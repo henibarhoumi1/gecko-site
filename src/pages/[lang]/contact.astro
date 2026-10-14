@@ -1,0 +1,71 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, type Locale } from "../../i18n/strings";
+import { href } from "../../i18n/paths";
+import { langPaths } from "../../i18n/static";
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+import { site } from '../../data/site';
+import { offers, audit } from '../../data/offers';
+const options = [...offers.map((o) => [o.key, o.name]), ['audit', audit.name], ['partner', s.partner.title], ['international', s.offers.intlTitle]];
+---
+<Base lang={lang} title={s.contact.title}>
+  <section class="wrap page-head stack">
+    <h1 class="display d-xl">{s.contact.title}</h1>
+    <p class="text text-l measure">{s.contact.intro}</p>
+  </section>
+  <section class="wrap section tight layout">
+    <form class="panel glass form" id="lead" method="POST" action="https://api.web3forms.com/submit" data-key={site.formKey}>
+      <input type="hidden" name="access_key" value={site.formKey} />
+      <input type="hidden" name="subject" value="New lead from the Gecko website" />
+      <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" />
+      <div class="grid g2">
+        <div class="field"><label for="f-name">{s.contact.name}</label><input id="f-name" name="name" required autocomplete="name" /></div>
+        <div class="field"><label for="f-brand">{s.contact.brand}</label><input id="f-brand" name="brand" required autocomplete="organization" /></div>
+        <div class="field"><label for="f-link">{s.contact.link}</label><input id="f-link" name="link" required /></div>
+        <div class="field"><label for="f-country">{s.contact.country}</label><input id="f-country" name="country" autocomplete="country-name" /></div>
+      </div>
+      <div class="field"><label for="f-product">{s.contact.product}</label><input id="f-product" name="product" required /></div>
+      <div class="grid g2">
+        <div class="field"><label for="f-budget">{s.contact.budget}</label><select id="f-budget" name="budget">{s.contact.budgets.map((b) => <option>{b}</option>)}</select></div>
+        <div class="field"><label for="f-offer">{s.contact.interest}</label><select id="f-offer" name="offer">{options.map(([k, n]) => <option value={k}>{n}</option>)}</select></div>
+      </div>
+      <div class="field"><label for="f-msg">{s.contact.message}</label><textarea id="f-msg" name="message"></textarea></div>
+      <button class="pill primary lg" type="submit">{s.contact.send}</button>
+      <p class="text status" role="status" aria-live="polite" data-sent={s.contact.sent} data-error={s.contact.error} data-not-ready={s.contact.notReady}></p>
+    </form>
+    <aside class="stack direct">
+      <p class="eyebrow">{s.contact.or}</p>
+      <a class="card glass row" href={site.whatsapp} rel="noopener"><span class="eyebrow">{s.contact.whatsapp}</span><span class="text">{site.phone}</span></a>
+      <a class="card glass row" href={`mailto:${site.email}`}><span class="eyebrow">{s.contact.email}</span><span class="text">{site.email}</span></a>
+      <a class="card glass row" href={site.instagram} rel="noopener"><span class="eyebrow">{s.contact.instagram}</span><span class="text">{site.instagramHandle}</span></a>
+    </aside>
+  </section>
+</Base>
+<script>
+  const form = document.getElementById('lead') as HTMLFormElement;
+  const status = form.querySelector('.status') as HTMLElement;
+  const pick = new URLSearchParams(location.search).get('offer');
+  const sel = form.querySelector<HTMLSelectElement>('#f-offer');
+  if (pick && sel && [...sel.options].some((o) => o.value === pick)) sel.value = pick;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form.dataset.key) { status.textContent = status.dataset.notReady!; return; }
+    try {
+      const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      if (!r.ok) throw new Error();
+      form.reset();
+      status.textContent = status.dataset.sent!;
+    } catch { status.textContent = status.dataset.error!; }
+  });
+</script>
+<style>
+  .layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: clamp(20px, 3vw, 40px); align-items: start; }
+  .form { display: grid; gap: 18px; }
+  .form .pill { justify-self: start; }
+  .status:empty { display: none; }
+  .row { display: grid; gap: 6px; text-decoration: none; overflow-wrap: anywhere; }
+  .row:hover { border-color: rgba(255,255,255,.5); }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+</style>

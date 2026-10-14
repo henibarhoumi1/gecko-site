@@ -1,0 +1,38 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, type Locale } from "../../i18n/strings";
+import { href } from "../../i18n/paths";
+import { langPaths } from "../../i18n/static";
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+import Reel from '../../components/Reel.astro';
+import { visibleWork } from '../../data/work';
+const work = visibleWork();
+---
+<Base lang={lang} title={s.work.title}>
+  <section class="wrap page-head stack">
+    <h1 class="display d-xl">{s.work.title}</h1>
+    <p class="text text-l measure">{s.work.intro}</p>
+  </section>
+  <section class="wrap section tight">
+    {work.length ? (
+      <div class="grid g3 work-grid">
+        {work.map((w) => (
+          <a class="work-card" href={href(lang, `work/${w.slug}`)}>
+            <Reel src={w.reels[0]?.src} poster={w.reels[0]?.poster} label={w.sample ? s.work.placeholder : '9:16'} />
+            <p class="eyebrow">{w.brand} · {w.sector[lang]}</p>
+            {w.resultLine && <p class="text text-s">{w.resultLine[lang]}</p>}
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="panel glass stack"><h2 class="display d-m">{s.work.soon}</h2><p class="text">{s.work.soonText}</p></div>
+    )}
+  </section>
+</Base>
+<style>
+  .work-card { text-decoration: none; display: grid; gap: 10px; }
+  .work-card:hover .reel { border-color: rgba(255,255,255,.5); }
+  @media (max-width: 640px) { .work-grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
+</style>
