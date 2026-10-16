@@ -4,6 +4,9 @@ import Ad from '../../components/Ad.astro';
 import CaseCard from '../../components/CaseCard.astro';
 import Faq from '../../components/Faq.astro';
 import ApplyBlock from '../../components/ApplyBlock.astro';
+import AdDemo from '../../components/AdDemo.astro';
+import Anatomy from '../../components/Anatomy.astro';
+import PlanFinder from '../../components/PlanFinder.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
@@ -24,7 +27,7 @@ const h = s.home;
           <a class="btn" href={href(lang, 'work')}>{s.hero.work}</a>
         </div>
       </div>
-      {hero && (
+      {hero ? (
         <figure class="hero-ad">
           <div class="frame r916" data-ad>
             {hero.src
@@ -36,7 +39,15 @@ const h = s.home;
             <span class="small">{hero.result ? hero.result[lang] : s.hero.captionEmpty}</span>
           </figcaption>
         </figure>
-      )}
+      ) : <AdDemo lang={lang} />}
+    </div>
+  </section>
+
+  <section class="on-black marquee" aria-label={h.grid}>
+    <div class="track">
+      {[0, 1].map((dup) => (
+        <ul aria-hidden={dup ? 'true' : undefined}>{h.formats.map((f) => <li>{f}</li>)}</ul>
+      ))}
     </div>
   </section>
 
@@ -66,6 +77,23 @@ const h = s.home;
       </div>
     </section>
   )}
+
+  <section class="on-white section">
+    <div class="wrap">
+      <div class="head"><p class="label">{h.anatomyLabel}</p><div class="side"><h2 class="h2">{h.anatomyTitle}</h2><p class="small muted">{h.anatomyHint}</p></div></div>
+      <Anatomy lang={lang} />
+    </div>
+  </section>
+
+  <section class="on-black section">
+    <div class="wrap">
+      <div class="head"><p class="label">{h.dayLabel}</p><div class="side"><h2 class="h2">{h.dayTitle}</h2></div></div>
+      <ol class="day" data-count>
+        {h.day.map((d) => <li><p class="big" data-to={d.n}>{d.n}</p><p class="text">{d.l}</p></li>)}
+      </ol>
+      <div class="actions more"><a class="btn" href={href(lang, 'offers')}>{h.dayCta} <span class="arr" aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
 
   {cases.length > 0 && (
     <section class="on-white section">
@@ -101,6 +129,13 @@ const h = s.home;
     </div>
   </section>
 
+  <section class="on-white section">
+    <div class="wrap">
+      <div class="head"><p class="label">{h.finderLabel}</p><div class="side"><h2 class="h2">{h.finderTitle}</h2></div></div>
+      <PlanFinder lang={lang} />
+    </div>
+  </section>
+
   {photos.length > 0 && (
     <section class="on-white section">
       <div class="wrap">
@@ -131,6 +166,28 @@ const h = s.home;
   </section>
 </Base>
 
+<script>
+  // Count up the shoot-day numbers once, when they come into view. The final numbers are in the HTML.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((list) => {
+      const io = new IntersectionObserver(([e]) => {
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        list.querySelectorAll<HTMLElement>('[data-to]').forEach((el) => {
+          const to = Number(el.dataset.to); const t0 = performance.now(); const dur = 900;
+          const step = (now: number) => {
+            const p = Math.min(1, (now - t0) / dur);
+            el.textContent = String(Math.round(to * (1 - Math.pow(1 - p, 3))));
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        });
+      }, { threshold: 0.4 });
+      io.observe(list);
+    });
+  }
+</script>
+
 <style>
   .hero { padding-top: calc(var(--header) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(56px, 8vw, 104px); }
   .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(32px, 6vw, 96px); align-items: end; }
@@ -150,6 +207,24 @@ const h = s.home;
   .big { margin: 0; font-weight: 600; font-size: clamp(56px, 7vw, 112px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
 
   .more { margin-top: clamp(28px, 4vw, 48px); }
+
+  .marquee { overflow: hidden; padding-block: clamp(18px, 2.4vw, 28px); }
+  .marquee .track { display: flex; width: max-content; animation: slide 38s linear infinite; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .marquee ul { display: flex; list-style: none; margin: 0; padding: 0; }
+  .marquee li { font-weight: 600; font-size: clamp(28px, 3.6vw, 52px); letter-spacing: -0.025em; line-height: 1; white-space: nowrap; padding-right: 1.2em; }
+  .marquee li::after { content: '·'; padding-left: 1.2em; opacity: .5; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .marquee .track { animation: none; } }
+
+  .day { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .day li { border-top: var(--line) solid rgba(255,255,255,.35); padding: 20px 20px 0 0; display: grid; gap: 12px; align-content: start; position: relative; }
+  .day li + li { padding-left: 20px; border-left: var(--line) solid rgba(255,255,255,.35); }
+  .day .big { font-size: clamp(72px, 10vw, 160px); }
+  @media (max-width: 760px) {
+    .day { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+    .day li:nth-child(3) { border-left: 0; padding-left: 0; }
+  }
 
   .steps { list-style: none; margin: 0; padding: 0; }
   .steps li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.5fr); gap: 24px; padding-block: clamp(22px, 3vw, 36px); align-items: baseline; }

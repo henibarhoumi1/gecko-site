@@ -1,0 +1,113 @@
+---
+// Gecko's own ad, made from type: plays like a reel, with two hooks to switch between.
+// Tap the frame to skip a scene. With reduced motion it waits for taps instead of playing.
+import Logo from './Logo.astro';
+import { t, type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const d = t(lang).home.demo;
+const words = (text: string) => text.split(' ').map((w, k) => ({ w, k }));
+const scenes = [
+  { bg: 'on-black', hook: true },
+  { bg: 'on-white', text: d.scenes[0] },
+  { bg: 'on-blue', text: d.scenes[1] },
+  { bg: 'on-black', text: d.scenes[2] },
+];
+---
+<figure class="demo" data-demo data-hook="a">
+  <div class="phone" role="button" tabindex="0" aria-label={d.tap}>
+    <div class="bars" aria-hidden="true">{[...scenes, 0].map(() => <i><b></b></i>)}</div>
+    <p class="top label" aria-hidden="true">{d.label}</p>
+    {scenes.map((sc, i) => (
+      <div class={`scene ${sc.bg}`} data-i={i}>
+        {sc.hook ? (
+          <>
+            <p class="cap ha">{words(d.a).map(({ w, k }) => <span class="w" style={`--k:${k}`}>{w} </span>)}</p>
+            <p class="cap hb">{words(d.b).map(({ w, k }) => <span class="w" style={`--k:${k}`}>{w} </span>)}</p>
+          </>
+        ) : (
+          <p class="cap">{words(sc.text!).map(({ w, k }) => <span class="w" style={`--k:${k}`}>{w} </span>)}</p>
+        )}
+      </div>
+    ))}
+    <div class="scene on-white end" data-i={scenes.length}>
+      <div class="endcard">
+        <Logo class="endlogo" />
+        <p class="text">{d.end}</p>
+        <a class="btn primary" href={href(lang, 'apply')}>{d.cta} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </div>
+  <figcaption class="ctrl">
+    <span class="small">{d.hooks}</span>
+    <span class="seg" role="group">
+      <button type="button" class="label" data-set="a" aria-pressed="true">{d.hookA}</button>
+      <button type="button" class="label" data-set="b" aria-pressed="false">{d.hookB}</button>
+    </span>
+  </figcaption>
+</figure>
+
+<script>
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-demo]').forEach((demo) => {
+    const phone = demo.querySelector<HTMLElement>('.phone')!;
+    const scenes = [...demo.querySelectorAll<HTMLElement>('.scene')];
+    const bars = [...demo.querySelectorAll<HTMLElement>('.bars i')];
+    const DUR = 2800, END = 4200;
+    let i = 0, timer = 0, visible = true;
+    const show = (n: number) => {
+      i = n % scenes.length;
+      clearTimeout(timer);
+      scenes.forEach((s, k) => s.classList.toggle('on', k === i));
+      bars.forEach((b, k) => {
+        b.classList.toggle('done', k < i);
+        b.classList.remove('on');
+        if (k === i) { void b.offsetWidth; b.classList.add('on'); }
+      });
+      const dur = i === scenes.length - 1 ? END : DUR;
+      phone.style.setProperty('--dur', `${dur}ms`);
+      if (!still && visible) timer = window.setTimeout(() => show(i + 1), dur);
+    };
+    phone.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('a')) show(i + 1); });
+    phone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(i + 1); } });
+    demo.querySelectorAll<HTMLButtonElement>('[data-set]').forEach((btn) => btn.addEventListener('click', () => {
+      demo.dataset.hook = btn.dataset.set;
+      demo.querySelectorAll('[data-set]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      show(0);
+    }));
+    // Pause while off screen.
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) show(i); else clearTimeout(timer); }).observe(phone);
+    if (still) demo.classList.add('still');
+    show(0);
+  });
+</script>
+
+<style>
+  .demo { margin: 0; display: grid; gap: 14px; width: clamp(260px, 25vw, 360px); }
+  .phone { position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: var(--black); border: var(--line) solid var(--black); cursor: pointer; outline-offset: 4px; user-select: none; -webkit-user-select: none; }
+  .bars { position: absolute; z-index: 3; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; mix-blend-mode: difference; }
+  .bars i { flex: 1; height: 2px; background: rgba(255,255,255,.35); }
+  .bars b { display: block; height: 100%; width: 0; background: var(--white); }
+  .bars i.done b { width: 100%; }
+  .bars i.on b { animation: fill var(--dur, 2800ms) linear forwards; }
+  .top { position: absolute; z-index: 3; top: 26px; left: 12px; color: var(--white); mix-blend-mode: difference; }
+  .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px 22px; opacity: 0; transition: opacity 220ms var(--ease); }
+  .scene.on { opacity: 1; z-index: 2; }
+  .cap { margin: 0; text-align: center; font-weight: 600; font-size: clamp(26px, 2.5vw, 36px); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance; }
+  .w { display: inline-block; white-space: pre; opacity: 0; transform: translateY(35%); }
+  .scene.on .w { animation: word 420ms var(--ease) forwards; animation-delay: calc(var(--k) * 110ms + 120ms); }
+  [data-hook='a'] .hb, [data-hook='b'] .ha { display: none; }
+  .endcard { display: grid; justify-items: center; gap: 18px; text-align: center; }
+  .endcard :global(.endlogo) { width: 140px; }
+  .ctrl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .seg { display: inline-flex; border: var(--line) solid var(--black); }
+  .seg button { font-family: var(--font); background: transparent; color: var(--black); border: 0; padding: 9px 12px; cursor: pointer; }
+  .seg button + button { border-left: var(--line) solid var(--black); }
+  .seg button[aria-pressed='true'] { background: var(--black); color: var(--white); }
+  .still .w { opacity: 1; transform: none; animation: none !important; }
+  .still .bars i.on b { width: 100%; animation: none; }
+  @keyframes fill { to { width: 100%; } }
+  @keyframes word { to { opacity: 1; transform: none; } }
+  @media (max-width: 860px) { .demo { width: min(100%, 320px); } }
+</style>

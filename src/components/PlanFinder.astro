@@ -1,0 +1,72 @@
+---
+// Pick a monthly ad budget, see the plan that fits. Plans and prices from data/offers.ts.
+import { t, type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+import { test, monthly, fmt } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const s = t(lang);
+const h = s.home;
+const o = s.offers;
+const results = [test, ...monthly];
+---
+<div class="finder" data-finder>
+  <div class="opts" role="radiogroup" aria-label={h.finderTitle}>
+    {h.finderOpts.map((label, i) => (
+      <button type="button" role="radio" aria-checked={i === 0 ? 'true' : 'false'} data-pick={i}>{label}</button>
+    ))}
+  </div>
+  {results.map((p, i) => (
+    <div class="result" data-res={i} hidden={i !== 0} aria-live="polite">
+      <div class="stack" style="--gap:14px">
+        <p class="label">{p.monthly ? `${p.reels} ${o.reels}` : o.startTitle}</p>
+        <h3 class="h2">{p.name}</h3>
+        {!p.monthly && <p class="text">{h.finderStart}</p>}
+      </div>
+      <ul class="items">{p.items[lang].map((it) => <li class="text">{it}</li>)}</ul>
+      <div class="price">
+        <p class="small">{o.launch}</p>
+        <p class="num">{fmt(p.launch, lang)} <span class="cur">{o.currency}{p.monthly ? ` ${o.month}` : ''}</span></p>
+        <p class="small"><s>{fmt(p.standard, lang)} {o.currency}</s> {o.standard}</p>
+        <a class="btn primary" href={href(lang, 'apply')}>{o.apply} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  ))}
+  <a class="link small all" href={href(lang, 'offers')}>{h.finderAll} →</a>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-finder]').forEach((el) => {
+    const opts = [...el.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    const res = [...el.querySelectorAll<HTMLElement>('[data-res]')];
+    opts.forEach((b, k) => b.addEventListener('click', () => {
+      opts.forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+      res.forEach((r, j) => (r.hidden = j !== k));
+    }));
+  });
+</script>
+<style>
+  .finder { display: grid; gap: 28px; }
+  .opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: var(--line) solid var(--black); }
+  .opts button { font: 500 16px/1.2 var(--font); padding: 18px 16px; text-align: left; background: var(--white); color: var(--black); border: 0; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .opts button + button { border-left: var(--line) solid var(--black); }
+  .opts button:hover { box-shadow: inset 0 -3px 0 var(--blue); }
+  .opts button[aria-checked='true'] { background: var(--black); color: var(--white); }
+  .result { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+  .result:not([hidden]) { animation: rise 360ms var(--ease); }
+  .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .items li { padding-left: 20px; position: relative; }
+  .items li::before { content: ''; position: absolute; left: 0; top: .72em; width: 10px; height: 1px; background: currentColor; }
+  .price { display: grid; gap: 6px; justify-items: start; }
+  .price p { margin: 0; }
+  .price .btn { margin-top: 14px; }
+  .num { font-weight: 600; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .cur { font-size: .3em; font-weight: 500; letter-spacing: 0; }
+  .all { justify-self: start; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  @media (max-width: 860px) {
+    .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .opts button:nth-child(3) { border-left: 0; }
+    .opts button:nth-child(n+3) { border-top: var(--line) solid var(--black); }
+    .result { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>

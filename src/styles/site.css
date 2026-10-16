@@ -83,6 +83,7 @@ a { color: inherit; }
 .field input:focus, .field select:focus { outline: none; border-bottom-width: 2px; padding-bottom: 9px; }
 .field input::placeholder { color: currentColor; opacity: .4; }
 
+[hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Horizontal scroll rows on phones instead of stacking full-width 9:16 frames */
