@@ -1,57 +1,68 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import Reel from '../../../components/Reel.astro';
+import Ad from '../../../components/Ad.astro';
 import { t, locales, type Locale } from '../../../i18n/strings';
 import { href } from '../../../i18n/paths';
-import { visibleWork, type Work } from '../../../data/work';
-import { site } from '../../../data/site';
-export function getStaticPaths() {
-  return locales.flatMap((lang) => visibleWork().map((w) => ({ params: { lang, slug: w.slug }, props: { w } })));
-}
+import { cases, type Case } from '../../../data/work';
+export const getStaticPaths = () => locales.flatMap((lang) => cases.map((c) => ({ params: { lang, slug: c.slug }, props: { c } })));
 const lang = Astro.params.lang as Locale;
-const { w } = Astro.props as { w: Work };
+const { c } = Astro.props as { c: Case };
 const s = t(lang);
+const w = s.work;
 ---
-<Base lang={lang} title={w.brand} noindex={w.sample}>
-  <section class="wrap page-head stack">
-    <a class="link text-s" href={href(lang, 'work')}>← {s.work.back}</a>
-    <p class="eyebrow">{w.sector[lang]} · {w.country} · {w.year}</p>
-    <h1 class="display d-xl">{w.brand}</h1>
-  </section>
-  <section class="wrap section tight">
-    <div class="grid g3">
-      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.brief}</p><p class="text">{w.story.before[lang]}</p></div>
-      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.angles}</p><ul class="list">{w.angles[lang].map((a) => <li>{a}</li>)}</ul><p class="text">{w.story.tried[lang]}</p></div>
-      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.results}</p><p class="text">{w.story.happened[lang]}</p></div>
+<Base lang={lang} title={c.brand} noindex={c.sample}>
+  <section class="on-white page-head">
+    <div class="wrap stack" style="--gap:24px">
+      <a class="label link" href={href(lang, 'work')}>← {w.back}</a>
+      <p class="label">{c.sample ? `${s.sample} · ` : ''}{c.sector[lang]} · {c.year}</p>
+      <h1 class="h1">{c.brand}</h1>
+      <div class="lead">
+        <p class="num">{c.number}</p>
+        <p class="label">{c.numberLabel[lang]}</p>
+      </div>
+      <p class="text text-l measure">{c.line[lang]}</p>
     </div>
   </section>
-  <section class="wrap section tight">
-    <h2 class="display d-m">{s.work.reels}</h2>
-    <div class="grid g3 reels reel-row">
-      {(w.reels.length ? w.reels : [{ src: '' }, { src: '' }, { src: '' }]).map((r) => <Reel src={r.src || undefined} poster={r.poster} label={w.sample ? s.work.placeholder : '9:16'} />)}
+  <section class="on-black section">
+    <div class="wrap grid g3 scroll-row">{c.ads.map((a) => <Ad ad={a} lang={lang} showBrand={false} />)}</div>
+  </section>
+  <section class="on-white section">
+    <div class="wrap">
+      <dl class="rows story">
+        <div><dt class="label">{w.brief}</dt><dd class="text text-l">{c.brief[lang]}</dd></div>
+        <div><dt class="label">{w.before}</dt><dd class="text text-l">{c.story.before[lang]}</dd></div>
+        <div><dt class="label">{w.tried}</dt><dd class="text text-l">{c.story.tried[lang]}</dd></div>
+        <div><dt class="label">{w.angles}</dt><dd class="text text-l">{c.angles[lang].join(' · ')}</dd></div>
+        <div><dt class="label">{w.happened}</dt><dd class="text text-l">{c.story.happened[lang]}</dd></div>
+      </dl>
     </div>
   </section>
-  {w.results?.length ? (
-    <section class="wrap section tight">
-      <h2 class="display d-m">{s.work.results}</h2>
-      <div class="grid g4 results">
-        {w.results.map((r) => <div class="card glass stack" style="--gap:6px"><p class="display d-l">{r.value}</p><p class="text text-s">{r.label[lang]}</p></div>)}
+  {c.results && c.results.length > 0 && (
+    <section class="on-white section">
+      <div class="wrap">
+        <div class="head"><p class="label">{w.results}</p></div>
+        <div class="grid g3">{c.results.map((r) => <div class="res"><p class="num">{r.value}</p><p class="label">{r.label[lang]}</p></div>)}</div>
       </div>
     </section>
-  ) : null}
-  {w.quote && (
-    <section class="wrap section tight">
-      <figure class="panel glass stack"><p class="eyebrow">{s.work.quote}</p><blockquote class="display d-m">{w.quote.text[lang]}</blockquote><figcaption class="text">{w.quote.who}</figcaption></figure>
-    </section>
   )}
-  <section class="wrap section stack center">
-    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
-    <div class="actions center"><a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a></div>
+  {c.quote && (
+    <section class="on-white section"><div class="wrap"><blockquote class="h2 quote">“{c.quote.text[lang]}”<footer class="label">{c.quote.who}</footer></blockquote></div></section>
+  )}
+  <section class="on-blue section">
+    <div class="wrap cta">
+      <h2 class="h2">{w.next}</h2>
+      <a class="btn primary" href={href(lang, 'apply')}>{s.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </section>
 </Base>
 <style>
-  .reels { margin-top: 24px; }
-  .results { margin-top: 24px; }
-  blockquote { margin: 0; }
-  figure { margin: 0; }
+  .lead { display: grid; gap: 6px; margin-top: 16px; }
+  .num { margin: 0; font-weight: 600; font-size: clamp(56px, 7vw, 104px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .story { margin: 0; }
+  .story > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: 24px; padding-block: 28px; }
+  .story dd { margin: 0; max-width: 46rem; }
+  .res { border-top: var(--line) solid var(--black); padding-top: 16px; display: grid; gap: 8px; }
+  .quote { margin: 0; max-width: 60rem; display: grid; gap: 24px; }
+  .cta { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  @media (max-width: 760px) { .story > div { grid-template-columns: 1fr; gap: 8px; } }
 </style>

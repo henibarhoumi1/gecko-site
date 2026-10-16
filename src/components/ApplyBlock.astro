@@ -1,0 +1,44 @@
+---
+// The apply section: who it's for on the left, the form on the right. Used on home and /apply.
+import LeadForm from './LeadForm.astro';
+import { t, type Locale } from '../i18n/strings';
+import { site } from '../data/site';
+interface Props { lang: Locale; heading?: 'h1' | 'h2' }
+const { lang, heading = 'h2' } = Astro.props;
+const s = t(lang).apply;
+const c = t(lang).contact;
+const H = heading;
+const fields = [
+  { name: 'name', label: s.name, required: true, auto: 'name' },
+  { name: 'brand', label: s.brand, required: true, auto: 'organization' },
+  { name: 'product', label: s.product, required: true },
+  { name: 'link', label: s.link, required: true },
+  { name: 'spend', label: s.spend, options: s.spends },
+  { name: 'phone', label: s.phone, type: 'tel', required: true, auto: 'tel' },
+];
+---
+<div class="apply">
+  <div class="stack" style="--gap:28px">
+    <H class={heading === 'h1' ? 'h1' : 'h2'}>{s.title}</H>
+    <p class="text text-l measure">{s.intro}</p>
+    <div class="stack" style="--gap:12px">
+      <p class="label">{s.forTitle}</p>
+      <ul class="check">{s.forList.map((i) => <li class="text">{i}</li>)}</ul>
+    </div>
+    <div class="direct">
+      <p class="label">{s.or}</p>
+      <a class="link" href={site.whatsapp} rel="noopener">{c.whatsapp} {site.phone}</a>
+      <a class="link" href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
+  </div>
+  <LeadForm id={`apply-${heading}`} subject="New application from the Gecko website" fields={fields} send={s.send} waIntro={s.waIntro} sent={s.sent} error={s.error} />
+</div>
+<style>
+  .apply { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(40px, 7vw, 120px); align-items: start; }
+  .check { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .check li { padding-left: 28px; position: relative; }
+  .check li::before { content: ''; position: absolute; left: 0; top: .45em; width: 12px; height: 7px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); }
+  .direct { display: grid; gap: 6px; }
+  .direct .label { margin-bottom: 4px; }
+  @media (max-width: 860px) { .apply { grid-template-columns: 1fr; } }
+</style>

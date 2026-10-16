@@ -1,0 +1,54 @@
+---
+// One form for brands (apply) and people who want to be filmed (creators).
+// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the answers filled in.
+import { site } from '../data/site';
+type Field = { name: string; label: string; type?: string; options?: readonly string[]; required?: boolean; auto?: string };
+interface Props { id: string; subject: string; fields: Field[]; send: string; waIntro: string; sent?: string; error?: string }
+const { id, subject, fields, send, waIntro, sent = '', error = '' } = Astro.props;
+const wa = site.whatsapp.replace('https://wa.me/', '');
+---
+<form class="lead" id={id} method="POST" action="https://api.web3forms.com/submit" data-key={site.formKey} data-wa={wa} data-intro={waIntro}>
+  <input type="hidden" name="access_key" value={site.formKey} />
+  <input type="hidden" name="subject" value={subject} />
+  <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <div class="fields">
+    {fields.map((f) => (
+      <div class="field">
+        <label for={`${id}-${f.name}`}>{f.label}</label>
+        {f.options
+          ? <select id={`${id}-${f.name}`} name={f.name} required={f.required}>{f.options.map((o) => <option>{o}</option>)}</select>
+          : <input id={`${id}-${f.name}`} name={f.name} type={f.type ?? 'text'} required={f.required} autocomplete={f.auto} />}
+      </div>
+    ))}
+  </div>
+  <button class="btn primary" type="submit">{send} <span class="arr" aria-hidden="true">→</span></button>
+  <p class="text status" role="status" aria-live="polite" data-sent={sent} data-error={error}></p>
+</form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('form.lead').forEach((form) => {
+    const status = form.querySelector('.status') as HTMLElement;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      if (!form.dataset.key) {
+        const lines = [...form.querySelectorAll<HTMLInputElement>('.field input, .field select')]
+          .map((el) => `${form.querySelector(`label[for="${el.id}"]`)?.textContent}: ${el.value}`);
+        open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
+        return;
+      }
+      try {
+        const r = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error();
+        form.reset();
+        status.textContent = status.dataset.sent!;
+      } catch { status.textContent = status.dataset.error!; }
+    });
+  });
+</script>
+<style>
+  .lead { display: grid; gap: 32px; }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+  .lead .btn { justify-self: start; }
+  .status:empty { display: none; }
+  @media (max-width: 600px) { .fields { grid-template-columns: 1fr; } }
+</style>

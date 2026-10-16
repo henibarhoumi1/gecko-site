@@ -1,129 +1,161 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Reel from '../../components/Reel.astro';
+import Ad from '../../components/Ad.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import Faq from '../../components/Faq.astro';
+import ApplyBlock from '../../components/ApplyBlock.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { visibleWork } from '../../data/work';
-import { offers, fmt } from '../../data/offers';
+import { hero, logos, numbers, cases, ads, photos } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
-const work = visibleWork().slice(0, 3);
-const test = offers.find((o) => o.key === 'test')!;
+const h = s.home;
 ---
 <Base lang={lang}>
-  <section class="hero wrap stack center">
-    <p class="eyebrow pill glass">{s.eyebrow}</p>
-    <h1 class="display d-xl">{s.hero.title}</h1>
-    <p class="text text-l measure center">{s.hero.sub}</p>
-    <div class="actions center">
-      <a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a>
-      <a class="pill glass lg" href={href(lang, 'offers')}>{s.hero.secondary}</a>
+  <section class="on-white hero">
+    <div class="wrap hero-grid">
+      <div class="stack copy" style="--gap:28px">
+        <h1 class="h1">{s.hero.title}</h1>
+        <p class="text text-l measure">{s.hero.sub}</p>
+        <div class="actions">
+          <a class="btn primary" href={href(lang, 'apply')}>{s.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn" href={href(lang, 'work')}>{s.hero.work}</a>
+        </div>
+      </div>
+      {hero && (
+        <figure class="hero-ad">
+          <div class="frame r916" data-ad>
+            {hero.src
+              ? <video src={hero.src} poster={hero.poster} muted loop playsinline autoplay data-autoplay></video>
+              : <div class="empty"><span class="label muted">{s.sample}</span></div>}
+          </div>
+          <figcaption class="stack" style="--gap:4px">
+            <span class="label">{s.hero.caption}</span>
+            <span class="small">{hero.result ? hero.result[lang] : s.hero.captionEmpty}</span>
+          </figcaption>
+        </figure>
+      )}
     </div>
   </section>
 
-  <section class="wrap section tight">
-    <div class="panel glass problem stack">
-      <h2 class="display d-l">{s.home.problemTitle}</h2>
-      <p class="text text-l white">{s.home.problemText}</p>
-    </div>
-  </section>
+  {logos.length > 0 && (
+    <section class="on-white logos">
+      <div class="wrap">
+        <p class="label">{h.logos}</p>
+        <ul class="logo-row">
+          {logos.map((l) => <li>{l.src ? <img src={l.src} alt={l.name} /> : <span class="h3">{l.name}</span>}</li>)}
+        </ul>
+      </div>
+    </section>
+  )}
 
-  <section class="wrap section tight">
-    <div class="grid g2 instead">
-      <h2 class="display d-l">{s.home.insteadTitle}</h2>
-      <p class="text text-l">{s.home.insteadText}</p>
-    </div>
-  </section>
+  {numbers.length > 0 && (
+    <section class="on-black section numbers">
+      <div class="wrap">
+        <div class="head"><p class="label">{h.numbers}</p><p class="small muted side">{numbers.some((n) => n.sample) ? h.numbersEmpty : ''}</p></div>
+        <div class="grid g3">
+          {numbers.map((n) => (
+            <div class="stat">
+              <p class="big">{n.value}</p>
+              <p class="label">{h.numberLabels[n.key]}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
-  <section class="wrap section">
-    <div class="row-head">
-      <h2 class="display d-m">{s.home.work}</h2>
-      <a class="link" href={href(lang, 'work')}>{s.home.allWork}</a>
-    </div>
-    {work.length ? (
-      <div class="grid g3 reels reel-row">
-        {work.map((w) => (
-          <a class="work-card" href={href(lang, `work/${w.slug}`)}>
-            <Reel src={w.reels[0]?.src} poster={w.reels[0]?.poster} label={w.sample ? s.work.placeholder : '9:16'} />
-            <p class="eyebrow">{w.brand} · {w.sector[lang]}</p>
-            {w.resultLine && <p class="text text-s">{w.resultLine[lang]}</p>}
-          </a>
+  {cases.length > 0 && (
+    <section class="on-white section">
+      <div class="wrap">
+        <div class="head"><p class="label">{h.cases}</p><div class="side"><h2 class="h2">{h.casesTitle}</h2></div></div>
+        <div class="grid g3 scroll-row">{cases.slice(0, 3).map((c) => <CaseCard c={c} lang={lang} />)}</div>
+      </div>
+    </section>
+  )}
+
+  {ads.length > 0 && (
+    <section class="on-black section">
+      <div class="wrap">
+        <div class="head"><p class="label">{h.grid}</p><div class="side"><h2 class="h2">{h.gridTitle}</h2><p class="small muted">{h.gridHint}</p></div></div>
+        <div class="grid g4 scroll-row">{ads.slice(0, 8).map((a) => <Ad ad={a} lang={lang} />)}</div>
+        <div class="actions more"><a class="btn" href={href(lang, 'work')}>{h.allWork} <span class="arr" aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+  )}
+
+  <section class="on-white section">
+    <div class="wrap">
+      <div class="head"><p class="label">{h.howTitle}</p></div>
+      <ol class="rows steps">
+        {h.how.map((step, i) => (
+          <li>
+            <span class="label">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="h3">{step.t}</h3>
+            <p class="text">{step.d}</p>
+          </li>
         ))}
-      </div>
-    ) : (
-      <div class="panel glass stack"><h3 class="display d-m">{s.work.soon}</h3><p class="text">{s.work.soonText}</p></div>
-    )}
+      </ol>
+    </div>
   </section>
 
-  <section class="wrap section">
-    <h2 class="display d-m">{s.home.method}</h2>
-    <div class="grid g3 steps">
-      {s.method.steps.map((st, i) => (
-        <div class="card glass stack" style="--gap:12px">
-          <p class="eyebrow">0{i + 1}</p>
-          <h3 class="display d-m">{st.name}</h3>
-          <p class="text">{st.text}</p>
+  {photos.length > 0 && (
+    <section class="on-white section">
+      <div class="wrap">
+        <div class="head"><p class="label">{h.teamTitle}</p><div class="side"><p class="text text-l measure">{h.teamText}</p></div></div>
+        <div class="grid g3 scroll-row">
+          {photos.map((p) => (
+            <figure class="photo">
+              <div class="frame r45">{p.src ? <img src={p.src} alt={p.alt[lang]} loading="lazy" /> : <div class="empty"><span class="label muted">{s.sample} · {h.teamEmpty}</span></div>}</div>
+            </figure>
+          ))}
         </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="wrap section">
-    <h2 class="display d-l">{s.home.objectionsTitle}</h2>
-    <div class="objections">
-      {s.home.objections.map((o) => (
-        <div class="obj">
-          <p class="text text-l white">{o.q}</p>
-          <p class="text text-l">{o.a}</p>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <section class="wrap section">
-    <div class="panel glass offer">
-      <div class="stack">
-        <h2 class="display d-l">{s.home.offerTitle}</h2>
-        <p class="text text-l">{s.home.offerText}</p>
-        <a class="link" href={href(lang, 'offers')}>{s.home.allOffers}</a>
       </div>
-      <div class="price stack" style="--gap:6px">
-        <p class="eyebrow">{s.offers.launch}</p>
-        <p class="display d-xl">{fmt(test.launch, lang)}</p>
-        <p class="text">{s.offers.tnd} · {s.offers.standard} {fmt(test.standard, lang)}</p>
+    </section>
+  )}
+
+  <section class="on-white section" id="faq">
+    <div class="wrap">
+      <div class="head"><p class="label">{h.faqTitle}</p></div>
+      <div class="faq-wrap">
+        <Faq items={s.faq} />
+        <a class="link small" href={href(lang, 'offers')}>{h.allFaq} →</a>
       </div>
     </div>
   </section>
 
-  <section class="wrap section stack center">
-    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
-    <p class="text text-l measure center">{s.home.closeText}</p>
-    <div class="actions center">
-      <a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a>
-    </div>
+  <section class="on-blue section" id="apply">
+    <div class="wrap"><ApplyBlock lang={lang} /></div>
   </section>
 </Base>
 
 <style>
-  .hero { padding-top: clamp(150px, 20vw, 230px); padding-bottom: clamp(48px, 7vw, 96px); --gap: 26px; }
-  .hero .d-xl { max-width: 12ch; margin-inline: auto; }
-  .problem .d-l { max-width: 20ch; }
-  .instead { align-items: end; }
-  .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; }
-  .reels { gap: clamp(14px, 2.5vw, 32px); }
-  .work-card { text-decoration: none; display: grid; gap: 10px; }
-  .work-card:hover .reel { border-color: rgba(255,255,255,.5); }
-  .steps { margin-top: 28px; }
-  .objections { margin-top: 32px; display: grid; }
-  .obj { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-block: 22px; border-top: 1px solid var(--glass-border); }
-  .obj:last-child { border-bottom: 1px solid var(--glass-border); }
-  .offer { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
-  .price { text-align: right; }
-  @media (max-width: 760px) {
-    .instead, .obj, .offer { grid-template-columns: 1fr; }
-    .obj { gap: 6px; }
-    .price { text-align: left; }
+  .hero { padding-top: calc(var(--header) + clamp(32px, 6vw, 72px)); padding-bottom: clamp(56px, 8vw, 104px); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: clamp(32px, 6vw, 96px); align-items: end; }
+  .hero-ad { margin: 0; width: clamp(240px, 24vw, 340px); display: grid; gap: 12px; }
+  .hero-ad .frame { max-height: 72vh; }
+  @media (max-width: 860px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-ad { width: min(100%, 300px); }
   }
+
+  .logos { padding-bottom: clamp(48px, 6vw, 80px); }
+  .logo-row { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); border-top: var(--line) solid var(--black); border-left: var(--line) solid var(--black); }
+  .logo-row li { display: grid; place-items: center; min-height: 112px; padding: 20px; border-right: var(--line) solid var(--black); border-bottom: var(--line) solid var(--black); }
+  .logo-row img { max-height: 40px; width: auto; }
+
+  .stat { border-top: var(--line) solid rgba(255,255,255,.35); padding-top: 20px; display: grid; gap: 10px; }
+  .big { margin: 0; font-weight: 600; font-size: clamp(56px, 7vw, 112px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+
+  .more { margin-top: clamp(28px, 4vw, 48px); }
+
+  .steps { list-style: none; margin: 0; padding: 0; }
+  .steps li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 1.5fr); gap: 24px; padding-block: clamp(22px, 3vw, 36px); align-items: baseline; }
+  @media (max-width: 760px) { .steps li { grid-template-columns: 1fr; gap: 8px; } }
+
+  .photo { margin: 0; }
+  .faq-wrap { display: grid; gap: 28px; margin-left: calc(25% + 6px); }
+  @media (max-width: 760px) { .faq-wrap { margin-left: 0; } }
 </style>

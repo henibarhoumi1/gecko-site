@@ -7,8 +7,6 @@ export const site = {
   email: 'reachoutgecko@gmail.com',
   instagram: 'https://instagram.com/geckoagency_',
   instagramHandle: '@geckoagency_',
-  // Web3Forms access key for the contact form. Empty = form shows a WhatsApp fallback.
+  // Web3Forms access key for the forms. Empty = forms open WhatsApp with the answers filled in.
   formKey: '',
-  // Partner brand slots still open (out of 3).
-  partnerSlots: 3,
 };

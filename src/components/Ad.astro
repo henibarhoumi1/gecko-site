@@ -1,0 +1,26 @@
+---
+// A 9:16 ad. With a file it loops muted: on hover on desktop, while on screen on phones.
+// Without one it shows a flat black frame marked as a sample.
+import type { Ad } from '../data/work';
+import { t, type Locale } from '../i18n/strings';
+interface Props { ad: Ad; lang: Locale; showBrand?: boolean; eager?: boolean }
+const { ad, lang, showBrand = true, eager = false } = Astro.props;
+const s = t(lang);
+---
+<figure class="ad">
+  <div class="frame r916" data-ad>
+    {ad.src
+      ? <video src={ad.src} poster={ad.poster} muted loop playsinline preload={eager ? 'auto' : 'none'} aria-label={`${ad.brand}: ${ad.angle[lang]}`}></video>
+      : <div class="empty"><span class="label muted">{s.sample}</span></div>}
+    {ad.sample && ad.src && <span class="tag label">{s.sample}</span>}
+  </div>
+  <figcaption>
+    <span class="label">{showBrand ? `${ad.brand} · ` : ''}{ad.angle[lang]}</span>
+    {ad.result && <span class="label res">{ad.result[lang]}</span>}
+  </figcaption>
+</figure>
+<style>
+  .ad { margin: 0; display: grid; gap: 10px; }
+  figcaption { display: flex; justify-content: space-between; gap: 12px; }
+  .res { white-space: nowrap; }
+</style>

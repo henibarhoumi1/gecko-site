@@ -7,35 +7,40 @@ interface Props { lang: Locale }
 const { lang } = Astro.props;
 const s = t(lang);
 ---
-<footer class="site-footer">
+<footer class="site-footer on-black">
   <div class="wrap inner">
-    <div class="col">
+    <div class="stack" style="--gap:16px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
-      <p class="text text-s">{s.eyebrow}</p>
+      <p class="text">{s.line}</p>
+      <p class="text muted">{s.footer.address}</p>
     </div>
     <nav class="col" aria-label="Footer">
       <a href={href(lang, 'work')}>{s.nav.work}</a>
       <a href={href(lang, 'offers')}>{s.nav.offers}</a>
-      <a href={href(lang, 'method')}>{s.nav.method}</a>
       <a href={href(lang, 'about')}>{s.nav.about}</a>
-      <a href={href(lang, 'contact')}>{s.nav.contact}</a>
+      <a href={href(lang, 'apply')}>{s.nav.apply}</a>
+      <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
     <div class="col">
-      <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} · {site.phone}</a>
+      <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
-      <a href={site.instagram} rel="noopener">{s.contact.instagram} · {site.instagramHandle}</a>
-      <a href={href(lang, 'legal')}>{s.footer.legal}</a>
+      <a href={site.instagram} rel="noopener">{s.contact.instagram} {site.instagramHandle}</a>
     </div>
   </div>
-  <div class="wrap base"><p class="text text-s">© {new Date().getFullYear()} Gecko</p></div>
+  <div class="wrap base">
+    <p class="small muted">© {new Date().getFullYear()} Gecko</p>
+    <a class="small muted" href={href(lang, 'legal')}>{s.footer.legal}</a>
+  </div>
 </footer>
 <style>
-  .site-footer { border-top: 1px solid var(--glass-border); margin-top: clamp(40px, 6vw, 80px); padding-block: 48px 28px; }
-  .inner { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 32px; }
-  .brand { display: block; width: 110px; margin-bottom: 14px; }
+  .site-footer { padding-block: clamp(56px, 8vw, 96px) 28px; }
+  .inner { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 40px; }
+  .brand { display: block; width: 120px; }
   .col { display: grid; align-content: start; gap: 10px; }
-  .col a { color: var(--soft); text-decoration: none; font-size: var(--text-s); overflow-wrap: anywhere; }
-  .col a:hover { color: var(--white); }
-  .base { margin-top: 36px; }
+  .col a { text-decoration: none; overflow-wrap: anywhere; }
+  .col a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .base { margin-top: clamp(48px, 7vw, 88px); padding-top: 20px; border-top: var(--line) solid rgba(255,255,255,.3); display: flex; justify-content: space-between; gap: 16px; }
+  .base p { margin: 0; }
+  .base a { text-decoration: none; }
   @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }
 </style>

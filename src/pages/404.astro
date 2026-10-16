@@ -4,8 +4,11 @@ import { t } from '../i18n/strings';
 const s = t('en');
 ---
 <Base lang="en" title="404" noindex>
-  <section class="wrap page-head stack center" style="min-height:60vh">
-    <h1 class="display d-l">{s.notFound.title}</h1>
-    <div class="actions center"><a class="pill primary lg" href="/en/">{s.notFound.back}</a></div>
+  <section class="on-white page-head body">
+    <div class="wrap stack" style="--gap:32px">
+      <h1 class="h1">{s.notFound.title}</h1>
+      <div class="actions"><a class="btn primary" href="/en/">{s.notFound.back}</a></div>
+    </div>
   </section>
 </Base>
+<style>.body { min-height: 70vh; }</style>

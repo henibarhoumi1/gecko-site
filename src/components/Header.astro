@@ -7,23 +7,23 @@ const { lang } = Astro.props;
 const s = t(lang);
 const path = Astro.url.pathname;
 const links = [
-  ['work', s.nav.work], ['offers', s.nav.offers], ['method', s.nav.method], ['about', s.nav.about], ['contact', s.nav.contact],
+  [href(lang, 'work'), s.nav.work], [href(lang, 'offers'), s.nav.offers], [href(lang, 'about'), s.nav.about], [`${href(lang)}#faq`, s.nav.faq],
 ] as const;
-const isActive = (p: string) => path.startsWith(href(lang, p));
+const isActive = (p: string) => !p.includes('#') && path.startsWith(p);
 ---
 <header class="site-header">
-  <nav class="bar glass" aria-label="Main">
-    <a href={href(lang)} class="brand" aria-label="Gecko, home"><Logo class="logo-sm" /></a>
+  <nav class="wrap bar" aria-label="Main">
+    <a href={href(lang)} class="brand" aria-label="Gecko, home"><Logo /></a>
     <ul class="links">
-      {links.map(([p, label]) => <li><a href={href(lang, p)} aria-current={isActive(p) ? 'page' : undefined}>{label}</a></li>)}
+      {links.map(([p, label]) => <li><a href={p} aria-current={isActive(p) ? 'page' : undefined}>{label}</a></li>)}
     </ul>
     <div class="right">
-      <a class="lang" href={swapLang(path, other(lang))} hreflang={other(lang)} lang={other(lang)} aria-label={s.langName}>{s.langShort}</a>
-      <a class="pill glass book" href={href(lang, 'contact')}>{s.nav.book}</a>
+      <a class="lang label" href={swapLang(path, other(lang))} hreflang={other(lang)} lang={other(lang)} aria-label={s.langName}>{s.langShort}</a>
+      <a class="btn primary sm" href={href(lang, 'apply')}>{s.nav.apply}</a>
       <details class="menu">
-        <summary class="pill glass" aria-label={s.nav.menu}>{s.nav.menu}</summary>
-        <div class="sheet glass">
-          {links.map(([p, label]) => <a href={href(lang, p)}>{label}</a>)}
+        <summary class="btn sm" aria-label={s.nav.menu}>{s.nav.menu}</summary>
+        <div class="sheet">
+          {links.map(([p, label]) => <a href={p}>{label}</a>)}
           <a href={swapLang(path, other(lang))} lang={other(lang)}>{s.langName}</a>
         </div>
       </details>
@@ -31,26 +31,27 @@ const isActive = (p: string) => path.startsWith(href(lang, p));
   </nav>
 </header>
 <style>
-  .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 14px clamp(12px, 3vw, 28px); }
-  .bar { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 10px 10px 10px 20px; border-radius: var(--radius-pill); background: linear-gradient(180deg, rgba(11,27,63,.72), rgba(5,10,24,.6)); }
-  .brand { display: block; width: 84px; flex: none; }
-  .links { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 0; }
-  .links a { display: block; padding: 8px 14px; border-radius: var(--radius-pill); font: 500 var(--text-s)/1 var(--font-text); color: var(--soft); text-decoration: none; }
-  .links a:hover { color: var(--white); }
-  .links a[aria-current='page'] { color: var(--white); background: rgba(255,255,255,.1); }
-  .right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
-  .lang { font: 500 var(--text-s)/1 var(--font-text); color: var(--soft); text-decoration: none; padding: 8px 10px; }
-  .lang:hover { color: var(--white); }
+  .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--white); color: var(--black); border-bottom: var(--line) solid transparent; transition: border-color 200ms var(--ease); }
+  :global(.scrolled) .site-header { border-bottom-color: var(--black); }
+  .bar { height: var(--header); display: flex; align-items: center; gap: 24px; }
+  .brand { display: block; width: 76px; flex: none; }
+  .links { display: flex; gap: 28px; list-style: none; margin: 0 0 0 auto; padding: 0; }
+  .links a { font-weight: 500; font-size: 15px; text-decoration: none; padding-block: 6px; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 200ms var(--ease); }
+  .links a:hover, .links a[aria-current='page'] { background-size: 100% 1px; }
+  .right { display: flex; align-items: center; gap: 16px; }
+  .lang { text-decoration: none; }
+  .lang:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .btn.sm { padding: 11px 18px; font-size: 14px; }
   .menu { display: none; position: relative; }
   .menu summary { list-style: none; }
   .menu summary::-webkit-details-marker { display: none; }
-  .sheet { position: absolute; right: 0; top: calc(100% + 10px); min-width: 220px; padding: 10px; border-radius: var(--radius-card); display: grid; background: linear-gradient(180deg, rgba(11,27,63,.95), rgba(5,10,24,.95)); }
-  .sheet a { padding: 12px 14px; border-radius: 12px; color: var(--white); text-decoration: none; font: 500 16px/1 var(--font-text); }
-  .sheet a:hover { background: rgba(255,255,255,.08); }
+  .sheet { position: absolute; right: 0; top: calc(100% + 12px); min-width: 220px; display: grid; background: var(--white); border: var(--line) solid var(--black); }
+  .sheet a { padding: 14px 16px; text-decoration: none; font-weight: 500; border-bottom: var(--line) solid var(--black); }
+  .sheet a:last-child { border-bottom: 0; }
+  .sheet a:hover { background: var(--black); color: var(--white); }
   @media (max-width: 860px) {
     .links, .lang { display: none; }
     .menu { display: block; }
-    .bar { padding-left: 16px; }
+    .right { margin-left: auto; gap: 8px; }
   }
-  @media (max-width: 420px) { .book { display: none; } }
 </style>

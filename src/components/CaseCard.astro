@@ -1,0 +1,29 @@
+---
+import type { Case } from '../data/work';
+import { t, type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+interface Props { c: Case; lang: Locale }
+const { c, lang } = Astro.props;
+const s = t(lang);
+const ad = c.ads[0];
+---
+<a class="case" href={href(lang, `work/${c.slug}`)}>
+  <div class="frame r45">
+    {ad?.poster ? <img src={ad.poster} alt="" loading="lazy" /> : <div class="empty"><span class="label muted">{s.sample}</span></div>}
+  </div>
+  <div class="meta">
+    <p class="label">{c.brand} · {c.sector[lang]}</p>
+    <p class="num">{c.number}</p>
+    <p class="label">{c.numberLabel[lang]}</p>
+    <p class="text">{c.line[lang]}</p>
+  </div>
+</a>
+<style>
+  .case { display: grid; gap: 16px; text-decoration: none; }
+  .meta { display: grid; gap: 6px; }
+  .num { margin: 8px 0 0; font-weight: 600; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .text { margin-top: 6px; }
+  .case .frame img { transition: transform 400ms var(--ease); }
+  .case:hover .frame img { transform: scale(1.03); }
+  .case:hover .text { text-decoration: underline; text-underline-offset: 4px; }
+</style>

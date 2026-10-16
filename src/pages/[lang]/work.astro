@@ -1,38 +1,48 @@
 ---
-import Base from "../../layouts/Base.astro";
-import { t, type Locale } from "../../i18n/strings";
-import { href } from "../../i18n/paths";
-import { langPaths } from "../../i18n/static";
+import Base from '../../layouts/Base.astro';
+import Ad from '../../components/Ad.astro';
+import CaseCard from '../../components/CaseCard.astro';
+import { t, type Locale } from '../../i18n/strings';
+import { href } from '../../i18n/paths';
+import { langPaths } from '../../i18n/static';
+import { cases, ads } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
-import Reel from '../../components/Reel.astro';
-import { visibleWork } from '../../data/work';
-const work = visibleWork();
 ---
 <Base lang={lang} title={s.work.title}>
-  <section class="wrap page-head stack">
-    <h1 class="display d-xl">{s.work.title}</h1>
-    <p class="text text-l measure">{s.work.intro}</p>
+  <section class="on-white page-head">
+    <div class="wrap stack" style="--gap:24px">
+      <h1 class="h1">{s.work.title}</h1>
+      <p class="text text-l measure">{s.work.intro}</p>
+    </div>
   </section>
-  <section class="wrap section tight">
-    {work.length ? (
-      <div class="grid g3 work-grid">
-        {work.map((w) => (
-          <a class="work-card" href={href(lang, `work/${w.slug}`)}>
-            <Reel src={w.reels[0]?.src} poster={w.reels[0]?.poster} label={w.sample ? s.work.placeholder : '9:16'} />
-            <p class="eyebrow">{w.brand} · {w.sector[lang]}</p>
-            {w.resultLine && <p class="text text-s">{w.resultLine[lang]}</p>}
-          </a>
-        ))}
+  {cases.length > 0 ? (
+    <section class="on-white section" style="padding-top:0">
+      <div class="wrap">
+        <div class="head"><p class="label">{s.home.cases}</p><div class="side"><h2 class="h2">{s.home.casesTitle}</h2></div></div>
+        <div class="grid g3">{cases.map((c) => <CaseCard c={c} lang={lang} />)}</div>
       </div>
-    ) : (
-      <div class="panel glass stack"><h2 class="display d-m">{s.work.soon}</h2><p class="text">{s.work.soonText}</p></div>
-    )}
+    </section>
+  ) : (
+    <section class="on-white section" style="padding-top:0"><div class="wrap"><p class="text text-l">{s.work.empty}</p></div></section>
+  )}
+  {ads.length > 0 && (
+    <section class="on-black section">
+      <div class="wrap">
+        <div class="head"><p class="label">{s.home.grid}</p><div class="side"><h2 class="h2">{s.home.gridTitle}</h2><p class="small muted">{s.home.gridHint}</p></div></div>
+        <div class="grid g4">{ads.map((a) => <Ad ad={a} lang={lang} />)}</div>
+      </div>
+    </section>
+  )}
+  <section class="on-blue section">
+    <div class="wrap cta">
+      <h2 class="h2">{s.work.next}</h2>
+      <a class="btn primary" href={href(lang, 'apply')}>{s.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </section>
 </Base>
 <style>
-  .work-card { text-decoration: none; display: grid; gap: 10px; }
-  .work-card:hover .reel { border-color: rgba(255,255,255,.5); }
-  @media (max-width: 640px) { .work-grid { grid-template-columns: 1fr 1fr; gap: 12px; } }
+  .cta { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+  @media (max-width: 600px) { .grid.g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

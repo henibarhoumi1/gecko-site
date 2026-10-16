@@ -1,19 +1,20 @@
 ---
-import Base from "../../layouts/Base.astro";
-import { t, type Locale } from "../../i18n/strings";
-import { href } from "../../i18n/paths";
-import { langPaths } from "../../i18n/static";
+import Base from '../../layouts/Base.astro';
+import { t, type Locale } from '../../i18n/strings';
+import { langPaths } from '../../i18n/static';
+import { site } from '../../data/site';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
-const s = t(lang);
-import { site } from '../../data/site';
+const l = t(lang).legal;
 ---
-<Base lang={lang} title={s.legal.title}>
-  <section class="wrap page-head stack">
-    <h1 class="display d-xl">{s.legal.title}</h1>
-  </section>
-  <section class="wrap section tight grid g2">
-    <div class="card glass stack" style="--gap:12px"><h2 class="display d-m">{s.legal.notice}</h2><p class="text">{s.legal.noticeText}</p><p class="text"><a class="link" href={`mailto:${site.email}`}>{site.email}</a></p></div>
-    <div class="card glass stack" style="--gap:12px"><h2 class="display d-m">{s.legal.privacy}</h2><p class="text">{s.legal.privacyText}</p></div>
+<Base lang={lang} title={l.title} noindex>
+  <section class="on-white page-head body">
+    <div class="wrap stack" style="--gap:32px">
+      <h1 class="h2">{l.title}</h1>
+      <p class="text text-l measure">{l.pending}</p>
+      <h2 class="h3">{l.privacyTitle}</h2>
+      <p class="text text-l measure">{l.privacy} <a class="link" href={`mailto:${site.email}`}>{site.email}</a>.</p>
+    </div>
   </section>
 </Base>
+<style>.body { padding-bottom: var(--section); }</style>
