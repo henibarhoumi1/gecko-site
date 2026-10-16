@@ -1,0 +1,41 @@
+---
+import Logo from './Logo.astro';
+import { t, type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+import { site } from '../data/site';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const s = t(lang);
+---
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div class="col">
+      <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
+      <p class="text text-s">{s.eyebrow}</p>
+    </div>
+    <nav class="col" aria-label="Footer">
+      <a href={href(lang, 'work')}>{s.nav.work}</a>
+      <a href={href(lang, 'offers')}>{s.nav.offers}</a>
+      <a href={href(lang, 'method')}>{s.nav.method}</a>
+      <a href={href(lang, 'about')}>{s.nav.about}</a>
+      <a href={href(lang, 'contact')}>{s.nav.contact}</a>
+    </nav>
+    <div class="col">
+      <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} · {site.phone}</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+      <a href={site.instagram} rel="noopener">{s.contact.instagram} · {site.instagramHandle}</a>
+      <a href={href(lang, 'legal')}>{s.footer.legal}</a>
+    </div>
+  </div>
+  <div class="wrap base"><p class="text text-s">© {new Date().getFullYear()} Gecko</p></div>
+</footer>
+<style>
+  .site-footer { border-top: 1px solid var(--glass-border); margin-top: clamp(40px, 6vw, 80px); padding-block: 48px 28px; }
+  .inner { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 32px; }
+  .brand { display: block; width: 110px; margin-bottom: 14px; }
+  .col { display: grid; align-content: start; gap: 10px; }
+  .col a { color: var(--soft); text-decoration: none; font-size: var(--text-s); overflow-wrap: anywhere; }
+  .col a:hover { color: var(--white); }
+  .base { margin-top: 36px; }
+  @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }
+</style>

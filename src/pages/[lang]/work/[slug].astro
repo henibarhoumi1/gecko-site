@@ -1,0 +1,57 @@
+---
+import Base from '../../../layouts/Base.astro';
+import Reel from '../../../components/Reel.astro';
+import { t, locales, type Locale } from '../../../i18n/strings';
+import { href } from '../../../i18n/paths';
+import { visibleWork, type Work } from '../../../data/work';
+import { site } from '../../../data/site';
+export function getStaticPaths() {
+  return locales.flatMap((lang) => visibleWork().map((w) => ({ params: { lang, slug: w.slug }, props: { w } })));
+}
+const lang = Astro.params.lang as Locale;
+const { w } = Astro.props as { w: Work };
+const s = t(lang);
+---
+<Base lang={lang} title={w.brand} noindex={w.sample}>
+  <section class="wrap page-head stack">
+    <a class="link text-s" href={href(lang, 'work')}>← {s.work.back}</a>
+    <p class="eyebrow">{w.sector[lang]} · {w.country} · {w.year}</p>
+    <h1 class="display d-xl">{w.brand}</h1>
+  </section>
+  <section class="wrap section tight">
+    <div class="grid g3">
+      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.brief}</p><p class="text">{w.story.before[lang]}</p></div>
+      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.angles}</p><ul class="list">{w.angles[lang].map((a) => <li>{a}</li>)}</ul><p class="text">{w.story.tried[lang]}</p></div>
+      <div class="card glass stack" style="--gap:10px"><p class="eyebrow">{s.work.results}</p><p class="text">{w.story.happened[lang]}</p></div>
+    </div>
+  </section>
+  <section class="wrap section tight">
+    <h2 class="display d-m">{s.work.reels}</h2>
+    <div class="grid g3 reels reel-row">
+      {(w.reels.length ? w.reels : [{ src: '' }, { src: '' }, { src: '' }]).map((r) => <Reel src={r.src || undefined} poster={r.poster} label={w.sample ? s.work.placeholder : '9:16'} />)}
+    </div>
+  </section>
+  {w.results?.length ? (
+    <section class="wrap section tight">
+      <h2 class="display d-m">{s.work.results}</h2>
+      <div class="grid g4 results">
+        {w.results.map((r) => <div class="card glass stack" style="--gap:6px"><p class="display d-l">{r.value}</p><p class="text text-s">{r.label[lang]}</p></div>)}
+      </div>
+    </section>
+  ) : null}
+  {w.quote && (
+    <section class="wrap section tight">
+      <figure class="panel glass stack"><p class="eyebrow">{s.work.quote}</p><blockquote class="display d-m">{w.quote.text[lang]}</blockquote><figcaption class="text">{w.quote.who}</figcaption></figure>
+    </section>
+  )}
+  <section class="wrap section stack center">
+    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
+    <div class="actions center"><a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a></div>
+  </section>
+</Base>
+<style>
+  .reels { margin-top: 24px; }
+  .results { margin-top: 24px; }
+  blockquote { margin: 0; }
+  figure { margin: 0; }
+</style>

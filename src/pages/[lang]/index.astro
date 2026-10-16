@@ -1,0 +1,129 @@
+---
+import Base from '../../layouts/Base.astro';
+import Reel from '../../components/Reel.astro';
+import { t, type Locale } from '../../i18n/strings';
+import { href } from '../../i18n/paths';
+import { langPaths } from '../../i18n/static';
+import { visibleWork } from '../../data/work';
+import { offers, fmt } from '../../data/offers';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+const work = visibleWork().slice(0, 3);
+const test = offers.find((o) => o.key === 'test')!;
+---
+<Base lang={lang}>
+  <section class="hero wrap stack center">
+    <p class="eyebrow pill glass">{s.eyebrow}</p>
+    <h1 class="display d-xl">{s.hero.title}</h1>
+    <p class="text text-l measure center">{s.hero.sub}</p>
+    <div class="actions center">
+      <a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a>
+      <a class="pill glass lg" href={href(lang, 'offers')}>{s.hero.secondary}</a>
+    </div>
+  </section>
+
+  <section class="wrap section tight">
+    <div class="panel glass problem stack">
+      <h2 class="display d-l">{s.home.problemTitle}</h2>
+      <p class="text text-l white">{s.home.problemText}</p>
+    </div>
+  </section>
+
+  <section class="wrap section tight">
+    <div class="grid g2 instead">
+      <h2 class="display d-l">{s.home.insteadTitle}</h2>
+      <p class="text text-l">{s.home.insteadText}</p>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="row-head">
+      <h2 class="display d-m">{s.home.work}</h2>
+      <a class="link" href={href(lang, 'work')}>{s.home.allWork}</a>
+    </div>
+    {work.length ? (
+      <div class="grid g3 reels reel-row">
+        {work.map((w) => (
+          <a class="work-card" href={href(lang, `work/${w.slug}`)}>
+            <Reel src={w.reels[0]?.src} poster={w.reels[0]?.poster} label={w.sample ? s.work.placeholder : '9:16'} />
+            <p class="eyebrow">{w.brand} · {w.sector[lang]}</p>
+            {w.resultLine && <p class="text text-s">{w.resultLine[lang]}</p>}
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="panel glass stack"><h3 class="display d-m">{s.work.soon}</h3><p class="text">{s.work.soonText}</p></div>
+    )}
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display d-m">{s.home.method}</h2>
+    <div class="grid g3 steps">
+      {s.method.steps.map((st, i) => (
+        <div class="card glass stack" style="--gap:12px">
+          <p class="eyebrow">0{i + 1}</p>
+          <h3 class="display d-m">{st.name}</h3>
+          <p class="text">{st.text}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <h2 class="display d-l">{s.home.objectionsTitle}</h2>
+    <div class="objections">
+      {s.home.objections.map((o) => (
+        <div class="obj">
+          <p class="text text-l white">{o.q}</p>
+          <p class="text text-l">{o.a}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="panel glass offer">
+      <div class="stack">
+        <h2 class="display d-l">{s.home.offerTitle}</h2>
+        <p class="text text-l">{s.home.offerText}</p>
+        <a class="link" href={href(lang, 'offers')}>{s.home.allOffers}</a>
+      </div>
+      <div class="price stack" style="--gap:6px">
+        <p class="eyebrow">{s.offers.launch}</p>
+        <p class="display d-xl">{fmt(test.launch, lang)}</p>
+        <p class="text">{s.offers.tnd} · {s.offers.standard} {fmt(test.standard, lang)}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section stack center">
+    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
+    <p class="text text-l measure center">{s.home.closeText}</p>
+    <div class="actions center">
+      <a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero { padding-top: clamp(150px, 20vw, 230px); padding-bottom: clamp(48px, 7vw, 96px); --gap: 26px; }
+  .hero .d-xl { max-width: 12ch; margin-inline: auto; }
+  .problem .d-l { max-width: 20ch; }
+  .instead { align-items: end; }
+  .row-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+  .reels { gap: clamp(14px, 2.5vw, 32px); }
+  .work-card { text-decoration: none; display: grid; gap: 10px; }
+  .work-card:hover .reel { border-color: rgba(255,255,255,.5); }
+  .steps { margin-top: 28px; }
+  .objections { margin-top: 32px; display: grid; }
+  .obj { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding-block: 22px; border-top: 1px solid var(--glass-border); }
+  .obj:last-child { border-bottom: 1px solid var(--glass-border); }
+  .offer { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: center; }
+  .price { text-align: right; }
+  @media (max-width: 760px) {
+    .instead, .obj, .offer { grid-template-columns: 1fr; }
+    .obj { gap: 6px; }
+    .price { text-align: left; }
+  }
+</style>

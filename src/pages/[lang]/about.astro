@@ -1,0 +1,35 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, type Locale } from "../../i18n/strings";
+import { href } from "../../i18n/paths";
+import { langPaths } from "../../i18n/static";
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+---
+<Base lang={lang} title={s.about.title}>
+  <section class="wrap page-head stack">
+    <h1 class="display d-xl">{s.about.title}</h1>
+    <p class="text text-l measure">{s.about.intro}</p>
+  </section>
+  <section class="wrap section tight">
+    <div class="panel glass founder">
+      <div class="photo" role="img" aria-label={s.about.founderName}><span class="eyebrow">{s.about.photo}</span></div>
+      <div class="stack">
+        <p class="eyebrow">{s.about.founder}</p>
+        <h2 class="display d-l">{s.about.founderName}</h2>
+        <p class="text text-l">{s.about.founderText}</p>
+        <p class="text">{s.about.where}</p>
+      </div>
+    </div>
+  </section>
+  <section class="wrap section stack center">
+    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
+    <div class="actions center"><a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a></div>
+  </section>
+</Base>
+<style>
+  .founder { display: grid; grid-template-columns: minmax(200px, 360px) 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; }
+  .photo { aspect-ratio: 4 / 5; border-radius: var(--radius-card); border: 1px solid var(--glass-border); background: rgba(5,10,24,.5); display: grid; place-items: center; }
+  @media (max-width: 760px) { .founder { grid-template-columns: 1fr; } .photo { max-width: 320px; } }
+</style>

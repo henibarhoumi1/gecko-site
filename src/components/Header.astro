@@ -1,0 +1,56 @@
+---
+import Logo from './Logo.astro';
+import { t, other, type Locale } from '../i18n/strings';
+import { href, swapLang } from '../i18n/paths';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const s = t(lang);
+const path = Astro.url.pathname;
+const links = [
+  ['work', s.nav.work], ['offers', s.nav.offers], ['method', s.nav.method], ['about', s.nav.about], ['contact', s.nav.contact],
+] as const;
+const isActive = (p: string) => path.startsWith(href(lang, p));
+---
+<header class="site-header">
+  <nav class="bar glass" aria-label="Main">
+    <a href={href(lang)} class="brand" aria-label="Gecko, home"><Logo class="logo-sm" /></a>
+    <ul class="links">
+      {links.map(([p, label]) => <li><a href={href(lang, p)} aria-current={isActive(p) ? 'page' : undefined}>{label}</a></li>)}
+    </ul>
+    <div class="right">
+      <a class="lang" href={swapLang(path, other(lang))} hreflang={other(lang)} lang={other(lang)} aria-label={s.langName}>{s.langShort}</a>
+      <a class="pill glass book" href={href(lang, 'contact')}>{s.nav.book}</a>
+      <details class="menu">
+        <summary class="pill glass" aria-label={s.nav.menu}>{s.nav.menu}</summary>
+        <div class="sheet glass">
+          {links.map(([p, label]) => <a href={href(lang, p)}>{label}</a>)}
+          <a href={swapLang(path, other(lang))} lang={other(lang)}>{s.langName}</a>
+        </div>
+      </details>
+    </div>
+  </nav>
+</header>
+<style>
+  .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 10; padding: 14px clamp(12px, 3vw, 28px); }
+  .bar { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 10px 10px 10px 20px; border-radius: var(--radius-pill); background: linear-gradient(180deg, rgba(11,27,63,.72), rgba(5,10,24,.6)); }
+  .brand { display: block; width: 84px; flex: none; }
+  .links { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 0; }
+  .links a { display: block; padding: 8px 14px; border-radius: var(--radius-pill); font: 500 var(--text-s)/1 var(--font-text); color: var(--soft); text-decoration: none; }
+  .links a:hover { color: var(--white); }
+  .links a[aria-current='page'] { color: var(--white); background: rgba(255,255,255,.1); }
+  .right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .lang { font: 500 var(--text-s)/1 var(--font-text); color: var(--soft); text-decoration: none; padding: 8px 10px; }
+  .lang:hover { color: var(--white); }
+  .menu { display: none; position: relative; }
+  .menu summary { list-style: none; }
+  .menu summary::-webkit-details-marker { display: none; }
+  .sheet { position: absolute; right: 0; top: calc(100% + 10px); min-width: 220px; padding: 10px; border-radius: var(--radius-card); display: grid; background: linear-gradient(180deg, rgba(11,27,63,.95), rgba(5,10,24,.95)); }
+  .sheet a { padding: 12px 14px; border-radius: 12px; color: var(--white); text-decoration: none; font: 500 16px/1 var(--font-text); }
+  .sheet a:hover { background: rgba(255,255,255,.08); }
+  @media (max-width: 860px) {
+    .links, .lang { display: none; }
+    .menu { display: block; }
+    .bar { padding-left: 16px; }
+  }
+  @media (max-width: 420px) { .book { display: none; } }
+</style>

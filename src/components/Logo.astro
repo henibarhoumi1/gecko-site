@@ -1,0 +1,10 @@
+---
+import svg from './logo.svg.txt?raw';
+interface Props { class?: string }
+const { class: cls = '' } = Astro.props;
+---
+<span class={`logo ${cls}`} set:html={svg} />
+<style>
+  .logo { display: inline-block; line-height: 0; color: var(--white); }
+  .logo :global(svg) { width: 100%; height: auto; }
+</style>

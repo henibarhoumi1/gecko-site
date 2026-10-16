@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { t } from '../i18n/strings';
+const s = t('en');
+---
+<Base lang="en" title="404" noindex>
+  <section class="wrap page-head stack center" style="min-height:60vh">
+    <h1 class="display d-l">{s.notFound.title}</h1>
+    <div class="actions center"><a class="pill primary lg" href="/en/">{s.notFound.back}</a></div>
+  </section>
+</Base>

@@ -1,0 +1,100 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, type Locale } from "../../i18n/strings";
+import { href } from "../../i18n/paths";
+import { langPaths } from "../../i18n/static";
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+import { offers, audit, addons, fmt } from '../../data/offers';
+---
+<Base lang={lang} title={s.offers.title}>
+  <section class="wrap page-head stack">
+    <h1 class="display d-xl">{s.offers.title}</h1>
+    <p class="text text-l measure">{s.offers.intro}</p>
+    <p class="pill glass note">{s.offers.launchNote}</p>
+  </section>
+
+  <section class="wrap section tight grid g2 cards">
+    {offers.map((o) => (
+      <article class={`card glass offer${o.featured ? ' featured' : ''}`}>
+        <div class="stack" style="--gap:12px">
+          <h2 class="display d-m">{o.name}</h2>
+          <p class="text">{o.text[lang]}</p>
+        </div>
+        <div class="prices">
+          <div><p class="eyebrow">{s.offers.launch}</p><p class="display d-l">{fmt(o.launch, lang)}</p><p class="text text-s">{s.offers.tnd}{o.monthly ? ` ${s.offers.month}` : ''}</p></div>
+          <div class="std"><p class="eyebrow">{s.offers.standard}</p><p class="display d-m">{fmt(o.standard, lang)}</p><p class="text text-s">{s.offers.tnd}{o.monthly ? ` ${s.offers.month}` : ''}</p></div>
+        </div>
+        {o.key === 'test' && <p class="text text-s">{s.offers.credit}</p>}
+        {o.monthly && <p class="text text-s">{s.offers.commitment}</p>}
+        {o.featured && <a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a>}
+      </article>
+    ))}
+  </section>
+
+  <section class="wrap section tight">
+    <article class="card glass audit">
+      <div class="stack" style="--gap:10px">
+        <h2 class="display d-m">{audit.name}</h2>
+        <p class="text">{audit.text[lang]} {s.offers.auditCredit}</p>
+      </div>
+      <div class="stack" style="--gap:10px">
+        <p class="display d-l">{audit.price} <span class="text text-s">{s.offers.tnd}</span></p>
+        <a class="pill glass" href={href(lang, 'contact') + '?offer=audit'}>{s.offers.bookAudit}</a>
+      </div>
+    </article>
+    <p class="text text-s vat">{s.offers.vat} <a class="link" href={href(lang, 'contact')}>{s.offers.bigger}</a></p>
+  </section>
+
+  <section class="wrap section tight grid g2">
+    <div class="stack">
+      <h2 class="display d-m">{s.offers.addonsTitle}</h2>
+      <table class="addons">
+        <tbody>
+          {addons.map((a) => <tr><th scope="row" class="text">{a.name[lang]}</th><td class="text white">{a.price[lang]}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <div class="stack">
+      <div class="card glass stack" style="--gap:10px"><h2 class="display d-m">{s.offers.paymentTitle}</h2><p class="text">{s.offers.paymentText}</p></div>
+      <div class="card glass stack" style="--gap:10px">
+        <h2 class="display d-m">{s.offers.intlTitle}</h2>
+        <p class="text">{s.offers.intlText}</p>
+        <div><a class="link" href={href(lang, 'contact') + '?offer=international'}>{s.offers.intlCta}</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section tight">
+    <h2 class="display d-m">{s.offers.faq}</h2>
+    <div class="faq">
+      {s.offers.faqList.map((f) => (
+        <details><summary class="text text-l white">{f.q}</summary><p class="text">{f.a}</p></details>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>
+  .note { white-space: normal; line-height: 1.4; max-width: 40rem; border-radius: 18px; }
+  .offer { display: grid; gap: 18px; align-content: start; }
+  .offer .pill { justify-self: start; }
+  .featured { border-color: rgba(242,138,60,.55); }
+  .prices { display: flex; gap: 28px; align-items: end; flex-wrap: wrap; }
+  .prices p { margin: 0; }
+  .std .display { color: var(--soft); }
+  .audit { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; align-items: center; }
+  .audit .pill { justify-self: start; }
+  .vat { margin-top: 16px; }
+  .addons { width: 100%; border-collapse: collapse; }
+  .addons th, .addons td { text-align: left; font-weight: 400; padding: 12px 0; border-top: 1px solid var(--glass-border); vertical-align: top; }
+  .addons td { text-align: right; padding-left: 16px; white-space: nowrap; }
+  .faq { margin-top: 20px; }
+  .faq details { border-top: 1px solid var(--glass-border); padding-block: 18px; }
+  .faq details:last-child { border-bottom: 1px solid var(--glass-border); }
+  .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+  .faq summary::after { content: '+'; color: var(--soft); }
+  .faq details[open] summary::after { content: '–'; }
+  .faq details p { margin-top: 10px; }
+  @media (max-width: 760px) { .audit { grid-template-columns: 1fr; } }
+</style>

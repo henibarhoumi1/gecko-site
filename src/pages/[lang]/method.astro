@@ -1,0 +1,40 @@
+---
+import Base from "../../layouts/Base.astro";
+import { t, type Locale } from "../../i18n/strings";
+import { href } from "../../i18n/paths";
+import { langPaths } from "../../i18n/static";
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const s = t(lang);
+---
+<Base lang={lang} title={s.nav.method}>
+  <section class="wrap page-head stack">
+    <h1 class="display d-xl">{s.method.title}</h1>
+    <p class="text text-l measure">{s.method.intro}</p>
+  </section>
+  <section class="wrap section tight steps">
+    {s.method.steps.map((st, i) => (
+      <article class="panel glass step">
+        <div class="stack" style="--gap:12px">
+          <p class="eyebrow">0{i + 1}</p>
+          <h2 class="display d-l">{st.name}</h2>
+          <p class="text text-l">{st.text}</p>
+        </div>
+        <div class="io">
+          <div class="stack" style="--gap:6px"><p class="eyebrow">{s.method.youGive}</p><p class="text">{st.give}</p></div>
+          <div class="stack" style="--gap:6px"><p class="eyebrow">{s.method.youGet}</p><p class="text">{st.get}</p></div>
+        </div>
+      </article>
+    ))}
+  </section>
+  <section class="wrap section stack center">
+    <h2 class="display d-l measure center">{s.home.closeTitle}</h2>
+    <div class="actions center"><a class="pill primary lg" href={href(lang, 'contact')}>{s.nav.book}</a></div>
+  </section>
+</Base>
+<style>
+  .steps { display: grid; gap: 20px; }
+  .step { display: grid; grid-template-columns: 1.5fr 1fr; gap: 32px; align-items: end; }
+  .io { display: grid; gap: 20px; padding-left: 24px; border-left: 1px solid var(--glass-border); }
+  @media (max-width: 760px) { .step { grid-template-columns: 1fr; } .io { padding-left: 0; border-left: 0; padding-top: 20px; border-top: 1px solid var(--glass-border); } }
+</style>
