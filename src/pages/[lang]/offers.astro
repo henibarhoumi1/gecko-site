@@ -12,14 +12,14 @@ const o = s.offers;
 const price = (x: Offer) => ({ launch: fmt(x.launch, lang), standard: fmt(x.standard, lang), per: x.monthly ? ` ${o.month}` : '' });
 ---
 <Base lang={lang} title={o.title}>
-  <section class="on-white page-head">
+  <section class="on-pink page-head">
     <div class="wrap stack" style="--gap:24px">
       <h1 class="h1">{o.title}</h1>
       <p class="text text-l measure">{o.intro}</p>
     </div>
   </section>
 
-  <section class="on-white section top0">
+  <section class="on-pink section top0">
     <div class="wrap">
       <div class="head"><p class="label">{o.startTitle}</p></div>
       <div class="start">
@@ -37,7 +37,7 @@ const price = (x: Offer) => ({ launch: fmt(x.launch, lang), standard: fmt(x.stan
     </div>
   </section>
 
-  <section class="on-black section">
+  <section class="on-yellow section">
     <div class="wrap">
       <div class="head"><p class="label">{o.monthlyTitle}</p><div class="side"><p class="text muted">{o.monthlyNote}</p></div></div>
       <div class="plans">
@@ -111,15 +111,15 @@ const price = (x: Offer) => ({ launch: fmt(x.launch, lang), standard: fmt(x.stan
   .start { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: start; }
   .price-block { display: grid; gap: 8px; justify-items: start; }
   .price-block .btn { margin-top: 16px; }
-  .p-big { margin: 0; font-weight: 600; font-size: clamp(56px, 7vw, 104px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
-  .p-mid { margin: 12px 0 0; font-weight: 600; font-size: clamp(32px, 3vw, 44px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .p-big { margin: 0; font-weight: 700; font-size: clamp(56px, 7vw, 104px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .p-mid { margin: 12px 0 0; font-weight: 700; font-size: clamp(32px, 3vw, 44px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
   .cur { font-size: .36em; letter-spacing: 0; font-weight: 500; }
-  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--line) solid rgba(255,255,255,.35); }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--line) solid var(--ink); }
   .plan { display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; padding: 28px 28px 32px 0; }
-  .plan + .plan { border-left: var(--line) solid rgba(255,255,255,.35); padding-left: 28px; }
+  .plan + .plan { border-left: var(--line) solid var(--ink); padding-left: 28px; }
   .reels { margin: 0; display: flex; align-items: baseline; gap: 10px; }
-  .reels .n { font-weight: 600; font-size: 44px; line-height: 1; letter-spacing: -0.03em; }
-  .foot { display: grid; gap: 4px; border-top: var(--line) solid rgba(255,255,255,.35); padding-top: 20px; }
+  .reels .n { font-weight: 700; font-size: 44px; line-height: 1; letter-spacing: -0.03em; }
+  .foot { display: grid; gap: 4px; border-top: var(--line) solid var(--ink); padding-top: 20px; }
   .foot p { margin: 0; }
   .note { margin-top: 32px; max-width: 46rem; }
   .table .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, .8fr); gap: 24px; padding-block: 28px; align-items: baseline; }
@@ -131,7 +131,7 @@ const price = (x: Offer) => ({ launch: fmt(x.launch, lang), standard: fmt(x.stan
   @media (max-width: 960px) {
     .plans { grid-template-columns: 1fr; }
     .plan, .plan + .plan { padding: 28px 0; border-left: 0; }
-    .plan + .plan { border-top: var(--line) solid rgba(255,255,255,.35); }
+    .plan + .plan { border-top: var(--line) solid var(--ink); }
   }
   @media (max-width: 760px) {
     .start, .two { grid-template-columns: 1fr; }

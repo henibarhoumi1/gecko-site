@@ -46,27 +46,27 @@ const results = [test, ...monthly];
 </script>
 <style>
   .finder { display: grid; gap: 28px; }
-  .opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: var(--line) solid var(--black); }
-  .opts button { font: 500 16px/1.2 var(--font); padding: 18px 16px; text-align: left; background: var(--white); color: var(--black); border: 0; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .opts button + button { border-left: var(--line) solid var(--black); }
-  .opts button:hover { box-shadow: inset 0 -3px 0 var(--blue); }
-  .opts button[aria-checked='true'] { background: var(--black); color: var(--white); }
+  .opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: var(--line) solid var(--ink); }
+  .opts button { font: 500 16px/1.2 var(--font); padding: 18px 16px; text-align: left; background: var(--white); color: var(--ink); border: 0; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .opts button + button { border-left: var(--line) solid var(--ink); }
+  .opts button:hover { box-shadow: inset 0 -3px 0 var(--ink); }
+  .opts button[aria-checked='true'] { background: var(--yellow); font-weight: 700; }
   .result { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: start; }
   .result:not([hidden]) { animation: rise 360ms var(--ease); }
   .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
   .items li { padding-left: 20px; position: relative; }
-  .items li::before { content: ''; position: absolute; left: 0; top: .72em; width: 10px; height: 1px; background: currentColor; }
+  .items li::before { content: ''; position: absolute; left: 0; top: .72em; width: 10px; height: 1.5px; background: currentColor; }
   .price { display: grid; gap: 6px; justify-items: start; }
   .price p { margin: 0; }
   .price .btn { margin-top: 14px; }
-  .num { font-weight: 600; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .num { font-weight: 700; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
   .cur { font-size: .3em; font-weight: 500; letter-spacing: 0; }
   .all { justify-self: start; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
   @media (max-width: 860px) {
     .opts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .opts button:nth-child(3) { border-left: 0; }
-    .opts button:nth-child(n+3) { border-top: var(--line) solid var(--black); }
+    .opts button:nth-child(n+3) { border-top: var(--line) solid var(--ink); }
     .result { grid-template-columns: 1fr; gap: 20px; }
   }
 </style>

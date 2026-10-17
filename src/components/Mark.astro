@@ -1,0 +1,17 @@
+---
+// Hand marks from the brand kit: one per piece, never on the logo.
+interface Props { kind: 'swoosh' | 'tick' | 'circle' | 'arrow' | 'asterisk'; class?: string }
+const { kind, class: cls = '' } = Astro.props;
+const paths: Record<Props['kind'], { box: string; d: string }> = {
+  swoosh: { box: '0 0 300 40', d: 'M4 30 C 60 14, 140 8, 210 14 S 290 24, 296 10' },
+  tick: { box: '0 0 40 40', d: 'M5 22 L 15 33 L 36 6' },
+  circle: { box: '0 0 200 90', d: 'M150 10 C 90 0, 12 14, 8 46 C 4 80, 120 90, 180 70 C 206 60, 196 22, 140 12' },
+  arrow: { box: '0 0 120 60', d: 'M4 40 C 30 10, 70 8, 108 30 M92 16 L 110 31 L 90 42' },
+  asterisk: { box: '0 0 40 40', d: 'M20 4 L 20 36 M6 12 L 34 28 M34 12 L 6 28' },
+};
+const p = paths[kind];
+---
+<svg class={`mark ${kind} ${cls}`} viewBox={p.box} aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d={p.d} /></svg>
+<style>
+  .mark { display: block; height: auto; color: var(--ink); overflow: visible; }
+</style>

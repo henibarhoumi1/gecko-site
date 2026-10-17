@@ -7,12 +7,13 @@ export const strings = {
     meta: {
       description: 'Gecko is a video ad studio in Tunis. We write, shoot and edit short ads for brands that sell online, then check with you which ones sold.',
     },
-    line: 'Video ads and content for brands.',
+    line: 'From the first idea to the final cut.',
     nav: { work: 'Work', offers: 'Offers', about: 'About', faq: 'FAQ', apply: 'Apply', menu: 'Menu' },
     langShort: 'FR', langName: 'Français',
     sample: 'Sample',
     hero: {
-      title: 'Video ads and content for brands.',
+      kicker: 'Video ads and content for brands',
+      title: 'From the first idea to the final cut.',
       sub: 'We’re a small studio in Tunis. We write, shoot and edit short ads for brands that sell online, then go through your ad account with you to see which ones sold.',
       work: 'See the work',
       caption: 'Gecko’s own campaign',
@@ -184,12 +185,13 @@ export const strings = {
     meta: {
       description: 'Gecko est un studio de publicités vidéo à Tunis. Nous écrivons, tournons et montons des pubs courtes pour les marques qui vendent en ligne, puis nous regardons avec vous lesquelles ont vendu.',
     },
-    line: 'Publicités vidéo et contenu pour les marques.',
+    line: 'De la première idée au montage final.',
     nav: { work: 'Projets', offers: 'Offres', about: 'À propos', faq: 'FAQ', apply: 'Postuler', menu: 'Menu' },
     langShort: 'EN', langName: 'English',
     sample: 'Exemple',
     hero: {
-      title: 'Publicités vidéo et contenu pour les marques.',
+      kicker: 'Publicités vidéo et contenu pour les marques',
+      title: 'De la première idée au montage final.',
       sub: 'Nous sommes un petit studio à Tunis. Nous écrivons, tournons et montons des pubs courtes pour les marques qui vendent en ligne, puis nous regardons votre compte publicitaire avec vous pour voir lesquelles ont vendu.',
       work: 'Voir les projets',
       caption: 'La campagne de Gecko',

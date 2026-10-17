@@ -9,10 +9,10 @@ const { lang } = Astro.props;
 const d = t(lang).home.demo;
 const words = (text: string) => text.split(' ').map((w, k) => ({ w, k }));
 const scenes = [
-  { bg: 'on-black', hook: true },
+  { bg: 'on-yellow', hook: true },
   { bg: 'on-white', text: d.scenes[0] },
-  { bg: 'on-blue', text: d.scenes[1] },
-  { bg: 'on-black', text: d.scenes[2] },
+  { bg: 'on-pink', text: d.scenes[1] },
+  { bg: 'on-yellow', text: d.scenes[2] },
 ];
 ---
 <figure class="demo" data-demo data-hook="a">
@@ -85,26 +85,26 @@ const scenes = [
 
 <style>
   .demo { margin: 0; display: grid; gap: 14px; width: clamp(260px, 25vw, 360px); }
-  .phone { position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: var(--black); border: var(--line) solid var(--black); cursor: pointer; outline-offset: 4px; user-select: none; -webkit-user-select: none; }
-  .bars { position: absolute; z-index: 3; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; mix-blend-mode: difference; }
-  .bars i { flex: 1; height: 2px; background: rgba(255,255,255,.35); }
-  .bars b { display: block; height: 100%; width: 0; background: var(--white); }
+  .phone { position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: var(--ink); border: var(--line) solid var(--ink); cursor: pointer; outline-offset: 4px; user-select: none; -webkit-user-select: none; }
+  .bars { position: absolute; z-index: 3; top: 12px; left: 12px; right: 12px; display: flex; gap: 4px; }
+  .bars i { flex: 1; height: 2px; background: var(--white); }
+  .bars b { display: block; height: 100%; width: 0; background: var(--ink); }
   .bars i.done b { width: 100%; }
   .bars i.on b { animation: fill var(--dur, 2800ms) linear forwards; }
-  .top { position: absolute; z-index: 3; top: 26px; left: 12px; color: var(--white); mix-blend-mode: difference; }
+  .top { position: absolute; z-index: 3; top: 26px; left: 12px; color: var(--ink); }
   .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px 22px; opacity: 0; transition: opacity 220ms var(--ease); }
   .scene.on { opacity: 1; z-index: 2; }
-  .cap { margin: 0; text-align: center; font-weight: 600; font-size: clamp(26px, 2.5vw, 36px); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance; }
+  .cap { margin: 0; text-align: center; font-weight: 700; font-size: clamp(26px, 2.5vw, 36px); line-height: 1.08; letter-spacing: -0.02em; text-wrap: balance; }
   .w { display: inline-block; white-space: pre; opacity: 0; transform: translateY(35%); }
   .scene.on .w { animation: word 420ms var(--ease) forwards; animation-delay: calc(var(--k) * 110ms + 120ms); }
   [data-hook='a'] .hb, [data-hook='b'] .ha { display: none; }
   .endcard { display: grid; justify-items: center; gap: 18px; text-align: center; }
   .endcard :global(.endlogo) { width: 140px; }
   .ctrl { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
-  .seg { display: inline-flex; border: var(--line) solid var(--black); }
-  .seg button { font-family: var(--font); background: transparent; color: var(--black); border: 0; padding: 9px 12px; cursor: pointer; }
-  .seg button + button { border-left: var(--line) solid var(--black); }
-  .seg button[aria-pressed='true'] { background: var(--black); color: var(--white); }
+  .seg { display: inline-flex; border: var(--line) solid var(--ink); }
+  .seg button { font-family: var(--type); background: var(--white); background: transparent; color: var(--ink); border: 0; padding: 9px 12px; cursor: pointer; }
+  .seg button + button { border-left: var(--line) solid var(--ink); }
+  .seg button[aria-pressed='true'] { background: var(--yellow); }
   .still .w { opacity: 1; transform: none; animation: none !important; }
   .still .bars i.on b { width: 100%; animation: none; }
   @keyframes fill { to { width: 100%; } }

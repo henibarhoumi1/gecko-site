@@ -47,16 +47,16 @@ const spans = [3, 5, 12, 6, 4]; // seconds per part, adds up to 30
 </script>
 <style>
   .anat { display: grid; gap: 12px; }
-  .track { display: flex; border: var(--line) solid var(--black); }
-  .track button { min-width: 0; display: grid; align-content: space-between; gap: 28px; text-align: left; padding: 14px 12px; min-height: 120px; font-family: var(--font); background: var(--white); color: var(--black); border: 0; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .track button + button { border-left: var(--line) solid var(--black); }
-  .track button:hover { box-shadow: inset 0 -3px 0 var(--blue); }
-  .track button[aria-selected='true'] { background: var(--blue); color: var(--white); }
+  .track { display: flex; border: var(--line) solid var(--ink); }
+  .track button { min-width: 0; display: grid; align-content: space-between; gap: 28px; text-align: left; padding: 14px 12px; min-height: 120px; font-family: var(--font); background: var(--white); color: var(--ink); border: 0; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .track button + button { border-left: var(--line) solid var(--ink); }
+  .track button:hover { box-shadow: inset 0 -3px 0 var(--ink); }
+  .track button[aria-selected='true'] { background: var(--pink); }
   .track .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ticks { display: flex; justify-content: space-between; opacity: .6; }
+  .ticks { display: flex; justify-content: space-between; font-family: var(--type); }
   .panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 32px; align-items: start; padding-top: clamp(24px, 4vw, 48px); }
   .panel:not([hidden]) { animation: rise 360ms var(--ease); }
-  .big { margin: 0; font-weight: 600; font-size: clamp(56px, 7vw, 112px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .big { margin: 0; font-weight: 700; font-size: clamp(56px, 7vw, 112px); line-height: .95; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
   @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
   @media (max-width: 760px) {
     .track button { padding: 10px 6px; min-height: 96px; }

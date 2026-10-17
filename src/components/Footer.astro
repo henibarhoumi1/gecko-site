@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import Stamp from './Stamp.astro';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
@@ -7,7 +8,7 @@ interface Props { lang: Locale }
 const { lang } = Astro.props;
 const s = t(lang);
 ---
-<footer class="site-footer on-black">
+<footer class="site-footer on-pink">
   <div class="wrap inner">
     <div class="stack" style="--gap:16px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
@@ -21,10 +22,11 @@ const s = t(lang);
       <a href={href(lang, 'apply')}>{s.nav.apply}</a>
       <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
-    <div class="col">
+    <div class="col last">
       <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
       <a href={site.instagram} rel="noopener">{s.contact.instagram} {site.instagramHandle}</a>
+      <Stamp kind="oval" tilt={-6} class="made" />
     </div>
   </div>
   <div class="wrap base">
@@ -39,7 +41,8 @@ const s = t(lang);
   .col { display: grid; align-content: start; gap: 10px; }
   .col a { text-decoration: none; overflow-wrap: anywhere; }
   .col a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .base { margin-top: clamp(48px, 7vw, 88px); padding-top: 20px; border-top: var(--line) solid rgba(255,255,255,.3); display: flex; justify-content: space-between; gap: 16px; }
+  .base { margin-top: clamp(48px, 7vw, 88px); padding-top: 20px; background: linear-gradient(var(--ink), var(--ink)) no-repeat center top / calc(100% - 2 * var(--gutter)) var(--line); display: flex; justify-content: space-between; gap: 16px; }
+  .last :global(.made) { margin-top: 28px; width: 150px; }
   .base p { margin: 0; }
   .base a { text-decoration: none; }
   @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }

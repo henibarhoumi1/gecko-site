@@ -1,6 +1,7 @@
 ---
 // The apply section: who it's for on the left, the form on the right. Used on home and /apply.
 import LeadForm from './LeadForm.astro';
+import Stamp from './Stamp.astro';
 import { t, type Locale } from '../i18n/strings';
 import { site } from '../data/site';
 interface Props { lang: Locale; heading?: 'h1' | 'h2' }
@@ -18,7 +19,8 @@ const fields = [
 ];
 ---
 <div class="apply">
-  <div class="stack" style="--gap:28px">
+  <div class="stack lead" style="--gap:28px">
+    <Stamp kind="rect" tilt={5} class="ok" />
     <H class={heading === 'h1' ? 'h1' : 'h2'}>{s.title}</H>
     <p class="text text-l measure">{s.intro}</p>
     <div class="stack" style="--gap:12px">
@@ -35,6 +37,9 @@ const fields = [
 </div>
 <style>
   .apply { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(40px, 7vw, 120px); align-items: start; }
+  .lead { position: relative; }
+  .lead :global(.ok) { position: absolute; right: 0; top: -70px; width: 150px; }
+  @media (max-width: 760px) { .lead :global(.ok) { width: 110px; top: -60px; } }
   .check { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .check li { padding-left: 28px; position: relative; }
   .check li::before { content: ''; position: absolute; left: 0; top: .45em; width: 12px; height: 7px; border-left: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); }

@@ -10,13 +10,13 @@ const s = t(lang);
 const a = s.about;
 ---
 <Base lang={lang} title={a.title}>
-  <section class="on-white page-head">
+  <section class="on-pink page-head">
     <div class="wrap stack" style="--gap:24px">
       <h1 class="h1">{a.title}</h1>
       <p class="text text-l measure">{a.intro}</p>
     </div>
   </section>
-  <section class="on-white section top0">
+  <section class="on-pink section top0">
     <div class="wrap heni">
       {portrait.src && (
         <div class="frame r45">{portrait.src ? <img src={portrait.src} alt={a.heniTitle} /> : <div class="empty"><span class="label muted">{s.sample} · {a.heniEmpty}</span></div>}</div>
@@ -28,7 +28,7 @@ const a = s.about;
     </div>
   </section>
   {photos.length > 0 && (
-    <section class="on-black section">
+    <section class="on-white section">
       <div class="wrap">
         <div class="head"><p class="label">{a.crewTitle}</p></div>
         <div class="grid g3 scroll-row">
@@ -37,7 +37,7 @@ const a = s.about;
       </div>
     </section>
   )}
-  <section class="on-blue section">
+  <section class="on-yellow section">
     <div class="wrap cta">
       <h2 class="h2">{s.work.next}</h2>
       <a class="btn primary" href={href(lang, 'apply')}>{s.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
@@ -46,7 +46,7 @@ const a = s.about;
 </Base>
 <style>
   .top0 { padding-top: 0; }
-  .heni { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); align-items: end; border-top: var(--line) solid var(--black); padding-top: 32px; }
+  .heni { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); align-items: end; background: linear-gradient(var(--ink), var(--ink)) no-repeat center top / calc(100% - 2 * var(--gutter)) var(--line); padding-top: 32px; }
   .heni .frame { max-width: 440px; }
   .cta { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
   @media (max-width: 760px) { .heni { grid-template-columns: 1fr; } }
