@@ -1,6 +1,5 @@
 ---
 import Logo from './Logo.astro';
-import Stamp from './Stamp.astro';
 import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
@@ -10,45 +9,41 @@ const { lang } = Astro.props;
 const s = t(lang);
 const n = c(lang).nav;
 ---
-<footer class="site-footer on-pink">
-  <div class="wrap"><a class="big" href={href(lang, 'apply')}>{n.apply} <span aria-hidden="true">→</span></a></div>
+<footer class="site-footer">
   <div class="wrap inner">
-    <div class="stack" style="--gap:16px">
+    <div class="stack" style="--gap:14px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
-      <p class="text">{s.line}</p>
-      <p class="text muted">{s.footer.address}</p>
+      <p class="text soft">{s.line}</p>
+      <a class="btn primary" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
     </div>
     <nav class="col" aria-label="Footer">
       <a href={href(lang, 'work')}>{n.work}</a>
       <a href={href(lang, 'process')}>{n.process}</a>
-      <a href={href(lang, 'offers')}>{s.nav.offers}</a>
-      <a href={href(lang, 'about')}>{s.nav.about}</a>
+      <a href={href(lang, 'offers')}>{n.offers}</a>
+      <a href={href(lang, 'about')}>{n.about}</a>
       <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
-    <div class="col last">
+    <div class="col">
       <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
       <a href={site.instagram} rel="noopener">{s.contact.instagram} {site.instagramHandle}</a>
-      <Stamp kind="oval" tilt={-6} class="made" />
+      <span class="soft">{s.footer.address}</span>
     </div>
   </div>
   <div class="wrap base">
-    <p class="small muted">© {new Date().getFullYear()} Gecko</p>
-    <a class="small muted" href={href(lang, 'legal')}>{s.footer.legal}</a>
+    <p class="small soft">© {new Date().getFullYear()} Gecko</p>
+    <a class="small soft" href={href(lang, 'legal')}>{s.footer.legal}</a>
   </div>
 </footer>
 <style>
-  .site-footer { padding-block: clamp(56px, 8vw, 96px) 28px; border-top: var(--line) solid var(--ink); }
-  .big { display: block; font-weight: 700; font-size: clamp(48px, 10vw, 160px); letter-spacing: -0.055em; line-height: .9; text-decoration: none; padding-bottom: clamp(40px, 6vw, 80px); margin-bottom: clamp(40px, 6vw, 80px); border-bottom: var(--line) solid var(--ink); }
-  .big span { display: inline-block; transition: transform 360ms var(--ease); }
-  .big:hover span { transform: translateX(16px); }
-  .inner { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 40px; }
-  .brand { display: block; width: 120px; }
-  .col { display: grid; align-content: start; gap: 10px; }
-  .col a { text-decoration: none; overflow-wrap: anywhere; }
+  .site-footer { padding-block: clamp(64px, 8vw, 104px) 28px; background: var(--paper); }
+  .inner { display: grid; grid-template-columns: 1.6fr 1fr 1.2fr; gap: 40px; }
+  .brand { display: block; width: 104px; }
+  .stack .btn { justify-self: start; margin-top: 8px; }
+  .col { display: grid; align-content: start; gap: 12px; font-size: 15px; }
+  .col a { text-decoration: none; overflow-wrap: anywhere; color: var(--ink); }
   .col a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .base { margin-top: clamp(48px, 7vw, 88px); padding-top: 20px; background: linear-gradient(var(--ink), var(--ink)) no-repeat center top / calc(100% - 2 * var(--gutter)) var(--line); display: flex; justify-content: space-between; gap: 16px; }
-  .last :global(.made) { margin-top: 28px; width: 150px; }
+  .base { margin-top: clamp(48px, 7vw, 80px); padding-top: 20px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 16px; }
   .base p { margin: 0; }
   .base a { text-decoration: none; }
   @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }

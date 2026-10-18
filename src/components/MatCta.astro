@@ -1,0 +1,23 @@
+---
+// Closing call to action on the green cutting mat.
+import { type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import { site } from '../data/site';
+interface Props { lang: Locale; title: string }
+const { lang, title } = Astro.props;
+const n = c(lang).nav;
+---
+<section class="section panel-wrap">
+  <div class="panel-in mat cta">
+    <h2 class="h2 rv">{title}</h2>
+    <div class="actions rv" style="--d:120ms">
+      <a class="btn" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
+      <a class="btn ghost" href={site.whatsapp} rel="noopener">WhatsApp</a>
+    </div>
+  </div>
+</section>
+<style>
+  .cta { display: grid; justify-items: center; text-align: center; gap: 32px; padding: clamp(80px, 12vw, 168px) var(--gutter); }
+  .cta .h2 { max-width: 14ch; color: #fff; }
+</style>

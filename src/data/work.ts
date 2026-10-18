@@ -40,4 +40,4 @@ export const hero = heroAd && !(live && heroAd.sample) ? heroAd : undefined;
 export const logos = (() => { const l = real(allLogos); return l.length >= 3 ? l : []; })();
 export const numbers = real(allNumbers);
 export const photos = real(allPhotos);
-export const portrait: { src?: string } = {};
+export const portrait: { src?: string } = { src: '/team/heni.jpg' };

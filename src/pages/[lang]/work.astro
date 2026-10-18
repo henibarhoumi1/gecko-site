@@ -1,9 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import CaseCard from '../../components/CaseCard.astro';
+import ReelCard from '../../components/ReelCard.astro';
+import ReelViewer from '../../components/ReelViewer.astro';
+import MatCta from '../../components/MatCta.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
-import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
 import { cases, ads } from '../../data/work';
 export const getStaticPaths = langPaths;
@@ -12,172 +14,35 @@ const s = t(lang);
 const w = c(lang).work;
 ---
 <Base lang={lang} title={w.title}>
-  <section class="on-pink page-head">
-    <div class="wrap head-in">
+  <section class="page-head">
+    <div class="wrap stack center" style="--gap:18px">
       <h1 class="h1 rv">{w.title}</h1>
-      <p class="label rv" style="--d:120ms">{w.sub}</p>
+      <p class="text text-l soft rv" style="--d:100ms">{w.sub}</p>
     </div>
   </section>
 
-  <section class="on-pink section reels-sec">
+  <section class="reels-sec">
     <div class="wrap">
-      <ul class="reels" data-reels>
-        {ads.map((a, i) => (
-          <li class="rv" style={`--d:${i * 80}ms`}>
-            <button type="button" class="card" data-i={i} data-src={a.src} data-poster={a.poster} data-title={`${a.brand} · ${a.angle[lang]}`}>
-              <span class="frame-in">
-                <img src={a.poster} alt="" loading={i < 4 ? 'eager' : 'lazy'} />
-                <video muted loop playsinline preload="none" src={a.src}></video>
-                <span class="play" aria-hidden="true"><i></i></span>
-              </span>
-              <span class="cap"><span class="label">0{i + 1}</span><span class="h3">{a.brand}</span><span class="label">{a.angle[lang]}</span></span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div class="reels">
+        {ads.map((a, i) => <div class="rv" style={`--d:${i * 80}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
+      </div>
     </div>
   </section>
 
   {cases.length > 0 && (
-    <section class="on-white section">
+    <section class="section">
       <div class="wrap">
-        <div class="head"><p class="label">{s.home.cases}</p><h2 class="h2">{s.home.casesTitle}</h2></div>
+        <div class="head"><h2 class="h2">{s.home.casesTitle}</h2></div>
         <div class="grid g3">{cases.map((cs) => <CaseCard c={cs} lang={lang} />)}</div>
       </div>
     </section>
   )}
 
-  <section class="on-yellow section">
-    <div class="wrap cta">
-      <h2 class="h2 rv">{w.next}</h2>
-      <a class="btn primary rv" href={href(lang, 'apply')}>{c(lang).nav.apply} <span class="arr" aria-hidden="true">→</span></a>
-    </div>
-  </section>
-
-  <div class="viewer" data-viewer hidden role="dialog" aria-modal="true" aria-label={w.title}>
-    <div class="veil" data-close></div>
-    <div class="stage">
-      <div class="player" data-player>
-        <video playsinline loop data-video></video>
-        <div class="bar"><i data-progress></i></div>
-      </div>
-      <div class="controls">
-        <p class="label title" data-title></p>
-        <div class="btns">
-          <button type="button" class="ctl label" data-prev aria-label={w.prev}>←</button>
-          <button type="button" class="ctl label" data-mute aria-pressed="false" data-on={w.mute} data-off={w.sound}>{w.mute}</button>
-          <button type="button" class="ctl label" data-next aria-label={w.nextReel}>→</button>
-          <button type="button" class="ctl label close" data-close>{w.close} ✕</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <MatCta lang={lang} title={w.next} />
+  <ReelViewer lang={lang} />
 </Base>
-
-<script>
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cards = [...document.querySelectorAll<HTMLButtonElement>('[data-reels] .card')];
-  const viewer = document.querySelector<HTMLElement>('[data-viewer]')!;
-  const player = viewer.querySelector<HTMLElement>('[data-player]')!;
-  const video = viewer.querySelector<HTMLVideoElement>('[data-video]')!;
-  const title = viewer.querySelector<HTMLElement>('[data-title]')!;
-  const progress = viewer.querySelector<HTMLElement>('[data-progress]')!;
-  const muteBtn = viewer.querySelector<HTMLButtonElement>('[data-mute]')!;
-  let current = 0, opener: HTMLButtonElement | null = null;
-
-  // Muted preview on hover (desktop only).
-  if (fine) cards.forEach((card) => {
-    const v = card.querySelector('video')!;
-    card.addEventListener('mouseenter', () => { v.preload = 'auto'; v.play().catch(() => {}); card.classList.add('live'); });
-    card.addEventListener('mouseleave', () => { v.pause(); card.classList.remove('live'); });
-  });
-
-  const load = (i: number) => {
-    current = (i + cards.length) % cards.length;
-    const card = cards[current];
-    video.src = card.dataset.src!; video.poster = card.dataset.poster!;
-    title.textContent = card.dataset.title!;
-    video.play().catch(() => { video.muted = true; setMute(true); video.play().catch(() => {}); });
-  };
-  const setMute = (m: boolean) => { video.muted = m; muteBtn.setAttribute('aria-pressed', String(m)); muteBtn.textContent = (m ? muteBtn.dataset.off : muteBtn.dataset.on) ?? ''; };
-
-  // The card grows into the player: measure both boxes and animate between them.
-  const open = (i: number) => {
-    opener = cards[i];
-    viewer.hidden = false;
-    document.documentElement.classList.add('locked');
-    setMute(false); load(i);
-    requestAnimationFrame(() => {
-      viewer.classList.add('in');
-      if (still) return;
-      const from = opener!.querySelector('.frame-in')!.getBoundingClientRect();
-      const to = player.getBoundingClientRect();
-      player.animate([
-        { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})` },
-        { transform: 'none' },
-      ], { duration: 520, easing: 'cubic-bezier(.2,.7,.2,1)' });
-    });
-    viewer.querySelector<HTMLButtonElement>('.close')!.focus({ preventScroll: true });
-  };
-  const close = () => {
-    viewer.classList.remove('in');
-    video.pause();
-    setTimeout(() => { viewer.hidden = true; video.removeAttribute('src'); video.load(); }, 320);
-    document.documentElement.classList.remove('locked');
-    opener?.focus({ preventScroll: true });
-  };
-
-  cards.forEach((card, i) => card.addEventListener('click', () => open(i)));
-  viewer.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
-  viewer.querySelector('[data-prev]')!.addEventListener('click', () => load(current - 1));
-  viewer.querySelector('[data-next]')!.addEventListener('click', () => load(current + 1));
-  muteBtn.addEventListener('click', () => setMute(!video.muted));
-  player.addEventListener('click', () => (video.paused ? video.play() : video.pause()));
-  video.addEventListener('timeupdate', () => { progress.style.transform = `scaleX(${video.currentTime / (video.duration || 1)})`; });
-  addEventListener('keydown', (e) => {
-    if (viewer.hidden) return;
-    if (e.key === 'Escape') close();
-    if (e.key === 'ArrowRight') load(current + 1);
-    if (e.key === 'ArrowLeft') load(current - 1);
-  });
-</script>
-
 <style>
-  .head-in { display: grid; gap: 20px; }
-  .reels-sec { padding-top: 0; }
-  .reels { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); }
-  .card { width: 100%; display: grid; gap: 14px; padding: 0; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; font-family: var(--font); }
-  .frame-in { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; border: var(--line) solid var(--ink); background: var(--ink); transition: transform 420ms var(--ease), box-shadow 420ms var(--ease); }
-  .card:hover .frame-in, .card:focus-visible .frame-in { transform: translate(-4px, -6px); box-shadow: 8px 10px 0 var(--ink); }
-  .frame-in img, .frame-in video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .frame-in video { opacity: 0; transition: opacity 300ms var(--ease); }
-  .live .frame-in video { opacity: 1; }
-  .play { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: var(--yellow); border: var(--line) solid var(--ink); display: grid; place-items: center; transition: transform 300ms var(--ease), opacity 300ms var(--ease); }
-  .play i { width: 0; height: 0; border-left: 16px solid var(--ink); border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px; }
-  .live .play { transform: scale(.8); opacity: 0; }
-  .cap { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; align-items: baseline; }
-  .cap .h3 { grid-column: 2; grid-row: 1; }
-  .cap .label:last-child { grid-column: 2; }
+  .reels-sec { padding-bottom: clamp(24px, 4vw, 48px); }
+  .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); }
   @media (max-width: 960px) { .reels { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-
-  .cta { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-  .cta .h2 { max-width: 14ch; }
-
-  .viewer { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; }
-  .veil { position: absolute; inset: 0; background: rgba(24, 22, 20, .72); backdrop-filter: blur(16px) saturate(.9); -webkit-backdrop-filter: blur(16px) saturate(.9); opacity: 0; transition: opacity 320ms var(--ease); }
-  .viewer.in .veil { opacity: 1; }
-  .stage { position: relative; display: grid; gap: 14px; justify-items: center; opacity: 0; transition: opacity 240ms var(--ease); }
-  .viewer.in .stage { opacity: 1; }
-  .player { position: relative; height: min(78svh, 820px); aspect-ratio: 9 / 16; max-width: calc(100vw - 32px); background: var(--ink); border: 2px solid var(--white); box-shadow: 10px 12px 0 var(--pink); transform-origin: top left; cursor: pointer; overflow: hidden; }
-  .player video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .bar { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(252, 250, 245, .3); }
-  .bar i { display: block; height: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: left; }
-  .controls { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--white); }
-  .title { color: var(--white); }
-  .btns { display: flex; gap: 8px; }
-  .ctl { font-family: var(--type); background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); padding: 10px 12px; cursor: pointer; }
-  .ctl:hover { background: var(--yellow); }
-  .close { background: var(--pink); }
-  @media (max-width: 600px) { .player { height: auto; width: calc(100vw - 32px); } .controls { padding-inline: 16px; } }
 </style>

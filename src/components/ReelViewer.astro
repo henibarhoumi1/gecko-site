@@ -1,0 +1,124 @@
+---
+// Full-screen reel viewer for every [data-reel] card on the page. The card grows into the player, the page blurs and darkens.
+import { type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const w = c(lang).work;
+const icon = {
+  prev: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+  next: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
+  close: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  sound: '<svg class="i-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/></svg><svg class="i-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M16 10l4 4M20 10l-4 4"/></svg>',
+};
+---
+<div class="viewer" data-viewer hidden role="dialog" aria-modal="true" aria-label={w.title}>
+  <div class="veil" data-close></div>
+  <button type="button" class="ctl close" data-close aria-label={w.close} set:html={icon.close} />
+  <div class="stage">
+    <button type="button" class="ctl side" data-prev aria-label={w.prev} set:html={icon.prev} />
+    <div class="player" data-player>
+      <video playsinline loop data-video></video>
+      <div class="bar"><i data-progress></i></div>
+    </div>
+    <button type="button" class="ctl side" data-next aria-label={w.nextReel} set:html={icon.next} />
+  </div>
+  <div class="dock">
+    <p class="title" data-title></p>
+    <button type="button" class="ctl" data-mute aria-pressed="false" aria-label={w.mute} set:html={icon.sound} />
+  </div>
+</div>
+<script>
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = [...document.querySelectorAll<HTMLButtonElement>('[data-reel]')];
+  const viewer = document.querySelector<HTMLElement>('[data-viewer]');
+  if (viewer && cards.length) {
+    const player = viewer.querySelector<HTMLElement>('[data-player]')!;
+    const video = viewer.querySelector<HTMLVideoElement>('[data-video]')!;
+    const title = viewer.querySelector<HTMLElement>('[data-title]')!;
+    const progress = viewer.querySelector<HTMLElement>('[data-progress]')!;
+    const muteBtn = viewer.querySelector<HTMLButtonElement>('[data-mute]')!;
+    let current = 0, opener: HTMLButtonElement | null = null;
+
+    if (fine) cards.forEach((card) => {
+      const v = card.querySelector('video')!;
+      card.addEventListener('mouseenter', () => { v.preload = 'auto'; v.play().catch(() => {}); card.classList.add('live'); });
+      card.addEventListener('mouseleave', () => { v.pause(); card.classList.remove('live'); });
+    });
+
+    const setMute = (m: boolean) => { video.muted = m; muteBtn.setAttribute('aria-pressed', String(m)); viewer.classList.toggle('muted', m); };
+    const load = (i: number) => {
+      current = (i + cards.length) % cards.length;
+      const card = cards[current];
+      video.src = card.dataset.src!; video.poster = card.dataset.poster!;
+      title.textContent = card.dataset.title!;
+      player.animate([{ opacity: .4, transform: 'scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
+      video.play().catch(() => { setMute(true); video.play().catch(() => {}); });
+    };
+    const open = (i: number) => {
+      opener = cards[i];
+      viewer.hidden = false;
+      document.documentElement.classList.add('locked');
+      setMute(false); load(i);
+      requestAnimationFrame(() => {
+        viewer.classList.add('in');
+        if (still) return;
+        const from = opener!.querySelector('.media')!.getBoundingClientRect();
+        const to = player.getBoundingClientRect();
+        player.animate([
+          { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`, borderRadius: '22px' },
+          { transform: 'none', borderRadius: '28px' },
+        ], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      });
+      viewer.querySelector<HTMLButtonElement>('.close')!.focus({ preventScroll: true });
+    };
+    const close = () => {
+      viewer.classList.remove('in');
+      video.pause();
+      setTimeout(() => { viewer.hidden = true; video.removeAttribute('src'); video.load(); }, 360);
+      document.documentElement.classList.remove('locked');
+      opener?.focus({ preventScroll: true });
+    };
+
+    cards.forEach((card, i) => card.addEventListener('click', () => open(i)));
+    viewer.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    viewer.querySelector('[data-prev]')!.addEventListener('click', () => load(current - 1));
+    viewer.querySelector('[data-next]')!.addEventListener('click', () => load(current + 1));
+    muteBtn.addEventListener('click', () => setMute(!video.muted));
+    player.addEventListener('click', () => (video.paused ? video.play() : video.pause()));
+    video.addEventListener('timeupdate', () => { progress.style.transform = `scaleX(${video.currentTime / (video.duration || 1)})`; });
+    addEventListener('keydown', (e) => {
+      if (viewer.hidden) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowRight') load(current + 1);
+      if (e.key === 'ArrowLeft') load(current - 1);
+    });
+  }
+</script>
+<style>
+  .viewer { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; grid-template-rows: 1fr auto; padding: 24px 16px; color: #fff; }
+  .veil { position: absolute; inset: 0; background: rgba(10, 10, 12, .62); -webkit-backdrop-filter: blur(28px) saturate(140%); backdrop-filter: blur(28px) saturate(140%); opacity: 0; transition: opacity 360ms var(--ease); }
+  .viewer.in .veil { opacity: 1; }
+  .stage { position: relative; display: flex; align-items: center; gap: clamp(12px, 3vw, 40px); opacity: 0; transition: opacity 260ms var(--ease); }
+  .viewer.in .stage, .viewer.in .dock, .viewer.in .close { opacity: 1; }
+  .player { position: relative; height: min(80svh, 860px); aspect-ratio: 9 / 16; max-width: calc(100vw - 32px); background: #000; border-radius: 28px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 50px 120px -20px rgba(0, 0, 0, .7); transform-origin: top left; cursor: pointer; overflow: hidden; }
+  .player video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .bar { position: absolute; left: 16px; right: 16px; bottom: 14px; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, .3); }
+  .bar i { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
+  .ctl { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: #fff; cursor: pointer; background: rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border: 1px solid rgba(255, 255, 255, .16); transition: background 200ms var(--ease), transform 300ms var(--spring); }
+  .ctl:hover { background: rgba(255, 255, 255, .26); transform: scale(1.06); }
+  .ctl:active { transform: scale(.94); }
+  .close { position: absolute; top: 20px; right: 20px; z-index: 2; opacity: 0; transition: opacity 260ms var(--ease), background 200ms var(--ease); }
+  .dock { position: relative; display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 6px 6px 6px 20px; border-radius: 999px; background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, .12); opacity: 0; transition: opacity 260ms var(--ease); }
+  .dock .ctl { width: 40px; height: 40px; border: 0; }
+  .title { margin: 0; font-weight: 600; font-size: 15px; }
+  .ctl :global(.i-off) { display: none; }
+  .muted .ctl :global(.i-off) { display: block; }
+  .muted .ctl :global(.i-on) { display: none; }
+  @media (max-width: 600px) {
+    .player { height: auto; width: calc(100vw - 32px); max-height: 74svh; }
+    .side { position: absolute; z-index: 2; top: 50%; margin-top: -24px; }
+    [data-prev] { left: 8px; } [data-next] { right: 8px; }
+  }
+</style>

@@ -1,10 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
-import ApplyBlock from '../../components/ApplyBlock.astro';
+import ApplyFlow from '../../components/ApplyFlow.astro';
 import Anatomy from '../../components/Anatomy.astro';
-import PlanPicker from '../../components/PlanPicker.astro';
-import Stamp from '../../components/Stamp.astro';
+import Plans from '../../components/Plans.astro';
+import ReelCard from '../../components/ReelCard.astro';
+import ReelViewer from '../../components/ReelViewer.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
@@ -14,226 +15,178 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
-const tilts = [-4, 3, -2, 5];
 ---
 <Base lang={lang}>
-  <section class="on-pink hero">
-    <div class="wrap hero-in">
-      <p class="label rise" style="--d:0ms">{h.eyebrow}</p>
+  <section class="hero">
+    <div class="glow" aria-hidden="true"><i class="g1"></i><i class="g2"></i><i class="g3"></i></div>
+    <div class="wrap hero-in center">
       <h1 class="h1 big">
         {h.title.map((line, i) => (
-          <span class="line"><span class={`rise ${i === 1 ? 'hl' : ''}`} style={`--d:${120 + i * 110}ms`}>{line}</span></span>
+          <span class="line"><span class={`rise ${i === 1 ? 'hl' : ''}`} style={`--d:${80 + i * 110}ms`}>{line}</span></span>
         ))}
       </h1>
-      <div class="hero-foot">
-        <p class="text text-l rise" style="--d:520ms">{h.sub}</p>
-        <div class="actions rise" style="--d:620ms">
-          <a class="btn primary" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn" href={href(lang, 'process')}>{h.ctaAlt}</a>
-        </div>
+      <p class="text text-l soft lede rise" style="--d:460ms">{h.sub}</p>
+      <div class="actions rise" style="--d:560ms">
+        <a class="btn primary" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn" href={href(lang, 'process')}>{h.ctaAlt}</a>
       </div>
-      <div class="drag stamp-wrap" data-drag data-spin><Stamp kind="round" tilt={0} /></div>
-      <p class="drag ticket label" data-drag>{s.line}</p>
+    </div>
+    <div class="ticker rise" style="--d:700ms" aria-hidden="true">
+      <div class="track">
+        {[0, 1].map(() => <ul>{s.home.formats.map((f, i) => <li class={['', 'p', 'y'][i % 3]}>{f}</li>)}</ul>)}
+      </div>
     </div>
   </section>
 
-  <section class="on-yellow marquee" aria-hidden="true">
-    <div class="track">
-      {[0, 1].map(() => <ul>{s.home.formats.map((f) => <li>{f}</li>)}</ul>)}
-    </div>
-  </section>
-
-  <section class="on-white section">
+  <section class="on-paper screen">
     <div class="wrap">
-      <div class="head rv"><p class="label">01 · {h.makeLabel}</p><h2 class="h2">{h.makeTitle}</h2></div>
-      <ul class="formats" data-formats>
+      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.makeTitle}</h2><p class="text sub">{h.makeSub}</p></div></div>
+      <ul class="formats">
         {h.make.map((f, i) => (
-          <li class="rv" style={`--d:${i * 60}ms`}>
-            <button type="button" aria-expanded="false">
-              <span class="label">0{i + 1}</span>
-              <span class="name">{f.t}</span>
-              <span class="plus" aria-hidden="true"></span>
-            </button>
-            <p class="desc text text-l">{f.d}</p>
+          <li class="fcard rv" style={`--d:${i * 60}ms`}>
+            <span class={`dot ${['p', 'y', 'g'][i % 3]}`} aria-hidden="true"></span>
+            <h3 class="h3">{f.t}</h3>
+            <p class="text soft">{f.d}</p>
           </li>
         ))}
       </ul>
-      <div class="peek label" data-peek aria-hidden="true"><span></span></div>
     </div>
   </section>
 
   {ads.length > 0 && (
-    <section class="on-pink section">
-      <div class="wrap">
-        <div class="head rv"><p class="label">02 · {h.workLabel}</p><div class="side"><h2 class="h2">{h.workTitle}</h2><a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a></div></div>
-        <div class="prints">
-          {ads.slice(0, 4).map((a, i) => (
-            <a class="print rv" href={href(lang, 'work')} style={`--t:${tilts[i]}deg; --d:${i * 90}ms`}>
-              <span class="tape" aria-hidden="true"></span>
-              <img src={a.poster} alt={`${a.brand}, ${a.angle[lang]}`} loading="lazy" />
-              <span class="label">{a.brand}</span>
-            </a>
-          ))}
+    <section class="panel-wrap work-sec">
+      <div class="panel-in mat screen-mat">
+        <div class="wrap">
+          <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.workTitle}</h2><p class="text sub">{h.workSub}</p></div><a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a></div>
+          <div class="reels scroll-row">
+            {ads.slice(0, 4).map((a, i) => <div class="rv" style={`--d:${i * 90}ms`}><ReelCard ad={a} i={i} lang={lang} /></div>)}
+          </div>
         </div>
       </div>
     </section>
   )}
 
-  <section class="on-yellow section">
-    <div class="wrap steps-grid">
-      <div class="sticky">
-        <div class="head rv"><p class="label">03 · {h.stepsLabel}</p><h2 class="h2">{h.stepsTitle}</h2></div>
-        <a class="btn rv" href={href(lang, 'process')}>{h.stepsCta} <span class="arr" aria-hidden="true">→</span></a>
-      </div>
+  <section class="on-white screen">
+    <div class="wrap">
+      <div class="head rv"><h2 class="h2">{h.stepsTitle}</h2><a class="link" href={href(lang, 'process')}>{h.stepsCta} →</a></div>
       <ol class="steps" data-steps>
         {h.steps.map((st, i) => (
-          <li>
-            <span class="num">0{i + 1}</span>
-            <div class="stack" style="--gap:10px"><h3 class="h3">{st.t}</h3><p class="text text-l">{st.d}</p></div>
+          <li class="rv" style={`--d:${i * 110}ms`}>
+            <span class="num">{i + 1}</span>
+            <h3 class="h3">{st.t}</h3>
+            <p class="text soft">{st.d}</p>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  <section class="on-white section">
+  <section class="on-paper screen">
     <div class="wrap">
-      <div class="head rv"><p class="label">04 · {h.anatomyLabel}</p><h2 class="h2">{h.anatomyTitle}</h2></div>
+      <div class="head rv"><h2 class="h2">{h.anatomyTitle}</h2></div>
       <div class="rv"><Anatomy lang={lang} /></div>
     </div>
   </section>
 
-  <section class="on-pink section">
+  <section class="on-white screen">
     <div class="wrap">
-      <div class="head rv"><p class="label">05 · {h.plansLabel}</p><div class="side"><h2 class="h2">{h.plansTitle}</h2><a class="link" href={href(lang, 'offers')}>{h.plansCta} →</a></div></div>
-      <div class="rv"><PlanPicker lang={lang} /></div>
+      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.plansTitle}</h2><p class="text sub">{h.plansSub}</p></div><a class="link" href={href(lang, 'offers')}>{h.plansCta} →</a></div>
+      <Plans lang={lang} />
     </div>
   </section>
 
-  <section class="on-white section" id="faq">
+  <section class="on-paper screen" id="faq">
     <div class="wrap faq-grid">
-      <div class="head rv"><p class="label">06 · {h.faqLabel}</p><h2 class="h2">{h.faqTitle}</h2></div>
+      <div class="head rv"><h2 class="h2">{h.faqTitle}</h2></div>
       <div class="rv"><Faq items={s.faq.slice(0, 6)} /></div>
     </div>
   </section>
 
-  <section class="on-yellow section" id="apply">
-    <div class="wrap"><ApplyBlock lang={lang} /></div>
+  <section class="panel-wrap section apply-sec" id="apply">
+    <div class="panel-in mat">
+      <div class="wrap apply-in"><ApplyFlow lang={lang} /></div>
+    </div>
   </section>
+
+  <ReelViewer lang={lang} />
 </Base>
 
 <script>
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-
-  // Formats: on desktop a card with the description follows the cursor; on phones a tap opens the row.
-  document.querySelectorAll<HTMLElement>('[data-formats]').forEach((list) => {
-    const peek = list.parentElement!.querySelector<HTMLElement>('[data-peek]')!;
-    const text = peek.querySelector('span')!;
-    list.querySelectorAll('li').forEach((li) => {
-      const btn = li.querySelector('button')!;
-      btn.addEventListener('click', () => { if (!fine) btn.setAttribute('aria-expanded', String(btn.getAttribute('aria-expanded') !== 'true')); });
-      if (fine) li.addEventListener('mouseenter', () => { text.textContent = li.querySelector('.desc')!.textContent; peek.classList.add('on'); });
-    });
-    if (fine) {
-      list.addEventListener('mouseleave', () => peek.classList.remove('on'));
-      list.addEventListener('mousemove', (e) => { peek.style.transform = `translate(${e.clientX + 24}px, ${e.clientY - 20}px) rotate(-3deg)`; });
-    }
-  });
-
-  // Steps light up as they pass the middle of the screen.
-  document.querySelectorAll<HTMLElement>('[data-steps]').forEach((list) => {
-    const items = [...list.querySelectorAll('li')];
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && items.forEach((li) => li.classList.toggle('on', li === e.target))), { rootMargin: '-45% 0px -45% 0px' });
-    items.forEach((li) => io.observe(li));
-    items[0].classList.add('on');
-  });
-
-  // The stamp turns as you scroll; the stamp and the label can be dragged around the hero.
-  const spin = document.querySelector<HTMLElement>('[data-spin]');
-  if (spin && !still) addEventListener('scroll', () => spin.style.setProperty('--r', `${scrollY * 0.25}deg`), { passive: true });
-  document.querySelectorAll<HTMLElement>('[data-drag]').forEach((el) => {
-    let x = 0, y = 0, sx = 0, sy = 0;
-    el.addEventListener('pointerdown', (e) => {
-      el.setPointerCapture(e.pointerId); sx = e.clientX - x; sy = e.clientY - y; el.classList.add('held');
-      const move = (m: PointerEvent) => { x = m.clientX - sx; y = m.clientY - sy; el.style.translate = `${x}px ${y}px`; };
-      const up = () => { el.classList.remove('held'); el.removeEventListener('pointermove', move); el.removeEventListener('pointerup', up); };
-      el.addEventListener('pointermove', move); el.addEventListener('pointerup', up);
-    });
+  // The line between the steps draws itself when the row comes into view.
+  document.querySelectorAll<HTMLElement>('[data-steps]').forEach((el) => {
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('drawn'); io.disconnect(); } }, { threshold: .4 });
+    io.observe(el);
   });
 </script>
 
 <style>
-  .hero { min-height: 100svh; display: flex; align-items: flex-end; padding-top: calc(var(--header) + 56px); padding-bottom: clamp(40px, 6vw, 80px); overflow: hidden; }
-  .hero-in { position: relative; display: grid; gap: clamp(24px, 3vw, 40px); }
-  .big { font-size: clamp(56px, 11.5vw, 184px); line-height: .9; letter-spacing: -0.055em; }
-  .line { display: block; position: relative; overflow: hidden; padding-bottom: .08em; width: fit-content; }
+  .hero { position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding-top: calc(var(--header) + 40px); overflow: hidden; }
+  .hero-in { position: relative; z-index: 1; align-self: center; display: grid; gap: clamp(22px, 2.6vw, 32px); padding-block: 40px; }
+  .big { font-size: clamp(52px, 9.6vw, 156px); line-height: .95; letter-spacing: -0.055em; max-width: none !important; }
+  .line { display: block; overflow: hidden; padding: .02em .06em .1em; margin: 0 auto; width: fit-content; }
   .line .rise { display: inline-block; }
-  .rise { animation: up 900ms var(--ease) both; animation-delay: var(--d); }
-  .hl { position: relative; padding: 0 .1em; margin-left: -.1em; }
-  .hl::before { content: ''; position: absolute; inset: .14em 0 .06em; background: var(--yellow); z-index: -1; transform-origin: left; animation: wipe 700ms 900ms var(--ease) both; }
-  .line { isolation: isolate; }
-  .hero-foot { display: grid; grid-template-columns: minmax(0, 34rem) auto; justify-content: space-between; align-items: end; gap: 24px 48px; border-top: var(--line) solid var(--ink); padding-top: 24px; }
-  .drag { position: absolute; cursor: grab; touch-action: none; user-select: none; z-index: 3; }
-  .drag.held { cursor: grabbing; }
-  .stamp-wrap { right: 2%; top: -10px; transform: rotate(var(--r, 0deg)); }
-  .stamp-wrap :global(.stamp) { width: clamp(110px, 13vw, 180px); }
-  .ticket { right: 22%; top: 16%; background: var(--yellow); border: var(--line) solid var(--ink); padding: 10px 14px; transform: rotate(4deg); box-shadow: 3px 3px 0 var(--ink); }
-  .ticket.held, .stamp-wrap.held { filter: drop-shadow(6px 8px 0 rgba(24, 22, 20, .18)); }
-  @keyframes up { from { transform: translateY(105%); opacity: 0; } }
+  .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }
+  .hl { position: relative; isolation: isolate; padding: 0 .12em; }
+  .hl::before { content: ''; position: absolute; inset: .16em -.02em .04em; background: var(--yellow); border-radius: .18em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
+  .lede { max-width: 34rem; margin-inline: auto; }
+  @keyframes up { from { transform: translateY(100%); opacity: 0; filter: blur(8px); } }
   @keyframes wipe { from { transform: scaleX(0); } }
-  @media (prefers-reduced-motion: reduce) { .rise, .hl::before { animation: none; } }
+
+  .glow { position: absolute; inset: 0; pointer-events: none; }
+  .glow i { position: absolute; border-radius: 50%; filter: blur(80px); opacity: .55; animation: drift 18s ease-in-out infinite alternate; }
+  .g1 { width: 46vw; height: 46vw; left: -12vw; top: -10vw; background: var(--pink); }
+  .g2 { width: 40vw; height: 40vw; right: -10vw; top: 10vh; background: var(--yellow); animation-delay: -6s !important; }
+  .g3 { width: 30vw; height: 30vw; left: 35vw; bottom: -18vw; background: #CFE3D6; animation-delay: -12s !important; }
+  @keyframes drift { to { transform: translate(6vw, 4vh) scale(1.08); } }
+
+  .ticker { position: relative; z-index: 1; overflow: hidden; padding-block: 18px 26px; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+  .ticker .track { display: flex; width: max-content; animation: slide 60s linear infinite; }
+  .ticker:hover .track { animation-play-state: paused; }
+  .ticker ul { display: flex; gap: 10px; list-style: none; margin: 0; padding: 0 10px 0 0; }
+  .ticker li { white-space: nowrap; font-size: 14px; font-weight: 500; padding: 9px 16px; border-radius: 999px; background: rgba(255, 255, 255, .7); border: 1px solid var(--hair); box-shadow: var(--shadow-1); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .ticker li.p::before, .ticker li.y::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; vertical-align: 1px; background: var(--pink); }
+  .ticker li.y::before { background: #E5C55A; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .glow i, .ticker .track { animation: none; } }
+
+  .formats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 18px); }
+  .fcard { display: grid; gap: 10px; align-content: start; padding: clamp(22px, 2.2vw, 30px); min-height: 190px; background: var(--white); border-radius: var(--r); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .fcard.in:hover { transform: translateY(-6px); box-shadow: var(--shadow-2); }
+  .dot { width: 36px; height: 36px; border-radius: 12px; margin-bottom: 14px; transition: transform 500ms var(--spring); }
+  .fcard:hover .dot { transform: rotate(-8deg) scale(1.1); }
+  .dot.p { background: var(--pink); } .dot.y { background: var(--yellow); } .dot.g { background: var(--mat); }
+  @media (max-width: 860px) { .formats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .formats { gap: 10px; } .fcard { min-height: 0; padding: 18px 16px; gap: 6px; } .fcard .h3 { font-size: 17px; } .fcard .text { font-size: 14px; line-height: 1.4; } .dot { width: 28px; height: 28px; border-radius: 9px; margin-bottom: 8px; } }
+
+  .work-sec { padding-block: clamp(8px, 1.6vw, 20px); }
+  .screen-mat { min-height: calc(100svh - 40px); display: grid; align-content: center; padding-block: clamp(72px, 9vh, 112px); }
+  .screen-mat .h2 { color: #fff; }
+  .screen-mat .btn { box-shadow: none; }
+  .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
+  @media (max-width: 760px) { .screen-mat { min-height: 0; } }
+
+  .steps { --g: clamp(16px, 2vw, 28px); list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--g); position: relative; }
+  .steps::before { content: ''; position: absolute; left: 24px; width: calc((100% + var(--g)) * .75); top: 24px; height: 2px; background: var(--paper); }
+  .steps::after { content: ''; position: absolute; left: 24px; width: calc((100% + var(--g)) * .75); top: 24px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 1600ms var(--ease) 200ms; }
+  .steps.drawn::after { transform: none; }
+  .steps li { position: relative; z-index: 1; display: grid; gap: 10px; align-content: start; }
+  .num { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 18px; background: var(--white); border: 1px solid var(--hair); box-shadow: var(--shadow-1); margin-bottom: 18px; transition: background 400ms var(--ease) var(--d), color 400ms var(--ease) var(--d); }
+  .drawn .num { background: var(--ink); color: #fff; }
   @media (max-width: 860px) {
-    .hero { min-height: 92svh; }
-    .hero-foot { grid-template-columns: 1fr; }
-    .stamp-wrap { top: -64px; right: 0; }
-    .ticket { display: none; }
+    .steps { grid-template-columns: 1fr; gap: 28px; }
+    .steps::before, .steps::after { left: 23px; top: 24px; bottom: 24px; width: 2px; height: auto; }
+    .steps::after { transform: scaleY(0); transform-origin: top; }
+    .steps li { grid-template-columns: 48px 1fr; column-gap: 20px; }
+    .steps li .num { grid-row: span 2; margin: 0; }
   }
 
-  .marquee { overflow: hidden; padding-block: clamp(18px, 2.4vw, 28px); border-block: var(--line) solid var(--ink); }
-  .marquee .track { display: flex; width: max-content; animation: slide 40s linear infinite; }
-  .marquee ul { display: flex; list-style: none; margin: 0; padding: 0; }
-  .marquee li { font-weight: 700; font-size: clamp(28px, 3.6vw, 52px); letter-spacing: -0.03em; line-height: 1; white-space: nowrap; padding-right: 1.2em; }
-  .marquee li::after { content: '✱'; padding-left: 1.2em; font-size: .6em; vertical-align: middle; }
-  @keyframes slide { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .marquee .track { animation: none; } }
-
-  .formats { list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
-  .formats li { border-bottom: var(--line) solid var(--ink); }
-  .formats button { width: 100%; display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 16px; padding: clamp(18px, 2.4vw, 30px) 0; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; font-family: var(--font); }
-  .formats .name { font-weight: 700; font-size: clamp(32px, 5vw, 76px); letter-spacing: -0.045em; line-height: 1; transition: transform 360ms var(--ease); }
-  .formats li:hover .name { transform: translateX(18px); }
-  .formats li:nth-child(odd):hover { background: linear-gradient(var(--pink), var(--pink)); }
-  .formats li:nth-child(even):hover { background: linear-gradient(var(--yellow), var(--yellow)); }
-  .plus { width: 22px; height: 22px; position: relative; }
-  .plus::before, .plus::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: currentColor; transition: transform 260ms var(--ease); }
-  .plus::after { transform: rotate(90deg); }
-  .desc { margin: 0; display: none; padding: 0 0 22px 72px; max-width: 40rem; }
-  [aria-expanded='true'] + .desc { display: block; }
-  [aria-expanded='true'] .plus::after { transform: none; }
-  .peek { position: fixed; left: 0; top: 0; z-index: 40; pointer-events: none; max-width: 300px; padding: 16px 18px; background: var(--yellow); border: var(--line) solid var(--ink); box-shadow: 4px 4px 0 var(--ink); line-height: 1.5; opacity: 0; transition: opacity 200ms var(--ease); }
-  .peek.on { opacity: 1; }
-  @media (hover: hover) and (pointer: fine) { .plus { display: none; } }
-  @media (max-width: 600px) { .formats button { grid-template-columns: 36px 1fr auto; } .desc { padding-left: 52px; } }
-
-  .prints { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 3vw, 44px); padding-block: 12px 24px; }
-  .print { position: relative; display: grid; gap: 12px; padding: 12px 12px 16px; background: var(--white); border: var(--line) solid var(--ink); text-decoration: none; transform: rotate(var(--t)); transition: transform 420ms var(--ease), box-shadow 420ms var(--ease); }
-  .print.rv:not(.in) { transform: rotate(var(--t)) translateY(28px); }
-  .print:hover { transform: rotate(0deg) translateY(-8px) scale(1.03); box-shadow: 8px 10px 0 var(--ink); z-index: 2; }
-  .print img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-  .tape { position: absolute; top: -12px; left: 50%; width: 76px; height: 24px; background: var(--yellow); border: var(--line) solid var(--ink); transform: translateX(-50%) rotate(-3deg); opacity: .95; }
-  @media (max-width: 860px) { .prints { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; } }
-
-  .steps-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(40px, 7vw, 120px); align-items: start; }
-  .sticky { position: sticky; top: calc(var(--header) + 32px); display: grid; gap: 8px; justify-items: start; }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; }
-  .steps li { display: grid; grid-template-columns: auto 1fr; gap: 28px; padding-block: clamp(32px, 5vw, 64px); border-top: var(--line) solid var(--ink); }
-  .steps li .num { color: transparent; -webkit-text-stroke: 1.5px var(--ink); transition: color 400ms var(--ease); }
-  .steps li.on .num { color: var(--ink); }
-  .steps .num { font-weight: 700; font-size: clamp(56px, 7vw, 104px); line-height: .85; letter-spacing: -0.05em; }
-  @media (max-width: 860px) { .steps-grid { grid-template-columns: 1fr; } .sticky { position: static; } }
-
-  .faq-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .faq-grid .head { margin-bottom: 0; }
   @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } }
+
+  .apply-sec { padding-block: clamp(8px, 1.6vw, 20px) var(--section); }
+  .apply-in { padding-block: clamp(72px, 10vw, 136px); }
+  .apply-in :global(.h2) { color: #fff; }
+  .apply-in :global(.soft), .apply-in :global(.direct a), .apply-in :global(.label) { color: rgba(255, 255, 255, .8); }
+  .apply-in :global(.flow .soft) { color: var(--ink-2); }
 </style>

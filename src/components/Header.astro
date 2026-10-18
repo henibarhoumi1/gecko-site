@@ -1,7 +1,7 @@
 ---
-// Floating navbar: hides on scroll down, comes back on scroll up. Full-screen menu on phones.
+// Floating glass navbar: hides on scroll down, comes back on scroll up. Globe button opens the language menu.
 import Logo from './Logo.astro';
-import { other, type Locale } from '../i18n/strings';
+import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href, swapLang } from '../i18n/paths';
 interface Props { lang: Locale }
@@ -11,7 +11,11 @@ const path = Astro.url.pathname;
 const links = [
   [href(lang, 'work'), n.work], [href(lang, 'process'), n.process], [href(lang, 'offers'), n.offers], [href(lang, 'about'), n.about],
 ] as const;
-const langs = (['en', 'fr'] as const).map((l) => ({ l, url: l === lang ? path : swapLang(path, l) }));
+const langs = [
+  { l: 'en', flag: '🇬🇧', name: 'English' },
+  { l: 'fr', flag: '🇫🇷', name: 'Français' },
+].map((x) => ({ ...x, url: x.l === lang ? path : swapLang(path, x.l as Locale) }));
+const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg>';
 ---
 <header class="site-header" data-header>
   <nav class="bar" aria-label="Main">
@@ -20,9 +24,15 @@ const langs = (['en', 'fr'] as const).map((l) => ({ l, url: l === lang ? path : 
       {links.map(([p, label]) => <li><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>{label}</a></li>)}
     </ul>
     <div class="right">
-      <div class="lang" role="group" aria-label={n.lang} data-active={lang}>
-        <span class="thumb" aria-hidden="true"></span>
-        {langs.map(({ l, url }) => <a href={url} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>)}
+      <div class="lang" data-lang>
+        <button type="button" class="globe" aria-haspopup="true" aria-expanded="false" aria-label={n.lang} set:html={globe} />
+        <div class="pop" role="menu" hidden>
+          {langs.map((x) => (
+            <a role="menuitemradio" href={x.url} hreflang={x.l} lang={x.l} aria-checked={x.l === lang ? 'true' : 'false'}>
+              <span class="flag" aria-hidden="true">{x.flag}</span><span>{x.name}</span><span class="on" aria-hidden="true"></span>
+            </a>
+          ))}
+        </div>
       </div>
       <a class="btn primary cta" href={href(lang, 'apply')}>{n.apply}</a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
@@ -30,14 +40,13 @@ const langs = (['en', 'fr'] as const).map((l) => ({ l, url: l === lang ? path : 
       </button>
     </div>
   </nav>
-  <div class="menu on-pink" id="menu" data-menu hidden>
+  <div class="menu" id="menu" data-menu hidden>
     <ul>
-      {links.map(([p, label], i) => <li style={`--i:${i}`}><a href={p}><span class="label">0{i + 1}</span>{label}</a></li>)}
+      {links.map(([p, label], i) => <li style={`--i:${i}`}><a href={p}>{label}</a></li>)}
     </ul>
     <div class="menu-foot">
-      <div class="lang big" data-active={lang}>
-        <span class="thumb" aria-hidden="true"></span>
-        {langs.map(({ l, url }) => <a href={url} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>)}
+      <div class="langs">
+        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}><span aria-hidden="true">{x.flag}</span> {x.name}</a>)}
       </div>
       <a class="btn primary" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
     </div>
@@ -47,55 +56,80 @@ const langs = (['en', 'fr'] as const).map((l) => ({ l, url: l === lang ? path : 
   const header = document.querySelector<HTMLElement>('[data-header]')!;
   const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
+  const lang = header.querySelector<HTMLElement>('[data-lang]')!;
+  const globe = lang.querySelector<HTMLButtonElement>('.globe')!;
+  const pop = lang.querySelector<HTMLElement>('.pop')!;
   let last = scrollY;
   addEventListener('scroll', () => {
     const y = scrollY;
-    header.classList.toggle('hide', y > last && y > 200 && menu.hidden);
+    header.classList.toggle('hide', y > last && y > 240 && menu.hidden && pop.hidden);
     header.classList.toggle('scrolled', y > 8);
     last = y;
   }, { passive: true });
+
+  const setPop = (open: boolean) => {
+    globe.setAttribute('aria-expanded', String(open));
+    if (open) { pop.hidden = false; requestAnimationFrame(() => pop.classList.add('in')); }
+    else { pop.classList.remove('in'); setTimeout(() => { if (!pop.classList.contains('in')) pop.hidden = true; }, 200); }
+  };
+  globe.addEventListener('click', (e) => { e.stopPropagation(); setPop(pop.hidden); });
+  document.addEventListener('click', (e) => { if (!pop.hidden && !lang.contains(e.target as Node)) setPop(false); });
+
   const setMenu = (open: boolean) => {
     burger.setAttribute('aria-expanded', String(open));
     header.classList.toggle('open', open);
     document.documentElement.classList.toggle('locked', open);
     if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('in')); }
-    else { menu.classList.remove('in'); setTimeout(() => (menu.hidden = true), 300); }
+    else { menu.classList.remove('in'); setTimeout(() => (menu.hidden = true), 320); }
   };
   burger.addEventListener('click', () => setMenu(menu.hidden));
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!menu.hidden) setMenu(false);
+    if (!pop.hidden) { setPop(false); globe.focus(); }
+  });
 </script>
 <style>
-  .site-header { position: fixed; top: 12px; left: 0; right: 0; z-index: 50; padding-inline: var(--gutter); transition: transform 360ms var(--ease); pointer-events: none; }
-  .site-header.hide { transform: translateY(-140%); }
-  .bar { pointer-events: auto; position: relative; z-index: 2; max-width: var(--max); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 24px; padding: 0 8px 0 18px; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); box-shadow: 4px 4px 0 var(--ink); }
-  .brand { display: block; width: 72px; flex: none; }
-  .links { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 0; }
-  .links a { display: block; font-weight: 700; font-size: 15px; text-decoration: none; padding: 8px 14px; position: relative; }
-  .links a::before { content: ''; position: absolute; left: 8px; right: 8px; bottom: 9px; height: 9px; background: var(--yellow); z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 260ms var(--ease); }
-  .links a:hover::before, .links a[aria-current='page']::before { transform: scaleX(1); }
-  .links a[aria-current='page']::before { background: var(--pink); }
-  .right { display: flex; align-items: center; gap: 10px; }
-  .lang { position: relative; display: grid; grid-template-columns: 1fr 1fr; border: var(--line) solid var(--ink); font: 700 12px/1 var(--type); letter-spacing: .08em; }
-  .lang a { position: relative; z-index: 1; padding: 10px 11px; text-decoration: none; text-align: center; }
-  .lang .thumb { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: var(--yellow); transition: transform 260ms var(--ease); }
-  .lang[data-active='fr'] .thumb { transform: translateX(100%); }
-  .lang a:not([aria-current]):hover { text-decoration: underline; text-underline-offset: 3px; }
-  .cta { padding: 12px 18px; font-size: 14px; }
-  .burger { display: none; width: 46px; height: 42px; border: var(--line) solid var(--ink); background: var(--yellow); position: relative; cursor: pointer; }
-  .burger i { position: absolute; left: 12px; right: 12px; height: 2px; background: var(--ink); transition: transform 260ms var(--ease); }
-  .burger i:first-of-type { top: 15px; } .burger i:last-of-type { top: 23px; }
-  .open .burger i:first-of-type { transform: translateY(4px) rotate(45deg); }
-  .open .burger i:last-of-type { transform: translateY(-4px) rotate(-45deg); }
-  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 1; padding: calc(60px + 48px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; clip-path: inset(0 0 100% 0); transition: clip-path 420ms var(--ease); }
-  .menu.in { clip-path: inset(0 0 0 0); }
+  .site-header { position: fixed; top: 14px; left: 0; right: 0; z-index: 50; padding-inline: var(--gutter); transition: transform 420ms var(--ease); pointer-events: none; }
+  .site-header.hide { transform: translateY(-160%); }
+  .bar { pointer-events: auto; position: relative; z-index: 2; max-width: 1080px; margin-inline: auto; height: 56px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 20px; color: var(--ink);
+    background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    border: 1px solid rgba(0, 0, 0, .06); border-radius: 999px; box-shadow: 0 1px 1px rgba(0, 0, 0, .03), 0 10px 30px -10px rgba(0, 0, 0, .14); transition: box-shadow 300ms var(--ease), background 300ms var(--ease); }
+  .scrolled .bar { background: rgba(255, 255, 255, .82); }
+  .brand { display: block; width: 64px; flex: none; }
+  .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; }
+  .links a { display: block; font-weight: 500; font-size: 14px; letter-spacing: -0.01em; color: var(--ink-2); text-decoration: none; padding: 8px 14px; border-radius: 999px; transition: color 200ms var(--ease), background 200ms var(--ease); }
+  .links a:hover { color: var(--ink); background: rgba(0, 0, 0, .04); }
+  .links a[aria-current='page'] { color: var(--ink); background: rgba(0, 0, 0, .06); }
+  .right { display: flex; align-items: center; gap: 6px; }
+  .lang { position: relative; }
+  .globe { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: background 200ms var(--ease); }
+  .globe:hover, .globe[aria-expanded='true'] { background: rgba(0, 0, 0, .06); }
+  .pop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 196px; padding: 6px; display: grid; gap: 2px; background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); border: 1px solid rgba(0, 0, 0, .06); border-radius: 16px; box-shadow: var(--shadow-2); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity 180ms var(--ease), transform 220ms var(--ease); }
+  .pop.in { opacity: 1; transform: none; }
+  .pop a { display: grid; grid-template-columns: 24px 1fr 16px; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 500; }
+  .pop a:hover { background: rgba(0, 0, 0, .05); }
+  .flag { font-size: 18px; line-height: 1; }
+  .on { width: 10px; height: 6px; border-left: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg) translateY(-2px); opacity: 0; }
+  [aria-checked='true'] .on { opacity: 1; }
+  .cta { padding: 11px 18px; font-size: 14px; box-shadow: none; }
+  .burger { display: none; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0, 0, 0, .05); position: relative; cursor: pointer; }
+  .burger i { position: absolute; left: 12px; right: 12px; height: 1.6px; border-radius: 2px; background: var(--ink); transition: transform 300ms var(--ease); }
+  .burger i:first-of-type { top: 16px; } .burger i:last-of-type { top: 23px; }
+  .open .burger i:first-of-type { transform: translateY(3.5px) rotate(45deg); }
+  .open .burger i:last-of-type { transform: translateY(-3.5px) rotate(-45deg); }
+  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 1; padding: calc(56px + 56px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(255, 255, 255, .94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); opacity: 0; transition: opacity 320ms var(--ease); }
+  .menu.in { opacity: 1; }
   .menu ul { list-style: none; margin: 0; padding: 0; }
-  .menu li { border-bottom: var(--line) solid var(--ink); opacity: 0; transform: translateY(16px); transition: opacity 300ms var(--ease), transform 300ms var(--ease); transition-delay: calc(var(--i) * 60ms + 120ms); }
+  .menu li { opacity: 0; transform: translateY(14px); transition: opacity 360ms var(--ease), transform 360ms var(--ease); transition-delay: calc(var(--i) * 50ms + 80ms); }
   .menu.in li { opacity: 1; transform: none; }
-  .menu li a { display: flex; align-items: baseline; gap: 16px; padding: 18px 0; text-decoration: none; font-weight: 700; font-size: clamp(36px, 11vw, 56px); letter-spacing: -0.04em; line-height: 1; }
-  .menu-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-  .lang.big a { padding: 14px 18px; }
-  @media (max-width: 960px) {
-    .links, .right > .lang, .cta { display: none; }
+  .menu li a { display: block; padding: 12px 0; text-decoration: none; font-weight: 700; font-size: clamp(36px, 10vw, 52px); letter-spacing: -0.04em; line-height: 1.05; }
+  .menu-foot { display: grid; gap: 16px; }
+  .langs { display: flex; gap: 8px; }
+  .langs a { flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: var(--paper); text-decoration: none; font-weight: 500; }
+  .langs a[aria-current] { background: var(--ink); color: #fff; }
+  @media (max-width: 860px) {
+    .links, .cta { display: none; }
     .burger { display: block; }
     .right { margin-left: auto; }
   }

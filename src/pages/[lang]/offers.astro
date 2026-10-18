@@ -1,147 +1,98 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
+import Plans from '../../components/Plans.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { test, monthly, campaign, audit, addons, fmt, type Offer } from '../../data/offers';
+import { test, campaign, audit, fmt } from '../../data/offers';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const o = s.offers;
 const k = c(lang).offers;
+const p = c(lang).plans;
 const cta = c(lang).nav.apply;
-const price = (x: Offer) => ({ launch: fmt(x.launch, lang), standard: fmt(x.standard, lang) });
+const oneOffs = [
+  { name: test.name, text: test.items[lang].join('. ') + '.', price: test.launch, standard: test.standard },
+  { name: campaign.name, text: campaign.items[lang].join('. ') + '.', price: campaign.launch },
+  { name: audit.name, text: audit.text[lang], price: audit.price },
+];
 ---
 <Base lang={lang} title={o.title}>
-  <section class="on-pink page-head">
-    <div class="wrap head-in">
-      <h1 class="h1 rv">{k.title}<br />{k.title2}</h1>
-      <p class="text text-l measure rv" style="--d:120ms">{k.sub}</p>
+  <section class="page-head">
+    <div class="wrap stack center" style="--gap:20px">
+      <h1 class="h1 rv">{k.title} <span class="soft">{k.title2}</span></h1>
+      <p class="text text-l soft measure rv" style="--d:100ms">{k.sub}</p>
     </div>
   </section>
 
-  <section class="on-pink section top0">
-    <div class="wrap">
-      <article class="test rv">
-        <div class="stack" style="--gap:16px">
-          <p class="label">{k.test}</p>
-          <h2 class="h2">{test.name}</h2>
-          <ul class="list">{test.items[lang].map((i) => <li>{i}</li>)}</ul>
-        </div>
-        <div class="price-block">
-          <p class="p-big">{price(test).launch} <span class="cur">{o.currency}</span></p>
-          <p class="small"><s>{price(test).standard} {o.currency}</s> · {o.launch}</p>
-          <a class="btn primary" href={href(lang, 'apply')}>{cta} <span class="arr" aria-hidden="true">→</span></a>
-        </div>
-      </article>
-    </div>
+  <section class="plans-sec">
+    <div class="wrap"><Plans lang={lang} /></div>
+    <p class="wrap small soft note rv">{o.launchNote} {o.monthlyNote}</p>
   </section>
 
-  <section class="on-yellow section">
+  <section class="on-paper section">
     <div class="wrap">
-      <div class="head rv"><p class="label">{k.monthly}</p><h2 class="h2">{c(lang).home.plansTitle}</h2></div>
-      <div class="plans">
-        {monthly.map((p, i) => (
-          <article class={`plan rv ${i === 1 ? 'mid' : ''}`} style={`--d:${i * 90}ms`}>
-            <div class="top">
-              <h3 class="h3">{p.name}</h3>
-              <p class="reels"><span class="n">{p.reels}</span><span class="label">{o.reels}</span></p>
-            </div>
-            <ul class="list">{p.items[lang].map((it) => <li>{it}</li>)}</ul>
+      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{k.oneOff}</h2><p class="text sub">{k.oneOffSub}</p></div></div>
+      <div class="ones">
+        {oneOffs.map((x, i) => (
+          <article class="one rv" style={`--d:${i * 80}ms`}>
+            <h3 class="h3">{x.name}</h3>
+            <p class="text soft">{x.text}</p>
             <div class="foot">
-              <p class="p-mid">{price(p).launch} <span class="cur">{o.currency} {o.month}</span></p>
-              <p class="small"><s>{price(p).standard}</s> · {Math.round(p.launch / p.reels!)} {o.currency} {c(lang).home.perReel}</p>
-              <a class="btn" href={href(lang, 'apply')}>{cta} <span class="arr" aria-hidden="true">→</span></a>
+              <p><span class="num">{fmt(x.price, lang)}</span> <span class="soft">{o.currency}</span></p>
+              {x.standard && <p class="small soft">{p.usually} {fmt(x.standard, lang)} {o.currency}</p>}
             </div>
+            <a class="link" href={href(lang, 'apply')}>{cta} →</a>
           </article>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="on-white section">
-    <div class="wrap">
-      <div class="head rv"><p class="label">{o.oneOffTitle}</p></div>
-      <div class="rows table">
-        <div class="row rv">
-          <h3 class="h3">{campaign.name}</h3>
-          <p class="text">{campaign.items[lang].join('. ')}.</p>
-          <p class="text right"><strong>{price(campaign).launch} {o.currency}</strong></p>
-        </div>
-        <div class="row rv">
-          <h3 class="h3">{audit.name}</h3>
-          <p class="text">{audit.text[lang]}</p>
-          <p class="text right"><strong>{fmt(audit.price, lang)} {o.currency}</strong></p>
-        </div>
+  <section class="section">
+    <div class="wrap every">
+      <div class="stack rv" style="--gap:24px">
+        <h2 class="h2">{k.every}</h2>
+        <ul class="ticks-list text-l">{o.allInList.map((i) => <li>{i}</li>)}</ul>
       </div>
-
-      <div class="two">
-        <div class="stack rv" style="--gap:14px">
-          <p class="label">{o.addonsTitle}</p>
-          <div class="rows">
-            {addons.map((a) => <div class="addon"><span class="text">{a.name[lang]}</span><span class="text">{a.price[lang]}</span></div>)}
-          </div>
-        </div>
-        <div class="stack rv" style="--gap:14px">
-          <p class="label">{o.allIn}</p>
-          <ul class="list">{o.allInList.map((i) => <li>{i}</li>)}</ul>
-          <details class="terms">
-            <summary class="label">{k.terms} <span aria-hidden="true">+</span></summary>
-            <ul class="list">{[...o.terms, o.monthlyNote, o.launchNote].map((i) => <li class="small">{i}</li>)}</ul>
+      <div class="rv" style="--d:100ms">
+        <div class="faq">
+          <details>
+            <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
+            <ul class="terms text">{o.terms.map((i) => <li>{i}</li>)}</ul>
+          </details>
+          <details>
+            <summary><span>{o.intlTitle}</span><span class="pm" aria-hidden="true"></span></summary>
+            <p class="text a">{o.intl}</p>
           </details>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="on-white section top0">
+  <section class="on-paper section">
     <div class="wrap faq-grid">
-      <div class="head rv"><p class="label">{s.home.faqTitle}</p><h2 class="h2">{c(lang).home.faqTitle}</h2></div>
+      <div class="head rv"><h2 class="h2">{c(lang).home.faqTitle}</h2></div>
       <div class="rv"><Faq items={s.faq} /></div>
     </div>
   </section>
 </Base>
 <style>
-  .top0 { padding-top: 0; }
-  .head-in { display: grid; gap: 24px; }
-  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-content: start; }
-  .list li { padding-left: 26px; position: relative; }
-  .list li::before { content: ''; position: absolute; left: 2px; top: .38em; width: 11px; height: 6px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
-  .test { position: relative; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: end; padding: clamp(28px, 4vw, 56px); background: var(--white); border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); }
-  .test :global(.go) { position: absolute; right: 24px; top: -36px; width: 150px; }
-  .price-block { display: grid; gap: 8px; justify-items: start; }
-  .price-block p { margin: 0; }
-  .price-block .btn { margin-top: 16px; }
-  .p-big { font-weight: 700; font-size: clamp(64px, 8vw, 120px); line-height: .9; letter-spacing: -0.05em; }
-  .p-mid { margin: 0; font-weight: 700; font-size: clamp(36px, 3.4vw, 52px); line-height: 1; letter-spacing: -0.035em; }
-  .cur { font-size: .3em; letter-spacing: 0; }
-  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); align-items: stretch; }
-  .plan { display: grid; grid-template-rows: auto 1fr auto; gap: 28px; padding: 28px; background: var(--white); border: var(--line) solid var(--ink); transition: transform 360ms var(--ease), box-shadow 360ms var(--ease); }
-  .plan:hover { transform: translate(-4px, -6px); box-shadow: 8px 10px 0 var(--ink); }
-  .plan.mid { background: var(--pink); }
-  .top { display: grid; gap: 10px; border-bottom: var(--line) solid var(--ink); padding-bottom: 20px; }
-  .reels { margin: 0; display: flex; align-items: baseline; gap: 10px; }
-  .reels .n { font-weight: 700; font-size: clamp(72px, 7vw, 112px); line-height: .85; letter-spacing: -0.06em; }
-  .foot { display: grid; gap: 8px; justify-items: start; border-top: var(--line) solid var(--ink); padding-top: 20px; }
-  .foot p { margin: 0; }
-  .foot .btn { margin-top: 10px; }
-  .table .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, .8fr); gap: 24px; padding-block: 28px; align-items: baseline; }
-  .right { text-align: right; }
-  .two { margin-top: clamp(64px, 9vw, 120px); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(40px, 6vw, 96px); }
-  .addon { display: flex; justify-content: space-between; gap: 16px; padding-block: 14px; }
-  .addon span:last-child { white-space: nowrap; }
-  .terms { margin-top: 20px; border-top: var(--line) solid var(--ink); }
-  .terms summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; padding-block: 16px; }
-  .terms summary::-webkit-details-marker { display: none; }
-  .faq-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .page-head .h1 { max-width: 16ch; }
+  .plans-sec { padding-bottom: var(--section); }
+  .note { margin-top: 24px; text-align: center; max-width: 52rem; }
+  .ones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
+  .one { display: grid; grid-template-rows: auto 1fr auto auto; gap: 16px; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .one.in:hover { transform: translateY(-6px); box-shadow: var(--shadow-2); }
+  .one .foot { padding-top: 16px; border-top: 1px solid var(--hair); }
+  .one .foot p { margin: 0; }
+  .num { font-weight: 700; font-size: 30px; letter-spacing: -0.03em; }
+  .every { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .terms { margin: 0; padding: 0 64px 22px 40px; display: grid; gap: 10px; color: var(--ink-2); }
+  .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .faq-grid .head { margin-bottom: 0; }
-  @media (max-width: 960px) { .plans { grid-template-columns: 1fr; } }
-  @media (max-width: 760px) {
-    .test, .two, .faq-grid { grid-template-columns: 1fr; }
-    .test :global(.go) { width: 110px; top: -30px; }
-    .table .row { grid-template-columns: 1fr; gap: 8px; }
-    .right { text-align: left; }
-  }
+  @media (max-width: 860px) { .ones, .every, .faq-grid { grid-template-columns: 1fr; } }
 </style>

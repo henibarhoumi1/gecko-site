@@ -1,11 +1,10 @@
-/* Layout and components. Colours, fonts and the type scale come from brand.css (gecko/brand/, v5).
-   Pink and yellow take turns with white. Ink for words, lines, stamps and hand marks. No grey. */
+/* Layout and shared components. Tokens come from brand.css. */
 
 :root {
   --gutter: clamp(16px, 4vw, 48px);
-  --section: clamp(96px, 12vw, 184px);
-  --max: 1320px;
-  --header: 84px;
+  --section: clamp(88px, 11vw, 160px);
+  --max: 1280px;
+  --header: 80px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -17,40 +16,54 @@ body { margin: 0; font-size: var(--body); line-height: 1.5; }
 img, video, svg { display: block; max-width: 100%; }
 a { color: inherit; }
 ::selection { background: var(--yellow); color: var(--ink); }
-:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
 .section { padding-block: var(--section); }
-.page-head { padding-top: calc(var(--header) + clamp(72px, 11vw, 160px)); padding-bottom: clamp(56px, 8vw, 112px); }
+.page-head { padding-top: calc(var(--header) + clamp(64px, 9vw, 128px)); padding-bottom: clamp(48px, 6vw, 88px); }
+.page-head .h1 { max-width: 14ch; }
+.center { text-align: center; justify-items: center; margin-inline: auto; }
+.center .h1, .center .h2 { margin-inline: auto; }
+
+/* A section that fills one screen on desktop, content centred. */
+.screen { min-height: 100svh; display: grid; align-content: center; padding-block: clamp(88px, 11vh, 128px); }
+@media (max-width: 760px), (max-height: 640px) { .screen { min-height: 0; padding-block: var(--section); } }
+
+/* Inset panel (used for the cutting mat sections) */
+.panel-wrap { padding-inline: clamp(8px, 1.6vw, 20px); }
+.panel-in { max-width: calc(var(--max) + 160px); margin-inline: auto; }
 
 .text-l { font-size: var(--body-l); line-height: 1.45; }
 .small { font-size: var(--small); }
-.measure { max-width: 36rem; }
-.muted { opacity: 1; }
+.measure { max-width: 34rem; }
 .stack { display: grid; gap: var(--gap, 20px); align-content: start; }
-.text, .h1, .h2, .h3 { margin: 0; }
-.label { margin: 0; }
+.text, .h1, .h2, .h3, .label { margin: 0; }
 
-/* Section head: a rule, a typewriter label, then a big title */
-.head { border-top: var(--line) solid currentColor; padding-top: 18px; display: grid; gap: clamp(20px, 3vw, 36px); margin-bottom: clamp(40px, 6vw, 88px); }
-.head .side { display: flex; justify-content: space-between; align-items: end; gap: 24px 48px; flex-wrap: wrap; }
-.head .h2 { max-width: 16ch; }
+/* Section head: title on the left, an optional link or note on the right */
+.head { display: flex; justify-content: space-between; align-items: end; gap: 20px 48px; flex-wrap: wrap; margin-bottom: clamp(32px, 4.5vw, 64px); }
+.head .h2 { max-width: 15ch; }
+.head .sub { max-width: 28rem; color: var(--ink-2); }
+.mat .head .sub { color: rgba(255, 255, 255, .75); }
 
 /* Reveal on scroll */
-.rv { opacity: 0; transform: translateY(28px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
-.rv.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+.rv { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 900ms var(--ease), transform 900ms var(--ease), filter 900ms var(--ease); transition-delay: var(--d, 0ms); }
+.rv.in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; filter: none; transition: none; } }
 
 /* Buttons and links */
 .btn { cursor: pointer; }
-.btn:hover { background: var(--ink); color: var(--white); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
-.btn.primary:hover { background: var(--white); color: var(--ink); }
-.btn:active { transform: none; box-shadow: none; }
-.btn .arr { transition: transform 160ms var(--ease); }
+.btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.btn.primary:hover { background: #000; }
+.btn:active { transform: scale(.97); box-shadow: var(--shadow-1); }
+.btn .arr { transition: transform 200ms var(--ease); }
 .btn:hover .arr { transform: translateX(3px); }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
-.link { text-underline-offset: 4px; text-decoration-thickness: 1px; }
-.link:hover { text-decoration-thickness: 2px; }
+.center .actions { justify-content: center; }
+.link { font-weight: 600; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.link:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Cards */
+.card-soft { background: var(--white); border-radius: var(--r); box-shadow: var(--shadow-1); border: 1px solid var(--hair); }
 
 .grid { display: grid; gap: clamp(12px, 1.6vw, 20px); }
 .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -59,43 +72,59 @@ a { color: inherit; }
 @media (max-width: 960px) { .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .g3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .g2, .g3 { grid-template-columns: 1fr; } }
 
-/* Media frames. Without a real file they show a flat black frame with a label, never a fake image. */
-.frame { position: relative; overflow: hidden; background: var(--ink); color: var(--white); }
+/* Media frames */
+.frame { position: relative; overflow: hidden; background: var(--ink); color: #fff; border-radius: var(--r); }
 .frame.r916 { aspect-ratio: 9 / 16; }
 .frame.r45 { aspect-ratio: 4 / 5; }
 .frame.r32 { aspect-ratio: 3 / 2; }
 .frame video, .frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .frame .empty { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; text-align: center; }
-.tag { position: absolute; left: 0; top: 0; z-index: 2; padding: 6px 9px; background: var(--white); color: var(--ink); }
+.tag { position: absolute; left: 10px; top: 10px; z-index: 2; padding: 6px 10px; border-radius: 999px; background: rgba(255, 255, 255, .85); color: var(--ink); font-size: 12px; font-weight: 600; }
 
-/* Rows separated by lines (steps, FAQ, tables) */
-.rows { border-top: var(--line) solid currentColor; }
-.rows > * { border-bottom: var(--line) solid currentColor; }
+/* Ticked lists */
+.ticks-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; align-content: start; }
+.ticks-list li { padding-left: 30px; position: relative; line-height: 1.4; }
+.ticks-list li::before { content: ''; position: absolute; left: 0; top: .08em; width: 20px; height: 20px; border-radius: 50%; background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%231D1D1F' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 20px no-repeat; }
 
-.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-block: 22px; font-weight: 700; letter-spacing: -0.01em; font-size: clamp(18px, 1.5vw, 21px); line-height: 1.3; }
+/* FAQ */
+.faq { display: grid; gap: 10px; }
+.faq details { background: var(--white); border-radius: var(--r-sm); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: box-shadow 260ms var(--ease); }
+.faq details[open] { box-shadow: var(--shadow-2); }
+.faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px 22px; font-weight: 600; letter-spacing: -0.01em; font-size: 17px; line-height: 1.35; }
 .faq summary::-webkit-details-marker { display: none; }
-.faq .pm { flex: none; width: 14px; height: 14px; position: relative; }
-.faq .pm::before, .faq .pm::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: currentColor; transition: transform 200ms var(--ease); }
-.faq .pm::after { transform: rotate(90deg); }
+.faq .pm { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--paper); position: relative; transition: background 200ms var(--ease), transform 300ms var(--ease); }
+.faq .pm::before, .faq .pm::after { content: ''; position: absolute; left: 9px; right: 9px; top: 50%; height: 1.5px; margin-top: -.75px; background: currentColor; border-radius: 2px; }
+.faq .pm::after { transform: rotate(90deg); transition: transform 300ms var(--ease); }
+.faq details[open] .pm { background: var(--yellow); transform: rotate(180deg); }
 .faq details[open] .pm::after { transform: rotate(0deg); }
-.faq summary:hover span:first-child { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
-.faq .a { padding: 0 48px 24px 0; max-width: 46rem; }
+.faq .a { padding: 0 64px 22px 22px; max-width: 46rem; color: var(--ink-2); }
 
 /* Forms */
 .field { display: grid; gap: 8px; }
-.field label { font: 700 var(--label)/1.2 var(--type); letter-spacing: .12em; text-transform: uppercase; }
-.field input, .field select, .field textarea { font: 400 17px/1.4 var(--font); color: inherit; width: 100%; background: transparent; border: 0; border-bottom: var(--line) solid currentColor; border-radius: 0; padding: 10px 0; -webkit-appearance: none; appearance: none; }
-.field select { background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 10px) 55%, calc(100% - 5px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+.field label { font: 600 13px/1.2 var(--font); color: var(--ink-2); }
+.field input, .field select, .field textarea { font: 400 17px/1.4 var(--font); color: inherit; width: 100%; background: var(--paper); border: 1px solid transparent; border-radius: 12px; padding: 14px 16px; -webkit-appearance: none; appearance: none; transition: border-color 200ms var(--ease), background 200ms var(--ease), box-shadow 200ms var(--ease); }
+.field select { background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 20px) 55%, calc(100% - 15px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
 .field select option { color: #000; }
-.field input:focus, .field select:focus { outline: none; border-bottom-width: 2px; padding-bottom: 9px; }
-.field input::placeholder { color: currentColor; opacity: .4; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; background: var(--white); border-color: var(--ink); box-shadow: 0 0 0 4px rgba(243, 223, 158, .6); }
+.field input::placeholder { color: var(--ink-2); opacity: .7; }
 
 [hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-/* Horizontal scroll rows on phones instead of stacking full-width 9:16 frames */
-@media (max-width: 600px) {
-  .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 10px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
+/* Horizontal scroll rows on phones */
+@media (max-width: 760px) {
+  .scroll-row { display: flex !important; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 12px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); padding-bottom: 8px; scrollbar-width: none; }
   .scroll-row::-webkit-scrollbar { display: none; }
-  .scroll-row > * { flex: 0 0 64%; scroll-snap-align: start; }
+  .scroll-row > * { flex: 0 0 68%; scroll-snap-align: start; }
 }
+
+/* Moving between pages: the old page lifts away, the new one settles in. The header stays put. */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: vt-out 260ms var(--ease) both; }
+::view-transition-new(root) { animation: vt-in 560ms var(--ease) both; }
+.site-header { view-transition-name: header; }
+::view-transition-group(header) { animation: none; }
+@keyframes vt-out { to { opacity: 0; transform: translateY(-16px) scale(.985); filter: blur(6px); } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(28px); filter: blur(8px); } }
+@supports not (view-transition-name: none) { main { animation: vt-in 600ms var(--ease) both; } }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(root), ::view-transition-new(root) { animation: none; } }

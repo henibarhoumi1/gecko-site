@@ -1,0 +1,163 @@
+---
+// Apply in four taps: what you sell, what you need, your ad spend, how to reach you.
+// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the answers filled in.
+import { t, type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+import { site } from '../data/site';
+interface Props { lang: Locale; heading?: 'h1' | 'h2' }
+const { lang, heading = 'h2' } = Astro.props;
+const a = c(lang).apply;
+const s = t(lang).apply;
+const ct = t(lang).contact;
+const H = heading;
+const choices = [a.sell, a.need, s.spends];
+const fields = [
+  { name: 'name', label: s.name, auto: 'name' },
+  { name: 'brand', label: s.brand, auto: 'organization' },
+  { name: 'link', label: s.link },
+  { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
+];
+const wa = site.whatsapp.replace('https://wa.me/', '');
+---
+<div class="apply">
+  <div class="lead stack" style="--gap:22px">
+    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`}>{a.title}</H>
+    <p class="text text-l soft rv" style="--d:80ms">{a.sub}</p>
+    <div class="direct rv" style="--d:160ms">
+      <p class="label">{a.direct}</p>
+      <a href={site.whatsapp} rel="noopener">{ct.whatsapp} {site.phone}</a>
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
+  </div>
+
+  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} action="https://api.web3forms.com/submit" method="POST" novalidate>
+    <input type="hidden" name="access_key" value={site.formKey} />
+    <input type="hidden" name="subject" value="New application from the Gecko website" />
+    <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <div class="top">
+      <p class="small soft" aria-live="polite"><span data-count>1</span> {a.of} 4</p>
+      <div class="bars" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
+    </div>
+
+    {choices.map((list, k) => (
+      <fieldset class="step" data-step={k} hidden={k !== 0}>
+        <legend class="h3">{a.steps[k]}</legend>
+        <input type="hidden" name={['sells', 'needs', 'spend'][k]} data-label={a.steps[k]} />
+        <div class="chips">{list.map((o) => <button type="button" class="chip" data-pick={o}>{o}</button>)}</div>
+      </fieldset>
+    ))}
+
+    <fieldset class="step" data-step="3" hidden>
+      <legend class="h3">{a.steps[3]}</legend>
+      <div class="fields">
+        {fields.map((f) => (
+          <div class="field">
+            <label for={`flow-${f.name}`}>{f.label}</label>
+            <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required autocomplete={f.auto} data-label={f.label} />
+          </div>
+        ))}
+      </div>
+      <button class="btn primary send" type="submit">{site.formKey ? a.send : a.wa} <span class="arr" aria-hidden="true">→</span></button>
+    </fieldset>
+
+    <div class="step done" data-done hidden>
+      <span class="ok" aria-hidden="true"></span>
+      <p class="h3" data-msg data-sent={a.done} data-error={s.error}>{a.done}</p>
+      <button type="button" class="link" data-again>{a.again}</button>
+    </div>
+
+    <button type="button" class="back small" data-back hidden>← {a.back}</button>
+  </form>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-flow]').forEach((form) => {
+    const steps = [...form.querySelectorAll<HTMLElement>('[data-step]')];
+    const bars = [...form.querySelectorAll('.bars i')];
+    const count = form.querySelector<HTMLElement>('[data-count]')!;
+    const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
+    const done = form.querySelector<HTMLElement>('[data-done]')!;
+    const msg = form.querySelector<HTMLElement>('[data-msg]')!;
+    let at = 0;
+
+    const go = (n: number, dir = 1) => {
+      steps[at].hidden = true;
+      at = n;
+      const el = steps[at];
+      el.hidden = false;
+      el.animate([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      bars.forEach((b, i) => b.classList.toggle('on', i <= at));
+      count.textContent = String(at + 1);
+      back.hidden = at === 0;
+      if (at === 3) el.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true });
+    };
+
+    form.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((chip) => chip.addEventListener('click', () => {
+      const step = chip.closest<HTMLElement>('[data-step]')!;
+      step.querySelectorAll('.chip').forEach((x) => x.classList.toggle('picked', x === chip));
+      step.querySelector<HTMLInputElement>('input[type=hidden]')!.value = chip.dataset.pick!;
+      setTimeout(() => go(Number(step.dataset.step) + 1), 260);
+    }));
+    back.addEventListener('click', () => go(at - 1, -1));
+
+    const finish = (text: string) => {
+      steps[at].hidden = true; back.hidden = true;
+      msg.textContent = text; done.hidden = false;
+      done.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+      bars.forEach((b) => b.classList.add('on'));
+    };
+    form.querySelector('[data-again]')!.addEventListener('click', () => {
+      form.reset(); form.querySelectorAll('.chip').forEach((x) => x.classList.remove('picked'));
+      done.hidden = true; at = 0; steps.forEach((s, i) => (s.hidden = i !== 0)); go(0, -1);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-step="3"] input')];
+      const empty = inputs.find((i) => !i.value.trim());
+      if (empty) { empty.focus(); empty.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
+      if (!form.dataset.key) {
+        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].map((el) => `${el.dataset.label} ${el.value}`);
+        open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
+        finish(msg.dataset.sent!);
+        return;
+      }
+      try {
+        const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error();
+        finish(msg.dataset.sent!);
+      } catch { finish(msg.dataset.error!); }
+    });
+  });
+</script>
+
+<style>
+  .apply { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .lead .h1, .lead .h2 { max-width: 12ch; }
+  .direct { display: grid; gap: 6px; }
+  .direct .label { margin-bottom: 4px; }
+  .direct a { text-decoration: none; font-weight: 500; }
+  .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .flow { position: relative; display: grid; gap: 24px; padding: clamp(24px, 3vw, 40px); min-height: 440px; align-content: start; background: var(--white); color: var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-3); }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .top p { margin: 0; }
+  .bars { display: grid; grid-template-columns: repeat(4, 36px); gap: 6px; }
+  .bars i { height: 4px; border-radius: 4px; background: var(--paper); position: relative; overflow: hidden; }
+  .bars i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease); }
+  .bars i.on::after { transform: none; }
+  .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
+  .step legend { padding: 0; margin-bottom: 22px; font-size: clamp(24px, 2.4vw, 32px); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { font: 500 16px/1 var(--font); padding: 14px 18px; border-radius: 999px; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); cursor: pointer; transition: background 200ms var(--ease), transform 300ms var(--spring), border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
+  .chip:hover { background: var(--white); border-color: rgba(0, 0, 0, .2); box-shadow: var(--shadow-1); transform: translateY(-2px); }
+  .chip.picked { background: var(--ink); color: #fff; border-color: var(--ink); transform: scale(1.04); }
+  .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .send { justify-self: start; }
+  .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font-family: var(--font); font-weight: 500; }
+  .back:hover { color: var(--ink); }
+  .done { justify-items: start; align-content: center; min-height: 300px; }
+  .ok { width: 56px; height: 56px; border-radius: 50%; background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%231D1D1F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 40px no-repeat; }
+  .done .link { background: none; border: 0; padding: 0; cursor: pointer; font: 600 15px var(--font); color: var(--ink-2); }
+  @media (max-width: 860px) { .apply { grid-template-columns: 1fr; } .flow { min-height: 0; } }
+  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } .chip { font-size: 15px; padding: 12px 15px; } }
+</style>
