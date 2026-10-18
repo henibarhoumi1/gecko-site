@@ -97,12 +97,15 @@ a { color: inherit; }
 
 /* Forms */
 .field { display: grid; gap: 8px; }
-.field label { font: 700 11px/1.2 var(--type); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.field label { font: 700 13px/1.2 var(--font); color: var(--ink); }
 .field input, .field select, .field textarea { font: 400 17px/1.4 var(--font); color: inherit; width: 100%; background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r-sm); padding: 14px 16px; -webkit-appearance: none; appearance: none; transition: border-color 200ms var(--ease), background 200ms var(--ease), box-shadow 200ms var(--ease); }
 .field select { background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 20px) 55%, calc(100% - 15px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
 .field select option { color: #000; }
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; background: var(--white); border-color: var(--ink); box-shadow: 3px 3px 0 var(--yellow); }
 .field input::placeholder { color: var(--ink-2); opacity: .7; }
+
+/* White sections that follow each other are separated by an ink line */
+:is(.on-white, .on-paper) + :is(.on-white, .on-paper) { border-top: var(--line) solid var(--ink); }
 
 [hidden] { display: none !important; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

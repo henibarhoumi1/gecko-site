@@ -1,8 +1,9 @@
 ---
-interface Props { items: readonly { q: string; a: string }[] }
-const { items } = Astro.props;
+// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself, so the page stays one screen tall.
+interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean }
+const { items, scroll = false } = Astro.props;
 ---
-<div class="faq rows">
+<div class={`faq ${scroll ? 'scroll' : ''}`} data-lenis-prevent={scroll ? '' : undefined} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
   {items.map((f) => (
     <details>
       <summary><span>{f.q}</span><span class="pm" aria-hidden="true"></span></summary>
@@ -10,3 +11,9 @@ const { items } = Astro.props;
     </details>
   ))}
 </div>
+<style>
+  .faq.scroll { max-height: min(60vh, 540px); overflow-y: auto; overscroll-behavior: contain; padding: 4px 8px 56px 2px; margin-right: -8px; scrollbar-width: thin; scrollbar-color: var(--ink) transparent;
+    -webkit-mask-image: linear-gradient(#000 calc(100% - 56px), transparent); mask-image: linear-gradient(#000 calc(100% - 56px), transparent); }
+  .faq.scroll::-webkit-scrollbar { width: 6px; }
+  .faq.scroll::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 6px; }
+</style>

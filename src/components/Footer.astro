@@ -10,41 +10,48 @@ const s = t(lang);
 const n = c(lang).nav;
 ---
 <footer class="site-footer">
+  <div class="wrap">
+    <a class="big" href={href(lang, 'apply')}>{n.apply} <span aria-hidden="true">→</span></a>
+  </div>
   <div class="wrap inner">
     <div class="stack" style="--gap:14px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
-      <p class="text soft">{s.line}</p>
-      <a class="btn primary" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
+      <p class="text dim">{s.line}</p>
     </div>
     <nav class="col" aria-label="Footer">
       <a href={href(lang, 'work')}>{n.work}</a>
       <a href={href(lang, 'process')}>{n.process}</a>
       <a href={href(lang, 'offers')}>{n.offers}</a>
       <a href={href(lang, 'about')}>{n.about}</a>
+      <a href={href(lang, 'contact')}>{n.contact}</a>
       <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
     <div class="col">
       <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
-      <a href={site.instagram} rel="noopener">{s.contact.instagram} {site.instagramHandle}</a>
-      <span class="soft">{s.footer.address}</span>
+      {site.socials.map((x) => <a href={x.url} rel="noopener">{x.name} {x.handle}</a>)}
+      <span class="dim">{s.footer.address}</span>
     </div>
   </div>
   <div class="wrap base">
-    <p class="small soft">© {new Date().getFullYear()} Gecko</p>
-    <a class="small soft" href={href(lang, 'legal')}>{s.footer.legal}</a>
+    <p class="small dim">© {new Date().getFullYear()} Gecko</p>
+    <a class="small dim" href={href(lang, 'legal')}>{s.footer.legal}</a>
   </div>
 </footer>
 <style>
-  .site-footer { padding-block: clamp(64px, 8vw, 104px) 28px; background: var(--cream); border-top: var(--line) solid var(--ink); }
-  .inner { display: grid; grid-template-columns: 1.6fr 1fr 1.2fr; gap: 40px; }
-  .brand { display: block; width: 104px; }
-  .stack .btn { justify-self: start; margin-top: 8px; }
+  .site-footer { padding-block: clamp(64px, 8vw, 112px) 28px; background: var(--ink); color: #fff; }
+  .big { display: block; font-weight: 700; font-size: clamp(44px, 9vw, 144px); letter-spacing: -0.055em; line-height: .92; text-decoration: none; color: #fff; padding-bottom: clamp(36px, 5vw, 64px); margin-bottom: clamp(36px, 5vw, 64px); border-bottom: 1px solid rgba(255, 255, 255, .22); }
+  .big span { display: inline-block; color: var(--pink); transition: transform 360ms var(--ease); }
+  .big:hover span { transform: translateX(16px); }
+  .inner { display: grid; grid-template-columns: 1.6fr 1fr 1.3fr; gap: 40px; }
+  .brand { display: block; width: 110px; color: #fff; }
+  .dim { color: rgba(255, 255, 255, .6); }
   .col { display: grid; align-content: start; gap: 12px; font-size: 15px; }
-  .col a { text-decoration: none; overflow-wrap: anywhere; color: var(--ink); }
-  .col a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .base { margin-top: clamp(48px, 7vw, 80px); padding-top: 20px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 16px; }
+  .col a { text-decoration: none; overflow-wrap: anywhere; color: #fff; }
+  .col a:hover { color: var(--pink); }
+  .base { margin-top: clamp(48px, 7vw, 80px); padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .22); display: flex; justify-content: space-between; gap: 16px; }
   .base p { margin: 0; }
   .base a { text-decoration: none; }
+  .base a:hover { color: #fff; }
   @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }
 </style>

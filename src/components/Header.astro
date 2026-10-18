@@ -9,7 +9,7 @@ const { lang } = Astro.props;
 const n = c(lang).nav;
 const path = Astro.url.pathname;
 const links = [
-  [href(lang, 'work'), n.work], [href(lang, 'process'), n.process], [href(lang, 'offers'), n.offers], [href(lang, 'about'), n.about],
+  [href(lang, 'work'), n.work], [href(lang, 'process'), n.process], [href(lang, 'offers'), n.offers], [href(lang, 'about'), n.about], [href(lang, 'contact'), n.contact],
 ] as const;
 const langs = [
   { l: 'en', flag: '🇬🇧', name: 'English' },

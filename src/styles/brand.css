@@ -1,8 +1,5 @@
-/* Gecko brand tokens. Warm white pages, pink and yellow blocks, ink lines, a typewriter face for labels.
+/* Gecko brand tokens. White pages, pink and yellow blocks, ink lines, one sans family.
    Corners are softened and depth comes from a small ink offset, not from blur. */
-
-@font-face { font-family: "Courier Prime"; src: url("/fonts/courier-prime-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Courier Prime"; src: url("/fonts/courier-prime-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 
 :root {
   --pink: #F4C1C4;
@@ -10,8 +7,8 @@
   --yellow: #F3DF9E;
   --yellow-soft: #FAF0CF;
   --white: #FFFFFF;
-  --paper: #FCFAF5;
-  --cream: #F6F1E6;
+  --paper: #FFFFFF;
+  --cream: #FFFFFF;
   --ink: #181614;
   --ink-2: #5E5953;
   --hair: var(--ink);
@@ -21,7 +18,7 @@
   --blue: var(--ink);
 
   --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --type: "Courier Prime", "Courier New", Courier, monospace;
+  --type: var(--font);
 
   --h1: clamp(46px, 7.6vw, 120px);
   --h2: clamp(36px, 5vw, 76px);
@@ -29,7 +26,7 @@
   --body-l: 19px;
   --body: 17px;
   --small: 14px;
-  --label: 12px;
+  --label: 13px;
 
   --line: 1.5px;
   --r-sm: 10px;
@@ -47,7 +44,7 @@ body { font-family: var(--font); background: var(--paper); color: var(--ink); -w
 .h1, .h2, .h3 { font-family: var(--font); font-weight: 700; line-height: 1; letter-spacing: -0.04em; margin: 0; text-wrap: balance; }
 .h1 { font-size: var(--h1); } .h2 { font-size: var(--h2); } .h3 { font-size: var(--h3); letter-spacing: -0.02em; line-height: 1.15; }
 .text { font-weight: 400; font-size: var(--body); line-height: 1.5; }
-.label { font-family: var(--type); font-weight: 700; font-size: var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
+.label { font-weight: 700; font-size: var(--label); letter-spacing: 0; color: var(--ink); }
 .soft { color: var(--ink-2); }
 
 .on-white  { background: var(--paper); color: var(--ink); }

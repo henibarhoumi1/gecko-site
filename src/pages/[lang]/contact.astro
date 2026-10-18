@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { type Locale } from '../../i18n/strings';
+import { c } from '../../i18n/copy';
+import { href } from '../../i18n/paths';
+import { langPaths } from '../../i18n/static';
+import { site } from '../../data/site';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const k = c(lang).contact;
+const n = c(lang).nav;
+const ways = [
+  { e: '💬', name: k.whatsapp, value: site.phone, url: site.whatsapp },
+  { e: '📞', name: k.call, value: site.phone, url: `tel:${site.phone.replace(/\s/g, '')}` },
+  { e: '✉️', name: k.email, value: site.email, url: `mailto:${site.email}` },
+  ...site.socials.map((x) => ({ e: '📸', name: x.name, value: x.handle, url: x.url })),
+];
+---
+<Base lang={lang} title={n.contact}>
+  <section class="on-pink page-head">
+    <div class="wrap stack" style="--gap:20px">
+      <h1 class="h1 rv">{k.title}</h1>
+      <p class="text text-l soft measure rv" style="--d:100ms">{k.sub}</p>
+    </div>
+  </section>
+
+  <section class="on-white section">
+    <div class="wrap grid-c">
+      <div class="stack" style="--gap:22px">
+        <h2 class="h3 rv">{k.ways}</h2>
+        <ul class="ways">
+          {ways.map((w, i) => (
+            <li class="rv" style={`--d:${i * 70}ms`}>
+              <a href={w.url} rel="noopener">
+                <span class="em" aria-hidden="true">{w.e}</span>
+                <span class="who"><span class="label">{w.name}</span><span class="val">{w.value}</span></span>
+                <span class="go" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="text soft rv"><span class="label">{k.based}</span> {k.place}</p>
+        <p class="text rv">{k.project} <a class="link" href={href(lang, 'apply')}>{k.projectCta} →</a></p>
+      </div>
+      <div class="rv" style="--d:120ms"><ContactForm lang={lang} /></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .page-head .h1 { max-width: 12ch; }
+  .grid-c { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .ways { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .ways a { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 16px; padding: 16px 18px; text-decoration: none; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease), background 200ms var(--ease); }
+  .ways a:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--ink); background: var(--yellow-soft); }
+  .em { width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; border-radius: 12px; background: var(--pink-soft); border: var(--line) solid var(--ink); }
+  .who { display: grid; gap: 2px; min-width: 0; }
+  .val { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; }
+  .go { font-weight: 700; transition: transform 240ms var(--ease); }
+  .ways a:hover .go { transform: translateX(4px); }
+  @media (max-width: 860px) { .grid-c { grid-template-columns: 1fr; } }
+</style>

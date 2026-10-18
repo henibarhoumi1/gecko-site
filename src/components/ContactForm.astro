@@ -1,0 +1,54 @@
+---
+// A plain contact form. With a Web3Forms key it emails Gecko; without one it opens the visitor's email app with the message filled in.
+import { c } from '../i18n/copy';
+import { site } from '../data/site';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const k = c(lang).contact;
+---
+<form class="cform" method="POST" action="https://api.web3forms.com/submit" data-cform data-key={site.formKey} data-mail={site.email} data-sent={k.sent} data-error={k.error} novalidate>
+  <input type="hidden" name="access_key" value={site.formKey} />
+  <input type="hidden" name="subject" value="New message from the Gecko website" />
+  <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <h2 class="h3">{k.formTitle}</h2>
+  <div class="two">
+    <div class="field"><label for="cf-name">{k.name}</label><input id="cf-name" name="name" required autocomplete="name" /></div>
+    <div class="field"><label for="cf-mail">{k.mail}</label><input id="cf-mail" name="email" type="email" required autocomplete="email" /></div>
+  </div>
+  <div class="field"><label for="cf-phone">{k.phone}</label><input id="cf-phone" name="phone" type="tel" autocomplete="tel" /></div>
+  <div class="field"><label for="cf-msg">{k.message}</label><textarea id="cf-msg" name="message" rows="5" required></textarea></div>
+  <button class="btn primary" type="submit">{k.send} <span class="arr" aria-hidden="true">→</span></button>
+  <p class="text status" role="status" aria-live="polite"></p>
+</form>
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-cform]').forEach((form) => {
+    const status = form.querySelector<HTMLElement>('.status')!;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = form.querySelector<HTMLInputElement>('[name=name]')!;
+      const mail = form.querySelector<HTMLInputElement>('[name=email]')!;
+      const msg = form.querySelector<HTMLTextAreaElement>('[name=message]')!;
+      const bad = [name, mail, msg].find((i) => !i.value.trim() || (i === mail && !mail.checkValidity()));
+      if (bad) { bad.focus(); bad.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
+      if (!form.dataset.key) {
+        const body = `${msg.value}\n\n${name.value}\n${mail.value}\n${form.querySelector<HTMLInputElement>('[name=phone]')!.value}`;
+        location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(name.value)}&body=${encodeURIComponent(body)}`;
+        return;
+      }
+      try {
+        const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error();
+        form.reset(); status.textContent = form.dataset.sent!;
+      } catch { status.textContent = form.dataset.error!; }
+    });
+  });
+</script>
+<style>
+  .cform { display: grid; gap: 20px; padding: clamp(24px, 3vw, 40px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }
+  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .cform textarea { resize: vertical; min-height: 130px; }
+  .cform .btn { justify-self: start; }
+  .status:empty { display: none; }
+  @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
+</style>

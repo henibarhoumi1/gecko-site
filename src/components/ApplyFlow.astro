@@ -1,15 +1,22 @@
 ---
-// Apply in four taps: what you sell, what you need, your ad spend, how to reach you.
+// Apply in four taps. A brief card on the left fills in as you answer and suggests where to start.
 // With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the answers filled in.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { site } from '../data/site';
+import { test, campaign, audit, monthly, fmt } from '../data/offers';
 interface Props { lang: Locale; heading?: 'h1' | 'h2' }
 const { lang, heading = 'h2' } = Astro.props;
 const a = c(lang).apply;
 const s = t(lang).apply;
 const ct = t(lang).contact;
+const cur = t(lang).offers.currency;
 const H = heading;
+const emoji = [
+  ['💄', '🍔', '👗', '💪', '🏠', '🛠️', '🙋', '✨'],
+  ['🧪', '🔁', '🚀', '🤔'],
+  [],
+];
 const choices = [a.sell, a.need, s.spends];
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
@@ -17,38 +24,60 @@ const fields = [
   { name: 'link', label: s.link },
   { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
 ];
+// Where we'd start, by what they need: test, monthly, campaign, not sure
+const sugg = [
+  `${test.name} · ${a.from} ${fmt(test.launch, lang)} ${cur}`,
+  `${a.mixed} · ${a.from} ${fmt(monthly[0].launch, lang)} ${cur} ${a.month}`,
+  `${campaign.name} · ${a.from} ${fmt(campaign.launch, lang)} ${cur}`,
+  `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
+];
 const wa = site.whatsapp.replace('https://wa.me/', '');
 ---
 <div class="apply">
   <div class="lead stack" style="--gap:22px">
-    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`}>{a.title}</H>
-    <p class="text text-l soft rv" style="--d:80ms">{a.sub}</p>
-    <div class="direct rv" style="--d:160ms">
+    <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
+    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{a.title}</H>
+    <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
+
+    <aside class="brief rv" style="--d:180ms" data-brief aria-live="polite">
+      <p class="label">{a.brief}</p>
+      <ul>
+        {a.rows.map((r, k) => (
+          <li><button type="button" data-jump={k}><span class="k">{r}</span><span class="v" data-v={k} data-empty={a.empty}>{a.empty}</span></button></li>
+        ))}
+      </ul>
+      <div class="sugg" data-sugg hidden>
+        <p class="label">{a.start}</p>
+        <p class="pick" data-sugg-text></p>
+      </div>
+    </aside>
+
+    <div class="direct rv" style="--d:240ms">
       <p class="label">{a.direct}</p>
       <a href={site.whatsapp} rel="noopener">{ct.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} action="https://api.web3forms.com/submit" method="POST" novalidate>
+  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} data-sugg-list={JSON.stringify(sugg)} action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
     <input type="hidden" name="subject" value="New application from the Gecko website" />
     <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <div class="top">
-      <p class="small soft" aria-live="polite"><span data-count>1</span> {a.of} 4</p>
+      <p class="count" aria-live="polite"><b data-count>1</b> / 4</p>
       <div class="bars" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
     </div>
 
     {choices.map((list, k) => (
       <fieldset class="step" data-step={k} hidden={k !== 0}>
-        <legend class="h3">{a.steps[k]}</legend>
-        <input type="hidden" name={['sells', 'needs', 'spend'][k]} data-label={a.steps[k]} />
-        <div class="chips">{list.map((o) => <button type="button" class="chip" data-pick={o}>{o}</button>)}</div>
+        <legend>{a.steps[k]}</legend>
+        <input type="hidden" name={['sells', 'needs', 'spend'][k]} data-label={a.rows[k]} />
+        <div class="chips">{list.map((o, j) => <button type="button" class="chip" data-pick={o} data-i={j}>{emoji[k][j] && <span class="em" aria-hidden="true">{emoji[k][j]}</span>}{o}</button>)}</div>
       </fieldset>
     ))}
 
     <fieldset class="step" data-step="3" hidden>
-      <legend class="h3">{a.steps[3]}</legend>
+      <legend>{a.steps[3]}</legend>
       <div class="fields">
         {fields.map((f) => (
           <div class="field">
@@ -63,28 +92,41 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
       <p class="h3" data-msg data-sent={a.done} data-error={s.error}>{a.done}</p>
-      <button type="button" class="link" data-again>{a.again}</button>
+      <button type="button" class="again" data-again>{a.again}</button>
     </div>
 
-    <button type="button" class="back small" data-back hidden>← {a.back}</button>
+    <button type="button" class="back" data-back hidden>← {a.back}</button>
   </form>
 </div>
 
 <script>
   document.querySelectorAll<HTMLFormElement>('[data-flow]').forEach((form) => {
+    const root = form.closest('.apply')!;
     const steps = [...form.querySelectorAll<HTMLElement>('[data-step]')];
     const bars = [...form.querySelectorAll('.bars i')];
     const count = form.querySelector<HTMLElement>('[data-count]')!;
     const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
     const done = form.querySelector<HTMLElement>('[data-done]')!;
     const msg = form.querySelector<HTMLElement>('[data-msg]')!;
+    const vals = [...root.querySelectorAll<HTMLElement>('[data-v]')];
+    const suggBox = root.querySelector<HTMLElement>('[data-sugg]')!;
+    const suggText = root.querySelector<HTMLElement>('[data-sugg-text]')!;
+    const suggList: string[] = JSON.parse(form.dataset.suggList!);
     let at = 0;
 
+    const setVal = (k: number, text: string) => {
+      const v = vals[k]; const had = v.classList.contains('set');
+      v.textContent = text || v.dataset.empty!; v.classList.toggle('set', !!text);
+      if (text && !had) v.animate([{ transform: 'scale(.9)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 360, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+    };
+    const showSugg = (i: number) => {
+      suggText.textContent = suggList[i]; suggBox.hidden = false;
+      suggBox.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    };
+
     const go = (n: number, dir = 1) => {
-      steps[at].hidden = true;
-      at = n;
-      const el = steps[at];
-      el.hidden = false;
+      steps[at].hidden = true; at = n;
+      const el = steps[at]; el.hidden = false;
       el.animate([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
       bars.forEach((b, i) => b.classList.toggle('on', i <= at));
       count.textContent = String(at + 1);
@@ -93,22 +135,27 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
     };
 
     form.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((chip) => chip.addEventListener('click', () => {
-      const step = chip.closest<HTMLElement>('[data-step]')!;
+      const step = chip.closest<HTMLElement>('[data-step]')!; const k = Number(step.dataset.step);
       step.querySelectorAll('.chip').forEach((x) => x.classList.toggle('picked', x === chip));
       step.querySelector<HTMLInputElement>('input[type=hidden]')!.value = chip.dataset.pick!;
-      setTimeout(() => go(Number(step.dataset.step) + 1), 260);
+      setVal(k, chip.dataset.pick!);
+      if (k === 1) showSugg(Number(chip.dataset.i));
+      setTimeout(() => go(k + 1), 300);
     }));
+    root.querySelectorAll<HTMLButtonElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { if (!done.hidden) return; go(Number(b.dataset.jump), Number(b.dataset.jump) < at ? -1 : 1); }));
     back.addEventListener('click', () => go(at - 1, -1));
+    form.querySelector<HTMLInputElement>('#flow-name')?.addEventListener('input', (e) => setVal(3, (e.target as HTMLInputElement).value.trim()));
 
     const finish = (text: string) => {
       steps[at].hidden = true; back.hidden = true;
       msg.textContent = text; done.hidden = false;
-      done.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+      done.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
       bars.forEach((b) => b.classList.add('on'));
     };
     form.querySelector('[data-again]')!.addEventListener('click', () => {
       form.reset(); form.querySelectorAll('.chip').forEach((x) => x.classList.remove('picked'));
-      done.hidden = true; at = 0; steps.forEach((s, i) => (s.hidden = i !== 0)); go(0, -1);
+      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true;
+      done.hidden = true; steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
 
     form.addEventListener('submit', async (e) => {
@@ -117,7 +164,7 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
       const empty = inputs.find((i) => !i.value.trim());
       if (empty) { empty.focus(); empty.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       if (!form.dataset.key) {
-        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].map((el) => `${el.dataset.label} ${el.value}`);
+        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].map((el) => `${el.dataset.label}: ${el.value}`);
         open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
         finish(msg.dataset.sent!);
         return;
@@ -132,32 +179,48 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
 </script>
 
 <style>
-  .apply { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+  .apply { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
   .lead .h1, .lead .h2 { max-width: 12ch; }
+  .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 8px 14px; border: var(--line) solid var(--ink); border-radius: 999px; background: var(--white); font-weight: 700; font-size: 14px; }
+  .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0 rgba(24, 22, 20, .4); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(24, 22, 20, 0); } 100% { box-shadow: 0 0 0 0 rgba(24, 22, 20, 0); } }
+
+  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: var(--shadow-2); }
+  .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .brief li + li { border-top: 1px dashed rgba(24, 22, 20, .3); }
+  .brief li button { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .brief .k { font-weight: 700; font-size: 14px; }
+  .brief .v { font-size: 15px; text-align: right; color: var(--ink-2); }
+  .brief .v.set { color: var(--ink); font-weight: 700; }
+  .brief li button:hover .k { text-decoration: underline; text-underline-offset: 3px; }
+  .sugg { display: grid; gap: 4px; padding: 12px 14px; background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--r-sm); }
+  .sugg .pick { margin: 0; font-weight: 700; }
   .direct { display: grid; gap: 6px; }
-  .direct .label { margin-bottom: 4px; }
-  .direct a { text-decoration: none; font-weight: 500; }
+  .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .flow { position: relative; display: grid; gap: 24px; padding: clamp(24px, 3vw, 40px); min-height: 440px; align-content: start; background: var(--paper); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }
+
+  .flow { position: relative; display: grid; gap: 26px; padding: clamp(24px, 3vw, 44px); min-height: 480px; align-content: start; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-  .top p { margin: 0; }
-  .bars { display: grid; grid-template-columns: repeat(4, 36px); gap: 6px; }
-  .bars i { height: 6px; border-radius: 4px; background: var(--white); border: 1px solid var(--ink); position: relative; overflow: hidden; }
+  .count { margin: 0; font-weight: 700; font-size: 15px; }
+  .count b { font-size: 28px; letter-spacing: -0.04em; }
+  .bars { display: grid; grid-template-columns: repeat(4, 40px); gap: 6px; }
+  .bars i { height: 8px; border-radius: 6px; background: var(--white); border: 1px solid var(--ink); position: relative; overflow: hidden; }
   .bars i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease); }
   .bars i.on::after { transform: none; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
-  .step legend { padding: 0; margin-bottom: 22px; font-size: clamp(24px, 2.4vw, 32px); }
+  .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { font: 500 16px/1 var(--font); padding: 14px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 200ms var(--ease), transform 300ms var(--spring), border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
+  .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
+  .chip .em { font-size: 20px; line-height: 1; }
   .chip:hover { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .chip.picked { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .send { justify-self: start; }
-  .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font-family: var(--font); font-weight: 500; }
+  .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--ink); }
-  .done { justify-items: start; align-content: center; min-height: 300px; }
-  .ok { width: 56px; height: 56px; border-radius: 50%; background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%231D1D1F' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 40px no-repeat; }
-  .done .link { background: none; border: 0; padding: 0; cursor: pointer; font: 600 15px var(--font); color: var(--ink-2); }
+  .done { justify-items: start; align-content: center; min-height: 320px; }
+  .ok { width: 64px; height: 64px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23181614' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 44px no-repeat; }
+  .again { background: none; border: 0; padding: 0; cursor: pointer; font: 700 15px var(--font); color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; }
   @media (max-width: 860px) { .apply { grid-template-columns: 1fr; } .flow { min-height: 0; } }
-  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } .chip { font-size: 15px; padding: 12px 15px; } }
+  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } .chip { font-size: 15px; padding: 12px 14px; } }
 </style>
