@@ -14,7 +14,6 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
-const p = c(lang).process;
 ---
 <Base lang={lang}>
   <section class="on-pink hero">
@@ -40,7 +39,7 @@ const p = c(lang).process;
   </section>
 
   {ads.length > 0 && (
-    <section class="on-white screen">
+    <section class="on-black screen">
       <div class="wrap">
         <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.workTitle}</h2><p class="text sub">{h.workSub}</p></div><a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a></div>
         <div class="reels scroll-row">
@@ -49,34 +48,6 @@ const p = c(lang).process;
       </div>
     </section>
   )}
-
-  <section class="on-yellow screen">
-    <div class="wrap">
-      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.stepsTitle}</h2></div><a class="btn" href={href(lang, 'process')}>{h.stepsCta} <span class="arr" aria-hidden="true">→</span></a></div>
-      <div class="proc" data-proc>
-        <ol class="tabs" role="tablist">
-          {p.steps.map((st, i) => (
-            <li>
-              <button type="button" role="tab" id={`pt${i}`} aria-controls={`pp${i}`} aria-selected={i === 0 ? 'true' : 'false'}>
-                <span class="n">{i + 1}</span><span class="t">{st.t}</span><span class="w">{st.when}</span>
-              </button>
-            </li>
-          ))}
-        </ol>
-        <div class="stage">
-          {p.steps.map((st, i) => (
-            <article class="detail" role="tabpanel" id={`pp${i}`} aria-labelledby={`pt${i}`} hidden={i !== 0}>
-              <p class="label">{p.label} {i + 1} · {st.when}</p>
-              <h3 class="h2">{st.t}</h3>
-              <p class="text text-l">{st.d}</p>
-              <div class="yours"><span>{p.yours}</span><p class="text">{st.you}</p></div>
-            </article>
-          ))}
-          <div class="meter" aria-hidden="true"><i data-meter></i></div>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <section class="on-white screen">
     <div class="wrap">
@@ -116,35 +87,6 @@ const p = c(lang).process;
   <ReelViewer lang={lang} />
 </Base>
 
-<script>
-  // The process steps: click one, or let it run. It stops once you touch it.
-  document.querySelectorAll<HTMLElement>('[data-proc]').forEach((el) => {
-    const tabs = [...el.querySelectorAll<HTMLButtonElement>('[role=tab]')];
-    const panels = [...el.querySelectorAll<HTMLElement>('[role=tabpanel]')];
-    const meter = el.querySelector<HTMLElement>('[data-meter]')!;
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let at = 0, auto = !still, timer = 0;
-    const pick = (n: number) => {
-      at = (n + tabs.length) % tabs.length;
-      tabs.forEach((t, i) => t.setAttribute('aria-selected', String(i === at)));
-      panels.forEach((p, i) => (p.hidden = i !== at));
-      meter.style.transition = 'none'; meter.style.transform = 'scaleX(0)';
-      if (auto) requestAnimationFrame(() => requestAnimationFrame(() => { meter.style.transition = 'transform 5200ms linear'; meter.style.transform = 'scaleX(1)'; }));
-    };
-    const run = () => { clearInterval(timer); if (auto) timer = window.setInterval(() => pick(at + 1), 5200); };
-    const stop = () => { auto = false; clearInterval(timer); meter.style.transition = 'none'; meter.style.transform = 'scaleX(0)'; };
-    tabs.forEach((t, i) => {
-      t.addEventListener('click', () => { stop(); pick(i); });
-      t.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { stop(); pick(at + 1); tabs[at].focus(); e.preventDefault(); }
-        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { stop(); pick(at - 1); tabs[at].focus(); e.preventDefault(); }
-      });
-    });
-    // Only run while it is on screen.
-    new IntersectionObserver(([e]) => { if (e.isIntersecting && auto) { pick(at); run(); } else { clearInterval(timer); } }, { threshold: .5 }).observe(el);
-  });
-</script>
-
 <style>
   .hero { min-height: 100svh; display: grid; grid-template-rows: 1fr auto; padding-top: calc(var(--header) + 40px); overflow: hidden; }
   .hero-in { align-self: end; display: grid; gap: clamp(28px, 3vw, 44px); padding-bottom: clamp(32px, 5vh, 56px); }
@@ -171,34 +113,6 @@ const p = c(lang).process;
 
   .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
 
-  .proc { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(16px, 2.4vw, 32px); align-items: stretch; }
-  .tabs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .tabs button { width: 100%; display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; padding: 12px 16px 12px 12px; text-align: left; font-family: var(--font); color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-  .tabs button:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
-  .tabs .n { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--yellow); border: var(--line) solid var(--ink); color: var(--ink); }
-  .tabs .t { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
-  .tabs .w { font-size: 13px; opacity: .65; white-space: nowrap; }
-  .tabs button[aria-selected='true'] { background: var(--ink); color: #fff; transform: translateX(10px); }
-  .tabs button[aria-selected='true'] .n { background: var(--pink); }
-  .stage { position: relative; display: grid; align-content: center; padding: clamp(28px, 3.6vw, 56px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
-  .detail { display: grid; gap: 18px; align-content: center; animation: swap 460ms var(--ease); }
-  .detail .h2 { font-size: clamp(34px, 4vw, 60px); }
-  .detail .text { max-width: 34rem; }
-  @keyframes swap { from { opacity: 0; transform: translateY(14px); } }
-  .yours { display: grid; gap: 4px; padding: 14px 16px; max-width: 34rem; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--yellow-soft); }
-  .yours span { font-weight: 700; font-size: 14px; }
-  .yours p { margin: 0; }
-  .meter { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: rgba(24, 22, 20, .08); }
-  .meter i { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: left; }
-  @media (max-width: 900px) {
-    .proc { grid-template-columns: 1fr; }
-    .tabs { grid-template-columns: repeat(6, 44px); gap: 6px; overflow-x: auto; }
-    .tabs button { grid-template-columns: 1fr; padding: 4px; justify-items: center; border-radius: 50%; }
-    .tabs .t, .tabs .w { display: none; }
-    .tabs button[aria-selected='true'] { transform: none; }
-    .tabs .n { width: 34px; height: 34px; }
-  }
-
   .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(14px, 2vw, 28px); align-items: stretch; }
   .vs .col { display: grid; gap: 14px; align-content: start; padding: clamp(22px, 2.8vw, 36px); border: var(--line) solid var(--ink); border-radius: var(--r-lg); }
   .vs ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
@@ -206,12 +120,12 @@ const p = c(lang).process;
   .cap { margin: 0; font-weight: 700; font-size: 14px; }
   .no { background: var(--pink-soft); color: var(--ink-2); }
   .no .em { font-size: 22px; line-height: 1; text-align: center; filter: grayscale(.6); }
-  .no li { text-decoration: line-through; text-decoration-color: rgba(24, 22, 20, .35); text-decoration-thickness: 1px; }
+  .no li { text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .35); text-decoration-thickness: 1px; }
   .yes { background: var(--yellow-soft); box-shadow: 8px 8px 0 var(--ink); }
   .yes li { font-weight: 700; }
   .yes li:hover { background: var(--yellow); transform: translateX(6px); }
   .yes .btn { justify-self: start; margin-top: 10px; }
-  .v { width: 28px; height: 28px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23181614' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat; transition: transform 300ms var(--spring); }
+  .v { width: 28px; height: 28px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat; transition: transform 300ms var(--spring); }
   .yes li:hover .v { transform: scale(1.15) rotate(-8deg); }
   @media (max-width: 860px) { .vs { grid-template-columns: 1fr; } }
 

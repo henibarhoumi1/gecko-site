@@ -9,7 +9,7 @@
   --white: #FFFFFF;
   --paper: #FFFFFF;
   --cream: #FFFFFF;
-  --ink: #181614;
+  --ink: #000000;
   --ink-2: #5E5953;
   --hair: var(--ink);
 
@@ -32,7 +32,7 @@
   --r-sm: 10px;
   --r: 14px;
   --r-lg: 18px;
-  --shadow-1: 0 1px 0 rgba(24, 22, 20, .06);
+  --shadow-1: 0 1px 0 rgba(0, 0, 0, .06);
   --shadow-2: 5px 5px 0 var(--ink);
   --shadow-3: 0 40px 90px -24px rgba(10, 10, 10, .5);
   --ease: cubic-bezier(.2, .7, .2, 1);
@@ -51,7 +51,7 @@ body { font-family: var(--font); background: var(--paper); color: var(--ink); -w
 .on-paper  { background: var(--cream); color: var(--ink); }
 .on-pink   { background: var(--pink); color: var(--ink); }
 .on-yellow { background: var(--yellow); color: var(--ink); }
-.on-pink .soft, .on-yellow .soft { color: rgba(24, 22, 20, .72); }
+.on-pink .soft, .on-yellow .soft { color: rgba(0, 0, 0, .72); }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--white); color: var(--ink); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
 .btn.primary { background: var(--ink); color: #fff; }
@@ -59,3 +59,6 @@ body { font-family: var(--font); background: var(--paper); color: var(--ink); -w
 .rule { border: 0; border-top: var(--line) solid var(--ink); margin: 0; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+.on-black { background: #000; color: #fff; --reel-edge: rgba(255, 255, 255, .28); --reel-shadow: var(--pink); }
+.on-black .soft, .on-black .head .sub { color: rgba(255, 255, 255, .7); }

@@ -1,26 +1,40 @@
 ---
-// A reel as a rounded card. Plays muted on hover (desktop); a click opens it in the viewer.
+// A reel as a rounded card, no captions. Tilts toward the pointer and plays muted on hover; a click opens it in the viewer.
 import type { Ad } from '../data/work';
 import type { Locale } from '../i18n/strings';
 interface Props { ad: Ad; i: number; lang: Locale; eager?: boolean }
 const { ad, i, lang, eager = false } = Astro.props;
 ---
-<button type="button" class="reel" data-reel={i} data-src={ad.src} data-poster={ad.poster} data-title={ad.angle[lang]}>
+<button type="button" class="reel" data-reel={i} data-src={ad.src} data-poster={ad.poster} aria-label={`Reel ${i + 1}`}>
   <span class="media">
     <img src={ad.poster} alt="" loading={eager ? 'eager' : 'lazy'} />
     <video muted loop playsinline preload="none" src={ad.src}></video>
-    <span class="shade" aria-hidden="true"></span>
-    <span class="title">{ad.angle[lang]}</span>
   </span>
 </button>
+<script>
+  // Pointer tilt, fine pointers only.
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll<HTMLElement>('.reel').forEach((card) => {
+      const m = card.querySelector<HTMLElement>('.media')!;
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        m.style.setProperty('--ry', `${x * 12}deg`); m.style.setProperty('--rx', `${-y * 12}deg`);
+        m.classList.add('tilt');
+      });
+      card.addEventListener('pointerleave', () => {
+        m.classList.remove('tilt'); m.style.removeProperty('--rx'); m.style.removeProperty('--ry');
+      });
+    });
+  }
+</script>
 <style>
-  .reel { width: 100%; display: block; padding: 0; background: none; border: 0; color: #fff; text-align: left; cursor: pointer; font-family: var(--font); border-radius: var(--r); }
-  .media { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; border-radius: var(--r); background: #111; border: var(--line) solid var(--ink); transform: translateZ(0); transition: transform 600ms var(--ease), box-shadow 600ms var(--ease); }
-  .reel:hover .media, .reel:focus-visible .media { transform: translate(-5px, -6px); box-shadow: 8px 9px 0 var(--ink); }
-  .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
+  .reel { width: 100%; display: block; padding: 0; background: none; border: 0; text-align: left; cursor: pointer; border-radius: var(--r); perspective: 900px; }
+  .media { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; border-radius: var(--r); background: #000; border: var(--line) solid var(--reel-edge, var(--ink)); transform: translateZ(0) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform 600ms var(--ease), box-shadow 600ms var(--ease); }
+  .media.tilt { transition: transform 120ms linear, box-shadow 600ms var(--ease); }
+  .reel:hover .media, .reel:focus-visible .media { box-shadow: 8px 9px 0 var(--reel-shadow, var(--ink)); }
+  .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #000; transition: transform 900ms var(--ease); }
   .reel:hover img { transform: scale(1.04); }
   .media video { opacity: 0; transition: opacity 400ms var(--ease); }
   .reel.live .media video { opacity: 1; }
-  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .55)); }
-  .title { position: absolute; left: 16px; right: 16px; bottom: 16px; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, .3); }
 </style>
