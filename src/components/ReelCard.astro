@@ -16,15 +16,15 @@ const { ad, i, lang, eager = false } = Astro.props;
 </button>
 <style>
   .reel { width: 100%; display: block; padding: 0; background: none; border: 0; color: #fff; text-align: left; cursor: pointer; font-family: var(--font); border-radius: var(--r); }
-  .media { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; border-radius: var(--r); background: #111; box-shadow: var(--shadow-2); transform: translateZ(0); transition: transform 600ms var(--ease), box-shadow 600ms var(--ease); }
-  .reel:hover .media, .reel:focus-visible .media { transform: translateY(-8px) scale(1.015); box-shadow: var(--shadow-3); }
+  .media { position: relative; display: block; aspect-ratio: 9 / 16; overflow: hidden; border-radius: var(--r); background: #111; border: var(--line) solid var(--ink); transform: translateZ(0); transition: transform 600ms var(--ease), box-shadow 600ms var(--ease); }
+  .reel:hover .media, .reel:focus-visible .media { transform: translate(-5px, -6px); box-shadow: 8px 9px 0 var(--ink); }
   .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 900ms var(--ease); }
   .reel:hover img { transform: scale(1.04); }
   .media video { opacity: 0; transition: opacity 400ms var(--ease); }
   .reel.live .media video { opacity: 1; }
   .shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, .55)); }
-  .play { position: absolute; left: 14px; bottom: 14px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255, 255, 255, .22); -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%); border: 1px solid rgba(255, 255, 255, .3); transition: transform 400ms var(--spring), background 300ms var(--ease); }
+  .play { position: absolute; left: 14px; bottom: 14px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); background: var(--yellow); border: var(--line) solid var(--ink); transition: transform 400ms var(--spring), background 300ms var(--ease); }
   .play svg { margin-left: 2px; }
-  .reel:hover .play { transform: scale(1.12); background: rgba(255, 255, 255, .35); }
+  .reel:hover .play { transform: scale(1.12); background: var(--pink); }
   .title { position: absolute; left: 70px; right: 14px; bottom: 25px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, .3); }
 </style>

@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import MatCta from '../../components/MatCta.astro';
+import Cta from '../../components/Cta.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -57,23 +57,23 @@ const n = c(lang).nav;
     </div>
   </section>
 
-  <MatCta lang={lang} title={a.cta} />
+  <Cta lang={lang} title={a.cta} />
 </Base>
 
 <style>
   .page-head .h1 { max-width: 15ch; }
   .heni-sec { padding-bottom: var(--section); }
   .heni { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
-  .photo { margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: hidden; background: #F2F2F0; box-shadow: var(--shadow-2); }
+  .photo { margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: hidden; background: #fff; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--pink); }
   .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: transform 1200ms var(--ease); }
   .photo:hover img { transform: scale(1.03); }
   .mono { height: 100%; display: grid; place-items: center; font-weight: 700; font-size: 160px; letter-spacing: -0.06em; }
   .role { margin: -6px 0 0; font-weight: 600; }
   .why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .why li { display: grid; gap: 12px; align-content: start; padding: clamp(26px, 3vw, 40px); background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
-  .why li.in:hover { transform: translateY(-6px); box-shadow: var(--shadow-2); }
+  .why li { display: grid; gap: 12px; align-content: start; padding: clamp(26px, 3vw, 40px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .why li.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
   .dot { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; margin-bottom: 12px; }
-  .dot.p { background: var(--pink); } .dot.y { background: var(--yellow); } .dot.g { background: var(--mat); color: #fff; } .dot.i { background: var(--ink); color: #fff; }
+  .dot.p { background: var(--pink); } .dot.y { background: var(--yellow); } .dot.g { background: var(--pink-soft); } .dot.i { background: var(--ink); color: #fff; }
   .why .text { max-width: 30rem; }
   .feel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .big-ticks { gap: 18px; font-size: var(--body-l); font-weight: 500; }

@@ -28,17 +28,18 @@ const p = c(lang).plans;
 </div>
 <style>
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
-  .plan { display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
-  .plan.in:hover { transform: translateY(-6px); box-shadow: var(--shadow-2); }
+  .plan { display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .plan.in:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
   .plan header { display: grid; gap: 6px; }
   .reels { margin: 0; display: flex; align-items: baseline; gap: 8px; }
   .reels .n { font-weight: 700; font-size: clamp(40px, 3.8vw, 56px); line-height: 1; letter-spacing: -0.05em; }
-  .price { display: grid; gap: 4px; padding-block: 14px; border-block: 1px solid var(--hair); }
+  .price { display: grid; gap: 4px; padding-block: 14px; border-block: var(--line) solid var(--ink); }
   .price p { margin: 0; }
   .from { font-size: 14px; font-weight: 500; }
   .num { font-weight: 700; font-size: clamp(28px, 2.4vw, 36px); letter-spacing: -0.03em; }
-  .plan .btn { width: 100%; box-shadow: none; }
-  .dark { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: var(--shadow-2); }
+  .plan .btn { width: 100%; }
+  .dark { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 6px 6px 0 var(--pink); }
+  .dark.in:hover { box-shadow: 10px 10px 0 var(--pink); }
   .dark .soft { color: rgba(255, 255, 255, .62); }
   .dark .price { border-color: rgba(255, 255, 255, .14); }
   .dark :global(.ticks-list li::before) { background-color: var(--yellow); }

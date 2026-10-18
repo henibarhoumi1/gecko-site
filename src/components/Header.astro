@@ -93,32 +93,31 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   .site-header { position: fixed; top: 14px; left: 0; right: 0; z-index: 50; padding-inline: var(--gutter); transition: transform 420ms var(--ease); pointer-events: none; }
   .site-header.hide { transform: translateY(-160%); }
   .bar { pointer-events: auto; position: relative; z-index: 2; max-width: 1080px; margin-inline: auto; height: 56px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 20px; color: var(--ink);
-    background: rgba(255, 255, 255, .72); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
-    border: 1px solid rgba(0, 0, 0, .06); border-radius: 999px; box-shadow: 0 1px 1px rgba(0, 0, 0, .03), 0 10px 30px -10px rgba(0, 0, 0, .14); transition: box-shadow 300ms var(--ease), background 300ms var(--ease); }
-  .scrolled .bar { background: rgba(255, 255, 255, .82); }
+    background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 3px 3px 0 var(--ink); }
   .brand { display: block; width: 64px; flex: none; }
   .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; }
-  .links a { display: block; font-weight: 500; font-size: 14px; letter-spacing: -0.01em; color: var(--ink-2); text-decoration: none; padding: 8px 14px; border-radius: 999px; transition: color 200ms var(--ease), background 200ms var(--ease); }
-  .links a:hover { color: var(--ink); background: rgba(0, 0, 0, .04); }
-  .links a[aria-current='page'] { color: var(--ink); background: rgba(0, 0, 0, .06); }
+  .links a { display: block; position: relative; isolation: isolate; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; text-decoration: none; padding: 8px 14px; }
+  .links a::before { content: ''; position: absolute; left: 10px; right: 10px; bottom: 9px; height: 8px; border-radius: 2px; background: var(--yellow); z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 260ms var(--ease); }
+  .links a:hover::before, .links a[aria-current='page']::before { transform: scaleX(1); }
+  .links a[aria-current='page']::before { background: var(--pink); }
   .right { display: flex; align-items: center; gap: 6px; }
   .lang { position: relative; }
   .globe { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: background 200ms var(--ease); }
-  .globe:hover, .globe[aria-expanded='true'] { background: rgba(0, 0, 0, .06); }
-  .pop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 196px; padding: 6px; display: grid; gap: 2px; background: rgba(255, 255, 255, .9); -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px); border: 1px solid rgba(0, 0, 0, .06); border-radius: 16px; box-shadow: var(--shadow-2); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity 180ms var(--ease), transform 220ms var(--ease); }
+  .globe:hover, .globe[aria-expanded='true'] { background: var(--yellow); }
+  .pop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 196px; padding: 6px; display: grid; gap: 2px; background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 4px 4px 0 var(--ink); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity 180ms var(--ease), transform 220ms var(--ease); }
   .pop.in { opacity: 1; transform: none; }
   .pop a { display: grid; grid-template-columns: 24px 1fr 16px; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 500; }
-  .pop a:hover { background: rgba(0, 0, 0, .05); }
+  .pop a:hover { background: var(--yellow-soft); }
   .flag { font-size: 18px; line-height: 1; }
   .on { width: 10px; height: 6px; border-left: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg) translateY(-2px); opacity: 0; }
   [aria-checked='true'] .on { opacity: 1; }
   .cta { padding: 11px 18px; font-size: 14px; box-shadow: none; }
-  .burger { display: none; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(0, 0, 0, .05); position: relative; cursor: pointer; }
+  .burger { display: none; width: 40px; height: 40px; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--yellow); position: relative; cursor: pointer; }
   .burger i { position: absolute; left: 12px; right: 12px; height: 1.6px; border-radius: 2px; background: var(--ink); transition: transform 300ms var(--ease); }
   .burger i:first-of-type { top: 16px; } .burger i:last-of-type { top: 23px; }
   .open .burger i:first-of-type { transform: translateY(3.5px) rotate(45deg); }
   .open .burger i:last-of-type { transform: translateY(-3.5px) rotate(-45deg); }
-  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 1; padding: calc(56px + 56px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(255, 255, 255, .94); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); opacity: 0; transition: opacity 320ms var(--ease); }
+  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 1; padding: calc(56px + 56px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; background: var(--pink); opacity: 0; transition: opacity 320ms var(--ease); }
   .menu.in { opacity: 1; }
   .menu ul { list-style: none; margin: 0; padding: 0; }
   .menu li { opacity: 0; transform: translateY(14px); transition: opacity 360ms var(--ease), transform 360ms var(--ease); transition-delay: calc(var(--i) * 50ms + 80ms); }
@@ -126,7 +125,7 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   .menu li a { display: block; padding: 12px 0; text-decoration: none; font-weight: 700; font-size: clamp(36px, 10vw, 52px); letter-spacing: -0.04em; line-height: 1.05; }
   .menu-foot { display: grid; gap: 16px; }
   .langs { display: flex; gap: 8px; }
-  .langs a { flex: 1; text-align: center; padding: 12px; border-radius: 12px; background: var(--paper); text-decoration: none; font-weight: 500; }
+  .langs a { flex: 1; text-align: center; padding: 12px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--paper); text-decoration: none; font-weight: 500; }
   .langs a[aria-current] { background: var(--ink); color: #fff; }
   @media (max-width: 860px) {
     .links, .cta { display: none; }

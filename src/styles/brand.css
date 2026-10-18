@@ -1,83 +1,64 @@
-/* Gecko brand tokens. Mostly white with soft depth; pink and yellow are accents, the green cutting mat is the stage.
-   One sans family for words, the typewriter face only for the logo world. */
+/* Gecko brand tokens. Warm white pages, pink and yellow blocks, ink lines, a typewriter face for labels.
+   Corners are softened and depth comes from a small ink offset, not from blur. */
 
+@font-face { font-family: "Courier Prime"; src: url("/fonts/courier-prime-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Courier Prime"; src: url("/fonts/courier-prime-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
 
 :root {
   --pink: #F4C1C4;
+  --pink-soft: #FBE3E4;
   --yellow: #F3DF9E;
+  --yellow-soft: #FAF0CF;
   --white: #FFFFFF;
-  --paper: #F5F4F0;
-  --ink: #1D1D1F;
-  --ink-2: #6E6E73;
-  --hair: rgba(0, 0, 0, .08);
-
-  /* cutting mat */
-  --mat: #2E6B4E;
-  --mat-deep: #245840;
-  --mat-minor: rgba(255, 255, 255, .07);
-  --mat-major: rgba(255, 255, 255, .16);
+  --paper: #FCFAF5;
+  --cream: #F6F1E6;
+  --ink: #181614;
+  --ink-2: #5E5953;
+  --hair: var(--ink);
 
   /* older names still used by components */
   --black: var(--ink);
   --blue: var(--ink);
 
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --type: "Courier Prime", "Courier New", Courier, monospace;
 
   --h1: clamp(46px, 7.6vw, 120px);
-  --h2: clamp(36px, 5vw, 72px);
+  --h2: clamp(36px, 5vw, 76px);
   --h3: clamp(20px, 1.9vw, 26px);
   --body-l: 19px;
   --body: 17px;
   --small: 14px;
-  --label: 14px;
+  --label: 12px;
 
-  --line: 1px;
-  --r-sm: 14px;
-  --r: 22px;
-  --r-lg: 32px;
-  --shadow-1: 0 1px 2px rgba(20, 24, 22, .04), 0 4px 14px rgba(20, 24, 22, .05);
-  --shadow-2: 0 2px 6px rgba(20, 24, 22, .05), 0 22px 44px -16px rgba(20, 24, 22, .22);
-  --shadow-3: 0 40px 90px -24px rgba(10, 14, 12, .45);
+  --line: 1.5px;
+  --r-sm: 10px;
+  --r: 14px;
+  --r-lg: 18px;
+  --shadow-1: 0 1px 0 rgba(24, 22, 20, .06);
+  --shadow-2: 5px 5px 0 var(--ink);
+  --shadow-3: 0 40px 90px -24px rgba(10, 10, 10, .5);
   --ease: cubic-bezier(.2, .7, .2, 1);
   --spring: cubic-bezier(.34, 1.4, .64, 1);
 }
 
-body { font-family: var(--font); background: var(--white); color: var(--ink); -webkit-font-smoothing: antialiased; }
+body { font-family: var(--font); background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
 
-.h1, .h2, .h3 { font-family: var(--font); font-weight: 700; line-height: 1.02; letter-spacing: -0.04em; margin: 0; text-wrap: balance; }
+.h1, .h2, .h3 { font-family: var(--font); font-weight: 700; line-height: 1; letter-spacing: -0.04em; margin: 0; text-wrap: balance; }
 .h1 { font-size: var(--h1); } .h2 { font-size: var(--h2); } .h3 { font-size: var(--h3); letter-spacing: -0.02em; line-height: 1.15; }
 .text { font-weight: 400; font-size: var(--body); line-height: 1.5; }
-.label { font-family: var(--font); font-weight: 600; font-size: var(--label); letter-spacing: -0.005em; color: var(--ink-2); }
+.label { font-family: var(--type); font-weight: 700; font-size: var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink); }
 .soft { color: var(--ink-2); }
 
-.on-white  { background: var(--white); color: var(--ink); }
-.on-paper  { background: var(--paper); color: var(--ink); }
-.on-pink   { background: var(--pink);   color: var(--ink); }
+.on-white  { background: var(--paper); color: var(--ink); }
+.on-paper  { background: var(--cream); color: var(--ink); }
+.on-pink   { background: var(--pink); color: var(--ink); }
 .on-yellow { background: var(--yellow); color: var(--ink); }
+.on-pink .soft, .on-yellow .soft { color: rgba(24, 22, 20, .72); }
 
-/* The green cutting mat: a fine grid, a bolder grid every 5 squares and a ruler along the top edge. */
-.mat {
-  position: relative; color: #fff; background-color: var(--mat); border-radius: var(--r-lg); overflow: hidden; isolation: isolate;
-  background-image:
-    linear-gradient(var(--mat-major) 1px, transparent 1px), linear-gradient(90deg, var(--mat-major) 1px, transparent 1px),
-    linear-gradient(var(--mat-minor) 1px, transparent 1px), linear-gradient(90deg, var(--mat-minor) 1px, transparent 1px);
-  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
-  background-position: -1px -1px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), var(--shadow-2);
-}
-.mat::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px; z-index: -1;
-  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .45) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(255, 255, 255, .7) 0 1px, transparent 1px 120px);
-  background-size: 100% 8px, 100% 14px; background-repeat: no-repeat; }
-.mat::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(135deg, transparent calc(50% - .5px), rgba(255, 255, 255, .1) 50%, transparent calc(50% + .5px)), radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, .08), transparent 60%); }
-.mat .label, .mat .soft { color: rgba(255, 255, 255, .72); }
-
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 24px; font: 600 15px/1 var(--font); letter-spacing: -0.01em; border: 1px solid rgba(0, 0, 0, .1); border-radius: 999px; background: var(--white); color: var(--ink); text-decoration: none; box-shadow: var(--shadow-1); transition: background 200ms var(--ease), color 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-.btn.primary { background: var(--ink); color: #fff; border-color: var(--ink); }
-.btn.ghost { background: transparent; box-shadow: none; }
-.mat .btn.ghost { color: #fff; border-color: rgba(255, 255, 255, .35); }
-.rule { border: 0; border-top: 1px solid var(--hair); margin: 0; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--white); color: var(--ink); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
+.btn.primary { background: var(--ink); color: #fff; }
+.btn.ghost { background: transparent; }
+.rule { border: 0; border-top: var(--line) solid var(--ink); margin: 0; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

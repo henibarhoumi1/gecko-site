@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import CaseCard from '../../components/CaseCard.astro';
 import ReelCard from '../../components/ReelCard.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
-import MatCta from '../../components/MatCta.astro';
+import Cta from '../../components/Cta.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -38,7 +38,7 @@ const w = c(lang).work;
     </section>
   )}
 
-  <MatCta lang={lang} title={w.next} />
+  <Cta lang={lang} title={w.next} />
   <ReelViewer lang={lang} />
 </Base>
 <style>

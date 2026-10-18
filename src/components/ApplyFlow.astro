@@ -138,19 +138,19 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
   .direct .label { margin-bottom: 4px; }
   .direct a { text-decoration: none; font-weight: 500; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
-  .flow { position: relative; display: grid; gap: 24px; padding: clamp(24px, 3vw, 40px); min-height: 440px; align-content: start; background: var(--white); color: var(--ink); border-radius: var(--r-lg); box-shadow: var(--shadow-3); }
+  .flow { position: relative; display: grid; gap: 24px; padding: clamp(24px, 3vw, 40px); min-height: 440px; align-content: start; background: var(--paper); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
   .top p { margin: 0; }
   .bars { display: grid; grid-template-columns: repeat(4, 36px); gap: 6px; }
-  .bars i { height: 4px; border-radius: 4px; background: var(--paper); position: relative; overflow: hidden; }
+  .bars i { height: 6px; border-radius: 4px; background: var(--white); border: 1px solid var(--ink); position: relative; overflow: hidden; }
   .bars i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease); }
   .bars i.on::after { transform: none; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-size: clamp(24px, 2.4vw, 32px); }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { font: 500 16px/1 var(--font); padding: 14px 18px; border-radius: 999px; border: 1px solid var(--hair); background: var(--paper); color: var(--ink); cursor: pointer; transition: background 200ms var(--ease), transform 300ms var(--spring), border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
-  .chip:hover { background: var(--white); border-color: rgba(0, 0, 0, .2); box-shadow: var(--shadow-1); transform: translateY(-2px); }
-  .chip.picked { background: var(--ink); color: #fff; border-color: var(--ink); transform: scale(1.04); }
+  .chip { font: 500 16px/1 var(--font); padding: 14px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 200ms var(--ease), transform 300ms var(--spring), border-color 200ms var(--ease), box-shadow 200ms var(--ease); }
+  .chip:hover { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+  .chip.picked { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .send { justify-self: start; }
   .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font-family: var(--font); font-weight: 500; }

@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import MatCta from '../../components/MatCta.astro';
+import Cta from '../../components/Cta.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -52,7 +52,7 @@ const p = c(lang).process;
     </div>
   </section>
 
-  <MatCta lang={lang} title={p.cta} />
+  <Cta lang={lang} title={p.cta} />
 </Base>
 
 <script>
@@ -77,17 +77,17 @@ const p = c(lang).process;
   .rail { position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px; border-radius: 2px; background: var(--paper); }
   .rail i { position: absolute; inset: 0; background: var(--ink); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
   .step { position: relative; padding-left: 80px; }
-  .dot { position: absolute; left: 0; top: 24px; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--white); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: background 400ms var(--ease), color 400ms var(--ease), transform 400ms var(--spring); }
+  .dot { position: absolute; left: 0; top: 24px; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--white); border: var(--line) solid var(--ink); transition: background 400ms var(--ease), color 400ms var(--ease), transform 400ms var(--spring); }
   .passed .dot { background: var(--ink); color: #fff; transform: scale(1.06); }
-  .card { display: grid; gap: 12px; padding: clamp(24px, 3vw, 36px); background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--hair); box-shadow: var(--shadow-1); transition: box-shadow 500ms var(--ease); }
+  .card { display: grid; gap: 12px; padding: clamp(24px, 3vw, 36px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: box-shadow 500ms var(--ease); }
   .passed .card { box-shadow: var(--shadow-2); }
   .t { font-size: clamp(26px, 3vw, 38px); letter-spacing: -0.03em; }
   .yours { display: grid; gap: 4px; margin-top: 8px; padding: 14px 16px; border-radius: var(--r-sm); background: color-mix(in srgb, var(--yellow) 45%, white); }
   .yours span { font-size: 13px; font-weight: 600; }
   .yours p { margin: 0; }
   .promises { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .promises li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 2.6vw, 34px); background: var(--white); border-radius: var(--r-lg); border: 1px solid var(--hair); box-shadow: var(--shadow-1); }
-  .tick { width: 40px; height: 40px; border-radius: 12px; margin-bottom: 8px; background: var(--mat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 28px no-repeat; }
+  .promises li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 2.6vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
+  .tick { width: 40px; height: 40px; border-radius: 12px; margin-bottom: 8px; background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 28px no-repeat; }
   @media (max-width: 760px) {
     .rail { left: 17px; } .dot { width: 36px; height: 36px; font-size: 14px; top: 26px; }
     .step { padding-left: 52px; }
