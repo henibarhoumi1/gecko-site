@@ -1,14 +1,17 @@
 ---
 import Logo from './Logo.astro';
 import Stamp from './Stamp.astro';
+import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const s = t(lang);
+const n = c(lang).nav;
 ---
 <footer class="site-footer on-pink">
+  <div class="wrap"><a class="big" href={href(lang, 'apply')}>{n.apply} <span aria-hidden="true">→</span></a></div>
   <div class="wrap inner">
     <div class="stack" style="--gap:16px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
@@ -16,10 +19,10 @@ const s = t(lang);
       <p class="text muted">{s.footer.address}</p>
     </div>
     <nav class="col" aria-label="Footer">
-      <a href={href(lang, 'work')}>{s.nav.work}</a>
+      <a href={href(lang, 'work')}>{n.work}</a>
+      <a href={href(lang, 'process')}>{n.process}</a>
       <a href={href(lang, 'offers')}>{s.nav.offers}</a>
       <a href={href(lang, 'about')}>{s.nav.about}</a>
-      <a href={href(lang, 'apply')}>{s.nav.apply}</a>
       <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
     <div class="col last">
@@ -35,7 +38,10 @@ const s = t(lang);
   </div>
 </footer>
 <style>
-  .site-footer { padding-block: clamp(56px, 8vw, 96px) 28px; }
+  .site-footer { padding-block: clamp(56px, 8vw, 96px) 28px; border-top: var(--line) solid var(--ink); }
+  .big { display: block; font-weight: 700; font-size: clamp(48px, 10vw, 160px); letter-spacing: -0.055em; line-height: .9; text-decoration: none; padding-bottom: clamp(40px, 6vw, 80px); margin-bottom: clamp(40px, 6vw, 80px); border-bottom: var(--line) solid var(--ink); }
+  .big span { display: inline-block; transition: transform 360ms var(--ease); }
+  .big:hover span { transform: translateX(16px); }
   .inner { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 40px; }
   .brand { display: block; width: 120px; }
   .col { display: grid; align-content: start; gap: 10px; }

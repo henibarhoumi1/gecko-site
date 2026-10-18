@@ -1,53 +1,102 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { t, type Locale } from '../../i18n/strings';
+import Stamp from '../../components/Stamp.astro';
+import Mark from '../../components/Mark.astro';
+import { type Locale } from '../../i18n/strings';
+import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { photos, portrait } from '../../data/work';
+import { portrait } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
-const s = t(lang);
-const a = s.about;
+const a = c(lang).about;
+const n = c(lang).nav;
 ---
-<Base lang={lang} title={a.title}>
+<Base lang={lang} title={n.about}>
   <section class="on-pink page-head">
-    <div class="wrap stack" style="--gap:24px">
-      <h1 class="h1">{a.title}</h1>
-      <p class="text text-l measure">{a.intro}</p>
+    <div class="wrap head-in">
+      <p class="label rv">{n.about}</p>
+      <h1 class="h1 rv" style="--d:80ms">{a.title}</h1>
+      <p class="text text-l measure rv" style="--d:180ms">{a.sub}</p>
     </div>
   </section>
-  <section class="on-pink section top0">
+
+  <section class="on-white section">
+    <div class="wrap">
+      <div class="head rv"><p class="label">{a.whyLabel}</p></div>
+      <ol class="why">
+        {a.why.map((w, i) => (
+          <li class="rv" style={`--d:${i * 80}ms`}>
+            <span class="num">0{i + 1}</span>
+            <h2 class="h3">{w.t}</h2>
+            <p class="text">{w.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="on-yellow section">
     <div class="wrap heni">
-      {portrait.src && (
-        <div class="frame r45">{portrait.src ? <img src={portrait.src} alt={a.heniTitle} /> : <div class="empty"><span class="label muted">{s.sample} · {a.heniEmpty}</span></div>}</div>
-      )}
-      <div class="stack" style="--gap:16px">
-        <h2 class="h3">{a.heniTitle}</h2>
+      <div class="card rv">
+        {portrait.src
+          ? <img src={portrait.src} alt={a.heniTitle} />
+          : <div class="mono"><span>g.]</span></div>}
+        <Stamp kind="round" tilt={-12} class="seal" />
+      </div>
+      <div class="stack rv" style="--gap:18px; --d:120ms">
+        <p class="label">{a.heniLabel}</p>
+        <h2 class="h2">{a.heniTitle}</h2>
+        <p class="label">{a.heniRole}</p>
         <p class="text text-l measure">{a.heniText}</p>
       </div>
     </div>
   </section>
-  {photos.length > 0 && (
-    <section class="on-white section">
-      <div class="wrap">
-        <div class="head"><p class="label">{a.crewTitle}</p></div>
-        <div class="grid g3 scroll-row">
-          {photos.map((p) => <div class="frame r45">{p.src ? <img src={p.src} alt={p.alt[lang]} loading="lazy" /> : <div class="empty"><span class="label muted">{s.sample} · {a.crewEmpty}</span></div>}</div>)}
-        </div>
-      </div>
-    </section>
-  )}
-  <section class="on-yellow section">
+
+  <section class="on-white section">
+    <div class="wrap feel">
+      <div class="head rv"><p class="label">{a.feelLabel}</p></div>
+      <ul class="ticks">
+        {a.feel.map((f, i) => <li class="rv" style={`--d:${i * 70}ms`}><Mark kind="tick" class="tick" /><span class="h3">{f}</span></li>)}
+      </ul>
+      <div class="base rv"><p class="label">{a.baseLabel}</p><p class="text text-l">{a.base}</p></div>
+    </div>
+  </section>
+
+  <section class="on-pink section">
     <div class="wrap cta">
-      <h2 class="h2">{s.work.next}</h2>
-      <a class="btn primary" href={href(lang, 'apply')}>{s.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+      <h2 class="h2 rv">{a.cta}</h2>
+      <a class="btn primary rv" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
     </div>
   </section>
 </Base>
+
 <style>
-  .top0 { padding-top: 0; }
-  .heni { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); align-items: end; background: linear-gradient(var(--ink), var(--ink)) no-repeat center top / calc(100% - 2 * var(--gutter)) var(--line); padding-top: 32px; }
-  .heni .frame { max-width: 440px; }
+  .head-in { display: grid; gap: 24px; }
+  .head-in .h1 { max-width: 15ch; }
+  .why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: var(--line) solid var(--ink); }
+  .why li { display: grid; gap: 14px; align-content: start; padding: clamp(28px, 4vw, 56px) clamp(20px, 3vw, 48px) clamp(28px, 4vw, 56px) 0; border-bottom: var(--line) solid var(--ink); transition: background 300ms var(--ease); }
+  .why li:nth-child(even) { padding-left: clamp(20px, 3vw, 48px); border-left: var(--line) solid var(--ink); }
+  .why li:hover { background: var(--pink); }
+  .why li:nth-child(4n+2):hover, .why li:nth-child(4n+3):hover { background: var(--yellow); }
+  .why .num { font-weight: 700; font-size: clamp(48px, 6vw, 88px); line-height: .85; letter-spacing: -0.05em; }
+  .why .h3 { font-size: clamp(26px, 2.8vw, 40px); }
+  .why .text { max-width: 30rem; margin: 0; }
+  .heni { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(40px, 7vw, 120px); align-items: center; }
+  .card { position: relative; aspect-ratio: 4 / 5; background: var(--pink); border: var(--line) solid var(--ink); box-shadow: 10px 12px 0 var(--ink); transform: rotate(-2deg); }
+  .card img { width: 100%; height: 100%; object-fit: cover; }
+  .mono { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: clamp(96px, 14vw, 200px); letter-spacing: -0.06em; }
+  .card :global(.seal) { position: absolute; right: -36px; bottom: -36px; width: 140px; }
+  .ticks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 48px; }
+  .ticks li { display: grid; grid-template-columns: 44px 1fr; gap: 16px; align-items: start; }
+  .ticks :global(.tick) { width: 40px; }
+  .base { margin-top: clamp(56px, 8vw, 112px); display: grid; gap: 10px; max-width: 40rem; }
   .cta { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-  @media (max-width: 760px) { .heni { grid-template-columns: 1fr; } }
+  .cta .h2 { max-width: 14ch; }
+  @media (max-width: 760px) {
+    .why, .ticks, .heni { grid-template-columns: 1fr; }
+    .why li:nth-child(even) { padding-left: 0; border-left: 0; }
+    .card { max-width: 320px; }
+    .card :global(.seal) { right: -16px; width: 110px; }
+  }
 </style>

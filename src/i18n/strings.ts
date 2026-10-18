@@ -132,9 +132,9 @@ export const strings = {
     },
     offers: {
       title: 'Offers and prices',
-      intro: 'Every new client starts with a Test Campaign. After that, you pick the monthly plan that fits your ad budget.',
+      intro: 'Every new client starts with a Test Campaign. Then pick the month that matches how much you want to post.',
       launch: 'Launch price', standard: 'Standard', month: '/ month', currency: 'TND',
-      reels: 'reels a month', fits: 'Fits an ad budget of',
+      reels: 'reels a month',
       launchNote: 'Launch prices are for our first 5 clients, until 31 December 2026. On monthly plans they cover the first 3 months. Prices exclude VAT.',
       startTitle: 'Start here',
       monthlyTitle: 'Monthly plans',
@@ -312,9 +312,9 @@ export const strings = {
     },
     offers: {
       title: 'Offres et prix',
-      intro: 'Chaque nouveau client commence par un Test Campaign. Ensuite, vous choisissez le plan mensuel adapté à votre budget publicitaire.',
+      intro: 'Chaque nouveau client commence par un Test Campaign. Ensuite, choisissez le mois qui correspond à ce que vous voulez publier.',
       launch: 'Prix de lancement', standard: 'Standard', month: '/ mois', currency: 'TND',
-      reels: 'reels par mois', fits: 'Pour un budget pub de',
+      reels: 'reels par mois',
       launchNote: 'Prix de lancement réservés à nos 5 premiers clients, jusqu’au 31 décembre 2026. Sur les plans mensuels, ils couvrent les 3 premiers mois. Prix hors TVA.',
       startTitle: 'Pour commencer',
       monthlyTitle: 'Plans mensuels',

@@ -1,38 +1,35 @@
 // Source of truth: gecko/plan/offers-and-pricing.md. Prices in TND, excluding VAT.
 type L = { en: string; fr: string };
-export type Offer = { key: string; name: string; reels?: number; fits?: L; items: { en: string[]; fr: string[] }; launch: number; standard: number; monthly: boolean };
+export type Offer = { key: string; name: string; reels?: number; items: { en: string[]; fr: string[] }; launch: number; standard: number; monthly: boolean };
 
 export const test: Offer = {
   key: 'test', name: 'Test Campaign', launch: 1000, standard: 1500, monthly: false,
   items: {
-    en: ['3 angles, 1 shoot day', '3 reels with 2 hooks each (6 ads)', '1 carousel', 'Results read-out after 14 days'],
-    fr: ['3 angles, 1 journée de tournage', '3 reels avec 2 accroches chacun (6 pubs)', '1 carrousel', 'Bilan des résultats après 14 jours'],
+    en: ['3 angles, 1 production day', '3 reels with 2 hooks each (6 ads)', '1 carousel', 'Results read-out after 14 days'],
+    fr: ['3 angles, 1 journée de production', '3 reels avec 2 accroches chacun (6 pubs)', '1 carrousel', 'Bilan des résultats après 14 jours'],
   },
 };
 
 export const monthly: Offer[] = [
   {
-    key: 'regular', name: 'Regular', reels: 6, launch: 1800, standard: 2300, monthly: true,
-    fits: { en: 'under 1,500 TND / month', fr: 'moins de 1 500 TND / mois' },
+    key: 'regular', name: 'Regular', reels: 8, launch: 2200, standard: 2800, monthly: true,
     items: {
-      en: ['1 shoot day', '2 hooks per reel', '4 statics', '1 carousel', 'Monthly report'],
-      fr: ['1 journée de tournage', '2 accroches par reel', '4 visuels fixes', '1 carrousel', 'Rapport mensuel'],
+      en: ['1 production day', '2 hooks per reel', '4 statics', '1 carousel', 'Monthly report'],
+      fr: ['1 journée de production', '2 accroches par reel', '4 visuels fixes', '1 carrousel', 'Rapport mensuel'],
     },
   },
   {
-    key: 'premier', name: 'Premier', reels: 10, launch: 2800, standard: 3600, monthly: true,
-    fits: { en: '1,500 to 3,000 TND / month', fr: '1 500 à 3 000 TND / mois' },
+    key: 'pro', name: 'Pro', reels: 12, launch: 3000, standard: 3800, monthly: true,
     items: {
-      en: ['2 shoot days', '2 hooks per reel', '6 statics', '2 recut ads from your footage', '2 carousels', 'Monthly report'],
-      fr: ['2 journées de tournage', '2 accroches par reel', '6 visuels fixes', '2 pubs remontées à partir de vos images', '2 carrousels', 'Rapport mensuel'],
+      en: ['1 production day', '2 hooks per reel', '6 statics', '2 recut ads from your footage', '2 carousels', 'Monthly report'],
+      fr: ['1 journée de production', '2 accroches par reel', '6 visuels fixes', '2 pubs remontées à partir de vos images', '2 carrousels', 'Rapport mensuel'],
     },
   },
   {
-    key: 'premium', name: 'Premium', reels: 16, launch: 4500, standard: 5800, monthly: true,
-    fits: { en: 'over 3,000 TND / month', fr: 'plus de 3 000 TND / mois' },
+    key: 'premium', name: 'Premium', reels: 20, launch: 4800, standard: 6200, monthly: true,
     items: {
-      en: ['3 shoot days', '3 hooks per reel', '10 statics', '4 recut ads from your footage', '2 carousels', 'We run your Meta ads (budget up to 5,000 TND)', 'Weekly report'],
-      fr: ['3 journées de tournage', '3 accroches par reel', '10 visuels fixes', '4 pubs remontées à partir de vos images', '2 carrousels', 'On gère vos pubs Meta (budget jusqu’à 5 000 TND)', 'Rapport hebdomadaire'],
+      en: ['1 production day', '3 hooks per reel', '10 statics', '4 recut ads from your footage', '2 carousels', 'We run your Meta ads (budget up to 5,000 TND)', 'Weekly report'],
+      fr: ['1 journée de production', '3 accroches par reel', '10 visuels fixes', '4 pubs remontées à partir de vos images', '2 carrousels', 'On gère vos pubs Meta (budget jusqu’à 5 000 TND)', 'Rapport hebdomadaire'],
     },
   },
 ];
@@ -40,8 +37,8 @@ export const monthly: Offer[] = [
 export const campaign: Offer = {
   key: 'campaign', name: 'Campaign', launch: 3600, standard: 4800, monthly: false,
   items: {
-    en: ['For a launch, an opening, Ramadan or a season', 'Concept and 2 shoot days', '10 reels, 2 carousels'],
-    fr: ['Pour un lancement, une ouverture, Ramadan ou une saison', 'Concept et 2 journées de tournage', '10 reels, 2 carrousels'],
+    en: ['For a launch, an opening, Ramadan or a season', 'Concept and 1 production day', '10 reels, 2 carousels'],
+    fr: ['Pour un lancement, une ouverture, Ramadan ou une saison', 'Concept et 1 journée de production', '10 reels, 2 carrousels'],
   },
 };
 

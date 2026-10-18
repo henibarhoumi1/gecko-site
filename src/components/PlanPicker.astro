@@ -1,0 +1,76 @@
+---
+// Tabs for the monthly plans: pick one, see what's in it and what a reel costs.
+import { t, type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import { monthly, fmt } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const o = t(lang).offers;
+const h = c(lang).home;
+const start = 1;
+---
+<div class="picker" data-picker>
+  <div class="tabs" role="tablist">
+    {monthly.map((p, i) => (
+      <button type="button" role="tab" aria-selected={i === start ? 'true' : 'false'} data-tab={i}>
+        <span class="h3">{p.name}</span>
+        <span class="label">{p.reels} reels</span>
+      </button>
+    ))}
+  </div>
+  {monthly.map((p, i) => (
+    <div class="panel" role="tabpanel" data-panel={i} hidden={i !== start}>
+      <div class="count">
+        <p class="n" data-n={p.reels}>{p.reels}</p>
+        <p class="label">{o.reels}</p>
+      </div>
+      <ul class="items">{p.items[lang].map((it) => <li>{it}</li>)}</ul>
+      <div class="price">
+        <p class="num">{fmt(p.launch, lang)} <span class="cur">{o.currency} {o.month}</span></p>
+        <p class="small"><s>{fmt(p.standard, lang)} {o.currency}</s> · {Math.round(p.launch / p.reels!)} {o.currency} {h.perReel}</p>
+        <a class="btn primary" href={href(lang, 'apply')}>{c(lang).nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  ))}
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-picker]').forEach((el) => {
+    const tabs = [...el.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const panels = [...el.querySelectorAll<HTMLElement>('[data-panel]')];
+    const pick = (k: number) => {
+      tabs.forEach((t, j) => t.setAttribute('aria-selected', String(j === k)));
+      panels.forEach((p, j) => (p.hidden = j !== k));
+      const n = panels[k].querySelector<HTMLElement>('[data-n]')!; const to = Number(n.dataset.n); const t0 = performance.now();
+      const step = (now: number) => { const q = Math.min(1, (now - t0) / 500); n.textContent = String(Math.round(to * (1 - Math.pow(1 - q, 3)))); if (q < 1) requestAnimationFrame(step); };
+      requestAnimationFrame(step);
+    };
+    tabs.forEach((t, k) => t.addEventListener('click', () => pick(k)));
+  });
+</script>
+<style>
+  .picker { border: var(--line) solid var(--ink); background: var(--white); box-shadow: 6px 6px 0 var(--ink); }
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: var(--line) solid var(--ink); }
+  .tabs button { display: grid; gap: 6px; text-align: left; padding: 20px 22px; background: transparent; border: 0; color: var(--ink); cursor: pointer; font-family: var(--font); transition: background 220ms var(--ease); }
+  .tabs button + button { border-left: var(--line) solid var(--ink); }
+  .tabs button:hover { background: var(--pink); }
+  .tabs button[aria-selected='true'] { background: var(--yellow); }
+  .panel { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: clamp(24px, 5vw, 72px); padding: clamp(24px, 4vw, 48px); align-items: start; }
+  .panel:not([hidden]) { animation: rise 420ms var(--ease); }
+  .count .n { margin: 0; font-weight: 700; font-size: clamp(96px, 13vw, 200px); line-height: .82; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .count .label { margin-top: 12px; }
+  .items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; align-self: center; }
+  .items li { padding-left: 28px; position: relative; font-size: var(--body-l); line-height: 1.35; }
+  .items li::before { content: ''; position: absolute; left: 2px; top: .3em; width: 12px; height: 7px; border-left: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); }
+  .price { display: grid; gap: 8px; justify-items: start; align-self: end; }
+  .price p { margin: 0; }
+  .num { font-weight: 700; font-size: clamp(40px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.03em; white-space: nowrap; }
+  .cur { font-size: .3em; letter-spacing: 0; }
+  .price .btn { margin-top: 12px; }
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+  @media (max-width: 860px) {
+    .panel { grid-template-columns: 1fr; }
+    .tabs button { padding: 14px; }
+    .count { display: flex; align-items: baseline; gap: 12px; }
+  }
+</style>
