@@ -87,7 +87,7 @@ a { color: inherit; }
 
 /* Horizontal scroll rows on phones instead of stacking full-width 9:16 frames */
 @media (max-width: 600px) {
-  .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
+  .scroll-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 10px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); scrollbar-width: none; }
   .scroll-row::-webkit-scrollbar { display: none; }
   .scroll-row > * { flex: 0 0 64%; scroll-snap-align: start; }
 }

@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Ad from '../../components/Ad.astro';
+import Reel from '../../components/Reel.astro';
 import CaseCard from '../../components/CaseCard.astro';
 import AdDemo from '../../components/AdDemo.astro';
 import { t, type Locale } from '../../i18n/strings';
@@ -18,23 +18,32 @@ const s = t(lang);
       <p class="text text-l measure">{s.work.intro}</p>
     </div>
   </section>
-  {cases.length > 0 ? (
+  {ads.length > 0 && (
     <section class="on-pink section" style="padding-top:0">
+      <div class="wrap">
+        <div class="head"><p class="label">{s.home.grid}</p><div class="side"><h2 class="h2">{s.home.gridTitle}</h2><p class="small">{s.home.gridHint}</p></div></div>
+        <div class="grid g4 pieces">
+          {ads.map((a, i) => (
+            <article class="stack" style="--gap:14px">
+              <Reel ad={a} lang={lang} n={i + 1} />
+              <h3 class="h3">{a.idea?.[lang]}</h3>
+              <p class="text small">{a.how?.[lang]}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+  {cases.length > 0 && (
+    <section class="on-white section">
       <div class="wrap">
         <div class="head"><p class="label">{s.home.cases}</p><div class="side"><h2 class="h2">{s.home.casesTitle}</h2></div></div>
         <div class="grid g3">{cases.map((c) => <CaseCard c={c} lang={lang} />)}</div>
       </div>
     </section>
-  ) : (
-    <section class="on-pink section" style="padding-top:0"><div class="wrap empty-state"><p class="h3 measure">{s.work.empty}</p><AdDemo lang={lang} /></div></section>
   )}
-  {ads.length > 0 && (
-    <section class="on-white section">
-      <div class="wrap">
-        <div class="head"><p class="label">{s.home.grid}</p><div class="side"><h2 class="h2">{s.home.gridTitle}</h2><p class="small muted">{s.home.gridHint}</p></div></div>
-        <div class="grid g4">{ads.map((a) => <Ad ad={a} lang={lang} />)}</div>
-      </div>
-    </section>
+  {ads.length === 0 && cases.length === 0 && (
+    <section class="on-pink section" style="padding-top:0"><div class="wrap empty-state"><p class="h3 measure">{s.work.empty}</p><AdDemo lang={lang} /></div></section>
   )}
   <section class="on-yellow section">
     <div class="wrap cta">

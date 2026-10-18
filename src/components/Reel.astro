@@ -1,0 +1,51 @@
+---
+// A real 9:16 ad that plays muted while on screen. Tap the frame or the button for sound;
+// turning one on mutes the others.
+import type { Ad } from '../data/work';
+import { t, type Locale } from '../i18n/strings';
+interface Props { ad: Ad; lang: Locale; n?: number; caption?: boolean }
+const { ad, lang, n, caption = true } = Astro.props;
+const h = t(lang).home;
+---
+<figure class="reel" data-reel>
+  <div class="phone">
+    <video src={ad.src} poster={ad.poster} muted loop playsinline preload="metadata" aria-label={`${ad.brand}: ${ad.angle[lang]}`}></video>
+    <button type="button" class="snd label" aria-pressed="false" data-on={h.mute} data-off={h.sound}>{h.sound}</button>
+  </div>
+  {caption && (
+    <figcaption class="label">{n ? <span class="n">{String(n).padStart(2, '0')}</span> : null}{ad.brand} · {ad.angle[lang]}</figcaption>
+  )}
+</figure>
+<script>
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reels = [...document.querySelectorAll<HTMLElement>('[data-reel]')];
+  const setSound = (r: HTMLElement, on: boolean) => {
+    const v = r.querySelector('video')!; const b = r.querySelector<HTMLButtonElement>('.snd')!;
+    v.muted = !on; b.setAttribute('aria-pressed', String(on)); b.textContent = (on ? b.dataset.on : b.dataset.off) ?? '';
+    r.classList.toggle('loud', on);
+  };
+  reels.forEach((r) => {
+    const v = r.querySelector('video')!;
+    const toggle = () => {
+      const on = v.muted;
+      reels.forEach((o) => o !== r && setSound(o, false));
+      setSound(r, on);
+      if (on) { v.currentTime = 0; v.play().catch(() => {}); }
+    };
+    r.querySelector('.phone')!.addEventListener('click', toggle);
+    if (!still) new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) v.play().catch(() => {}); else { v.pause(); setSound(r, false); }
+    }, { threshold: 0.35 }).observe(r);
+  });
+</script>
+<style>
+  .reel { margin: 0; display: grid; gap: 10px; }
+  .phone { position: relative; aspect-ratio: 9 / 16; overflow: hidden; background: var(--ink); border: var(--line) solid var(--ink); cursor: pointer; }
+  .phone video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .snd { position: absolute; right: 10px; bottom: 10px; z-index: 2; font-family: var(--type); background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); padding: 7px 10px; cursor: pointer; }
+  .snd::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border: 1.5px solid currentColor; border-radius: 50%; vertical-align: 0; }
+  .loud .snd { background: var(--yellow); }
+  .loud .snd::before { background: currentColor; }
+  figcaption { display: flex; gap: 10px; }
+  .n { font-weight: 700; }
+</style>
