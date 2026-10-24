@@ -2,7 +2,7 @@
 
 :root {
   --gutter: clamp(16px, 4vw, 48px);
-  --section: clamp(88px, 11vw, 160px);
+  --section: clamp(72px, 8vw, 128px);
   --max: 1280px;
   --header: 80px;
 }
@@ -27,6 +27,7 @@ a { color: inherit; }
 
 /* A section that fills one screen on desktop, content centred. */
 .screen { min-height: 100svh; display: grid; align-content: center; padding-block: clamp(88px, 11vh, 128px); }
+.screen > * { min-width: 0; }
 @media (max-width: 760px), (max-height: 640px) { .screen { min-height: 0; padding-block: var(--section); } }
 
 

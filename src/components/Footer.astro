@@ -4,15 +4,15 @@ import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
-interface Props { lang: Locale }
-const { lang } = Astro.props;
+interface Props { lang: Locale; cta?: boolean }
+const { lang, cta = true } = Astro.props;
 const s = t(lang);
 const n = c(lang).nav;
 ---
 <footer class="site-footer">
-  <div class="wrap">
+  {cta && <div class="wrap">
     <a class="big" href={href(lang, 'apply')}>{n.apply} <span aria-hidden="true">→</span></a>
-  </div>
+  </div>}
   <div class="wrap inner">
     <div class="stack" style="--gap:14px">
       <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
@@ -33,10 +33,10 @@ const n = c(lang).nav;
       <span class="dim">{s.footer.address}</span>
     </div>
   </div>
-  <div class="wrap base">
+  <div class="wrap"><div class="base">
     <p class="small dim">© {new Date().getFullYear()} Gecko</p>
     <a class="small dim" href={href(lang, 'legal')}>{s.footer.legal}</a>
-  </div>
+  </div></div>
 </footer>
 <style>
   .site-footer { padding-block: clamp(64px, 8vw, 112px) 28px; background: var(--ink); color: #fff; }

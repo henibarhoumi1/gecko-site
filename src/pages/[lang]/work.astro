@@ -13,7 +13,7 @@ const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const w = c(lang).work;
 ---
-<Base lang={lang} title={w.title}>
+<Base lang={lang} footerCta={false} title={w.title}>
   <section class="page-head">
     <div class="wrap stack center" style="--gap:18px">
       <h1 class="h1 rv">{w.title}</h1>

@@ -164,7 +164,6 @@ export const strings = {
     },
     faq: [
       { q: 'Who is this for?', a: 'Brands that sell online and already run Meta ads, or are ready to, and personal brands: founders, doctors, coaches.' },
-      { q: 'Why start with a Test Campaign?', a: 'One shoot, 3 angles and 6 ads tell us both what sells for you before you commit to anything monthly.' },
       { q: 'Why 3 months minimum on monthly plans?', a: 'Testing takes time. The first month finds what works, the next two make more of it.' },
       { q: 'Do I need to be on camera?', a: 'No. We can film your team, a creator, real customers or only the product. If you want to be on camera, we’ll coach you.' },
       { q: 'Who owns the ads?', a: 'You can use every delivered piece on your own channels and ads. Raw footage stays with us unless you buy it.' },
@@ -174,6 +173,7 @@ export const strings = {
       { q: 'Do you work outside Tunisia?', a: 'Yes, remotely or on location. Ask for a quote.' },
       { q: 'What do you need from me before the shoot?', a: 'Your product, a quick call, and a yes on each script. We bring the crew, lights and sound.' },
       { q: 'Can you use footage I already have?', a: 'Yes. Pro and Creative Partner plans include recut ads made from your existing footage.' },
+      { q: 'Why start with a Test Campaign?', a: 'One shoot, 3 angles and 6 ads tell us both what sells for you before you commit to anything monthly.' },
       { q: 'Which formats do I get?', a: 'Every piece is cut in 9:16 and 4:5, with subtitles and licensed music.' },
       { q: 'Can I see the scripts first?', a: 'Always. Nothing is shot before you approve the script.' },
       { q: 'What if an ad doesn’t perform?', a: 'We say so and change it. We look at the results with you and make more of what works.' },
@@ -350,7 +350,6 @@ export const strings = {
     },
     faq: [
       { q: 'C’est pour qui ?', a: 'Les marques qui vendent en ligne et font déjà de la pub Meta, ou sont prêtes à commencer, et les marques personnelles : fondateurs, médecins, coachs.' },
-      { q: 'Pourquoi commencer par un Test Campaign ?', a: 'Un tournage, 3 angles et 6 pubs nous montrent ce qui vend pour vous avant tout engagement mensuel.' },
       { q: 'Pourquoi 3 mois minimum sur les plans mensuels ?', a: 'Tester prend du temps. Le premier mois trouve ce qui marche, les deux suivants en font plus.' },
       { q: 'Dois-je apparaître à l’écran ?', a: 'Non. Nous pouvons filmer votre équipe, un créateur, de vrais clients ou seulement le produit. Si vous voulez apparaître, on vous guide.' },
       { q: 'À qui appartiennent les pubs ?', a: 'Vous pouvez utiliser chaque pièce livrée sur vos réseaux et dans vos pubs. Les rushes restent chez nous, sauf achat.' },
@@ -360,6 +359,7 @@ export const strings = {
       { q: 'Travaillez-vous hors de Tunisie ?', a: 'Oui, à distance ou sur place. Demandez un devis.' },
       { q: 'Que faut-il vous donner avant le tournage ?', a: 'Votre produit, un appel rapide et un feu vert sur chaque script. On apporte l’équipe, la lumière et le son.' },
       { q: 'Pouvez-vous utiliser mes images existantes ?', a: 'Oui. Les plans Pro et Creative Partner incluent des pubs remontées à partir de vos images.' },
+      { q: 'Pourquoi commencer par un Test Campaign ?', a: 'Un tournage, 3 angles et 6 pubs nous montrent ce qui vend pour vous avant tout engagement mensuel.' },
       { q: 'Quels formats je reçois ?', a: 'Chaque pièce est montée en 9:16 et 4:5, sous-titrée, avec une musique sous licence.' },
       { q: 'Puis-je voir les scripts avant ?', a: 'Toujours. Rien n’est tourné avant que vous validiez le script.' },
       { q: 'Et si une pub ne performe pas ?', a: 'On le dit et on la change. On regarde les résultats avec vous et on fait plus de ce qui marche.' },

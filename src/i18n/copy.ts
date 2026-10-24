@@ -102,7 +102,7 @@ const en = {
       { t: 'The edit', when: '7 days later', d: 'Every ad cut in 9:16 and 4:5, with subtitles and licensed music.', you: 'One round of changes per piece.' },
       { t: 'The read-out', when: 'After 14 days', d: 'We look at the numbers with you, keep the winners and plan what to make more of.', you: 'Share access to your ad results.' },
     ],
-    promiseLabel: 'What you can count on',
+    promiseLabel: 'What you can count on.',
     promises: [
       { t: 'Nothing is shot before you say yes.', d: 'Scripts come first, always.' },
       { t: 'Ads in 7 days.', d: 'Every piece, 7 days after the shoot.' },
@@ -113,7 +113,7 @@ const en = {
   about: {
     title: 'A small studio that cares what your ads sell.',
     sub: 'Gecko writes, shoots and edits video ads for brands that sell online. We’re small on purpose: the team that writes your ad is the team that shoots it and cuts it.',
-    whyLabel: 'Why brands pick Gecko',
+    whyLabel: 'Why brands pick Gecko.',
     why: [
       { t: 'Ideas before cameras', d: 'Every ad starts from a written angle, a real reason to buy. The camera comes after.' },
       { t: 'One team, start to finish', d: 'No hand-offs between agencies. The idea you approve is the one that ends up on screen.' },
@@ -124,7 +124,7 @@ const en = {
     heniTitle: 'Heni Barhoumi',
     heniRole: 'Founder and director',
     heniText: 'Heni started Gecko so brands get ads made with the care of a short film and the discipline of a sales pitch. Behind every ad is a team that obsesses over the first three seconds and the last cut.',
-    feelLabel: 'Working with us',
+    feelLabel: 'Working with us.',
     feel: ['You approve every script', 'One production day, a month of ads', 'Ads delivered 7 days after the shoot', 'Results read together after 14 days'],
     baseLabel: 'Based in Tunis',
     base: 'We shoot across Grand Tunis and edit for brands in the Gulf and Europe.',
@@ -245,7 +245,7 @@ const fr: Copy = {
       { t: 'Le montage', when: '7 jours après', d: 'Chaque pub montée en 9:16 et 4:5, sous-titrée, avec une musique sous licence.', you: 'Une série de retouches par pièce.' },
       { t: 'Le bilan', when: 'Après 14 jours', d: 'On regarde les chiffres avec vous, on garde les gagnantes et on prévoit la suite.', you: 'Partagez l’accès à vos résultats.' },
     ],
-    promiseLabel: 'Ce sur quoi vous pouvez compter',
+    promiseLabel: 'Ce sur quoi vous pouvez compter.',
     promises: [
       { t: 'Rien n’est tourné sans votre accord.', d: 'Les scripts d’abord, toujours.' },
       { t: 'Des pubs en 7 jours.', d: 'Chaque pièce, 7 jours après le tournage.' },
@@ -256,7 +256,7 @@ const fr: Copy = {
   about: {
     title: 'Un petit studio qui se soucie de ce que vos pubs vendent.',
     sub: 'Gecko écrit, tourne et monte des pubs vidéo pour les marques qui vendent en ligne. Petit par choix : l’équipe qui écrit votre pub est celle qui la tourne et la monte.',
-    whyLabel: 'Pourquoi les marques choisissent Gecko',
+    whyLabel: 'Pourquoi les marques choisissent Gecko.',
     why: [
       { t: 'L’idée avant la caméra', d: 'Chaque pub part d’un angle écrit, une vraie raison d’acheter. La caméra vient après.' },
       { t: 'Une équipe, du début à la fin', d: 'Aucun passage de relais entre agences. L’idée validée est celle qui arrive à l’écran.' },
@@ -267,7 +267,7 @@ const fr: Copy = {
     heniTitle: 'Heni Barhoumi',
     heniRole: 'Fondateur et réalisateur',
     heniText: 'Heni a créé Gecko pour que les marques aient des pubs faites avec le soin d’un court métrage et la rigueur d’un argumentaire de vente. Derrière chaque pub, une équipe obsédée par les trois premières secondes et la dernière coupe.',
-    feelLabel: 'Travailler avec nous',
+    feelLabel: 'Travailler avec nous.',
     feel: ['Vous validez chaque script', 'Une journée de production, un mois de pubs', 'Pubs livrées 7 jours après le tournage', 'Bilan ensemble après 14 jours'],
     baseLabel: 'Basés à Tunis',
     base: 'On tourne dans tout le Grand Tunis et on monte pour des marques du Golfe et d’Europe.',
