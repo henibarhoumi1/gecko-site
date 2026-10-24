@@ -12,11 +12,12 @@ const en = {
     workCta: 'All work',
     why: {
       title: 'What other agencies skip.',
+      prev: 'Previous', next: 'Next',
       items: [
-        { t: 'Two openings for every reel.', d: 'The first two seconds decide who keeps watching. Each reel comes with two hooks, and your results show which one stops people.' },
-        { t: 'You approve the script before we film.', d: 'You read every script and change what you want. Nothing on set or in the edit comes as a surprise.' },
-        { t: 'One team, from brief to final cut.', d: 'The people who write your ads also shoot and edit them, so nothing gets lost on the way. Your ads arrive 7 days after the shoot.' },
-        { t: 'We read the results with you.', d: 'Each month we go through what sold and what didn’t, and write the next round from it.' },
+        { short: 'Two hooks', t: 'Two openings for every reel.', d: 'The first two seconds decide who keeps watching. Each reel comes with two hooks, and your results show which one stops people.' },
+        { short: 'Your script', t: 'You approve the script before we film.', d: 'You read every script and change what you want. Nothing on set or in the edit comes as a surprise.' },
+        { short: 'One team', t: 'One team, from brief to final cut.', d: 'The people who write your ads also shoot and edit them, so nothing gets lost on the way. Your ads arrive 7 days after the shoot.' },
+        { short: 'Your results', t: 'We read the results with you.', d: 'Each month we go through what sold and what didn’t, and write the next round from it.' },
       ],
       hooks: { same: 'Same reel, two openings', a: 'Hook A', b: 'Hook B', lines: ['“Your serum isn’t the problem.”', '“I tried six serums so you don’t have to.”'] },
       script: { title: 'Script, reel 1', scenes: ['Hook', 'The problem', 'The product, in use', 'Proof', 'The offer'], stamp: 'Approved' },
@@ -170,11 +171,12 @@ const fr: Copy = {
     workCta: 'Tous les projets',
     why: {
       title: 'Ce que les autres agences oublient.',
+      prev: 'Précédent', next: 'Suivant',
       items: [
-        { t: 'Deux ouvertures pour chaque reel.', d: 'Les deux premières secondes décident qui continue à regarder. Chaque reel a deux accroches, et vos résultats montrent laquelle arrête les gens.' },
-        { t: 'Vous validez le script avant le tournage.', d: 'Vous lisez chaque script et changez ce que vous voulez. Rien ne vous surprend au tournage ni au montage.' },
-        { t: 'Une seule équipe, du brief au montage final.', d: 'Ceux qui écrivent vos pubs les tournent et les montent aussi\u00a0: rien ne se perd en route. Vos pubs arrivent 7\u00a0jours après le tournage.' },
-        { t: 'On lit les résultats avec vous.', d: 'Chaque mois, on regarde ce qui a vendu et ce qui n’a pas marché, et on écrit la suite à partir de là.' },
+        { short: 'Deux accroches', t: 'Deux ouvertures pour chaque reel.', d: 'Les deux premières secondes décident qui continue à regarder. Chaque reel a deux accroches, et vos résultats montrent laquelle arrête les gens.' },
+        { short: 'Votre script', t: 'Vous validez le script avant le tournage.', d: 'Vous lisez chaque script et changez ce que vous voulez. Rien ne vous surprend au tournage ni au montage.' },
+        { short: 'Une équipe', t: 'Une seule équipe, du brief au montage final.', d: 'Ceux qui écrivent vos pubs les tournent et les montent aussi\u00a0: rien ne se perd en route. Vos pubs arrivent 7\u00a0jours après le tournage.' },
+        { short: 'Vos résultats', t: 'On lit les résultats avec vous.', d: 'Chaque mois, on regarde ce qui a vendu et ce qui n’a pas marché, et on écrit la suite à partir de là.' },
       ],
       hooks: { same: 'Même reel, deux ouvertures', a: 'Accroche A', b: 'Accroche B', lines: ['«\u00a0Le problème, ce n’est pas votre sérum.\u00a0»', '«\u00a0J’ai testé six sérums pour vous.\u00a0»'] },
       script: { title: 'Script, reel 1', scenes: ['Accroche', 'Le problème', 'Le produit, en action', 'La preuve', 'L’offre'], stamp: 'Validé' },

@@ -1,6 +1,6 @@
 ---
-// What sets Gecko apart: four promises, each with a small moving picture of what it means.
-// The pictures play while their row is on screen and start again each time it comes back.
+// What sets Gecko apart: four promises in one slider, each with a small moving picture of what it means.
+// It moves on by itself while on screen, and can be swiped, tapped or stepped through with the arrows.
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
 import type { Locale } from '../i18n/strings';
@@ -9,18 +9,28 @@ const { lang } = Astro.props;
 const h = c(lang).home;
 const w = h.why;
 ---
-<section class="on-yellow screen why-sec">
+<section class="on-yellow section why-sec">
   <div class="wrap">
-    <div class="head rv"><h2 class="h2 why-h">{w.title}</h2></div>
-    <ol class="list">
+    <div class="head rv">
+      <h2 class="h2 why-h">{w.title}</h2>
+      <div class="ctrl">
+        <button type="button" class="arw" data-prev aria-label={w.prev}>←</button>
+        <button type="button" class="arw" data-next aria-label={w.next}>→</button>
+      </div>
+    </div>
+    <div class="tabs rv" role="tablist" aria-label={w.title}>
       {w.items.map((it, i) => (
-        <li class="row" data-why>
-          <div class="copy rv">
-            <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <h3 class="t">{it.t}</h3>
+        <button type="button" role="tab" aria-selected={String(i === 0)} data-tab={i}><span class="tn">{String(i + 1).padStart(2, '0')}</span><span class="tl">{it.short}</span><i aria-hidden="true"></i></button>
+      ))}
+    </div>
+    <ol class="list rv" data-track>
+      {w.items.map((it, i) => (
+        <li class={`row ${i === 0 ? 'on' : ''}`} data-why role="tabpanel" aria-roledescription="slide">
+          <div class="copy">
+                        <h3 class="t">{it.t}</h3>
             <p class="text">{it.d}</p>
           </div>
-          <div class="proof rv" style="--d:120ms" aria-hidden="true">
+          <div class="proof" aria-hidden="true">
             {i === 0 && (
               <div class="hooks">
                 <div class="phone">
@@ -68,16 +78,79 @@ const w = h.why;
 </section>
 
 <script>
-  const rows = document.querySelectorAll<HTMLElement>('[data-why]');
-  const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('on', e.isIntersecting)), { threshold: 0.35 });
-  rows.forEach((r) => io.observe(r));
+  document.querySelectorAll<HTMLElement>('.why-sec').forEach((sec) => {
+    const track = sec.querySelector<HTMLElement>('[data-track]')!;
+    const slides = [...track.querySelectorAll<HTMLElement>('[data-why]')];
+    const tabs = [...sec.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const WAIT = 6500;
+    let at = 0, timer = 0, seen = false, held = false;
+
+    const mark = (i: number) => {
+      if (i === at && slides[i].classList.contains('on')) return;
+      at = i;
+      slides.forEach((s, k) => { s.classList.toggle('on', k === i); s.setAttribute('aria-hidden', String(k !== i)); });
+      tabs.forEach((t, k) => t.setAttribute('aria-selected', String(k === i)));
+      sec.style.setProperty('--wait', `${WAIT}ms`);
+    };
+    const go = (i: number) => {
+      const n = (i + slides.length) % slides.length;
+      track.scrollTo({ left: slides[n].offsetLeft - slides[0].offsetLeft, behavior: still ? 'auto' : 'smooth' });
+      mark(n); restart();
+    };
+    // Auto-advance only while the section is on screen and nobody is touching or hovering it.
+    const restart = () => {
+      clearTimeout(timer);
+      sec.classList.remove('run'); void sec.offsetWidth;
+      if (still || !seen || held) return;
+      sec.classList.add('run');
+      timer = window.setTimeout(() => go(at + 1), WAIT);
+    };
+    // Swiping by hand: the slide that lands in place becomes the current one.
+    let st = 0;
+    track.addEventListener('scroll', () => {
+      clearTimeout(st);
+      st = window.setTimeout(() => {
+        const x = track.scrollLeft;
+        const i = slides.reduce((best, s, k) => Math.abs(s.offsetLeft - slides[0].offsetLeft - x) < Math.abs(slides[best].offsetLeft - slides[0].offsetLeft - x) ? k : best, 0);
+        if (i !== at) { mark(i); restart(); }
+      }, 90);
+    }, { passive: true });
+    tabs.forEach((t, i) => t.addEventListener('click', () => go(i)));
+    sec.querySelector('[data-prev]')!.addEventListener('click', () => go(at - 1));
+    sec.querySelector('[data-next]')!.addEventListener('click', () => go(at + 1));
+    const hold = (v: boolean) => { held = v; restart(); };
+    track.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && hold(true));
+    track.addEventListener('pointerleave', (e) => e.pointerType === 'mouse' && hold(false));
+    track.addEventListener('touchstart', () => hold(true), { passive: true });
+    track.addEventListener('touchend', () => setTimeout(() => hold(false), 1200), { passive: true });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) slides[at].classList.add('on'); restart(); }, { threshold: 0.45 }).observe(track);
+    mark(0);
+  });
 </script>
 
 <style>
   .why-sec { border-top: var(--line) solid var(--ink); }
   .why-h { max-width: 13ch; }
-  .list { list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
-  .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding-block: clamp(32px, 4vw, 56px); border-bottom: var(--line) solid var(--ink); }
+  .head { margin-bottom: clamp(24px, 3vw, 40px); }
+  .ctrl { display: flex; gap: 10px; }
+  .arw { width: 52px; height: 52px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); font: 700 20px/1 var(--font); cursor: pointer; transition: transform 220ms var(--ease), box-shadow 220ms var(--ease), background 200ms var(--ease); }
+  .arw:hover { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+  .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: clamp(20px, 2.4vw, 32px); }
+  .tabs button { position: relative; display: flex; gap: 10px; align-items: baseline; padding: 12px 0 16px; border: 0; background: none; color: var(--ink); font: 700 15px/1.25 var(--font); text-align: left; cursor: pointer; opacity: .5; transition: opacity 240ms var(--ease); }
+  .tabs button:hover, .tabs [aria-selected='true'] { opacity: 1; }
+  .tn { font-size: 13px; }
+  .tabs i { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: rgba(0, 0, 0, .15); overflow: hidden; }
+  .tabs i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+  .tabs [aria-selected='true'] i::after { transform: scaleX(1); }
+  .run .tabs [aria-selected='true'] i::after { animation: prog var(--wait, 6500ms) linear both; }
+  @keyframes prog { from { transform: scaleX(0); } }
+  .list { list-style: none; margin: 0; padding: 0; display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; border-radius: var(--r-lg); }
+  .list::-webkit-scrollbar { display: none; }
+  .row { flex: 0 0 100%; scroll-snap-align: start; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding: 4px 12px 14px 0; }
+  .row { overflow: hidden; }
+  .row .copy { transition: opacity 400ms var(--ease); }
+  .row:not(.on) .copy { opacity: .3; }
   .copy { display: grid; gap: 14px; align-content: center; }
   .n { font-weight: 700; font-size: 15px; letter-spacing: .02em; }
   .t { margin: 0; font-weight: 700; font-size: clamp(30px, 3.4vw, 52px); line-height: 1.02; letter-spacing: -0.045em; max-width: 14ch; }
@@ -149,9 +222,18 @@ const w = h.why;
   .on .rr { animation: lineIn 520ms var(--ease) both; animation-delay: calc(var(--j) * 260ms + 100ms); }
   .on .rr b { animation: stamp 460ms var(--spring) both; animation-delay: calc(var(--j) * 260ms + 380ms); }
 
-  .why-cta { margin-top: clamp(28px, 3.5vw, 44px); }
+  .why-cta { margin-top: clamp(20px, 2.4vw, 32px); }
   @media (max-width: 860px) {
-    .row { grid-template-columns: 1fr; gap: 22px; }
+    .row { grid-template-columns: 1fr; gap: 20px; align-content: start; padding-right: 10px; }
+    .tabs { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .tl { display: none; }
+    .tabs button { justify-content: center; padding-bottom: 12px; }
+    .ctrl { display: none; }
+    .t { font-size: clamp(26px, 7.4vw, 34px); }
+    .copy { gap: 10px; }
+    .copy .text { font-size: 16px; }
+    .proof { min-height: 210px !important; }
+    .phone { height: 180px !important; }
     .proof { height: auto; min-height: 236px; box-shadow: 6px 6px 0 var(--ink); }
     .phone { height: 220px; }
   }
