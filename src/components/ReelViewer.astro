@@ -29,9 +29,8 @@ const icon = {
   </div>
 </div>
 <script>
-  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const cards = [...document.querySelectorAll<HTMLButtonElement>('[data-reel]')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-reel]')];
   const viewer = document.querySelector<HTMLElement>('[data-viewer]');
   if (viewer && cards.length) {
     const player = viewer.querySelector<HTMLElement>('[data-player]')!;
@@ -39,23 +38,7 @@ const icon = {
     const count = viewer.querySelector<HTMLElement>('[data-count]')!;
     const progress = viewer.querySelector<HTMLElement>('[data-progress]')!;
     const muteBtn = viewer.querySelector<HTMLButtonElement>('[data-mute]')!;
-    let current = 0, opener: HTMLButtonElement | null = null;
-
-    if (fine) cards.forEach((card) => {
-      const v = card.querySelector('video')!;
-      card.addEventListener('mouseenter', () => { v.preload = 'auto'; v.play().catch(() => {}); card.classList.add('live'); });
-      card.addEventListener('mouseleave', () => { v.pause(); card.classList.remove('live'); });
-    });
-
-    // Touch screens have no hover: play each card muted while it is mostly in view.
-    if (!fine && !still) {
-      const io = new IntersectionObserver((es) => es.forEach((e) => {
-        const card = e.target as HTMLElement, v = card.querySelector('video')!;
-        if (e.isIntersecting) { v.preload = 'auto'; v.play().then(() => card.classList.add('live')).catch(() => {}); }
-        else { v.pause(); card.classList.remove('live'); }
-      }), { threshold: .75 });
-      cards.forEach((card) => io.observe(card));
-    }
+    let current = 0, opener: HTMLElement | null = null;
 
     const setMute = (m: boolean) => { video.muted = m; muteBtn.setAttribute('aria-pressed', String(m)); viewer.classList.toggle('muted', m); };
     const load = (i: number) => {
@@ -68,6 +51,7 @@ const icon = {
     };
     const open = (i: number) => {
       opener = cards[i];
+      document.dispatchEvent(new Event('reel:open'));
       viewer.hidden = false;
       document.documentElement.classList.add('locked');
       setMute(false); load(i);
@@ -88,7 +72,7 @@ const icon = {
       video.pause();
       setTimeout(() => { viewer.hidden = true; video.removeAttribute('src'); video.load(); }, 360);
       document.documentElement.classList.remove('locked');
-      opener?.focus({ preventScroll: true });
+      opener?.querySelector<HTMLElement>('[data-open]')?.focus({ preventScroll: true });
     };
 
     cards.forEach((card, i) => card.addEventListener('click', () => open(i)));

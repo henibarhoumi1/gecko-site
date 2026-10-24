@@ -1,19 +1,40 @@
 ---
-// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself, so the page stays one screen tall.
-interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean }
-const { items, scroll = false } = Astro.props;
+// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself (the smooth scroller leaves it alone),
+// fades out at the bottom while there is more, and shows `hint` until the visitor reaches the end.
+interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string }
+const { items, scroll = false, hint } = Astro.props;
 ---
-<div class={`faq ${scroll ? 'scroll' : ''}`} data-lenis-prevent={scroll ? '' : undefined} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
-  {items.map((f) => (
-    <details>
-      <summary><span>{f.q}</span><span class="pm" aria-hidden="true"></span></summary>
-      <p class="text a">{f.a}</p>
-    </details>
-  ))}
+<div class={scroll ? 'faq-box' : undefined} data-faq-box={scroll ? '' : undefined}>
+  <div class={`faq ${scroll ? 'scroll' : ''}`} data-lenis-prevent={scroll ? '' : undefined} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
+    {items.map((f) => (
+      <details>
+        <summary><span>{f.q}</span><span class="pm" aria-hidden="true"></span></summary>
+        <p class="text a">{f.a}</p>
+      </details>
+    ))}
+  </div>
+  {scroll && hint && <p class="hint" aria-hidden="true"><span>↓</span> {hint}</p>}
 </div>
+{scroll && (
+  <script>
+    document.querySelectorAll<HTMLElement>('[data-faq-box]').forEach((box) => {
+      const list = box.querySelector<HTMLElement>('.faq')!;
+      const check = () => box.classList.toggle('end', list.scrollTop + list.clientHeight >= list.scrollHeight - 8);
+      list.addEventListener('scroll', check, { passive: true });
+      list.addEventListener('toggle', check, true);
+      check();
+    });
+  </script>
+)}
 <style>
-  .faq.scroll { max-height: min(60vh, 540px); overflow-y: auto; overscroll-behavior: contain; padding: 4px 8px 56px 2px; margin-right: -8px; scrollbar-width: thin; scrollbar-color: var(--ink) transparent;
-    -webkit-mask-image: linear-gradient(#000 calc(100% - 56px), transparent); mask-image: linear-gradient(#000 calc(100% - 56px), transparent); }
+  .faq.scroll { max-height: min(62vh, 560px); overflow-y: auto; overscroll-behavior: contain; padding: 4px 10px 64px 2px; margin-right: -10px; scrollbar-width: thin; scrollbar-color: var(--ink) transparent;
+    -webkit-mask-image: linear-gradient(#000 calc(100% - 72px), transparent); mask-image: linear-gradient(#000 calc(100% - 72px), transparent); }
   .faq.scroll::-webkit-scrollbar { width: 6px; }
   .faq.scroll::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 6px; }
+  .end .faq.scroll { -webkit-mask-image: none; mask-image: none; }
+  .hint { margin: 10px 0 0; font-size: 15px; font-weight: 600; transition: opacity 240ms var(--ease); }
+  .hint span { display: inline-block; animation: nudge 1.6s var(--ease) infinite; }
+  .end .hint { opacity: 0; }
+  @keyframes nudge { 50% { transform: translateY(3px); } }
+  @media (prefers-reduced-motion: reduce) { .hint span { animation: none; } }
 </style>

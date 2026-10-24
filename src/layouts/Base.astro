@@ -42,7 +42,7 @@ const path = Astro.url.pathname;
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Smooth, weighted scrolling. Paused while a dialog or the menu is open.
       if (!still) {
-        const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.9 });
+        const lenis = new Lenis({ lerp: 0.16, wheelMultiplier: 1 });
         (window as any).lenis = lenis;
         const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
         requestAnimationFrame(raf);

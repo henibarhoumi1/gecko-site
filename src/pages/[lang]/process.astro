@@ -10,14 +10,19 @@ const p = c(lang).process;
 ---
 <Base lang={lang} footerCta={false} title={p.title}>
   <section class="page-head">
-    <div class="wrap stack center" style="--gap:20px">
+    <div class="wrap stack" style="--gap:22px">
       <h1 class="h1 rv">{p.title}</h1>
-      <p class="text text-l soft measure rv" style="--d:100ms">{p.sub}</p>
+      <p class="text text-l lede rv" style="--d:80ms">{p.sub}</p>
     </div>
   </section>
 
   <section class="road-sec">
-    <div class="wrap">
+    <div class="wrap journey">
+      <aside class="legend rv">
+        <p class="key"><span class="chip ok">{p.tags.ok}</span> {p.legend.ok}</p>
+        <p class="key"><span class="chip pay">{p.tags.pay}</span> {p.legend.pay}</p>
+        <p class="text monthly">{p.monthly}</p>
+      </aside>
       <div class="road" data-road>
         <span class="rail" aria-hidden="true"><i data-fill></i></span>
         <ol class="steps">
@@ -25,10 +30,12 @@ const p = c(lang).process;
             <li class="step rv">
               <span class="dot" aria-hidden="true">{i + 1}</span>
               <div class="card">
-                <p class="label">{p.label} {i + 1} · {st.when}</p>
-                <h2 class="h3 t">{st.t}</h2>
-                <p class="text soft">{st.d}</p>
-                <div class="yours"><span>{p.yours}</span><p class="text">{st.you}</p></div>
+                <div class="top">
+                  <h2 class="h3 t">{st.t}</h2>
+                  {st.tag && <span class={`chip ${st.tag}`}>{p.tags[st.tag as 'ok' | 'pay']}</span>}
+                </div>
+                <p class="text">{st.d}</p>
+                <p class="yours"><span>{p.yours}</span> {st.you}</p>
               </div>
             </li>
           ))}
@@ -37,18 +44,17 @@ const p = c(lang).process;
     </div>
   </section>
 
-  <section class="on-paper section">
-    <div class="wrap">
-      <div class="head rv"><h2 class="h2">{p.promiseLabel}</h2></div>
-      <ul class="promises">
-        {p.promises.map((pr, i) => (
-          <li class="rv" style={`--d:${i * 90}ms`}>
-            <span class="tick" aria-hidden="true"></span>
-            <h3 class="h3">{pr.t}</h3>
-            <p class="text soft">{pr.d}</p>
-          </li>
-        ))}
-      </ul>
+  <section class="on-paper section portal-sec">
+    <div class="wrap portal">
+      <div class="stack rv" style="--gap:24px">
+        <h2 class="h2">{p.portal.title}</h2>
+        <p class="text text-l">{p.portal.text}</p>
+        <p class="status"><span class="pulse" aria-hidden="true"></span>{p.portal.status}</p>
+      </div>
+      <div class="room rv" style="--d:100ms">
+        <p class="label">{p.portal.list}</p>
+        <ul class="ticks-list">{p.portal.items.map((it) => <li>{it}</li>)}</ul>
+      </div>
     </div>
   </section>
 
@@ -60,37 +66,55 @@ const p = c(lang).process;
   document.querySelectorAll<HTMLElement>('[data-road]').forEach((road) => {
     const fill = road.querySelector<HTMLElement>('[data-fill]')!;
     const steps = [...road.querySelectorAll<HTMLElement>('.step')];
+    let ticking = false;
     const tick = () => {
       const r = road.getBoundingClientRect(); const mid = innerHeight * 0.55;
-      const q = Math.min(1, Math.max(0, (mid - r.top) / r.height));
-      fill.style.transform = `scaleY(${q})`;
+      fill.style.transform = `scaleY(${Math.min(1, Math.max(0, (mid - r.top) / r.height))})`;
       steps.forEach((s) => s.classList.toggle('passed', s.getBoundingClientRect().top < mid));
+      ticking = false;
     };
-    addEventListener('scroll', tick, { passive: true }); tick();
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }, { passive: true });
+    tick();
   });
 </script>
 
 <style>
+  .lede { max-width: 44rem; }
   .road-sec { padding-bottom: var(--section); }
-  .road { margin: 0 auto; position: relative; max-width: 860px; }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(18px, 2.4vw, 28px); }
-  .rail { position: absolute; left: 23px; top: 24px; bottom: 24px; width: 2px; border-radius: 2px; background: var(--paper); }
+  .journey { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .legend { position: sticky; top: 120px; display: grid; gap: 12px; justify-items: start; }
+  .key { margin: 0; display: grid; gap: 8px; justify-items: start; font-size: 17px; line-height: 1.4; }
+  .key + .key { margin-top: 10px; }
+  .monthly { margin: 12px 0 0; max-width: 24rem; padding-top: 18px; border-top: var(--line) solid var(--ink); }
+  .road { position: relative; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .rail { position: absolute; left: 19px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; background: rgba(0, 0, 0, .1); }
   .rail i { position: absolute; inset: 0; background: var(--ink); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
-  .step { position: relative; padding-left: 80px; }
-  .dot { position: absolute; left: 0; top: 24px; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; background: var(--white); border: var(--line) solid var(--ink); transition: background 400ms var(--ease), color 400ms var(--ease), transform 400ms var(--spring); }
-  .passed .dot { background: var(--ink); color: #fff; transform: scale(1.06); }
-  .card { display: grid; gap: 12px; padding: clamp(24px, 3vw, 36px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: box-shadow 500ms var(--ease); }
-  .passed .card { box-shadow: var(--shadow-2); }
-  .t { font-size: clamp(26px, 3vw, 38px); letter-spacing: -0.03em; }
-  .yours { display: grid; gap: 4px; margin-top: 8px; padding: 14px 16px; border-radius: var(--r-sm); background: color-mix(in srgb, var(--yellow) 45%, white); }
-  .yours span { font-size: 13px; font-weight: 600; }
-  .yours p { margin: 0; }
-  .promises { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .promises li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 2.6vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
-  .tick { width: 40px; height: 40px; border-radius: 12px; margin-bottom: 8px; background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 28px no-repeat; }
-  @media (max-width: 760px) {
-    .rail { left: 17px; } .dot { width: 36px; height: 36px; font-size: 14px; top: 26px; }
-    .step { padding-left: 52px; }
-    .promises { grid-template-columns: 1fr; }
+  .step { position: relative; padding-left: 64px; }
+  .dot { position: absolute; left: 0; top: 20px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--white); border: var(--line) solid var(--ink); transition: background 300ms var(--ease), color 300ms var(--ease); }
+  .passed .dot { background: var(--ink); color: #fff; }
+  .card { display: grid; gap: 10px; padding: clamp(20px, 2.2vw, 28px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .t { font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.03em; }
+  .chip { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; border: var(--line) solid var(--ink); }
+  .chip.ok { background: var(--yellow); }
+  .chip.pay { background: var(--pink); }
+  .card .text { margin: 0; }
+  .yours { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--yellow-soft); font-size: 16px; }
+  .yours span { font-weight: 700; margin-right: 6px; }
+  .portal-sec { border-top: var(--line) solid var(--ink); }
+  .portal { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
+  .portal .h2 { max-width: 14ch; }
+  .status { margin: 0; display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 8px 14px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--white); font-size: 15px; font-weight: 600; }
+  .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .4); } 70% { box-shadow: 0 0 0 9px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
+  .room { display: grid; gap: 18px; padding: clamp(26px, 3vw, 40px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }
+  .room .ticks-list { gap: 14px; font-size: 18px; }
+  @media (max-width: 900px) {
+    .journey, .portal { grid-template-columns: 1fr; }
+    .legend { position: static; display: flex; flex-wrap: wrap; align-items: center; }
+    .monthly { flex-basis: 100%; }
   }
+  @media (max-width: 560px) { .step { padding-left: 52px; } .rail { left: 15px; } .dot { width: 32px; height: 32px; font-size: 13px; } }
+  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
 </style>

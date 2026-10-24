@@ -14,51 +14,92 @@ const o = s.offers;
 const k = c(lang).offers;
 const p = c(lang).plans;
 const cta = c(lang).nav.apply;
+const h = c(lang).home;
 const oneOffs = [
-  { name: test.name, text: test.items[lang].join('. ') + '.', price: test.launch, standard: test.standard },
-  { name: campaign.name, text: campaign.items[lang].join('. ') + '.', price: campaign.launch },
-  { name: audit.name, text: audit.text[lang], price: audit.price },
+  { key: 'test', name: test.name, text: test.items[lang].join('. ') + '.', price: test.launch, standard: test.standard },
+  { key: 'campaign', name: campaign.name, text: campaign.items[lang].join('. ') + '.', price: campaign.launch },
+  { key: 'audit', name: audit.name, text: audit.text[lang], price: audit.price },
 ];
 ---
 <Base lang={lang} title={o.title}>
   <section class="page-head">
-    <div class="wrap stack center" style="--gap:20px">
-      <h1 class="h1 rv">{k.title} <span class="soft">{k.title2}</span></h1>
-      <p class="text text-l soft measure rv" style="--d:100ms">{k.sub}</p>
+    <div class="wrap stack" style="--gap:22px">
+      <h1 class="h1 rv">{k.title}</h1>
+      <p class="text text-l lede rv" style="--d:80ms">{k.sub}</p>
     </div>
   </section>
 
   <section class="plans-sec">
-    <div class="wrap"><Plans lang={lang} /></div>
-    <p class="wrap small soft note rv">{o.launchNote} {o.monthlyNote}</p>
+    <div class="wrap">
+      <Plans lang={lang} />
+      <p class="note rv">{o.launchNote} {o.monthlyNote}</p>
+    </div>
   </section>
 
   <section class="on-paper section">
     <div class="wrap">
-      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{k.oneOff}</h2><p class="text sub">{k.oneOffSub}</p></div></div>
+      <div class="head rv"><h2 class="h2">{k.splitTitle}</h2></div>
+      <div class="split">
+        {[k.make, k.run, k.costs].map((x, i) => (
+          <article class={`part rv ${i === 1 ? 'run' : ''}`} style={`--d:${i * 70}ms`}>
+            <p class="tag-pill">{x.tag}</p>
+            <h3 class="h3">{x.t}</h3>
+            <p class="text">{x.d}</p>
+          </article>
+        ))}
+      </div>
+      <div class="every rv">
+        <p class="label">{k.every}</p>
+        <ul class="ticks-list">{o.allInList.map((i) => <li>{i}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head rv"><div class="stack" style="--gap:16px"><h2 class="h2">{k.oneOff}</h2><p class="text text-l sub-l">{k.oneOffSub}</p></div></div>
       <div class="ones">
         {oneOffs.map((x, i) => (
-          <article class="one rv" style={`--d:${i * 80}ms`}>
+          <article class="one rv" style={`--d:${i * 70}ms`}>
             <h3 class="h3">{x.name}</h3>
-            <p class="text soft">{x.text}</p>
             <div class="foot">
-              <p><span class="num">{fmt(x.price, lang)}</span> <span class="soft">{o.currency}</span></p>
-              {x.standard && <p class="small soft">{p.usually} {fmt(x.standard, lang)} {o.currency}</p>}
+              <p><span class="num">{fmt(x.price, lang)}</span> {o.currency}</p>
+              {x.standard && <p class="was">{p.usually} {fmt(x.standard, lang)} {o.currency}</p>}
             </div>
-            <a class="link" href={href(lang, 'apply')}>{cta} →</a>
+            <p class="text">{x.text}</p>
+            <a class="link" href={`${href(lang, 'apply')}?plan=${x.key}`}>{cta} →</a>
           </article>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap every">
+  <section class="on-yellow section beyond-sec">
+    <div class="wrap beyond">
       <div class="stack rv" style="--gap:24px">
-        <h2 class="h2">{k.every}</h2>
-        <ul class="ticks-list text-l">{o.allInList.map((i) => <li>{i}</li>)}</ul>
+        <h2 class="h2">{k.beyond.title}</h2>
+        <p class="text text-l">{k.beyond.text}</p>
+        <p class="quote">{k.beyond.quote}</p>
+        <a class="btn primary" href={`${href(lang, 'apply')}?plan=bespoke`}>{k.beyond.cta} <span class="arr" aria-hidden="true">→</span></a>
       </div>
-      <div class="rv" style="--d:100ms">
+      <ol class="kinds">
+        {k.beyond.items.map((it, i) => (
+          <li class="rv" style={`--d:${i * 70}ms`}>
+            <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div><h3 class="h3">{it.t}</h3><p class="text">{it.d}</p></div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap faq-grid">
+      <div class="faq-lead rv">
+        <h2 class="h2">{k.faqTitle}</h2>
+        <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="stack rv" style="--gap:10px">
         <div class="faq">
           <details>
             <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
@@ -69,30 +110,45 @@ const oneOffs = [
             <p class="text a">{o.intl}</p>
           </details>
         </div>
+        <Faq items={s.faq} scroll hint={h.faqHint} />
       </div>
-    </div>
-  </section>
-
-  <section class="on-paper section">
-    <div class="wrap faq-grid">
-      <div class="head rv"><h2 class="h2">{c(lang).home.faqTitle}</h2></div>
-      <div class="rv"><Faq items={s.faq} scroll /></div>
     </div>
   </section>
 </Base>
 <style>
-  .page-head .h1 { max-width: 16ch; }
-  .plans-sec { padding-bottom: var(--section); }
-  .note { margin-top: 24px; text-align: center; max-width: 52rem; }
+  .lede { max-width: 44rem; }
+  .plans-sec { padding-bottom: clamp(8px, 2vw, 24px); }
+  .note { margin: 24px 0 0; max-width: 52rem; font-size: 15px; color: var(--ink-2); }
+  .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
+  .part { display: grid; gap: 14px; align-content: start; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); }
+  .part.run { background: var(--ink); color: #fff; box-shadow: 6px 6px 0 var(--pink); }
+  .tag-pill { margin: 0; justify-self: start; padding: 5px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 13px; font-weight: 700; }
+  .part:first-child .tag-pill { background: var(--pink); }
+  .every { margin-top: clamp(28px, 3vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: start; }
+  .every .ticks-list { display: flex; flex-wrap: wrap; gap: 12px 32px; }
+  .every .ticks-list li { white-space: nowrap; }
+  .every .label { padding-top: 2px; }
+  .sub-l { max-width: 34rem; margin: 0; }
   .ones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .one { display: grid; grid-template-rows: auto 1fr auto auto; gap: 16px; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .one { display: grid; grid-template-rows: auto auto 1fr auto; gap: 16px; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), opacity 600ms var(--ease); }
   .one.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
-  .one .foot { padding-top: 16px; border-top: 1px solid var(--hair); }
+  .one .foot { padding-bottom: 14px; border-bottom: var(--line) solid var(--ink); }
   .one .foot p { margin: 0; }
-  .num { font-weight: 700; font-size: 30px; letter-spacing: -0.03em; }
-  .every { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .was { font-size: 14px; color: var(--ink-2); }
+  .num { font-weight: 700; font-size: 32px; letter-spacing: -0.03em; }
+  .beyond-sec { border-block: var(--line) solid var(--ink); }
+  .beyond { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(40px, 7vw, 112px); align-items: start; }
+  .beyond .h2 { max-width: 13ch; }
+  .beyond .stack { justify-items: start; }
+  .quote { margin: 0; padding-left: 16px; border-left: 3px solid var(--ink); font-weight: 600; font-size: 18px; line-height: 1.4; max-width: 30rem; }
+  .kinds { list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+  .kinds li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: clamp(20px, 2vw, 28px) 0; border-bottom: var(--line) solid var(--ink); }
+  .kinds .n { font-weight: 700; font-size: 15px; padding-top: 4px; }
+  .kinds .h3 { margin-bottom: 6px; }
+  .kinds .text { margin: 0; }
   .terms { margin: 0; padding: 0 64px 22px 40px; display: grid; gap: 10px; color: var(--ink-2); }
   .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .faq-grid .head { margin-bottom: 0; }
-  @media (max-width: 860px) { .ones, .every, .faq-grid { grid-template-columns: 1fr; } }
+  .faq-lead { display: grid; gap: 28px; justify-items: start; }
+  @media (max-width: 960px) { .split, .ones { grid-template-columns: 1fr; } .beyond { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .faq-grid, .every { grid-template-columns: 1fr; } }
 </style>

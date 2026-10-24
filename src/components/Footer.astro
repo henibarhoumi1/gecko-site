@@ -1,5 +1,5 @@
 ---
-import Logo from './Logo.astro';
+// Black footer: an optional big call to action, the monogram, then pages, contact and socials in columns across the full width.
 import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
@@ -7,51 +7,57 @@ import { site } from '../data/site';
 interface Props { lang: Locale; cta?: boolean }
 const { lang, cta = true } = Astro.props;
 const s = t(lang);
-const n = c(lang).nav;
+const k = c(lang);
+const n = k.nav;
 ---
 <footer class="site-footer">
   {cta && <div class="wrap">
     <a class="big" href={href(lang, 'apply')}>{n.apply} <span aria-hidden="true">→</span></a>
   </div>}
   <div class="wrap inner">
-    <div class="stack" style="--gap:14px">
-      <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
-      <p class="text dim">{s.line}</p>
-    </div>
+    <a href={href(lang)} class="mark" aria-label="Gecko"><img src="/brand/monogram-white.svg" alt="" width="58" height="102" /></a>
     <nav class="col" aria-label="Footer">
+      <p class="h">{k.footer.pages}</p>
       <a href={href(lang, 'work')}>{n.work}</a>
-      <a href={href(lang, 'process')}>{n.process}</a>
       <a href={href(lang, 'offers')}>{n.offers}</a>
+      <a href={href(lang, 'process')}>{n.process}</a>
       <a href={href(lang, 'about')}>{n.about}</a>
+      <a href={href(lang, 'faq')}>{n.faq}</a>
       <a href={href(lang, 'contact')}>{n.contact}</a>
-      <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </nav>
     <div class="col">
-      <a href={site.whatsapp} rel="noopener">{s.contact.whatsapp} {site.phone}</a>
+      <p class="h">{k.footer.reach}</p>
+      <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
+      <span>{s.footer.address}</span>
+    </div>
+    <div class="col">
+      <p class="h">{k.footer.follow}</p>
       {site.socials.map((x) => <a href={x.url} rel="noopener">{x.name} {x.handle}</a>)}
-      <span class="dim">{s.footer.address}</span>
+      <a href={href(lang, 'creators')}>{s.creators.footer}</a>
     </div>
   </div>
   <div class="wrap"><div class="base">
-    <p class="small dim">© {new Date().getFullYear()} Gecko</p>
-    <a class="small dim" href={href(lang, 'legal')}>{s.footer.legal}</a>
+    <p>© {new Date().getFullYear()} Gecko</p>
+    <a href={href(lang, 'legal')}>{s.footer.legal}</a>
   </div></div>
 </footer>
 <style>
   .site-footer { padding-block: clamp(64px, 8vw, 112px) 28px; background: var(--ink); color: #fff; }
-  .big { display: block; font-weight: 700; font-size: clamp(44px, 9vw, 144px); letter-spacing: -0.055em; line-height: .92; text-decoration: none; color: #fff; padding-bottom: clamp(36px, 5vw, 64px); margin-bottom: clamp(36px, 5vw, 64px); border-bottom: 1px solid rgba(255, 255, 255, .22); }
+  .big { display: block; font-weight: 700; font-size: clamp(44px, 9vw, 144px); letter-spacing: -0.055em; line-height: .92; text-decoration: none; color: #fff; padding-bottom: clamp(36px, 5vw, 64px); margin-bottom: clamp(48px, 6vw, 80px); border-bottom: 1px solid rgba(255, 255, 255, .22); }
   .big span { display: inline-block; color: var(--pink); transition: transform 360ms var(--ease); }
   .big:hover span { transform: translateX(16px); }
-  .inner { display: grid; grid-template-columns: 1.6fr 1fr 1.3fr; gap: 40px; }
-  .brand { display: block; width: 110px; color: #fff; }
-  .dim { color: rgba(255, 255, 255, .6); }
-  .col { display: grid; align-content: start; gap: 12px; font-size: 15px; }
-  .col a { text-decoration: none; overflow-wrap: anywhere; color: #fff; }
+  .inner { display: grid; grid-template-columns: 1fr auto auto auto; gap: 40px clamp(40px, 7vw, 120px); align-items: start; }
+  .mark { display: block; width: clamp(44px, 4.4vw, 58px); }
+  .mark img { width: 100%; height: auto; }
+  .h { margin: 0 0 6px; font-weight: 700; font-size: 13px; color: rgba(255, 255, 255, .55); }
+  .col { display: grid; align-content: start; gap: 12px; font-size: 16px; }
+  .col a { text-decoration: none; color: #fff; width: fit-content; white-space: nowrap; }
   .col a:hover { color: var(--pink); }
-  .base { margin-top: clamp(48px, 7vw, 80px); padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .22); display: flex; justify-content: space-between; gap: 16px; }
+  .base { margin-top: clamp(56px, 7vw, 96px); padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .22); display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: rgba(255, 255, 255, .7); }
   .base p { margin: 0; }
-  .base a { text-decoration: none; }
+  .base a { color: inherit; text-decoration: none; }
   .base a:hover { color: #fff; }
-  @media (max-width: 760px) { .inner { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .inner { grid-template-columns: repeat(3, auto); justify-content: start; } .mark { grid-column: 1 / -1; } }
+  @media (max-width: 560px) { .inner { grid-template-columns: 1fr 1fr; } .col:nth-child(3) { grid-column: 1 / -1; order: 3; } .col:last-child { order: 2; } .col a { white-space: normal; overflow-wrap: anywhere; } }
 </style>

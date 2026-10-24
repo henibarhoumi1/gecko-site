@@ -27,7 +27,7 @@ const h = c(lang).home;
         <p class="text text-l lede">{h.sub}</p>
         <div class="actions">
           <a class="btn primary" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn" href={href(lang, 'process')}>{h.ctaAlt}</a>
+          <a class="btn" href="#plans">{h.ctaAlt}</a>
         </div>
       </div>
     </div>
@@ -41,9 +41,9 @@ const h = c(lang).home;
   {ads.length > 0 && (
     <section class="on-black screen">
       <div class="wrap">
-        <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.workTitle}</h2><p class="text sub">{h.workSub}</p></div><a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a></div>
+        <div class="head rv"><h2 class="h2 work-h">{h.workTitle}</h2><a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a></div>
         <div class="reels scroll-row">
-          {ads.slice(0, 4).map((ad, i) => <div class="rv" style={`--d:${i * 90}ms`}><ReelCard ad={ad} i={i} lang={lang} /></div>)}
+          {ads.slice(0, 4).map((ad, i) => <div class="rv" style={`--d:${i * 70}ms`}><ReelCard ad={ad} i={i} lang={lang} /></div>)}
         </div>
       </div>
     </section>
@@ -51,32 +51,36 @@ const h = c(lang).home;
 
   <section class="on-white screen">
     <div class="wrap">
-      <div class="head rv"><h2 class="h2">{h.compareTitle}</h2></div>
-      <div class="vs">
-        <div class="col no rv">
-          <p class="cap">{h.without}</p>
-          <ul>{h.compare.map(([e, no]) => <li><span class="em" aria-hidden="true">{e}</span>{no}</li>)}</ul>
-        </div>
-        <div class="col yes rv" style="--d:140ms">
-          <p class="cap">{h.with}</p>
-          <ul>{h.compare.map(([e, , yes], i) => <li style={`--i:${i}`}><span class="v" aria-hidden="true"></span>{yes}</li>)}</ul>
-          <a class="btn primary" href={href(lang, 'apply')}>{h.compareCta} <span class="arr" aria-hidden="true">→</span></a>
-        </div>
+      <div class="head rv"><h2 class="h2 wide-h">{h.compareTitle}</h2></div>
+      <div class="vs rv">
+        <div class="vs-head" aria-hidden="true"><p>{h.without}</p><p>{h.with}</p></div>
+        <ol class="rows">
+          {h.compare.map(([e, no, yes]) => (
+            <li class="row">
+              <p class="no"><span class="sr">{h.without}: </span><span class="em" aria-hidden="true">{e}</span>{no}</p>
+              <p class="yes"><span class="sr">{h.with}: </span><span class="v" aria-hidden="true"></span>{yes}</p>
+            </li>
+          ))}
+        </ol>
       </div>
+      <a class="btn primary vs-cta rv" href={href(lang, 'apply')}>{h.compareCta} <span class="arr" aria-hidden="true">→</span></a>
     </div>
   </section>
 
-  <section class="on-white screen">
+  <section class="on-white screen" id="plans">
     <div class="wrap">
-      <div class="head rv"><div class="stack" style="--gap:14px"><h2 class="h2">{h.plansTitle}</h2><p class="text sub">{h.plansSub}</p></div><a class="link" href={href(lang, 'offers')}>{h.plansCta} →</a></div>
+      <div class="head rv"><div class="stack" style="--gap:16px"><h2 class="h2">{h.plansTitle}</h2><p class="text text-l plans-sub">{h.plansSub}</p></div><a class="link" href={href(lang, 'offers')}>{h.plansCta} →</a></div>
       <Plans lang={lang} />
     </div>
   </section>
 
   <section class="on-white screen" id="faq">
     <div class="wrap faq-grid">
-      <div class="head rv stack" style="--gap:14px"><h2 class="h2">{h.faqTitle}</h2><p class="text sub">{s.faq.length} {h.faqCount}</p></div>
-      <div class="rv"><Faq items={s.faq} scroll /></div>
+      <div class="faq-lead rv">
+        <h2 class="h1 faq-h">{h.faqTitle}</h2>
+        <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <div class="rv"><Faq items={s.faq} scroll hint={h.faqHint} /></div>
     </div>
   </section>
 
@@ -96,7 +100,7 @@ const h = c(lang).home;
   .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }
   .hl { position: relative; isolation: isolate; padding: 0 .1em; margin-left: -.1em; }
   .hl::before { content: ''; position: absolute; inset: .16em -.02em .04em; background: var(--yellow); border-radius: .12em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
-  .hero-foot { display: grid; grid-template-columns: minmax(0, 34rem) auto; justify-content: space-between; align-items: end; gap: 24px 48px; padding-top: 24px; border-top: var(--line) solid var(--ink); }
+  .hero-foot { display: grid; grid-template-columns: minmax(0, 42rem) auto; justify-content: space-between; align-items: end; gap: 24px 48px; padding-top: 24px; border-top: var(--line) solid var(--ink); }
   .lede { margin: 0; }
   @keyframes up { from { transform: translateY(100%); opacity: 0; } }
   @keyframes wipe { from { transform: scaleX(0); } }
@@ -113,26 +117,34 @@ const h = c(lang).home;
 
   .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
 
-  .vs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(14px, 2vw, 28px); align-items: stretch; }
-  .vs .col { display: grid; gap: 14px; align-content: start; padding: clamp(22px, 2.8vw, 36px); border: var(--line) solid var(--ink); border-radius: var(--r-lg); }
-  .vs ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
-  .vs li { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: center; padding: 11px 10px; border-radius: var(--r-sm); font-size: clamp(16px, 1.35vw, 19px); line-height: 1.3; transition: background 240ms var(--ease), transform 300ms var(--ease); }
-  .cap { margin: 0; font-weight: 700; font-size: 14px; }
-  .no { background: var(--pink-soft); color: var(--ink-2); }
-  .no .em { font-size: 22px; line-height: 1; text-align: center; filter: grayscale(.6); }
-  .no li { text-decoration: line-through; text-decoration-color: rgba(0, 0, 0, .35); text-decoration-thickness: 1px; }
-  .yes { background: var(--yellow-soft); box-shadow: 8px 8px 0 var(--ink); }
-  .yes li { font-weight: 700; }
-  .yes li:hover { background: var(--yellow); transform: translateX(6px); }
-  .yes .btn { justify-self: start; margin-top: 10px; }
-  .v { width: 28px; height: 28px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat; transition: transform 300ms var(--spring); }
-  .yes li:hover .v { transform: scale(1.15) rotate(-8deg); }
-  @media (max-width: 860px) { .vs { grid-template-columns: 1fr; } }
+  .work-h { max-width: 12ch; }
+  .wide-h { max-width: 20ch; }
+  .vs { border: var(--line) solid var(--ink); border-radius: var(--r-lg); overflow: hidden; background: linear-gradient(90deg, var(--pink-soft) 0 46%, var(--yellow-soft) 46% 100%); }
+  .vs-head, .row { display: grid; grid-template-columns: 46fr 54fr; }
+  .vs-head p { margin: 0; padding: 18px clamp(20px, 2.4vw, 32px) 14px; font-weight: 700; font-size: 15px; }
+  .vs-head p:last-child { border-left: var(--line) solid var(--ink); }
+  .rows { list-style: none; margin: 0; padding: 0; }
+  .row { border-top: 1px solid rgba(0, 0, 0, .14); }
+  .row p { margin: 0; display: grid; grid-template-columns: 32px 1fr; gap: 16px; align-items: start; padding: clamp(16px, 1.6vw, 22px) clamp(20px, 2.4vw, 32px); font-size: clamp(17px, 1.3vw, 19px); line-height: 1.4; }
+  .no { color: var(--ink-2); }
+  .no .em { font-size: 22px; line-height: 1.1; text-align: center; filter: grayscale(.5); }
+  .yes { border-left: var(--line) solid var(--ink); font-weight: 600; }
+  .v { width: 26px; height: 26px; margin-top: -1px; border-radius: 50%; background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23F3DF9E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 22px no-repeat; }
+  .vs-cta { margin-top: clamp(24px, 3vw, 36px); }
+  @media (max-width: 760px) {
+    .vs { background: var(--white); }
+    .vs-head { display: none; }
+    .row { grid-template-columns: 1fr; border-top: var(--line) solid var(--ink); }
+    .row:first-child { border-top: 0; }
+    .no { background: var(--pink-soft); padding-bottom: 12px !important; }
+    .yes { background: var(--yellow-soft); border-left: 0; }
+  }
+  .plans-sub { max-width: 36rem; margin: 0; }
 
-  .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-  .faq-grid .head { margin-bottom: 0; display: grid; }
-  .faq-grid .sub { margin: 0; }
-  @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } }
+  .faq-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .faq-lead { display: grid; gap: clamp(24px, 3vw, 40px); justify-items: start; position: sticky; top: 120px; }
+  .faq-h { font-size: clamp(48px, 6.4vw, 104px); max-width: 8ch; }
+  @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } .faq-lead { position: static; } }
 
   .apply-sec { border-top: var(--line) solid var(--ink); }
 </style>

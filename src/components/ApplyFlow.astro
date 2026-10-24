@@ -32,6 +32,8 @@ const sugg = [
   `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
 ];
 const wa = site.whatsapp.replace('https://wa.me/', '');
+// Plan links (?plan=pro) arrive with that plan already chosen.
+const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test', test.name], ['campaign', campaign.name], ['audit', audit.name], ['bespoke', a.bespoke]]);
 ---
 <div class="apply">
   <div class="lead stack" style="--gap:22px">
@@ -59,10 +61,12 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} data-sugg-list={JSON.stringify(sugg)} action="https://api.web3forms.com/submit" method="POST" novalidate>
+  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} data-sugg-list={JSON.stringify(sugg)} data-plans={JSON.stringify(plans)} action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
     <input type="hidden" name="subject" value="New application from the Gecko website" />
     <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <input type="hidden" name="plan" data-label={a.plan} data-plan-input />
+    <p class="plan-pill" data-plan-pill hidden><span>{a.plan}: <b data-plan-name></b></span><button type="button" data-plan-clear aria-label={a.clear}>×</button></p>
     <div class="top">
       <p class="count" aria-live="polite"><b data-count>1</b> / 4</p>
       <div class="bars" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
@@ -91,7 +95,7 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
-      <p class="h3" data-msg data-sent={a.done} data-error={s.error}>{a.done}</p>
+      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-error={s.error}>{a.done}</p>
       <button type="button" class="again" data-again>{a.again}</button>
     </div>
 
@@ -113,6 +117,8 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
     const suggText = root.querySelector<HTMLElement>('[data-sugg-text]')!;
     const suggList: string[] = JSON.parse(form.dataset.suggList!);
     let at = 0;
+    const planIn = form.querySelector<HTMLInputElement>('[data-plan-input]')!;
+    const pill = form.querySelector<HTMLElement>('[data-plan-pill]')!;
 
     const setVal = (k: number, text: string) => {
       const v = vals[k]; const had = v.classList.contains('set');
@@ -140,7 +146,8 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
       step.querySelector<HTMLInputElement>('input[type=hidden]')!.value = chip.dataset.pick!;
       setVal(k, chip.dataset.pick!);
       if (k === 1) showSugg(Number(chip.dataset.i));
-      setTimeout(() => go(k + 1), 300);
+      const skip = k === 0 && planIn.value && form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value;
+      setTimeout(() => go(skip ? 2 : k + 1), 300);
     }));
     root.querySelectorAll<HTMLButtonElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { if (!done.hidden) return; go(Number(b.dataset.jump), Number(b.dataset.jump) < at ? -1 : 1); }));
     back.addEventListener('click', () => go(at - 1, -1));
@@ -152,9 +159,24 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
       done.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
       bars.forEach((b) => b.classList.add('on'));
     };
+    // Arriving from a plan or project button: keep that choice and answer "what are you after" for them.
+    const plans: Record<string, string> = JSON.parse(form.dataset.plans!);
+    const key = new URLSearchParams(location.search).get('plan') ?? '';
+    if (plans[key]) {
+      planIn.value = plans[key];
+      form.querySelector<HTMLElement>('[data-plan-name]')!.textContent = plans[key];
+      pill.hidden = false;
+      const needIdx = key === 'test' || key === 'audit' ? 0 : key === 'campaign' || key === 'bespoke' ? 2 : 1;
+      const chip = form.querySelectorAll<HTMLButtonElement>('[data-step="1"] .chip')[needIdx];
+      chip.classList.add('picked');
+      form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value = chip.dataset.pick!;
+      setVal(1, `${chip.dataset.pick} · ${plans[key]}`);
+    }
+    form.querySelector('[data-plan-clear]')!.addEventListener('click', () => { planIn.value = ''; pill.hidden = true; });
+
     form.querySelector('[data-again]')!.addEventListener('click', () => {
       form.reset(); form.querySelectorAll('.chip').forEach((x) => x.classList.remove('picked'));
-      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true;
+      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true; pill.hidden = true;
       done.hidden = true; steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
 
@@ -164,9 +186,9 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
       const empty = inputs.find((i) => !i.value.trim());
       if (empty) { empty.focus(); empty.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       if (!form.dataset.key) {
-        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].map((el) => `${el.dataset.label}: ${el.value}`);
+        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].filter((el) => el.value.trim()).map((el) => `${el.dataset.label}: ${el.value}`);
         open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
-        finish(msg.dataset.sent!);
+        finish(msg.dataset.waDone!);
         return;
       }
       try {
@@ -210,6 +232,8 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
   .bars i.on::after { transform: none; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
+  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--yellow); border: var(--line) solid var(--ink); font-size: 15px; }
+  .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--white); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
   .chip .em { font-size: 20px; line-height: 1; }

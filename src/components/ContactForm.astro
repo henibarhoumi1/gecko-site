@@ -7,7 +7,7 @@ interface Props { lang: Locale }
 const { lang } = Astro.props;
 const k = c(lang).contact;
 ---
-<form class="cform" method="POST" action="https://api.web3forms.com/submit" data-cform data-key={site.formKey} data-mail={site.email} data-sent={k.sent} data-error={k.error} novalidate>
+<form class="cform" method="POST" action="https://api.web3forms.com/submit" data-cform data-key={site.formKey} data-mail={site.email} data-sent={k.sent} data-error={k.error} data-mail-done={k.mailDone} novalidate>
   <input type="hidden" name="access_key" value={site.formKey} />
   <input type="hidden" name="subject" value="New message from the Gecko website" />
   <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
@@ -18,7 +18,8 @@ const k = c(lang).contact;
   </div>
   <div class="field"><label for="cf-phone">{k.phone}</label><input id="cf-phone" name="phone" type="tel" autocomplete="tel" /></div>
   <div class="field"><label for="cf-msg">{k.message}</label><textarea id="cf-msg" name="message" rows="5" required></textarea></div>
-  <button class="btn primary" type="submit">{k.send} <span class="arr" aria-hidden="true">→</span></button>
+  <button class="btn primary" type="submit">{site.formKey ? k.send : k.mailSend} <span class="arr" aria-hidden="true">→</span></button>
+  {!site.formKey && <p class="note">{k.mailNote}</p>}
   <p class="text status" role="status" aria-live="polite"></p>
 </form>
 <script>
@@ -34,6 +35,7 @@ const k = c(lang).contact;
       if (!form.dataset.key) {
         const body = `${msg.value}\n\n${name.value}\n${mail.value}\n${form.querySelector<HTMLInputElement>('[name=phone]')!.value}`;
         location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(name.value)}&body=${encodeURIComponent(body)}`;
+        status.textContent = form.dataset.mailDone!;
         return;
       }
       try {
@@ -50,5 +52,7 @@ const k = c(lang).contact;
   .cform textarea { resize: vertical; min-height: 130px; }
   .cform .btn { justify-self: start; }
   .status:empty { display: none; }
+  .note { margin: -8px 0 0; font-size: 15px; color: var(--ink-2); }
+  .status { margin: 0; font-weight: 600; }
   @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
 </style>

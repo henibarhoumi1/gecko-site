@@ -12,9 +12,16 @@ const n = c(lang).nav;
 ---
 <Base lang={lang} footerCta={false} title={n.about}>
   <section class="page-head">
-    <div class="wrap stack center" style="--gap:22px">
+    <div class="wrap">
       <h1 class="h1 rv">{a.title}</h1>
-      <p class="text text-l soft measure rv" style="--d:100ms">{a.sub}</p>
+      <dl class="facts">
+        {a.facts.map((f, i) => (
+          <div class="fact rv" style={`--d:${80 + i * 70}ms`}>
+            <dt class="label">{f.k}</dt>
+            <dd><span class="v">{f.v}</span><span class="d">{f.d}</span></dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
@@ -23,37 +30,27 @@ const n = c(lang).nav;
       <figure class="photo rv">
         {portrait.src ? <img src={portrait.src} alt={a.heniTitle} /> : <div class="mono">g.</div>}
       </figure>
-      <div class="stack rv" style="--gap:18px; --d:120ms">
+      <div class="stack rv" style="--gap:18px; --d:100ms">
         <p class="label">{a.heniLabel}</p>
         <h2 class="h2">{a.heniTitle}</h2>
         <p class="role">{a.heniRole}</p>
-        <p class="text text-l soft measure">{a.heniText}</p>
+        <p class="text text-l">{a.heniText}</p>
       </div>
     </div>
   </section>
 
-  <section class="on-paper section">
+  <section class="on-paper section think-sec">
     <div class="wrap">
-      <div class="head rv"><h2 class="h2">{a.whyLabel}</h2></div>
+      <div class="head rv"><h2 class="h2">{a.thinkTitle}</h2></div>
       <ol class="why">
-        {a.why.map((w, i) => (
-          <li class="rv" style={`--d:${i * 80}ms`}>
+        {a.think.map((w, i) => (
+          <li class="rv" style={`--d:${i * 70}ms`}>
             <span class={`dot ${['p', 'y', 'g', 'i'][i]}`} aria-hidden="true">{i + 1}</span>
             <h3 class="h3">{w.t}</h3>
-            <p class="text soft">{w.d}</p>
+            <p class="text">{w.d}</p>
           </li>
         ))}
       </ol>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="wrap feel">
-      <div class="stack rv" style="--gap:16px">
-        <h2 class="h2">{a.feelLabel}</h2>
-        <p class="text soft">{a.baseLabel}. {a.base}</p>
-      </div>
-      <ul class="ticks-list big-ticks rv" style="--d:100ms">{a.feel.map((f) => <li>{f}</li>)}</ul>
     </div>
   </section>
 
@@ -61,21 +58,30 @@ const n = c(lang).nav;
 </Base>
 
 <style>
-  .page-head .h1 { max-width: 15ch; }
-  .heni-sec { padding-bottom: var(--section); }
-  .heni { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
+  .page-head .h1 { max-width: 13ch; }
+  .facts { margin: clamp(48px, 6vw, 88px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: var(--line) solid var(--ink); }
+  .fact { padding: 24px clamp(16px, 2.4vw, 32px) 0 0; }
+  .fact + .fact { padding-left: clamp(16px, 2.4vw, 32px); border-left: var(--line) solid var(--ink); }
+  .fact dd { margin: 12px 0 0; display: grid; gap: 10px; }
+  .fact .v { font-weight: 700; font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.04em; line-height: 1; }
+  .fact .d { font-size: 17px; line-height: 1.45; max-width: 24rem; }
+  .heni-sec { padding-block: clamp(24px, 3vw, 48px) var(--section); }
+  .heni { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
+  .heni .text { max-width: 34rem; }
   .photo { margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: hidden; background: #fff; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--pink); }
-  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; transition: transform 1200ms var(--ease); }
-  .photo:hover img { transform: scale(1.03); }
+  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
   .mono { height: 100%; display: grid; place-items: center; font-weight: 700; font-size: 160px; letter-spacing: -0.06em; }
   .role { margin: -6px 0 0; font-weight: 600; }
+  .think-sec { border-top: var(--line) solid var(--ink); }
   .why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .why li { display: grid; gap: 12px; align-content: start; padding: clamp(26px, 3vw, 40px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .why li { display: grid; gap: 12px; align-content: start; padding: clamp(26px, 3vw, 40px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), opacity 600ms var(--ease); }
   .why li.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
   .dot { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; margin-bottom: 12px; }
   .dot.p { background: var(--pink); } .dot.y { background: var(--yellow); } .dot.g { background: var(--pink-soft); } .dot.i { background: var(--ink); color: #fff; }
-  .why .text { max-width: 30rem; }
-  .feel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .big-ticks { gap: 18px; font-size: var(--body-l); font-weight: 500; }
-  @media (max-width: 860px) { .heni, .why, .feel { grid-template-columns: 1fr; } .photo { max-width: 420px; } }
+  .why .text { max-width: 30rem; font-size: 18px; }
+  @media (max-width: 860px) {
+    .facts { grid-template-columns: 1fr; }
+    .fact, .fact + .fact { padding: 22px 0; border-left: 0; border-bottom: var(--line) solid var(--ink); }
+    .heni, .why { grid-template-columns: 1fr; } .photo { max-width: 420px; }
+  }
 </style>

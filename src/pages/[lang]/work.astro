@@ -15,17 +15,17 @@ const w = c(lang).work;
 ---
 <Base lang={lang} footerCta={false} title={w.title}>
   <section class="page-head">
-    <div class="wrap stack center" style="--gap:18px">
+    <div class="wrap">
       <h1 class="h1 rv">{w.title}</h1>
-      <p class="text text-l soft rv" style="--d:100ms">{w.sub}</p>
     </div>
   </section>
 
   <section class="reels-sec">
     <div class="wrap">
       <div class="reels">
-        {ads.map((a, i) => <div class="rv" style={`--d:${i * 80}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
+        {ads.map((a, i) => <div class="rv" style={`--d:${i * 70}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
       </div>
+      <p class="credit rv">{w.credit}</p>
     </div>
   </section>
 
@@ -44,5 +44,6 @@ const w = c(lang).work;
 <style>
   .reels-sec { padding-bottom: clamp(24px, 4vw, 48px); }
   .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); }
+  .credit { margin: clamp(24px, 3vw, 36px) 0 0; font-size: 17px; max-width: 40rem; }
   @media (max-width: 960px) { .reels { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

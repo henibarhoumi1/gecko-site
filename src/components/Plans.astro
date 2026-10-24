@@ -14,33 +14,39 @@ const p = c(lang).plans;
     <article class={`plan rv ${o.from ? 'dark' : ''}`} style={`--d:${i * 90}ms`}>
       <header>
         <h3 class="h3">{o.name}</h3>
-        <p class="reels"><span class="n">{o.reels}{o.more && '+'}</span> <span class="soft">{o.more ? p.more : p.reels}</span></p>
+        {o.for && <p class="for">{o.for[lang]}</p>}
       </header>
       <div class="price">
-        {o.from && <span class="from soft">{p.from}</span>}
-        <p><span class="num">{fmt(o.launch, lang)}</span> <span class="soft">{cur} {p.month}</span></p>
-        <p class="small soft">{o.standard ? `${p.usually} ${fmt(o.standard, lang)} ${cur}` : `${p.sized}. ${p.vip}.`}</p>
+        <p class="reels"><span class="n">{o.reels}{o.more && '+'}</span> {o.more ? p.more : p.reels}</p>
+        <p class="amount">{o.from && <span class="from">{p.from} </span>}<span class="num">{fmt(o.launch, lang)}</span> {cur} {p.month}</p>
+        <p class="was">{o.standard ? `${p.usually} ${fmt(o.standard, lang)} ${cur}` : `${p.sized}.`}</p>
       </div>
       <ul class="ticks-list">{o.items[lang].map((it) => <li>{it}</li>)}</ul>
-      <a class={`btn ${o.from ? '' : 'primary'}`} href={href(lang, 'apply')}>{o.from ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
+      <p class={`scope ${o.from ? 'yes' : ''}`}>{o.from ? p.media : p.noMedia}</p>
+      <a class={`btn ${o.from ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${o.key}`}>{o.from ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
     </article>
   ))}
 </div>
 <style>
   .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
-  .plan { display: grid; grid-template-rows: auto auto 1fr auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .plan { display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
   .plan.in:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
-  .plan header { display: grid; gap: 6px; }
-  .reels { margin: 0; display: flex; align-items: baseline; gap: 8px; }
+  .plan header { display: grid; gap: 8px; }
+  .for { margin: 0; font-size: 16px; line-height: 1.4; min-height: 2.8em; }
+  .amount, .was { margin: 0; }
+  .was { font-size: 14px; }
+  .scope { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--pink-soft); font-size: 14px; line-height: 1.4; }
+  .dark .scope { background: rgba(255, 255, 255, .1); }
+  .reels { margin: 0 0 6px; display: flex; align-items: baseline; gap: 8px; font-size: 16px; }
   .reels .n { font-weight: 700; font-size: clamp(40px, 3.8vw, 56px); line-height: 1; letter-spacing: -0.05em; }
   .price { display: grid; gap: 4px; padding-block: 14px; border-block: var(--line) solid var(--ink); }
   .price p { margin: 0; }
-  .from { font-size: 14px; font-weight: 500; }
+  .from { font-size: 15px; font-weight: 600; }
   .num { font-weight: 700; font-size: clamp(28px, 2.4vw, 36px); letter-spacing: -0.03em; }
   .plan .btn { width: 100%; }
   .dark { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 6px 6px 0 var(--pink); }
   .dark.in:hover { box-shadow: 10px 10px 0 var(--pink); }
-  .dark .soft { color: rgba(255, 255, 255, .62); }
+  .dark .was, .dark .for { color: rgba(255, 255, 255, .78); }
   .dark .price { border-color: rgba(255, 255, 255, .14); }
   .dark :global(.ticks-list li::before) { background-color: var(--yellow); }
   .dark .btn { background: var(--yellow); border-color: var(--yellow); }

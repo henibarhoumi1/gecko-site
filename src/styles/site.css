@@ -21,7 +21,8 @@ a { color: inherit; }
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
 .section { padding-block: var(--section); }
 .page-head { padding-top: calc(var(--header) + clamp(64px, 9vw, 128px)); padding-bottom: clamp(48px, 6vw, 88px); }
-.page-head .h1 { max-width: 14ch; }
+.page-head .h1 { max-width: 16ch; }
+.page-head .lede { max-width: 38rem; color: var(--ink); }
 .center { text-align: center; justify-items: center; margin-inline: auto; }
 .center .h1, .center .h2 { margin-inline: auto; }
 
@@ -43,9 +44,9 @@ a { color: inherit; }
 .head .sub { max-width: 28rem; color: var(--ink-2); }
 
 /* Reveal on scroll */
-.rv { opacity: 0; transform: translateY(24px); filter: blur(6px); transition: opacity 900ms var(--ease), transform 900ms var(--ease), filter 900ms var(--ease); transition-delay: var(--d, 0ms); }
-.rv.in { opacity: 1; transform: none; filter: none; }
-@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; filter: none; transition: none; } }
+.rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); transition-delay: min(var(--d, 0ms), 240ms); }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
 
 /* Buttons and links */
 .btn { cursor: pointer; }
