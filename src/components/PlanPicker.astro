@@ -1,0 +1,163 @@
+---
+// Home page pricing: pick a plan on the left, its card fills the right. The full comparison lives on Offers.
+import { t, type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import { monthly, fmt } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const o = t(lang).offers;
+const cur = o.currency;
+const p = c(lang).plans;
+const h = c(lang).home;
+const start = 1;
+---
+<div class="picker" data-picker data-locale={lang === 'en' ? 'en-US' : 'fr-FR'}>
+  <div class="side">
+    <div class="intro rv">
+      <h2 class="h2">{h.plansTitle}</h2>
+      <p class="text text-l">{h.plansSub}</p>
+    </div>
+    <div class="tabs rv" style="--d:80ms" role="tablist" aria-label={h.plansTitle}>
+      {monthly.map((m, i) => (
+        <button type="button" role="tab" id={`tab-${m.key}`} aria-controls={`panel-${m.key}`} aria-selected={String(i === start)} tabindex={i === start ? 0 : -1} data-tab={i}>
+          <span class="nm">{m.name}</span>
+          <span class="meta">{m.reels}{m.more && '+'} reels · {m.from && `${p.from.toLowerCase()} `}{fmt(m.launch, lang)} {cur}</span>
+        </button>
+      ))}
+    </div>
+    <a class="all rv" style="--d:140ms" href={href(lang, 'offers')}>{h.plansCta} <span aria-hidden="true">→</span></a>
+  </div>
+
+  <div class="stage rv" style="--d:120ms">
+    {monthly.map((m, i) => (
+      <article class={`card ${m.from ? 'dark' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
+        {m.standard && <span class="sticker" aria-hidden="true">{o.launch}</span>}
+        <header>
+          <h3 class="name">{m.name}</h3>
+          {m.for && <p class="for">{m.for[lang]}</p>}
+        </header>
+        <div class="price">
+          <p class="amount">
+            {m.from && <span class="from">{p.from}</span>}
+            <span class="num" data-num={m.launch}>{fmt(m.launch, lang)}</span>
+            <span class="unit">{cur} {p.month}</span>
+          </p>
+          <p class="was">{m.standard ? <>{`${p.usually} `}<s>{fmt(m.standard, lang)} {cur}</s></> : `${p.sized}.`}</p>
+        </div>
+        <p class="reels"><b>{m.reels}{m.more && '+'}</b> {m.more ? p.more : p.reels}</p>
+        <ul class="ticks-list">{m.items[lang].map((it) => <li>{it}</li>)}</ul>
+        <p class="scope">{m.from ? p.media : p.noMedia}</p>
+        <a class={`btn ${m.from ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${m.key}`}>{m.from ? p.talk : `${p.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
+      </article>
+    ))}
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-picker]').forEach((root) => {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[data-panel]')];
+    const nf = new Intl.NumberFormat(root.dataset.locale);
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let at = tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true');
+    let shown = Number(panels[at].querySelector<HTMLElement>('[data-num]')!.dataset.num);
+
+    const count = (el: HTMLElement, from: number, to: number) => {
+      if (still) return;
+      const t0 = performance.now();
+      const step = (now: number) => {
+        const k = Math.min(1, (now - t0) / 520); const e = 1 - Math.pow(1 - k, 3);
+        el.textContent = nf.format(Math.round((from + (to - from) * e) / 10) * 10).replace(/\s/g, ' ');
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+
+    const pick = (i: number, focus = false) => {
+      if (i === at) return;
+      const dir = i > at ? 1 : -1;
+      tabs.forEach((t, k) => { t.setAttribute('aria-selected', String(k === i)); t.tabIndex = k === i ? 0 : -1; });
+      panels[at].hidden = true; panels[i].hidden = false;
+      const num = panels[i].querySelector<HTMLElement>('[data-num]')!; const to = Number(num.dataset.num);
+      count(num, shown, to); shown = to;
+      if (!still) {
+        panels[i].animate([{ opacity: 0, transform: `translateX(${dir * 24}px) rotate(${dir * 0.6}deg)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+        panels[i].querySelectorAll('.ticks-list li').forEach((li, k) => li.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 360, delay: 80 + k * 45, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' }));
+      }
+      at = i;
+      if (focus) tabs[i].focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => pick(i));
+      t.addEventListener('keydown', (e) => {
+        const n = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+        if (n) { e.preventDefault(); pick((at + n + tabs.length) % tabs.length, true); }
+      });
+    });
+  });
+</script>
+
+<style>
+  .picker { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .side { display: grid; gap: clamp(24px, 3vw, 36px); position: sticky; top: 110px; }
+  .intro { display: grid; gap: 16px; }
+  .intro .h2 { max-width: 10ch; }
+  .intro .text { margin: 0; max-width: 30rem; }
+  .tabs { display: grid; gap: 10px; }
+  .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
+  .tabs button:hover { background: var(--yellow-soft); }
+  .tabs [aria-selected='true'] { background: var(--yellow); transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--ink); }
+  .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
+  .meta { font-size: 15px; font-weight: 600; white-space: nowrap; }
+  .all { font-weight: 700; text-decoration: none; width: fit-content; }
+  .all:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .all span { display: inline-block; transition: transform 260ms var(--ease); }
+  .all:hover span { transform: translateX(4px); }
+
+  .stage { display: grid; }
+  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
+  .card header { display: grid; gap: 8px; padding-right: 110px; }
+  .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
+  .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; }
+  .sticker { position: absolute; top: clamp(18px, 2vw, 28px); right: clamp(18px, 2vw, 28px); width: 96px; height: 96px; display: grid; place-items: center; text-align: center; padding: 12px; border-radius: 50%; background: var(--pink); border: var(--line) solid var(--ink); font-weight: 700; font-size: 14px; line-height: 1.1; transform: rotate(10deg); animation: spin-in 700ms var(--spring) both; }
+  @keyframes spin-in { from { transform: rotate(-40deg) scale(.6); opacity: 0; } }
+  .price { display: grid; gap: 6px; padding-block: 18px; border-block: var(--line) solid var(--ink); }
+  .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .from { font-weight: 600; font-size: 17px; }
+  .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: 1; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .unit { font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); }
+  .was { margin: 0; font-size: 15px; }
+  .was s { text-decoration-thickness: 1.5px; }
+  .reels { margin: 0; font-size: 17px; }
+  .reels b { font-size: 22px; letter-spacing: -0.02em; }
+  .card .ticks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; font-size: 16px; }
+  .scope { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--pink-soft); font-size: 15px; line-height: 1.4; }
+  .card .btn { justify-self: start; }
+  .dark { background: var(--ink); color: #fff; box-shadow: 10px 10px 0 var(--pink); }
+  .dark .price { border-color: rgba(255, 255, 255, .25); }
+  .dark .scope { background: rgba(255, 255, 255, .1); }
+  .dark .for, .dark .was { color: rgba(255, 255, 255, .8); }
+  .dark .btn { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
+  .dark :global(.ticks-list li::before) { background-color: var(--yellow); }
+
+  @media (max-width: 960px) {
+    .picker { grid-template-columns: 1fr; gap: 28px; }
+    .side { display: contents; }
+    .stage { order: 3; }
+    .tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .tabs button { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px; }
+    .nm { font-size: 16px; }
+    .meta { font-size: 13px; white-space: normal; }
+    .all { order: 4; }
+  }
+  @media (max-width: 560px) {
+    .card { box-shadow: 6px 6px 0 var(--ink); }
+    .dark { box-shadow: 6px 6px 0 var(--pink); }
+    .card header { padding-right: 76px; }
+    .sticker { width: 76px; height: 76px; font-size: 11px; padding: 6px; }
+    .card .ticks-list { grid-template-columns: 1fr; }
+    .card .btn { justify-self: stretch; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sticker { animation: none; } .tabs button { transition: none; } }
+</style>

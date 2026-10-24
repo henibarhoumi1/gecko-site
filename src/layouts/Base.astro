@@ -28,6 +28,7 @@ const path = Astro.url.pathname;
         <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
     <meta property="og:image" content="/brand/og.png" />
+    <script is:inline>if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>
   <body>
     <Header lang={lang} />
@@ -36,9 +37,18 @@ const path = Astro.url.pathname;
     <script>
       import Lenis from 'lenis';
       // A new page always opens at the top (unless the link points to a section).
-      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-      const toTop = () => { if (!location.hash) scrollTo(0, 0); };
+      // Inside a frame (the preview link), the page around it is brought back up too after an internal click.
+      const framed = window !== window.top && !!document.referrer && new URL(document.referrer).origin === location.origin;
+      const toTop = () => {
+        if (location.hash) return;
+        scrollTo(0, 0);
+        if (framed) document.body.scrollIntoView({ block: 'start' });
+      };
       toTop();
+      let touched = false;
+      ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, () => (touched = true), { once: true, passive: true }));
+      addEventListener('load', () => { if (!touched) toTop(); }, { once: true });
+      addEventListener('pageshow', (e) => { if (!(e as PageTransitionEvent).persisted) toTop(); });
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Smooth, weighted scrolling. Paused while a dialog or the menu is open.
       if (!still) {
@@ -57,6 +67,26 @@ const path = Astro.url.pathname;
       // Things marked .rv rise into place the first time they come into view.
       const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
       document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+      // Swipe rows on phones: the card nearest the middle sits full size, the ones beside it shrink and fade a little.
+      const phone = matchMedia('(max-width: 760px)');
+      document.querySelectorAll<HTMLElement>('[data-swipe]').forEach((row) => {
+        const items = [...row.children] as HTMLElement[];
+        let ticking = false;
+        const tick = () => {
+          ticking = false;
+          if (!phone.matches || still) { items.forEach((el) => el.style.removeProperty('--near')); return; }
+          const r = row.getBoundingClientRect(); const mid = r.left + r.width * .4;
+          items.forEach((el) => {
+            const b = el.getBoundingClientRect();
+            const d = Math.min(1, Math.abs(b.left + b.width / 2 - mid) / b.width);
+            el.style.setProperty('--near', (1 - d).toFixed(3));
+          });
+        };
+        const ask = () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } };
+        row.addEventListener('scroll', ask, { passive: true });
+        addEventListener('resize', ask);
+        tick();
+      });
     </script>
   </body>
 </html>

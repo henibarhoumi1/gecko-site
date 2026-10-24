@@ -1,0 +1,160 @@
+---
+// What sets Gecko apart: four promises, each with a small moving picture of what it means.
+// The pictures play while their row is on screen and start again each time it comes back.
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const h = c(lang).home;
+const w = h.why;
+---
+<section class="on-yellow screen why-sec">
+  <div class="wrap">
+    <div class="head rv"><h2 class="h2 why-h">{w.title}</h2></div>
+    <ol class="list">
+      {w.items.map((it, i) => (
+        <li class="row" data-why>
+          <div class="copy rv">
+            <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="t">{it.t}</h3>
+            <p class="text">{it.d}</p>
+          </div>
+          <div class="proof rv" style="--d:120ms" aria-hidden="true">
+            {i === 0 && (
+              <div class="hooks">
+                <div class="phone">
+                  <span class="cap a">{w.hooks.lines[0]}</span>
+                  <span class="cap b">{w.hooks.lines[1]}</span>
+                  <span class="bar"><i></i></span>
+                </div>
+                <div class="side">
+                  <p class="same">{w.hooks.same}</p>
+                  <p class="opt a"><b>A</b>{w.hooks.a}</p>
+                  <p class="opt b"><b>B</b>{w.hooks.b}</p>
+                </div>
+              </div>
+            )}
+            {i === 1 && (
+              <div class="script">
+                <p class="st">{w.script.title}</p>
+                <ol>{w.script.scenes.map((sc, j) => <li style={`--j:${j}`}><span>{String(j + 1).padStart(2, '0')}</span>{sc}<i></i></li>)}</ol>
+                <span class="stamp">{w.script.stamp}</span>
+              </div>
+            )}
+            {i === 2 && (
+              <div class="flow">
+                <div class="track">
+                  <span class="line"><i></i></span>
+                  {w.flow.steps.map((st, j) => <span class="node" style={`--j:${j}`}><b></b>{st}</span>)}
+                </div>
+                <span class="days">{w.flow.days}</span>
+              </div>
+            )}
+            {i === 3 && (
+              <div class="review">
+                <p class="st">{w.review.title}</p>
+                {w.review.rows.map(([k, v], j) => (
+                  <p class={`rr ${['keep', 'drop', 'next'][j]}`} style={`--j:${j}`}><span>{k}</span><b>{v}</b></p>
+                ))}
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+    <a class="btn primary why-cta rv" href={href(lang, 'apply')}>{h.compareCta} <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<script>
+  const rows = document.querySelectorAll<HTMLElement>('[data-why]');
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('on', e.isIntersecting)), { threshold: 0.35 });
+  rows.forEach((r) => io.observe(r));
+</script>
+
+<style>
+  .why-sec { border-top: var(--line) solid var(--ink); }
+  .why-h { max-width: 13ch; }
+  .list { list-style: none; margin: 0; padding: 0; border-top: var(--line) solid var(--ink); }
+  .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: center; padding-block: clamp(32px, 4vw, 56px); border-bottom: var(--line) solid var(--ink); }
+  .copy { display: grid; gap: 14px; align-content: center; }
+  .n { font-weight: 700; font-size: 15px; letter-spacing: .02em; }
+  .t { margin: 0; font-weight: 700; font-size: clamp(30px, 3.4vw, 52px); line-height: 1.02; letter-spacing: -0.045em; max-width: 14ch; }
+  .copy .text { margin: 0; max-width: 32rem; font-size: clamp(17px, 1.3vw, 19px); }
+  .proof { position: relative; height: clamp(250px, 22vw, 300px); padding: clamp(20px, 2vw, 28px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; display: grid; }
+  .st { margin: 0 0 12px; font-weight: 700; font-size: 14px; }
+
+  /* 1. Two hooks on the same reel */
+  .hooks { height: 100%; min-height: 0; display: grid; grid-template-columns: auto 1fr; gap: clamp(18px, 2.4vw, 32px); align-items: center; }
+  .phone { position: relative; height: min(100%, 250px); aspect-ratio: 9 / 16; border-radius: 16px; background: var(--ink); overflow: hidden; align-self: center; }
+  .cap { position: absolute; left: 10px; right: 10px; top: 22%; padding: 8px 9px; border-radius: 8px; background: var(--white); color: var(--ink); font-weight: 700; font-size: 12px; line-height: 1.2; opacity: 0; }
+  .cap.a { opacity: 1; }
+  .phone .bar { position: absolute; left: 10px; right: 10px; bottom: 12px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .25); overflow: hidden; }
+  .phone .bar i { position: absolute; inset: 0; background: var(--pink); transform-origin: left; transform: scaleX(0); }
+  .side { display: grid; gap: 10px; align-content: center; }
+  .same { margin: 0 0 6px; font-weight: 700; font-size: clamp(18px, 1.6vw, 22px); letter-spacing: -0.02em; line-height: 1.15; }
+  .opt { margin: 0; display: flex; align-items: center; gap: 10px; padding: 8px 12px 8px 8px; border: var(--line) solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 14px; width: fit-content; background: var(--white); }
+  .opt b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; background: var(--ink); color: #fff; }
+  .opt.a { background: var(--pink); }
+  .on .cap.a { animation: capA 6s infinite; }
+  .on .cap.b { animation: capB 6s infinite; }
+  .on .opt.a { animation: optA 6s infinite; }
+  .on .opt.b { animation: optB 6s infinite; }
+  .on .phone .bar i { animation: bar 3s linear infinite; }
+  @keyframes capA { 0%, 44% { opacity: 1; transform: none; } 50%, 94% { opacity: 0; transform: translateY(-8px); } 100% { opacity: 1; transform: none; } }
+  @keyframes capB { 0%, 44% { opacity: 0; transform: translateY(8px); } 50%, 94% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+  @keyframes optA { 0%, 46% { background: var(--pink); transform: translateX(6px); } 50%, 96% { background: var(--white); transform: none; } 100% { background: var(--pink); transform: translateX(6px); } }
+  @keyframes optB { 0%, 46% { background: var(--white); transform: none; } 50%, 96% { background: var(--pink); transform: translateX(6px); } 100% { background: var(--white); transform: none; } }
+  @keyframes bar { to { transform: scaleX(1); } }
+
+  /* 2. The script, signed off */
+  .script { position: relative; display: grid; align-content: start; }
+  .script ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .script li { position: relative; display: flex; gap: 12px; align-items: baseline; padding: 7px 0; font-weight: 600; font-size: 15px; border-bottom: 1px dashed rgba(0, 0, 0, .25); }
+  .script li span { font-weight: 700; font-size: 12px; width: 18px; }
+  .script li i { flex: 1; height: 6px; margin-left: 8px; border-radius: 3px; background: var(--yellow-soft); align-self: center; transform-origin: left; }
+  .stamp { position: absolute; right: clamp(16px, 2vw, 28px); bottom: clamp(16px, 2vw, 26px); padding: 10px 18px; border: 2.5px solid var(--ink); border-radius: 10px; background: var(--pink); font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -0.02em; transform: rotate(-8deg); box-shadow: 4px 4px 0 var(--ink); }
+  .on .script li { animation: lineIn 500ms var(--ease) both; animation-delay: calc(var(--j) * 140ms); }
+  .on .script li i { animation: grow 700ms var(--ease) both; animation-delay: calc(var(--j) * 140ms + 120ms); }
+  .on .stamp { animation: stamp 520ms var(--spring) 900ms both; }
+  @keyframes lineIn { from { opacity: 0; transform: translateX(-10px); } }
+  @keyframes grow { from { transform: scaleX(0); } }
+  @keyframes stamp { from { opacity: 0; transform: rotate(-20deg) scale(1.8); } }
+
+  /* 3. One team, one line from brief to ads */
+  .flow { display: grid; align-content: center; gap: 28px; }
+  .track { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); }
+  .line { position: absolute; left: 10%; right: 10%; top: 13px; height: 3px; border-radius: 3px; background: rgba(0, 0, 0, .12); }
+  .line i { position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(1); border-radius: 3px; }
+  .node { position: relative; display: grid; justify-items: center; gap: 12px; font-weight: 700; font-size: clamp(13px, 1.1vw, 15px); text-align: center; }
+  .node b { width: 28px; height: 28px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--pink); }
+  .days { justify-self: end; margin-right: 2%; padding: 8px 14px; border-radius: 999px; background: var(--yellow); border: var(--line) solid var(--ink); font-weight: 700; font-size: 15px; position: relative; }
+  .days::before { content: ''; position: absolute; top: -9px; right: 22%; width: 14px; height: 14px; background: var(--yellow); border-left: var(--line) solid var(--ink); border-top: var(--line) solid var(--ink); transform: rotate(45deg); }
+  .on .line i { animation: fill 3.6s var(--ease) infinite; }
+  .on .node b { animation: dot 3.6s var(--ease) infinite; animation-delay: calc(var(--j) * 0.62s); }
+  .on .days { animation: pop 3.6s var(--ease) infinite; }
+  @keyframes fill { 0% { transform: scaleX(0); } 75%, 100% { transform: scaleX(1); } }
+  @keyframes dot { 0% { background: var(--white); transform: scale(.8); } 12%, 100% { background: var(--pink); transform: none; } }
+  @keyframes pop { 0%, 60% { opacity: 0; transform: translateY(6px); } 72%, 100% { opacity: 1; transform: none; } }
+
+  /* 4. The results review */
+  .review { display: grid; align-content: start; gap: 10px; }
+  .rr { margin: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border: var(--line) solid var(--ink); border-radius: var(--r-sm); font-weight: 600; font-size: 15px; }
+  .rr b { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; font-size: 14px; }
+  .keep b { background: var(--yellow); }
+  .drop b { background: var(--pink-soft); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+  .next { background: var(--ink); color: #fff; }
+  .next b { background: var(--pink); color: var(--ink); }
+  .on .rr { animation: lineIn 520ms var(--ease) both; animation-delay: calc(var(--j) * 260ms + 100ms); }
+  .on .rr b { animation: stamp 460ms var(--spring) both; animation-delay: calc(var(--j) * 260ms + 380ms); }
+
+  .why-cta { margin-top: clamp(28px, 3.5vw, 44px); }
+  @media (max-width: 860px) {
+    .row { grid-template-columns: 1fr; gap: 22px; }
+    .proof { height: auto; min-height: 236px; box-shadow: 6px 6px 0 var(--ink); }
+    .phone { height: 220px; }
+  }
+  @media (max-width: 420px) { .node { font-size: 12px; } .node b { width: 22px; height: 22px; } .line { top: 10px; } }
+  @media (prefers-reduced-motion: reduce) { .on *, .on .cap, .on .opt { animation: none !important; } }
+</style>

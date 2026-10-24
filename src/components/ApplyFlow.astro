@@ -1,5 +1,5 @@
 ---
-// Apply in four taps. A brief card on the left fills in as you answer and suggests where to start.
+// Apply in a few taps. A brief card on the left fills in as you answer and suggests where to start.
 // With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the answers filled in.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -14,21 +14,26 @@ const cur = t(lang).offers.currency;
 const H = heading;
 const emoji = [
   ['💄', '🍔', '👗', '💪', '🏠', '🛠️', '🙋', '✨'],
-  ['🧪', '🔁', '🚀', '🤔'],
+  ['🧪', '🔁', '🚀', '🎬', '🔍', '🤔'],
+  ['⚡', '📅', '🎯', '👀'],
   [],
 ];
-const choices = [a.sell, a.need, s.spends];
+const choices = [a.sell, a.need, a.when, s.spends];
+const names = ['sells', 'needs', 'start', 'spend'];
+const total = choices.length + 1;
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
   { name: 'brand', label: s.brand, auto: 'organization' },
   { name: 'link', label: s.link },
   { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
 ];
-// Where we'd start, by what they need: test, monthly, campaign, not sure
+// Where we'd start, by what they need: test, monthly, campaign, film, audit, not sure
 const sugg = [
   `${test.name} · ${a.from} ${fmt(test.launch, lang)} ${cur}`,
   `${a.mixed} · ${a.from} ${fmt(monthly[0].launch, lang)} ${cur} ${a.month}`,
   `${campaign.name} · ${a.from} ${fmt(campaign.launch, lang)} ${cur}`,
+  a.film,
+  `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
   `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
 ];
 const wa = site.whatsapp.replace('https://wa.me/', '');
@@ -68,27 +73,42 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
     <input type="hidden" name="plan" data-label={a.plan} data-plan-input />
     <p class="plan-pill" data-plan-pill hidden><span>{a.plan}: <b data-plan-name></b></span><button type="button" data-plan-clear aria-label={a.clear}>×</button></p>
     <div class="top">
-      <p class="count" aria-live="polite"><b data-count>1</b> / 4</p>
-      <div class="bars" aria-hidden="true">{[0, 1, 2, 3].map((i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
+      <p class="count" aria-live="polite"><b data-count>1</b> / {total}</p>
+      <div class="bars" aria-hidden="true">{Array.from({ length: total }, (_, i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
     </div>
 
     {choices.map((list, k) => (
       <fieldset class="step" data-step={k} hidden={k !== 0}>
         <legend>{a.steps[k]}</legend>
-        <input type="hidden" name={['sells', 'needs', 'spend'][k]} data-label={a.rows[k]} />
+        <input type="hidden" name={names[k]} data-label={a.rows[k]} />
         <div class="chips">{list.map((o, j) => <button type="button" class="chip" data-pick={o} data-i={j}>{emoji[k][j] && <span class="em" aria-hidden="true">{emoji[k][j]}</span>}{o}</button>)}</div>
       </fieldset>
     ))}
 
-    <fieldset class="step" data-step="3" hidden>
-      <legend>{a.steps[3]}</legend>
+    <fieldset class="step" data-step={choices.length} data-last hidden>
+      <legend>{a.steps[choices.length]}</legend>
+      <div class="reach">
+        <p class="rl">{a.reach}</p>
+        <input type="hidden" name="reach" data-label={a.reach} value={a.reachOpts[0]} data-reach-input />
+        <div class="seg" role="radiogroup" aria-label={a.reach}>
+          {a.reachOpts.map((r, j) => <button type="button" role="radio" aria-checked={String(j === 0)} data-reach={j}>{r}</button>)}
+        </div>
+      </div>
       <div class="fields">
         {fields.map((f) => (
-          <div class="field">
+          <div class="field" data-f={f.name}>
             <label for={`flow-${f.name}`}>{f.label}</label>
             <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required autocomplete={f.auto} data-label={f.label} />
           </div>
         ))}
+        <div class="field" data-f="email" hidden>
+          <label for="flow-email">{a.mail}</label>
+          <input id="flow-email" name="email" type="email" autocomplete="email" data-label={a.mail} disabled />
+        </div>
+        <div class="field wide">
+          <label for="flow-note">{a.note} <span class="opt">({a.optional})</span></label>
+          <textarea id="flow-note" name="note" rows="3" placeholder={a.notePh} data-label={a.note}></textarea>
+        </div>
       </div>
       <button class="btn primary send" type="submit">{site.formKey ? a.send : a.wa} <span class="arr" aria-hidden="true">→</span></button>
     </fieldset>
@@ -137,7 +157,7 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
       bars.forEach((b, i) => b.classList.toggle('on', i <= at));
       count.textContent = String(at + 1);
       back.hidden = at === 0;
-      if (at === 3) el.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true });
+      if (el.hasAttribute('data-last')) el.querySelector<HTMLInputElement>('.fields input')?.focus({ preventScroll: true });
     };
 
     form.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((chip) => chip.addEventListener('click', () => {
@@ -151,7 +171,20 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
     }));
     root.querySelectorAll<HTMLButtonElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { if (!done.hidden) return; go(Number(b.dataset.jump), Number(b.dataset.jump) < at ? -1 : 1); }));
     back.addEventListener('click', () => go(at - 1, -1));
-    form.querySelector<HTMLInputElement>('#flow-name')?.addEventListener('input', (e) => setVal(3, (e.target as HTMLInputElement).value.trim()));
+    const last = steps.length - 1;
+    form.querySelector<HTMLInputElement>('#flow-name')?.addEventListener('input', (e) => setVal(last, (e.target as HTMLInputElement).value.trim()));
+    // WhatsApp or a call needs a number; email swaps the number for an address.
+    const reachIn = form.querySelector<HTMLInputElement>('[data-reach-input]')!;
+    const phoneF = form.querySelector<HTMLElement>('[data-f="phone"]')!; const mailF = form.querySelector<HTMLElement>('[data-f="email"]')!;
+    const setReach = (j: number) => {
+      form.querySelectorAll<HTMLButtonElement>('[data-reach]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.reach) === j)));
+      reachIn.value = form.querySelector<HTMLButtonElement>(`[data-reach="${j}"]`)!.textContent!.trim();
+      const mail = j === 2;
+      phoneF.hidden = mail; phoneF.querySelector('input')!.disabled = mail;
+      mailF.hidden = !mail; mailF.querySelector('input')!.disabled = !mail; mailF.querySelector('input')!.required = mail;
+      (mail ? mailF : phoneF).animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    };
+    form.querySelectorAll<HTMLButtonElement>('[data-reach]').forEach((b) => b.addEventListener('click', () => setReach(Number(b.dataset.reach))));
 
     const finish = (text: string) => {
       steps[at].hidden = true; back.hidden = true;
@@ -166,27 +199,27 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
       planIn.value = plans[key];
       form.querySelector<HTMLElement>('[data-plan-name]')!.textContent = plans[key];
       pill.hidden = false;
-      const needIdx = key === 'test' || key === 'audit' ? 0 : key === 'campaign' || key === 'bespoke' ? 2 : 1;
+      const needIdx = { test: 0, campaign: 2, audit: 4 }[key] ?? (key === 'bespoke' ? -1 : 1);
       const chip = form.querySelectorAll<HTMLButtonElement>('[data-step="1"] .chip')[needIdx];
-      chip.classList.add('picked');
-      form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value = chip.dataset.pick!;
-      setVal(1, `${chip.dataset.pick} · ${plans[key]}`);
+      chip?.classList.add('picked');
+      form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value = chip ? chip.dataset.pick! : plans[key];
+      setVal(1, chip ? `${chip.dataset.pick} · ${plans[key]}` : plans[key]);
     }
     form.querySelector('[data-plan-clear]')!.addEventListener('click', () => { planIn.value = ''; pill.hidden = true; });
 
     form.querySelector('[data-again]')!.addEventListener('click', () => {
       form.reset(); form.querySelectorAll('.chip').forEach((x) => x.classList.remove('picked'));
-      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true; pill.hidden = true;
+      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true; pill.hidden = true; setReach(0);
       done.hidden = true; steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-step="3"] input')];
-      const empty = inputs.find((i) => !i.value.trim());
+      const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-last] .fields input:not(:disabled)')];
+      const empty = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
       if (empty) { empty.focus(); empty.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       if (!form.dataset.key) {
-        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label]')].filter((el) => el.value.trim()).map((el) => `${el.dataset.label}: ${el.value}`);
+        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
         open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
         finish(msg.dataset.waDone!);
         return;
@@ -226,7 +259,7 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
   .count { margin: 0; font-weight: 700; font-size: 15px; }
   .count b { font-size: 28px; letter-spacing: -0.04em; }
-  .bars { display: grid; grid-template-columns: repeat(4, 40px); gap: 6px; }
+  .bars { display: grid; grid-auto-flow: column; grid-auto-columns: 32px; gap: 6px; }
   .bars i { height: 8px; border-radius: 6px; background: var(--white); border: 1px solid var(--ink); position: relative; overflow: hidden; }
   .bars i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease); }
   .bars i.on::after { transform: none; }
@@ -240,6 +273,15 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
   .chip:hover { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .chip.picked { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .fields .wide { grid-column: 1 / -1; }
+  .field textarea { resize: vertical; min-height: 92px; }
+  .field .opt { font-weight: 500; color: var(--ink-2); }
+  .reach { display: grid; gap: 10px; }
+  .rl { margin: 0; font: 700 13px/1.2 var(--font); }
+  .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border: var(--line) solid var(--ink); border-radius: 999px; background: var(--white); }
+  .seg button { padding: 11px 10px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 700 15px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease); }
+  .seg button:hover { background: var(--yellow-soft); }
+  .seg [aria-checked='true'] { background: var(--ink); color: #fff; }
   .send { justify-self: start; }
   .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--ink); }
