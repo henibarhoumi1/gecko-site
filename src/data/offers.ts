@@ -1,5 +1,5 @@
-// Prices and plans as Heni set them on 18 Oct (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
-export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; from?: boolean; monthly: boolean };
+// Prices and plans as Heni set them on 25 Oct (Regular and Pro standard prices lowered, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
+export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; from?: boolean; custom?: boolean; max?: number; monthly: boolean };
 
 export const test: Offer = {
   key: 'test', name: 'Test Campaign', launch: 1000, standard: 1500, monthly: false,
@@ -12,7 +12,7 @@ export const test: Offer = {
 export const monthly: Offer[] = [
   {
     key: 'regular', name: 'Regular', reels: 10,
-    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2200, standard: 3200, monthly: true,
+    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2200, standard: 2900, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '4 statics', '1 carousel', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '4 visuels fixes', '1 carrousel', 'Revue mensuelle des résultats et plan pour la suite'],
@@ -20,18 +20,18 @@ export const monthly: Offer[] = [
   },
   {
     key: 'pro', name: 'Pro', reels: 15,
-    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3200, standard: 3900, monthly: true,
+    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3200, standard: 3500, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '6 statics', '2 recut ads from your footage', '2 carousels', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '6 visuels fixes', '2 pubs remontées à partir de vos images', '2 carrousels', 'Revue mensuelle des résultats et plan pour la suite'],
     },
   },
   {
-    key: 'partner', name: 'Creative Partner', reels: 20,
-    for: { en: 'For brands that want one team on the creative and the ad account.', fr: 'Pour les marques qui veulent une seule équipe sur la création et le compte pub.' }, more: true, launch: 4800, from: true, monthly: true,
+    key: 'partner', name: 'Creative Partner', reels: 20, max: 100,
+    for: { en: 'For brands that need ads at volume, with the full VIP treatment.', fr: 'Pour les marques qui ont besoin de pubs en volume, avec le traitement VIP complet.' }, more: true, custom: true, launch: 0, monthly: true,
     items: {
-      en: ['As many reels as your volume needs', '3 hooks per reel', 'Statics, carousels and recut ads', 'Media buying: we run your Meta ads', 'Priority shoot dates', 'A direct line to the team, 7 days a week', 'Weekly results review'],
-      fr: ['Autant de reels que votre volume l’exige', '3 accroches par reel', 'Visuels fixes, carrousels et pubs remontées', 'Achat média : on gère vos pubs Meta', 'Dates de tournage prioritaires', 'Une ligne directe avec l’équipe, 7 jours sur 7', 'Revue hebdomadaire des résultats'],
+      en: ['20 to 100 reels a month', '3 hooks per reel', 'Statics, carousels and recut ads', 'Market analysis for your category', 'KPIs we set and track together', 'Weekly performance review and improvements', 'Priority shoot dates', 'A direct line to the team, 7 days a week'],
+      fr: ['20 à 100 reels par mois', '3 accroches par reel', 'Visuels fixes, carrousels et pubs remontées', 'Analyse de marché de votre secteur', 'Des KPIs fixés et suivis ensemble', 'Revue de performance hebdomadaire et améliorations', 'Dates de tournage prioritaires', 'Une ligne directe avec l’équipe, 7 jours sur 7'],
     },
   },
 ];

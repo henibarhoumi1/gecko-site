@@ -11,19 +11,19 @@ const p = c(lang).plans;
 ---
 <div class="plans">
   {monthly.map((o, i) => (
-    <article class={`plan rv ${o.from ? 'dark' : ''}`} style={`--d:${i * 90}ms`}>
+    <article class={`plan rv ${o.custom ? 'dark' : ''}`} style={`--d:${i * 90}ms`}>
       <header>
         <h3 class="h3">{o.name}</h3>
         {o.for && <p class="for">{o.for[lang]}</p>}
       </header>
       <div class="price">
-        <p class="reels"><span class="n">{o.reels}{o.more && '+'}</span> {o.more ? p.more : p.reels}</p>
-        <p class="amount">{o.from && <span class="from">{p.from} </span>}<span class="num">{fmt(o.launch, lang)}</span> {cur} {p.month}</p>
-        <p class="was">{o.standard ? `${p.usually} ${fmt(o.standard, lang)} ${cur}` : `${p.sized}.`}</p>
+        <p class="reels"><span class="n">{o.max ? `${o.reels}–${o.max}` : o.reels}</span> {p.reels}</p>
+        <p class="amount">{o.custom ? <span class="num">{p.custom}</span> : <><span class="num">{fmt(o.launch, lang)}</span> {cur} {p.month}</>}</p>
+        <p class="was">{o.standard ? `${p.usually} ${fmt(o.standard, lang)} ${cur}` : p.customNote}</p>
       </div>
       <ul class="ticks-list">{o.items[lang].map((it) => <li>{it}</li>)}</ul>
-      <p class={`scope ${o.from ? 'yes' : ''}`}>{o.from ? p.media : p.noMedia}</p>
-      <a class={`btn ${o.from ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${o.key}`}>{o.from ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
+      <p class="scope">{p.scope}</p>
+      <a class={`btn ${o.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${o.key}`}>{o.custom ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
     </article>
   ))}
 </div>

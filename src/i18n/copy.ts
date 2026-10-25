@@ -35,8 +35,8 @@ const en = {
   plans: {
     month: '/ month', reels: 'reels a month', more: 'reels and up', usually: 'Launch price, usually', from: 'From', sized: 'Sized to your volume',
     choose: 'Choose', talk: 'Talk to us', included: 'Included',
-    noMedia: 'Creative only. Media buying and ad spend are not included: you or your media buyer run the ads.',
-    media: 'Creative and media buying. We run your Meta ad account.',
+    scope: 'We make the ads and track how they perform. You run your ads and keep control of your ad spend.',
+    custom: 'Custom price', customShort: 'custom', customNote: 'Priced to your volume, from 20 to 100 reels a month.', upTo: 'to',
   },
   apply: {
     title: 'Tell us about your brand.',
@@ -130,7 +130,7 @@ const en = {
     sub: 'Monthly plans keep fresh ads coming. Bespoke projects are for the moments that need more.',
     splitTitle: 'What you’re paying for.',
     make: { t: 'Creative production', tag: 'Every plan', d: 'Research, scripts, the shoot and the edit. Each month we go through your ad and sales results with you and use them to shape the next round.' },
-    run: { t: 'Media buying', tag: 'Creative Partner only', d: 'We set up, run and optimise your Meta campaigns. On Regular and Pro, you or your media buyer run the ads, and ad spend is never part of those plans.' },
+    run: { t: 'Performance tracking', tag: 'Every plan', d: 'We set KPIs with you, track how each ad performs and use it to improve the next round. Creative Partner adds market analysis and a weekly review. We’re a creative studio: running your ad account and your ad spend stay with you.' },
     costs: { t: 'Outside production costs', tag: 'Quoted separately', d: 'Studio rental, talent, props and other outside costs are separate from our fee. We coordinate them, you approve each one before it’s booked, and you get the invoices or receipts.' },
     every: 'In every plan',
     oneOff: 'Not ready for a monthly plan?',
@@ -194,8 +194,8 @@ const fr: Copy = {
   plans: {
     month: '/ mois', reels: 'reels par mois', more: 'reels et plus', usually: 'Prix de lancement, habituellement', from: 'À partir de', sized: 'Adapté à votre volume',
     choose: 'Choisir', talk: 'Parlons-en', included: 'Inclus',
-    noMedia: 'Création uniquement. Achat média et budget pub non inclus : vous ou votre media buyer lancez les pubs.',
-    media: 'Création et achat média. On gère votre compte publicitaire Meta.',
+    scope: 'On crée les pubs et on suit leurs performances. Vous lancez vos pubs et gardez la main sur votre budget.',
+    custom: 'Prix sur mesure', customShort: 'sur mesure', customNote: 'Selon votre volume, de 20 à 100 reels par mois.', upTo: 'à',
   },
   apply: {
     title: 'Parlez-nous de votre marque.',
@@ -289,7 +289,7 @@ const fr: Copy = {
     sub: 'Les plans mensuels vous fournissent de nouvelles pubs chaque mois. Les projets sur mesure, c’est pour les moments qui demandent plus.',
     splitTitle: 'Ce que vous payez.',
     make: { t: 'Production créative', tag: 'Dans chaque plan', d: 'Recherche, scripts, tournage et montage. Chaque mois, on passe en revue vos résultats pub et ventes avec vous pour orienter la suite.' },
-    run: { t: 'Achat média', tag: 'Creative Partner uniquement', d: 'On crée, gère et optimise vos campagnes Meta. Avec Regular et Pro, c’est vous ou votre media buyer qui lancez les pubs, et le budget pub n’est jamais inclus dans ces plans.' },
+    run: { t: 'Suivi des performances', tag: 'Dans chaque plan', d: 'On fixe des KPIs avec vous, on suit les performances de chaque pub et on s’en sert pour améliorer la suite. Creative Partner ajoute une analyse de marché et une revue hebdomadaire. Nous sommes un studio créatif : la gestion de votre compte pub et votre budget restent chez vous.' },
     costs: { t: 'Coûts de production externes', tag: 'Chiffrés à part', d: 'Location de studio, talents, accessoires et autres coûts externes sont distincts de nos honoraires. On les coordonne, vous validez chacun avant réservation, et vous recevez les factures ou reçus.' },
     every: 'Dans chaque plan',
     oneOff: 'Pas prêt pour un plan mensuel ?',
