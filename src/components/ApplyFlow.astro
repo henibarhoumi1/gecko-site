@@ -1,44 +1,34 @@
 ---
-// Apply in a few taps. A brief card on the left fills in as you answer and suggests where to start.
-// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the answers filled in.
+// The brief, one tap at a time. Questions branch on earlier answers (no ad budget question if they don't run ads,
+// no "what do you sell" for an event), and the brief card fills in as they go and suggests where to start.
+// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the brief filled in.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { site } from '../data/site';
-import { test, campaign, audit, monthly, fmt } from '../data/offers';
+import { test, campaign, audit, monthly } from '../data/offers';
 interface Props { lang: Locale; heading?: 'h1' | 'h2' }
 const { lang, heading = 'h2' } = Astro.props;
 const a = c(lang).apply;
 const s = t(lang).apply;
 const ct = t(lang).contact;
-const cur = t(lang).offers.currency;
 const H = heading;
-const emoji = [
-  ['💄', '🍔', '👗', '💪', '🏠', '🛠️', '🙋', '✨'],
-  ['🧪', '🔁', '🚀', '🎬', '🔍', '🤔'],
-  ['⚡', '📅', '🎯', '👀'],
-  [],
-];
-const choices = [a.sell, a.need, a.when, s.spends];
-const names = ['sells', 'needs', 'start', 'spend'];
-const total = choices.length + 1;
+const qs = a.qs as { key: string; q: string; row: string; multi?: boolean; hint?: string; when?: Record<string, number[]>; opts: string[][] }[];
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
   { name: 'brand', label: s.brand, auto: 'organization' },
   { name: 'link', label: s.link },
   { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
 ];
-// Where we'd start, by what they need: test, monthly, campaign, film, audit, not sure
-const sugg = [
-  `${test.name} · ${a.from} ${fmt(test.launch, lang)} ${cur}`,
-  `${a.mixed} · ${a.from} ${fmt(monthly[0].launch, lang)} ${cur} ${a.month}`,
-  `${campaign.name} · ${a.from} ${fmt(campaign.launch, lang)} ${cur}`,
-  a.film,
-  `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
-  `${audit.name} · ${fmt(audit.price, lang)} ${cur}`,
-];
 const wa = site.whatsapp.replace('https://wa.me/', '');
-// Plan links (?plan=pro) arrive with that plan already chosen.
-const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test', test.name], ['campaign', campaign.name], ['audit', audit.name], ['bespoke', a.bespoke]]);
+// Plan links (?plan=pro) arrive with the matching answers filled in: [plan name, answers by question key].
+const plans = Object.fromEntries([
+  ...monthly.map((m) => [m.key, [m.name, { type: [0], make: [0], rhythm: [1] }]]),
+  ['test', [test.name, { type: [0], make: [0], rhythm: [0] }]],
+  ['campaign', [campaign.name, { make: [0], rhythm: [0] }]],
+  ['audit', [audit.name, { make: [0] }]],
+  ['bespoke', [a.bespoke, { rhythm: [0] }]],
+]);
+const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, when: when ?? null }));
 ---
 <div class="apply">
   <div class="lead stack" style="--gap:22px">
@@ -48,12 +38,9 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
 
     <aside class="brief rv" style="--d:180ms" data-brief aria-live="polite">
       <p class="label">{a.brief}</p>
-      <ul>
-        {a.rows.map((r, k) => (
-          <li><button type="button" data-jump={k}><span class="k">{r}</span><span class="v" data-v={k} data-empty={a.empty}>{a.empty}</span></button></li>
-        ))}
-      </ul>
-      <div class="sugg" data-sugg hidden>
+      <p class="empty" data-brief-empty>{a.briefEmpty}</p>
+      <ul data-rows></ul>
+      <div class="sugg mat" data-sugg hidden>
         <p class="label">{a.start}</p>
         <p class="pick" data-sugg-text></p>
       </div>
@@ -66,27 +53,36 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro} data-sugg-list={JSON.stringify(sugg)} data-plans={JSON.stringify(plans)} action="https://api.web3forms.com/submit" method="POST" novalidate>
+  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
+    data-meta={JSON.stringify(meta)} data-plans={JSON.stringify(plans)} data-sugg={JSON.stringify(a.sugg)} data-cheers={JSON.stringify(a.cheers)} data-contact-row={a.contactRow}
+    action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
-    <input type="hidden" name="subject" value="New application from the Gecko website" />
+    <input type="hidden" name="subject" value="New brief from the Gecko website" />
     <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <input type="hidden" name="plan" data-label={a.plan} data-plan-input />
     <p class="plan-pill" data-plan-pill hidden><span>{a.plan}: <b data-plan-name></b></span><button type="button" data-plan-clear aria-label={a.clear}>×</button></p>
     <div class="top">
-      <p class="count" aria-live="polite"><b data-count>1</b> / {total}</p>
-      <div class="bars" aria-hidden="true">{Array.from({ length: total }, (_, i) => <i class={i === 0 ? 'on' : ''}></i>)}</div>
+      <p class="count" aria-live="polite"><span class="sr">{a.step} </span><b data-count>1</b> / <span data-total></span></p>
+      <p class="cheer" data-cheer aria-hidden="true"></p>
+      <div class="bar" aria-hidden="true"><i data-fill></i></div>
     </div>
 
-    {choices.map((list, k) => (
-      <fieldset class="step" data-step={k} hidden={k !== 0}>
-        <legend>{a.steps[k]}</legend>
-        <input type="hidden" name={names[k]} data-label={a.rows[k]} />
-        <div class="chips">{list.map((o, j) => <button type="button" class="chip" data-pick={o} data-i={j}>{emoji[k][j] && <span class="em" aria-hidden="true">{emoji[k][j]}</span>}{o}</button>)}</div>
+    {qs.map((q, k) => (
+      <fieldset class="step" data-step={k} data-key={q.key} hidden={k !== 0}>
+        <legend>{q.q}</legend>
+        {q.hint && <p class="hint">{q.hint}</p>}
+        <input type="hidden" name={q.key} data-label={q.row} />
+        <div class={`chips ${q.opts.length > 6 ? 'many' : ''}`}>
+          {q.opts.map(([em, label], j) => (
+            <button type="button" class="chip" data-pick={label} data-i={j} aria-pressed="false">{em && <span class="em" aria-hidden="true">{em}</span>}{label}</button>
+          ))}
+        </div>
+        {q.multi && <button type="button" class="btn primary next" data-next disabled>{a.next} <span class="arr" aria-hidden="true">→</span></button>}
       </fieldset>
     ))}
 
-    <fieldset class="step" data-step={choices.length} data-last hidden>
-      <legend>{a.steps[choices.length]}</legend>
+    <fieldset class="step" data-step={qs.length} data-last hidden>
+      <legend>{a.contactQ}</legend>
       <div class="reach">
         <p class="rl">{a.reach}</p>
         <input type="hidden" name="reach" data-label={a.reach} value={a.reachOpts[0]} data-reach-input />
@@ -124,100 +120,154 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
 </div>
 
 <script>
+  type Meta = { key: string; row: string; multi: boolean; when: Record<string, number[]> | null };
   document.querySelectorAll<HTMLFormElement>('[data-flow]').forEach((form) => {
     const root = form.closest('.apply')!;
+    const meta: Meta[] = JSON.parse(form.dataset.meta!);
+    const sugg: Record<string, string> = JSON.parse(form.dataset.sugg!);
+    const cheers: string[] = JSON.parse(form.dataset.cheers!);
     const steps = [...form.querySelectorAll<HTMLElement>('[data-step]')];
-    const bars = [...form.querySelectorAll('.bars i')];
-    const count = form.querySelector<HTMLElement>('[data-count]')!;
-    const back = form.querySelector<HTMLButtonElement>('[data-back]')!;
-    const done = form.querySelector<HTMLElement>('[data-done]')!;
-    const msg = form.querySelector<HTMLElement>('[data-msg]')!;
-    const vals = [...root.querySelectorAll<HTMLElement>('[data-v]')];
-    const suggBox = root.querySelector<HTMLElement>('[data-sugg]')!;
-    const suggText = root.querySelector<HTMLElement>('[data-sugg-text]')!;
-    const suggList: string[] = JSON.parse(form.dataset.suggList!);
-    let at = 0;
-    const planIn = form.querySelector<HTMLInputElement>('[data-plan-input]')!;
-    const pill = form.querySelector<HTMLElement>('[data-plan-pill]')!;
+    const last = steps.length - 1;
+    const $ = <T extends HTMLElement>(sel: string) => form.querySelector<T>(sel)!;
+    const count = $('[data-count]'), total = $('[data-total]'), fill = $('[data-fill]'), cheer = $('[data-cheer]');
+    const back = $<HTMLButtonElement>('[data-back]'), done = $('[data-done]'), msg = $('[data-msg]');
+    const rows = root.querySelector<HTMLElement>('[data-rows]')!, empty = root.querySelector<HTMLElement>('[data-brief-empty]')!;
+    const suggBox = root.querySelector<HTMLElement>('[data-sugg]')!, suggText = root.querySelector<HTMLElement>('[data-sugg-text]')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const ans: Record<string, number[]> = {};
+    const prefilled = new Set<string>();
+    let at = 0, history: number[] = [];
 
-    const setVal = (k: number, text: string) => {
-      const v = vals[k]; const had = v.classList.contains('set');
-      v.textContent = text || v.dataset.empty!; v.classList.toggle('set', !!text);
-      if (text && !had) v.animate([{ transform: 'scale(.9)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 360, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+    const has = (k: string, ...i: number[]) => (ans[k] ?? []).some((x) => i.includes(x));
+    const shows = (k: number) => {
+      if (k === last) return true;
+      const w = meta[k].when; if (!w) return true;
+      return Object.entries(w).every(([key, vals]) => has(key, ...vals));
     };
-    const showSugg = (i: number) => {
-      suggText.textContent = suggList[i]; suggBox.hidden = false;
-      suggBox.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    // The questions this person will see, given what they've answered so far.
+    const path = () => steps.map((_, k) => k).filter((k) => shows(k) && (k === last || !prefilled.has(meta[k].key)));
+    const label = (k: number) => [...steps[k].querySelectorAll<HTMLButtonElement>('.chip')].filter((c) => (ans[meta[k].key] ?? []).includes(Number(c.dataset.i))).map((c) => c.dataset.pick).join(', ');
+
+    const anim = (el: Element, kf: Keyframe[], o: KeyframeAnimationOptions) => { if (!still) el.animate(kf, o); };
+    const progress = () => {
+      const p = path(); const i = Math.max(0, p.indexOf(at));
+      count.textContent = String(i + 1); total.textContent = String(p.length);
+      fill.style.transform = `scaleX(${(i + 1) / p.length})`;
+    };
+    // Answers that no longer apply (switching from "a shop" to "an event") are dropped.
+    const prune = () => meta.forEach((m, k) => { if (!shows(k) && ans[m.key]) { delete ans[m.key]; steps[k].querySelectorAll('.chip').forEach((c) => { c.classList.remove('picked'); c.setAttribute('aria-pressed', 'false'); }); steps[k].querySelector<HTMLInputElement>('input[type=hidden]')!.value = ''; } });
+
+    const brief = () => {
+      rows.innerHTML = '';
+      meta.forEach((m, k) => {
+        if (!ans[m.key]?.length || !shows(k)) return;
+        const li = document.createElement('li'); const b = document.createElement('button'); b.type = 'button';
+        b.innerHTML = '<span class="k"></span><span class="v"></span>';
+        b.querySelector('.k')!.textContent = m.row; b.querySelector('.v')!.textContent = label(k);
+        b.addEventListener('click', () => { if (done.hidden) go(k, -1); });
+        li.append(b); rows.append(li);
+      });
+      const name = form.querySelector<HTMLInputElement>('#flow-name')!.value.trim();
+      if (name) { const li = document.createElement('li'); li.innerHTML = '<button type="button"><span class="k"></span><span class="v"></span></button>'; li.querySelector('.k')!.textContent = form.dataset.contactRow!; li.querySelector('.v')!.textContent = name; rows.append(li); }
+      empty.hidden = rows.children.length > 0;
+      const pick = suggest();
+      if (pick && suggText.textContent !== pick) { suggText.textContent = pick; suggBox.hidden = false; anim(suggBox, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' }); }
+      if (!pick) suggBox.hidden = true;
+    };
+    // Where we'd start: a monthly plan, a test, an audit, a bespoke quote or just a call.
+    const suggest = () => {
+      if (!ans.make && !ans.rhythm) return '';
+      const bigger = has('make', 2, 4, 5, 6) || has('type', 4);
+      const ads = has('make', 0, 1);
+      if (has('rhythm', 1) && ads) return sugg.plans;
+      if (bigger) return sugg.bespoke;
+      if (ads && has('rhythm', 0)) return sugg.test;
+      if (ads && has('ads', 0, 1) && has('rhythm', 2)) return sugg.audit;
+      if (has('make', 3)) return sugg.bespoke;
+      return ans.rhythm ? sugg.call : '';
     };
 
     const go = (n: number, dir = 1) => {
       steps[at].hidden = true; at = n;
       const el = steps[at]; el.hidden = false;
-      el.animate([{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
-      bars.forEach((b, i) => b.classList.toggle('on', i <= at));
-      count.textContent = String(at + 1);
-      back.hidden = at === 0;
+      anim(el, [{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      back.hidden = history.length === 0;
+      progress();
       if (el.hasAttribute('data-last')) el.querySelector<HTMLInputElement>('.fields input')?.focus({ preventScroll: true });
     };
+    const forward = () => {
+      prune(); brief();
+      const p = path(); const next = p.find((k) => k > at) ?? last;
+      history.push(at);
+      if (!still && at < last) { cheer.textContent = cheers[Math.floor(Math.random() * cheers.length)]; cheer.classList.remove('show'); void cheer.offsetWidth; cheer.classList.add('show'); }
+      setTimeout(() => go(next), meta[at]?.multi ? 0 : 280);
+    };
+    back.addEventListener('click', () => { const prev = history.pop(); if (prev !== undefined) go(prev, -1); });
 
-    form.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((chip) => chip.addEventListener('click', () => {
-      const step = chip.closest<HTMLElement>('[data-step]')!; const k = Number(step.dataset.step);
-      step.querySelectorAll('.chip').forEach((x) => x.classList.toggle('picked', x === chip));
-      step.querySelector<HTMLInputElement>('input[type=hidden]')!.value = chip.dataset.pick!;
-      setVal(k, chip.dataset.pick!);
-      if (k === 1) showSugg(Number(chip.dataset.i));
-      const skip = k === 0 && planIn.value && form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value;
-      setTimeout(() => go(skip ? 2 : k + 1), 300);
-    }));
-    root.querySelectorAll<HTMLButtonElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => { if (!done.hidden) return; go(Number(b.dataset.jump), Number(b.dataset.jump) < at ? -1 : 1); }));
-    back.addEventListener('click', () => go(at - 1, -1));
-    const last = steps.length - 1;
-    form.querySelector<HTMLInputElement>('#flow-name')?.addEventListener('input', (e) => setVal(last, (e.target as HTMLInputElement).value.trim()));
+    const setPick = (k: number, i: number[]) => {
+      const key = meta[k].key; ans[key] = i;
+      steps[k].querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => { const on = i.includes(Number(c.dataset.i)); c.classList.toggle('picked', on); c.setAttribute('aria-pressed', String(on)); });
+      steps[k].querySelector<HTMLInputElement>('input[type=hidden]')!.value = label(k);
+      const nx = steps[k].querySelector<HTMLButtonElement>('[data-next]'); if (nx) nx.disabled = i.length === 0;
+    };
+    steps.slice(0, last).forEach((step, k) => {
+      step.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) => chip.addEventListener('click', () => {
+        const i = Number(chip.dataset.i);
+        if (meta[k].multi) {
+          const cur = ans[meta[k].key] ?? [];
+          setPick(k, cur.includes(i) ? cur.filter((x) => x !== i) : [...cur, i]);
+          anim(chip, [{ transform: 'scale(.94)' }, { transform: 'translate(-2px,-2px)' }], { duration: 260, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+          brief();
+        } else { setPick(k, [i]); forward(); }
+      }));
+      step.querySelector('[data-next]')?.addEventListener('click', forward);
+    });
+    form.querySelector('#flow-name')!.addEventListener('input', brief);
+
     // WhatsApp or a call needs a number; email swaps the number for an address.
-    const reachIn = form.querySelector<HTMLInputElement>('[data-reach-input]')!;
-    const phoneF = form.querySelector<HTMLElement>('[data-f="phone"]')!; const mailF = form.querySelector<HTMLElement>('[data-f="email"]')!;
+    const reachIn = $<HTMLInputElement>('[data-reach-input]');
+    const phoneF = $('[data-f="phone"]'), mailF = $('[data-f="email"]');
     const setReach = (j: number) => {
       form.querySelectorAll<HTMLButtonElement>('[data-reach]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.reach) === j)));
-      reachIn.value = form.querySelector<HTMLButtonElement>(`[data-reach="${j}"]`)!.textContent!.trim();
+      reachIn.value = $<HTMLButtonElement>(`[data-reach="${j}"]`).textContent!.trim();
       const mail = j === 2;
       phoneF.hidden = mail; phoneF.querySelector('input')!.disabled = mail;
       mailF.hidden = !mail; mailF.querySelector('input')!.disabled = !mail; mailF.querySelector('input')!.required = mail;
-      (mail ? mailF : phoneF).animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      anim(mail ? mailF : phoneF, [{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: 'cubic-bezier(.2,.7,.2,1)' });
     };
     form.querySelectorAll<HTMLButtonElement>('[data-reach]').forEach((b) => b.addEventListener('click', () => setReach(Number(b.dataset.reach))));
 
+    // Arriving from a plan or project button: keep that choice and answer the matching questions for them.
+    const planIn = $<HTMLInputElement>('[data-plan-input]'), pill = $('[data-plan-pill]');
+    const plans: Record<string, [string, Record<string, number[]>]> = JSON.parse(form.dataset.plans!);
+    const key = new URLSearchParams(location.search).get('plan') ?? '';
+    const applyPlan = () => {
+      if (!plans[key]) return;
+      const [name, pre] = plans[key];
+      planIn.value = name; $('[data-plan-name]').textContent = name; pill.hidden = false;
+      Object.entries(pre).forEach(([k, v]) => { const idx = meta.findIndex((m) => m.key === k); setPick(idx, v); prefilled.add(k); });
+      const first = path()[0]; steps.forEach((x, i) => (x.hidden = i !== first)); at = first;
+    };
+    $('[data-plan-clear]').addEventListener('click', () => { planIn.value = ''; pill.hidden = true; prefilled.clear(); progress(); });
+
     const finish = (text: string) => {
       steps[at].hidden = true; back.hidden = true;
-      msg.textContent = text; done.hidden = false;
-      done.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
-      bars.forEach((b) => b.classList.add('on'));
+      msg.textContent = text; done.hidden = false; fill.style.transform = 'scaleX(1)';
+      anim(done, [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
     };
-    // Arriving from a plan or project button: keep that choice and answer "what are you after" for them.
-    const plans: Record<string, string> = JSON.parse(form.dataset.plans!);
-    const key = new URLSearchParams(location.search).get('plan') ?? '';
-    if (plans[key]) {
-      planIn.value = plans[key];
-      form.querySelector<HTMLElement>('[data-plan-name]')!.textContent = plans[key];
-      pill.hidden = false;
-      const needIdx = { test: 0, campaign: 2, audit: 4 }[key] ?? (key === 'bespoke' ? -1 : 1);
-      const chip = form.querySelectorAll<HTMLButtonElement>('[data-step="1"] .chip')[needIdx];
-      chip?.classList.add('picked');
-      form.querySelector<HTMLInputElement>('[data-step="1"] input[type=hidden]')!.value = chip ? chip.dataset.pick! : plans[key];
-      setVal(1, chip ? `${chip.dataset.pick} · ${plans[key]}` : plans[key]);
-    }
-    form.querySelector('[data-plan-clear]')!.addEventListener('click', () => { planIn.value = ''; pill.hidden = true; });
-
-    form.querySelector('[data-again]')!.addEventListener('click', () => {
-      form.reset(); form.querySelectorAll('.chip').forEach((x) => x.classList.remove('picked'));
-      vals.forEach((_, k) => setVal(k, '')); suggBox.hidden = true; pill.hidden = true; setReach(0);
-      done.hidden = true; steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
+    $('[data-again]').addEventListener('click', () => {
+      form.reset(); Object.keys(ans).forEach((k) => delete ans[k]); prefilled.clear(); history = [];
+      form.querySelectorAll('.chip').forEach((x) => { x.classList.remove('picked'); x.setAttribute('aria-pressed', 'false'); });
+      form.querySelectorAll<HTMLButtonElement>('[data-next]').forEach((b) => (b.disabled = true));
+      pill.hidden = true; setReach(0); done.hidden = true; brief();
+      steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-last] .fields input:not(:disabled)')];
-      const empty = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
-      if (empty) { empty.focus(); empty.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
+      const bad = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
+      if (bad) { bad.focus(); anim(bad.closest('.field')!, [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       if (!form.dataset.key) {
         const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
         open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
@@ -230,6 +280,8 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
         finish(msg.dataset.sent!);
       } catch { finish(msg.dataset.error!); }
     });
+
+    applyPlan(); progress(); brief();
   });
 </script>
 
@@ -243,14 +295,14 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
 
   .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: var(--shadow-2); }
   .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
-  .brief li + li { border-top: 1px dashed rgba(0, 0, 0, .3); }
-  .brief li button { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-  .brief .k { font-weight: 700; font-size: 14px; }
-  .brief .v { font-size: 15px; text-align: right; color: var(--ink-2); }
-  .brief .v.set { color: var(--ink); font-weight: 700; }
-  .brief li button:hover .k { text-decoration: underline; text-underline-offset: 3px; }
-  .sugg { display: grid; gap: 4px; padding: 12px 14px; background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--r-sm); }
+  .brief :global(li + li) { border-top: 1px dashed rgba(0, 0, 0, .3); }
+  .brief :global(li button) { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+  .brief :global(.k) { font-weight: 700; font-size: 14px; flex: none; }
+  .brief :global(.v) { font-size: 15px; text-align: right; font-weight: 700; }
+  .brief :global(li button:hover .k) { text-decoration: underline; text-underline-offset: 3px; }
+  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--r-sm); }
   .sugg .pick { margin: 0; font-weight: 700; }
+  .sugg :global(.label) { color: rgba(255, 255, 255, .8); }
   .direct { display: grid; gap: 6px; }
   .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
@@ -259,15 +311,21 @@ const plans = Object.fromEntries([...monthly.map((m) => [m.key, m.name]), ['test
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
   .count { margin: 0; font-weight: 700; font-size: 15px; }
   .count b { font-size: 28px; letter-spacing: -0.04em; }
-  .bars { display: grid; grid-auto-flow: column; grid-auto-columns: 32px; gap: 6px; }
-  .bars i { height: 8px; border-radius: 6px; background: var(--white); border: 1px solid var(--ink); position: relative; overflow: hidden; }
-  .bars i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform: scaleX(0); transform-origin: left; transition: transform 420ms var(--ease); }
-  .bars i.on::after { transform: none; }
+  .bar { width: clamp(96px, 14vw, 168px); height: 10px; border-radius: 999px; border: var(--line) solid var(--ink); overflow: hidden; background: var(--white); }
+  .bar i { display: block; height: 100%; background: var(--mat); transform-origin: left; transform: scaleX(0); transition: transform 520ms var(--spring); }
+  .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--mat-soft); color: var(--mat-deep); opacity: 0; }
+  .cheer.show { animation: cheer 1600ms var(--ease) both; }
+  @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
+  .hint { margin: -12px 0 0; font-size: 15px; color: var(--ink-2); }
+  .next { justify-self: start; }
+  .next:disabled { opacity: .35; pointer-events: none; }
+  .empty { margin: 0; font-size: 15px; color: var(--ink-2); }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
   .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--yellow); border: var(--line) solid var(--ink); font-size: 15px; }
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--white); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .step[data-key='make'] .chip.picked::after { content: '✓'; margin-left: 2px; }
   .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
   .chip .em { font-size: 20px; line-height: 1; }
   .chip:hover { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }

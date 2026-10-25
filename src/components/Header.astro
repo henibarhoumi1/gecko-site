@@ -1,5 +1,6 @@
 ---
-// Compact floating bar at the top. Scrolling down opens it to full width; scrolling up brings the compact bar back. Globe button opens the language menu.
+// Compact floating bar at the top. Scrolling down stretches it edge to edge (logo far left, button far right, links centred)
+// with a green reading line along the bottom; scrolling up brings the compact bar back. Globe button opens the language menu.
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -21,7 +22,7 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   <nav class="bar" aria-label="Main">
     <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
     <ul class="links">
-      {links.map(([p, label]) => <li><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>{label}</a></li>)}
+      {links.map(([p, label], i) => <li style={`--i:${i}`}><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>{label}</a></li>)}
     </ul>
     <div class="right">
       <div class="lang" data-lang>
@@ -39,6 +40,7 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
         <span class="sr">{n.menu}</span><i></i><i></i>
       </button>
     </div>
+    <span class="prog" aria-hidden="true"><i data-prog></i></span>
   </nav>
   <div class="menu" id="menu" data-menu hidden>
     <ul>
@@ -56,6 +58,7 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   const header = document.querySelector<HTMLElement>('[data-header]')!;
   const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
+  const prog = header.querySelector<HTMLElement>('[data-prog]')!;
   const lang = header.querySelector<HTMLElement>('[data-lang]')!;
   const globe = lang.querySelector<HTMLButtonElement>('.globe')!;
   const pop = lang.querySelector<HTMLElement>('.pop')!;
@@ -67,6 +70,8 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
     else if (d > 4) header.classList.add('wide');
     else if (d < -4) header.classList.remove('wide');
     if (Math.abs(d) > 4 || y < 48) last = y;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    prog.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
     ticking = false;
   };
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
@@ -95,13 +100,22 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   });
 </script>
 <style>
-  .site-header { --t: 320ms cubic-bezier(.2, .7, .2, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 14px var(--gutter) 0; transition: padding var(--t); pointer-events: none; }
+  .site-header { --t: 560ms cubic-bezier(.7, 0, .2, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 14px var(--gutter) 0; transition: padding var(--t); pointer-events: none; }
   .bar { pointer-events: auto; position: relative; z-index: 2; max-width: 1080px; margin-inline: auto; height: 56px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 20px; color: var(--ink);
     background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 3px 3px 0 var(--ink);
     transition: max-width var(--t), border-radius var(--t), box-shadow var(--t), padding var(--t), height var(--t); }
   .wide { padding: 0; }
-  .wide .bar { max-width: 100%; height: 60px; border-radius: 0; border-width: 0 0 var(--line); box-shadow: none; padding-inline: max(var(--gutter), calc((100vw - var(--max)) / 2 + var(--gutter))); }
-  @media (prefers-reduced-motion: reduce) { .site-header, .bar { transition: none; } }
+  .wide .bar { max-width: 100%; height: 64px; border-radius: 0; border-width: 0 0 var(--line); box-shadow: none; padding-inline: clamp(16px, 2.6vw, 44px); background: rgba(255, 255, 255, .92); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); }
+  .wide .links { position: absolute; left: 50%; transform: translateX(-50%); }
+  .wide .links li { animation: drop 520ms var(--ease) both; animation-delay: calc(120ms + var(--i) * 45ms); }
+  .wide .brand { animation: nudge 640ms var(--spring) both; }
+  .wide .right { margin-left: auto; }
+  @keyframes drop { from { opacity: 0; transform: translateY(-10px); } }
+  @keyframes nudge { 0% { transform: translateX(24px) scale(.92); } 100% { transform: none; } }
+  .prog { position: absolute; left: 0; right: 0; bottom: calc(-1 * var(--line)); height: 3px; overflow: hidden; opacity: 0; transition: opacity 300ms var(--ease); pointer-events: none; }
+  .prog i { display: block; height: 100%; background: var(--mat); transform-origin: left; transform: scaleX(0); }
+  .wide .prog { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .site-header, .bar { transition: none; } .wide .links li, .wide .brand { animation: none; } }
   .brand { display: block; width: 64px; flex: none; }
   .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; }
   .links a { display: block; position: relative; isolation: isolate; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; text-decoration: none; padding: 8px 14px; }

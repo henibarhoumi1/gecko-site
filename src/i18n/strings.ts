@@ -101,7 +101,7 @@ export const strings = {
       send: 'Send',
       sent: 'Thanks. We’ll message you on WhatsApp.',
       error: 'That didn’t go through. Message us on WhatsApp instead.',
-      waIntro: 'Hi Gecko, I’d like to apply.',
+      waIntro: 'Hi Gecko, here’s my brief.',
       or: 'Or reach us directly',
     },
     creators: {
@@ -289,7 +289,7 @@ export const strings = {
       send: 'Envoyer',
       sent: 'Merci. On vous écrit sur WhatsApp.',
       error: 'L’envoi n’a pas marché. Écrivez-nous sur WhatsApp.',
-      waIntro: 'Bonjour Gecko, je souhaite postuler.',
+      waIntro: 'Bonjour Gecko, voici mon brief.',
       or: 'Ou contactez-nous directement',
     },
     creators: {

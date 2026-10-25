@@ -9,7 +9,7 @@ const { lang } = Astro.props;
 const h = c(lang).home;
 const w = h.why;
 ---
-<section class="on-yellow section why-sec">
+<section class="on-mat section why-sec">
   <div class="wrap">
     <div class="head rv">
       <h2 class="h2 why-h">{w.title}</h2>
@@ -137,11 +137,11 @@ const w = h.why;
   .arw { width: 52px; height: 52px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); font: 700 20px/1 var(--font); cursor: pointer; transition: transform 220ms var(--ease), box-shadow 220ms var(--ease), background 200ms var(--ease); }
   .arw:hover { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: clamp(20px, 2.4vw, 32px); }
-  .tabs button { position: relative; display: flex; gap: 10px; align-items: baseline; padding: 12px 0 16px; border: 0; background: none; color: var(--ink); font: 700 15px/1.25 var(--font); text-align: left; cursor: pointer; opacity: .5; transition: opacity 240ms var(--ease); }
+  .tabs button { position: relative; display: flex; gap: 10px; align-items: baseline; padding: 12px 0 16px; border: 0; background: none; color: #fff; font: 700 15px/1.25 var(--font); text-align: left; cursor: pointer; opacity: .5; transition: opacity 240ms var(--ease); }
   .tabs button:hover, .tabs [aria-selected='true'] { opacity: 1; }
   .tn { font-size: 13px; }
-  .tabs i { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: rgba(0, 0, 0, .15); overflow: hidden; }
-  .tabs i::after { content: ''; position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+  .tabs i { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .25); overflow: hidden; }
+  .tabs i::after { content: ''; position: absolute; inset: 0; background: var(--pink); transform-origin: left; transform: scaleX(0); }
   .tabs [aria-selected='true'] i::after { transform: scaleX(1); }
   .run .tabs [aria-selected='true'] i::after { animation: prog var(--wait, 6500ms) linear both; }
   @keyframes prog { from { transform: scaleX(0); } }
@@ -155,7 +155,8 @@ const w = h.why;
   .n { font-weight: 700; font-size: 15px; letter-spacing: .02em; }
   .t { margin: 0; font-weight: 700; font-size: clamp(30px, 3.4vw, 52px); line-height: 1.02; letter-spacing: -0.045em; max-width: 14ch; }
   .copy .text { margin: 0; max-width: 32rem; font-size: clamp(17px, 1.3vw, 19px); }
-  .proof { position: relative; height: clamp(250px, 22vw, 300px); padding: clamp(20px, 2vw, 28px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; display: grid; }
+  .proof { position: relative; color: var(--ink); height: clamp(250px, 22vw, 300px); padding: clamp(20px, 2vw, 28px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; display: grid; }
+  .why-sec .copy .text { color: rgba(255, 255, 255, .86); }
   .st { margin: 0 0 12px; font-weight: 700; font-size: 14px; }
 
   /* 1. Two hooks on the same reel */

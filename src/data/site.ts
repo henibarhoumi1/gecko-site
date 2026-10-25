@@ -4,7 +4,7 @@ export const site = {
   domain: 'https://gecko.example',
   phone: '+216 26 191 555',
   whatsapp: 'https://wa.me/21626191555',
-  email: 'reachoutgecko@gmail.com',
+  email: 'contact@geckostudio.com',
   instagram: 'https://instagram.com/geckoagency_',
   instagramHandle: '@geckoagency_',
   // Every social profile shown on the contact page and in the footer. Add the others here once the links are confirmed.

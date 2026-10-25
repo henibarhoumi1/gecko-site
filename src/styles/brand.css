@@ -1,4 +1,5 @@
-/* Gecko brand tokens. White pages, pink and yellow blocks, ink lines, one sans family.
+/* Gecko brand tokens. White pages, pink, yellow and cutting-mat green, ink lines, one sans family.
+   Green is the studio's working surface: used for a few big moments, with its grid texture.
    Corners are softened and depth comes from a small ink offset, not from blur. */
 
 :root {
@@ -6,6 +7,11 @@
   --pink-soft: #FBE3E4;
   --yellow: #F3DF9E;
   --yellow-soft: #FAF0CF;
+  --mat: #2E6B4E;
+  --mat-deep: #1F4D37;
+  --mat-soft: #DCEBE2;
+  --mat-minor: rgba(255, 255, 255, .07);
+  --mat-major: rgba(255, 255, 255, .17);
   --white: #FFFFFF;
   --paper: #FFFFFF;
   --cream: #FFFFFF;
@@ -52,6 +58,26 @@ body { font-family: var(--font); background: var(--paper); color: var(--ink); -w
 .on-pink   { background: var(--pink); color: var(--ink); }
 .on-yellow { background: var(--yellow); color: var(--ink); }
 .on-pink .soft, .on-yellow .soft { color: rgba(0, 0, 0, .72); }
+
+/* The green cutting mat: a fine grid, a bolder grid every 5 squares and a ruler along the top edge.
+   .on-mat is a full-width section, .mat a card. */
+.on-mat, .mat {
+  position: relative; isolation: isolate; color: #fff; background-color: var(--mat);
+  background-image:
+    linear-gradient(var(--mat-major) 1px, transparent 1px), linear-gradient(90deg, var(--mat-major) 1px, transparent 1px),
+    linear-gradient(var(--mat-minor) 1px, transparent 1px), linear-gradient(90deg, var(--mat-minor) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-position: -1px -1px;
+}
+.on-mat::before, .mat::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px; z-index: -1; pointer-events: none;
+  background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .45) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(255, 255, 255, .75) 0 1px, transparent 1px 120px);
+  background-size: 100% 8px, 100% 14px; background-repeat: no-repeat; }
+.on-mat::after, .mat::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(135deg, transparent calc(50% - .5px), rgba(255, 255, 255, .08) 50%, transparent calc(50% + .5px)), radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, .07), transparent 60%); }
+.mat { border-radius: var(--r-lg); overflow: hidden; border: var(--line) solid var(--ink); }
+.on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: rgba(255, 255, 255, .75); }
+.on-mat .btn:not(.primary) { border-color: var(--ink); }
+.on-mat .btn.primary { background: var(--white); color: var(--ink); border-color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--white); color: var(--ink); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
 .btn.primary { background: var(--ink); color: #fff; }
