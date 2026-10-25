@@ -119,22 +119,22 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   .brand { display: block; width: 64px; flex: none; }
   .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; }
   .links a { display: block; position: relative; isolation: isolate; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; text-decoration: none; padding: 8px 14px; }
-  .links a::before { content: ''; position: absolute; left: 10px; right: 10px; bottom: 9px; height: 8px; border-radius: 2px; background: var(--yellow); z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 260ms var(--ease); }
+  .links a::before { content: ''; position: absolute; left: 10px; right: 10px; bottom: 9px; height: 8px; border-radius: 2px; background: var(--pink-soft); z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 260ms var(--ease); }
   .links a:hover::before, .links a[aria-current='page']::before { transform: scaleX(1); }
   .links a[aria-current='page']::before { background: var(--pink); }
   .right { display: flex; align-items: center; gap: 6px; }
   .lang { position: relative; }
   .globe { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: background 200ms var(--ease); }
-  .globe:hover, .globe[aria-expanded='true'] { background: var(--yellow); }
+  .globe:hover, .globe[aria-expanded='true'] { background: var(--pink); }
   .pop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 196px; padding: 6px; display: grid; gap: 2px; background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 4px 4px 0 var(--ink); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity 180ms var(--ease), transform 220ms var(--ease); }
   .pop.in { opacity: 1; transform: none; }
   .pop a { display: grid; grid-template-columns: 24px 1fr 16px; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 500; }
-  .pop a:hover { background: var(--yellow-soft); }
+  .pop a:hover { background: var(--pink-soft); }
   .flag { font-size: 18px; line-height: 1; }
   .on { width: 10px; height: 6px; border-left: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg) translateY(-2px); opacity: 0; }
   [aria-checked='true'] .on { opacity: 1; }
   .cta { padding: 11px 18px; font-size: 14px; box-shadow: none; }
-  .burger { display: none; width: 40px; height: 40px; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--yellow); position: relative; cursor: pointer; }
+  .burger { display: none; width: 40px; height: 40px; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--pink); position: relative; cursor: pointer; }
   .burger i { position: absolute; left: 12px; right: 12px; height: 1.6px; border-radius: 2px; background: var(--ink); transition: transform 300ms var(--ease); }
   .burger i:first-of-type { top: 16px; } .burger i:last-of-type { top: 23px; }
   .open .burger i:first-of-type { transform: translateY(3.5px) rotate(45deg); }

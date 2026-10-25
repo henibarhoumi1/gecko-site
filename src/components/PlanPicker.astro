@@ -3,14 +3,14 @@
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
-import { monthly, fmt } from '../data/offers';
+import { plans, fmt } from '../data/offers';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const o = t(lang).offers;
 const cur = o.currency;
 const p = c(lang).plans;
 const h = c(lang).home;
-const start = 1;
+const start = 2;
 ---
 <div class="picker" data-picker data-locale={lang === 'en' ? 'en-US' : 'fr-FR'}>
   <div class="side">
@@ -19,10 +19,10 @@ const start = 1;
       <p class="text text-l">{h.plansSub}</p>
     </div>
     <div class="tabs rv" style="--d:80ms" role="tablist" aria-label={h.plansTitle}>
-      {monthly.map((m, i) => (
+      {plans.map((m, i) => (
         <button type="button" role="tab" id={`tab-${m.key}`} aria-controls={`panel-${m.key}`} aria-selected={String(i === start)} tabindex={i === start ? 0 : -1} data-tab={i}>
           <span class="nm">{m.name}</span>
-          <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)}–${fmt(m.top ?? m.launch, lang)} ${cur}`}</span>
+          <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)} ${cur}`}</span>
         </button>
       ))}
     </div>
@@ -30,8 +30,9 @@ const start = 1;
   </div>
 
   <div class="stage rv" style="--d:120ms">
-    {monthly.map((m, i) => (
+    {plans.map((m, i) => (
       <article class={`card ${m.custom ? 'dark' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
+        {!m.custom && <span class={`sticker ${m.once ? 'once' : ''}`} aria-hidden="true">{m.once ? p.exclusive : o.launch}</span>}
         <header>
           <h3 class="name">{m.name}</h3>
           {m.for && <p class="for">{m.for[lang]}</p>}
@@ -41,15 +42,15 @@ const start = 1;
             <p class="amount"><span class="num word">{p.custom}</span></p>
           ) : (
             <p class="amount">
-              <span class="num range">{fmt(m.launch, lang)}<span class="dash">–</span>{fmt(m.top ?? m.launch, lang)}</span>
-              <span class="unit">{cur} {p.month}</span>
+              <span class="num" data-num={m.launch}>{fmt(m.launch, lang)}</span>
+              <span class="unit">{cur} {m.once ? p.once : p.month}</span>
             </p>
           )}
-          <p class="was">{m.custom ? p.customNote : p.rangeNote}</p>
+          {(m.custom || m.once) && <p class="was">{m.custom ? p.customNote : p.onceNote}</p>}
         </div>
-        <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {p.reels}</p>
+        <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {m.once ? p.reelsOnce : p.reels}</p>
         <ul class="ticks-list">{m.items[lang].map((it) => <li>{it}</li>)}</ul>
-        <p class="scope">{p.scope}</p>
+        <p class="scope">{m.once ? p.scopeOnce : p.scope}</p>
         <a class={`btn ${m.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${m.key}`}>{m.custom ? p.talk : `${p.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
       </article>
     ))}
@@ -70,7 +71,7 @@ const start = 1;
       const t0 = performance.now();
       const step = (now: number) => {
         const k = Math.min(1, (now - t0) / 520); const e = 1 - Math.pow(1 - k, 3);
-        el.textContent = nf.format(Math.round((from + (to - from) * e) / 10) * 10).replace(/\s/g, ' ');
+        el.textContent = nf.format(k < 1 ? Math.round((from + (to - from) * e) / 10) * 10 : to).replace(/\s/g, ' ');
         if (k < 1) requestAnimationFrame(step);
       };
       requestAnimationFrame(step);
@@ -108,7 +109,7 @@ const start = 1;
   .intro .text { margin: 0; max-width: 30rem; }
   .tabs { display: grid; gap: 10px; }
   .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-  .tabs button:hover { background: var(--yellow-soft); }
+  .tabs button:hover { background: var(--mat-soft); }
   .tabs [aria-selected='true'] { background: var(--mat); color: #fff; transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--ink); }
   .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
   .meta { font-size: 15px; font-weight: 600; white-space: nowrap; }
@@ -119,7 +120,7 @@ const start = 1;
 
   .stage { display: grid; }
   .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
-  .card header { display: grid; gap: 8px; }
+  .card header { display: grid; gap: 8px; padding-right: 110px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
   .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; }
   .sticker { position: absolute; top: clamp(18px, 2vw, 28px); right: clamp(18px, 2vw, 28px); width: 96px; height: 96px; display: grid; place-items: center; text-align: center; padding: 12px; border-radius: 50%; background: var(--pink); border: var(--line) solid var(--ink); font-weight: 700; font-size: 14px; line-height: 1.1; transform: rotate(10deg); animation: spin-in 700ms var(--spring) both; }
@@ -128,8 +129,7 @@ const start = 1;
   .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
   .num.word { font-size: clamp(48px, 5vw, 80px); }
   .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: 1; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
-  .range { font-size: clamp(46px, 5.2vw, 84px); letter-spacing: -0.05em; white-space: nowrap; }
-  .dash { padding-inline: .06em; font-weight: 400; }
+  .sticker.once { background: var(--mat); color: #fff; }
   .unit { font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); }
   .was { margin: 0; font-size: 15px; }
   .was s { text-decoration-thickness: 1.5px; }
@@ -142,14 +142,14 @@ const start = 1;
   .dark .price { border-color: rgba(255, 255, 255, .25); }
   .dark .scope { background: rgba(255, 255, 255, .1); }
   .dark .for, .dark .was { color: rgba(255, 255, 255, .8); }
-  .dark .btn { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
-  .dark :global(.ticks-list li::before) { background-color: var(--yellow); }
+  .dark .btn { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .dark :global(.ticks-list li::before) { background-color: var(--pink); }
 
   @media (max-width: 960px) {
     .picker { grid-template-columns: 1fr; gap: 28px; }
     .side { display: contents; }
     .stage { order: 3; }
-    .tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .tabs button { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px; }
     .nm { font-size: 16px; }
     .meta { font-size: 13px; white-space: normal; }
@@ -158,6 +158,7 @@ const start = 1;
   @media (max-width: 560px) {
     .card { box-shadow: 6px 6px 0 var(--ink); }
     .dark { box-shadow: 6px 6px 0 var(--pink); }
+    .card header { padding-right: 76px; }
     .sticker { width: 76px; height: 76px; font-size: 11px; padding: 6px; }
     .card .ticks-list { grid-template-columns: 1fr; }
     .card .btn { justify-self: stretch; }

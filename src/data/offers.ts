@@ -1,18 +1,19 @@
-// Prices and plans as Heni set them on 25 Oct (Regular 2,200 to 2,900 and Pro 3,200 to 3,500 as price ranges, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
-export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; top?: number; from?: boolean; custom?: boolean; max?: number; monthly: boolean };
+// Prices and plans as Heni set them on 25 Oct (Test 999 one time, Regular 2,900 and Pro 3,500 launch prices with no original price shown, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
+export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; top?: number; from?: boolean; custom?: boolean; once?: boolean; max?: number; monthly: boolean };
 
 export const test: Offer = {
-  key: 'test', name: 'Test Campaign', launch: 1000, standard: 1500, monthly: false,
+  key: 'test', name: 'Test', reels: 3, launch: 999, once: true, monthly: false,
+  for: { en: 'For brands that want to see what we can do before a monthly plan.', fr: 'Pour les marques qui veulent voir ce qu’on sait faire avant un plan mensuel.' },
   items: {
-    en: ['3 angles, 1 production day', '3 reels with 2 hooks each (6 ads)', '1 carousel', 'Results read-out after 14 days'],
-    fr: ['3 angles, 1 journée de production', '3 reels avec 2 accroches chacun (6 pubs)', '1 carrousel', 'Bilan des résultats après 14 jours'],
+    en: ['1 static', 'A 3-hour shoot', 'Ready to post or run as ads'],
+    fr: ['1 visuel fixe', 'Un tournage de 3 heures', 'Prêts à publier ou à lancer en pub'],
   },
 };
 
 export const monthly: Offer[] = [
   {
     key: 'regular', name: 'Regular', reels: 10,
-    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2200, top: 2900, monthly: true,
+    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2900, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '4 statics', '1 carousel', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '4 visuels fixes', '1 carrousel', 'Revue mensuelle des résultats et plan pour la suite'],
@@ -20,7 +21,7 @@ export const monthly: Offer[] = [
   },
   {
     key: 'pro', name: 'Pro', reels: 15,
-    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3200, top: 3500, monthly: true,
+    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3500, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '6 statics', '2 recut ads from your footage', '2 carousels', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '6 visuels fixes', '2 pubs remontées à partir de vos images', '2 carrousels', 'Revue mensuelle des résultats et plan pour la suite'],
@@ -47,9 +48,12 @@ export const campaign: Offer = {
 export const audit = {
   name: 'Ad Audit', price: 150,
   text: {
-    en: 'Not ready to shoot? A 20-minute video review of your current ads and Instagram, plus 5 hook ideas for your products. Fully credited if you book a Test Campaign within 30 days.',
-    fr: 'Pas prêt à tourner ? Une revue vidéo de 20 minutes de vos pubs et de votre Instagram, plus 5 idées d’accroche pour vos produits. Entièrement déduite si vous réservez un Test Campaign sous 30 jours.',
+    en: 'Not ready to shoot? A 20-minute video review of your current ads and Instagram, plus 5 hook ideas for your products. Fully credited if you book a Test within 30 days.',
+    fr: 'Pas prêt à tourner ? Une revue vidéo de 20 minutes de vos pubs et de votre Instagram, plus 5 idées d’accroche pour vos produits. Entièrement déduite si vous réservez un Test sous 30 jours.',
   },
 };
+
+// Everything the pricing sections show, in order: the Test first, then the monthly plans.
+export const plans: Offer[] = [test, ...monthly];
 
 export const fmt = (n: number, lang: 'en' | 'fr') => n.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR').replace(/\s/g, ' ');

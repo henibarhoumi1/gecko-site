@@ -6,7 +6,7 @@ import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { test, campaign, audit, fmt } from '../../data/offers';
+import { campaign, audit, fmt } from '../../data/offers';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -16,7 +16,6 @@ const p = c(lang).plans;
 const cta = c(lang).nav.apply;
 const h = c(lang).home;
 const oneOffs = [
-  { key: 'test', name: test.name, text: test.items[lang].join('. ') + '.', price: test.launch, standard: test.standard },
   { key: 'campaign', name: campaign.name, text: campaign.items[lang].join('. ') + '.', price: campaign.launch },
   { key: 'audit', name: audit.name, text: audit.text[lang], price: audit.price },
 ];

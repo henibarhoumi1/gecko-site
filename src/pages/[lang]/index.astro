@@ -17,7 +17,7 @@ const s = t(lang);
 const h = c(lang).home;
 ---
 <Base lang={lang} footerCta={false}>
-  <section class="on-pink hero">
+  <section class="on-white hero">
     <div class="wrap hero-in">
       <h1 class="h1 big">
         {h.title.map((line, i) => (
@@ -68,7 +68,7 @@ const h = c(lang).home;
     </div>
   </section>
 
-  <section class="on-pink section apply-sec" id="apply">
+  <section class="on-paper section apply-sec" id="apply">
     <div class="wrap"><ApplyFlow lang={lang} /></div>
   </section>
 
@@ -83,14 +83,15 @@ const h = c(lang).home;
   .line .rise { display: inline-block; }
   .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }
   .hl { position: relative; isolation: isolate; padding: 0 .1em; margin-left: -.1em; }
-  .hl::before { content: ''; position: absolute; inset: .16em -.02em .04em; background: var(--yellow); border-radius: .12em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
+  .hl::before { content: ''; position: absolute; inset: .16em -.02em .04em; background: var(--pink); border-radius: .12em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
   .hero-foot { display: grid; grid-template-columns: minmax(0, 42rem) auto; justify-content: space-between; align-items: end; gap: 24px 48px; padding-top: 24px; border-top: var(--line) solid var(--ink); }
   .lede { margin: 0; }
   @keyframes up { from { transform: translateY(100%); opacity: 0; } }
   @keyframes wipe { from { transform: scaleX(0); } }
   @media (max-width: 860px) { .hero { min-height: 86svh; } .hero-foot { grid-template-columns: 1fr; } }
 
-  .ticker { overflow: hidden; padding-block: 14px; background: var(--white); border-block: var(--line) solid var(--ink); }
+  .ticker { overflow: hidden; padding-block: 14px; background: var(--mat); color: #fff; border-block: var(--line) solid var(--ink); }
+  .ticker li::after { color: var(--pink); }
   .ticker .track { display: flex; width: max-content; animation: slide 60s linear infinite; }
   .ticker:hover .track { animation-play-state: paused; }
   .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }

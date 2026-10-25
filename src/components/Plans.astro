@@ -1,38 +1,41 @@
 ---
-// The three monthly plans side by side. Creative Partner is the dark card.
+// The Test and the three monthly plans side by side. Creative Partner is the dark card.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
-import { monthly, fmt } from '../data/offers';
+import { plans, fmt } from '../data/offers';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const cur = t(lang).offers.currency;
 const p = c(lang).plans;
+const launch = t(lang).offers.launch;
 ---
 <div class="plans">
-  {monthly.map((o, i) => (
-    <article class={`plan rv ${o.custom ? 'dark' : ''}`} style={`--d:${i * 90}ms`}>
+  {plans.map((o, i) => (
+    <article class={`plan rv ${o.custom ? 'dark' : ''} ${o.once ? 'once' : ''}`} style={`--d:${i * 90}ms`}>
       <header>
-        <h3 class="h3">{o.name}</h3>
+        <div class="top"><h3 class="h3">{o.name}</h3><span class={`pill ${o.once ? 'ex' : ''} ${o.custom ? 'vip' : ''}`}>{o.custom ? 'VIP' : o.once ? p.exclusive : launch}</span></div>
         {o.for && <p class="for">{o.for[lang]}</p>}
       </header>
       <div class="price">
-        <p class="reels"><span class="n">{o.max ? `${o.reels}–${o.max}` : o.reels}</span> {p.reels}</p>
-        <p class="amount">{o.custom ? <span class="num">{p.custom}</span> : <><span class="num">{fmt(o.launch, lang)}–{fmt(o.top ?? o.launch, lang)}</span> {cur} {p.month}</>}</p>
-        <p class="was">{o.custom ? p.customNote : p.rangeNote}</p>
+        <p class="reels"><span class={`n ${o.max ? 'sm' : ''}`}>{o.max ? `${o.reels}–${o.max}` : o.reels}</span> {o.once ? p.reelsOnce : p.reels}</p>
+        {o.custom
+          ? <p class="amount"><span class="num">{p.custom}</span></p>
+          : <p class="amount"><span class="num">{fmt(o.launch, lang)}</span>{' '}<span class="unit">{cur} {o.once ? p.once : p.month}</span></p>}
+        {(o.custom || o.once) && <p class="was">{o.custom ? p.customNote : p.onceNote}</p>}
       </div>
       <ul class="ticks-list">{o.items[lang].map((it) => <li>{it}</li>)}</ul>
-      <p class="scope">{p.scope}</p>
+      <p class="scope">{o.once ? p.scopeOnce : p.scope}</p>
       <a class={`btn ${o.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${o.key}`}>{o.custom ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
     </article>
   ))}
 </div>
 <style>
-  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
+  .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
   .plan { display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
   .plan.in:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
   .plan header { display: grid; gap: 8px; }
-  .for { margin: 0; font-size: 16px; line-height: 1.4; min-height: 2.8em; }
+  .for { margin: 0; font-size: 15px; line-height: 1.4; min-height: 4.2em; }
   .amount, .was { margin: 0; }
   .was { font-size: 14px; }
   .scope { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--pink-soft); font-size: 14px; line-height: 1.4; }
@@ -48,9 +51,17 @@ const p = c(lang).plans;
   .dark.in:hover { box-shadow: 10px 10px 0 var(--pink); }
   .dark .was, .dark .for { color: rgba(255, 255, 255, .78); }
   .dark .price { border-color: rgba(255, 255, 255, .14); }
-  .dark :global(.ticks-list li::before) { background-color: var(--yellow); }
-  .dark .btn { background: var(--yellow); border-color: var(--yellow); }
-  @media (max-width: 960px) and (min-width: 761px) { .plans { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; } }
+  .dark :global(.ticks-list li::before) { background-color: var(--pink); }
+  .dark .btn { background: var(--pink); border-color: var(--pink); }
+  .top { display: flex; flex-direction: column-reverse; align-items: flex-start; gap: 12px; }
+  .pill.vip { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .dark .amount .num { font-size: clamp(24px, 2vw, 30px); }
+  .pill { padding: 4px 10px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--pink-soft); font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .pill.ex { background: var(--mat); border-color: var(--mat); color: #fff; }
+  .once { border-color: var(--mat); box-shadow: inset 0 0 0 1px var(--mat); }
+  .unit { font-weight: 600; font-size: 15px; }
+  .reels .n.sm { font-size: clamp(32px, 3vw, 44px); white-space: nowrap; }
+  @media (max-width: 1180px) and (min-width: 761px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 760px) {
     .plans { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 12px; margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 14px; scrollbar-width: none; }
     .plans::-webkit-scrollbar { display: none; }

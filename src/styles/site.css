@@ -15,7 +15,7 @@ html.lenis, html.lenis body { height: auto; }
 body { margin: 0; font-size: var(--body); line-height: 1.5; }
 img, video, svg { display: block; max-width: 100%; }
 a { color: inherit; }
-::selection { background: var(--yellow); color: var(--ink); }
+::selection { background: var(--pink); color: var(--ink); }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
@@ -50,7 +50,7 @@ a { color: inherit; }
 
 /* Buttons and links */
 .btn { cursor: pointer; }
-.btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); background: var(--yellow); }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); background: var(--pink); }
 .btn.primary:hover { background: var(--ink); box-shadow: 3px 3px 0 var(--pink); }
 .btn:active { transform: none; box-shadow: none; }
 .btn .arr { transition: transform 200ms var(--ease); }
@@ -93,7 +93,7 @@ a { color: inherit; }
 .faq .pm { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--cream); position: relative; transition: background 200ms var(--ease), transform 300ms var(--ease); }
 .faq .pm::before, .faq .pm::after { content: ''; position: absolute; left: 9px; right: 9px; top: 50%; height: 1.5px; margin-top: -.75px; background: currentColor; border-radius: 2px; }
 .faq .pm::after { transform: rotate(90deg); transition: transform 300ms var(--ease); }
-.faq details[open] .pm { background: var(--yellow); transform: rotate(180deg); }
+.faq details[open] .pm { background: var(--pink); transform: rotate(180deg); }
 .faq details[open] .pm::after { transform: rotate(0deg); }
 .faq .a { padding: 0 64px 22px 22px; max-width: 46rem; color: var(--ink-2); }
 

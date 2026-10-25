@@ -322,13 +322,13 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .empty { margin: 0; font-size: 15px; color: var(--ink-2); }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
-  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--yellow); border: var(--line) solid var(--ink); font-size: 15px; }
+  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--mat-soft); border: var(--line) solid var(--ink); font-size: 15px; }
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--white); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .step[data-key='make'] .chip.picked::after { content: '✓'; margin-left: 2px; }
   .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
   .chip .em { font-size: 20px; line-height: 1; }
-  .chip:hover { background: var(--yellow); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+  .chip:hover { background: var(--pink-soft); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .chip.picked { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .fields .wide { grid-column: 1 / -1; }
@@ -338,13 +338,13 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .rl { margin: 0; font: 700 13px/1.2 var(--font); }
   .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border: var(--line) solid var(--ink); border-radius: 999px; background: var(--white); }
   .seg button { padding: 11px 10px; border: 0; border-radius: 999px; background: none; color: var(--ink); font: 700 15px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease); }
-  .seg button:hover { background: var(--yellow-soft); }
+  .seg button:hover { background: var(--pink-soft); }
   .seg [aria-checked='true'] { background: var(--ink); color: #fff; }
   .send { justify-self: start; }
   .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--ink); }
   .done { justify-items: start; align-content: center; min-height: 320px; }
-  .ok { width: 64px; height: 64px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--yellow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 44px no-repeat; }
+  .ok { width: 64px; height: 64px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--mat-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 44px no-repeat; }
   .again { background: none; border: 0; padding: 0; cursor: pointer; font: 700 15px var(--font); color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; }
   @media (max-width: 860px) {
     .apply { grid-template-columns: 1fr; gap: 28px; }
