@@ -44,7 +44,7 @@ const p = c(lang).process;
     </div>
   </section>
 
-  <section class="on-paper section portal-sec">
+  <section class="on-mat section portal-sec">
     <div class="wrap portal">
       <div class="stack rv" style="--gap:24px">
         <h2 class="h2">{p.portal.title}</h2>
@@ -87,25 +87,24 @@ const p = c(lang).process;
   .key + .key { margin-top: 10px; }
   .monthly { margin: 12px 0 0; max-width: 24rem; padding-top: 18px; border-top: var(--line) solid var(--ink); }
   .road { position: relative; }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .rail { position: absolute; left: 19px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; background: rgba(0, 0, 0, .1); }
-  .rail i { position: absolute; inset: 0; background: var(--ink); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
+  .rail i { position: absolute; inset: 0; background: var(--mat); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
   .step { position: relative; padding-left: 64px; }
-  .dot { position: absolute; left: 0; top: 20px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--white); border: var(--line) solid var(--ink); transition: background 300ms var(--ease), color 300ms var(--ease); }
-  .passed .dot { background: var(--ink); color: #fff; }
-  .card { display: grid; gap: 10px; padding: clamp(20px, 2.2vw, 28px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
+  .dot { position: absolute; left: 0; top: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--white); border: var(--line) solid var(--ink); transition: background 300ms var(--ease), color 300ms var(--ease); }
+  .passed .dot { background: var(--mat); border-color: var(--mat-deep); color: #fff; }
+  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .t { font-size: clamp(22px, 2vw, 28px); letter-spacing: -0.03em; }
+  .t { font-size: clamp(19px, 1.6vw, 23px); letter-spacing: -0.025em; }
   .chip { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; border: var(--line) solid var(--ink); }
   .chip.ok { background: var(--yellow); }
   .chip.pay { background: var(--pink); }
   .card .text { margin: 0; }
-  .yours { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--yellow-soft); font-size: 16px; }
+  .yours { margin: 2px 0 0; padding: 8px 12px; border-radius: var(--r-sm); background: var(--yellow-soft); font-size: 15px; }
   .yours span { font-weight: 700; margin-right: 6px; }
-  .portal-sec { border-top: var(--line) solid var(--ink); }
   .portal { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
   .portal .h2 { max-width: 14ch; }
-  .status { margin: 0; display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 8px 14px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--white); font-size: 15px; font-weight: 600; }
+  .status { margin: 0; display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 8px 14px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); font-size: 15px; font-weight: 600; }
   .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .4); } 70% { box-shadow: 0 0 0 9px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
   .room { display: grid; gap: 18px; padding: clamp(26px, 3vw, 40px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }

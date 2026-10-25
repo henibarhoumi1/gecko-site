@@ -34,7 +34,7 @@ const h = c(lang).home;
       </div>
       {ads.length >= 3 && (
         <a class="hero-art rise" style="--d:260ms" href={href(lang, 'work')} data-fan data-cursor={h.watch} aria-label={h.workCta}>
-          <span class="art-mat" aria-hidden="true"></span>
+          <span class="art-mat mat" aria-hidden="true"></span>
           <span class="art-blob" aria-hidden="true"></span>
           {ads.slice(0, 3).map((ad, i) => (
             <span class={`fan f${i}`} aria-hidden="true">
@@ -69,7 +69,7 @@ const h = c(lang).home;
     </section>
   )}
 
-  <Compare lang={lang} />
+  <Compare lang={lang} num="02" />
 
   <section class="on-white section" id="plans">
     <div class="wrap">
@@ -152,7 +152,7 @@ const h = c(lang).home;
   @keyframes wipe { from { transform: scaleX(0); } }
 
   .hero-art { position: relative; display: block; height: clamp(440px, 46vw, 660px); color: var(--ink); text-decoration: none; }
-  .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; border-radius: var(--r-lg); background: var(--pink); border: var(--line) solid var(--ink); transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
+  .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; border-radius: var(--r-lg); position: absolute; border: var(--line) solid var(--ink); transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
   .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
   .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); transition: transform 800ms var(--ease); }
   .fan img, .fan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

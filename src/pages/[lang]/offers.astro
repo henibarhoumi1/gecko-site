@@ -35,7 +35,7 @@ const oneOffs = [
     </div>
   </section>
 
-  <section class="on-paper section">
+  <section class="on-mat section">
     <div class="wrap">
       <div class="head rv"><h2 class="h2">{k.splitTitle}</h2></div>
       <div class="split">
@@ -119,8 +119,8 @@ const oneOffs = [
   .plans-sec { padding-bottom: clamp(8px, 2vw, 24px); }
   .note { margin: 24px 0 0; max-width: 52rem; font-size: 15px; color: var(--ink-2); }
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .part { display: grid; gap: 14px; align-content: start; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); }
-  .part.run { background: var(--ink); color: #fff; box-shadow: 6px 6px 0 var(--pink); }
+  .part { display: grid; gap: 14px; align-content: start; padding: clamp(24px, 2.4vw, 32px); background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 6px 6px 0 var(--ink); }
+  .part.run { background: var(--ink); color: #fff; box-shadow: 6px 6px 0 var(--yellow); }
   .tag-pill { margin: 0; justify-self: start; padding: 5px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 13px; font-weight: 700; }
   .part:first-child .tag-pill { background: var(--pink); }
   .every { margin-top: clamp(28px, 3vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: start; }
