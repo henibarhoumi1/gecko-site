@@ -1,10 +1,12 @@
 ---
-// Compact floating bar at the top. Scrolling down stretches it edge to edge (logo far left, button far right, links centred)
-// with a green reading line along the bottom; scrolling up brings the compact bar back. Globe button opens the language menu.
+// The top bar. At the top of a page it sits open and borderless; once you scroll it becomes a floating white bar,
+// hides while you read down and slides back as soon as you scroll up. "Menu" opens a full panel that drops from
+// the top: numbered pages on the left, the Test offer, contacts and language on the right.
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href, swapLang } from '../i18n/paths';
+import { site } from '../data/site';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const n = c(lang).nav;
@@ -12,45 +14,66 @@ const path = Astro.url.pathname;
 const links = [
   [href(lang, 'work'), n.work], [href(lang, 'process'), n.process], [href(lang, 'offers'), n.offers], [href(lang, 'about'), n.about], [href(lang, 'contact'), n.contact],
 ] as const;
+const panel = [
+  [href(lang, 'work'), n.work, n.desc.work], [href(lang, 'process'), n.process, n.desc.process], [href(lang, 'offers'), n.offers, n.desc.offers],
+  [href(lang, 'about'), n.about, n.desc.about], [href(lang, 'faq'), n.faq, n.desc.faq], [href(lang, 'contact'), n.contact, n.desc.contact],
+] as const;
 const langs = [
-  { l: 'en', flag: '🇬🇧', name: 'English' },
-  { l: 'fr', flag: '🇫🇷', name: 'Français' },
+  { l: 'en', short: 'EN', name: 'English' },
+  { l: 'fr', short: 'FR', name: 'Français' },
 ].map((x) => ({ ...x, url: !/^\/(en|fr)(\/|$)/.test(path) ? `/${x.l}/` : x.l === lang ? path : swapLang(path, x.l as Locale) }));
-const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z"/></svg>';
 ---
 <header class="site-header" data-header>
   <nav class="bar" aria-label="Main">
     <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
     <ul class="links">
-      {links.map(([p, label], i) => <li style={`--i:${i}`}><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>{label}</a></li>)}
+      {links.map(([p, label]) => (
+        <li><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}><span class="roll"><span data-text={label}>{label}</span></span></a></li>
+      ))}
     </ul>
     <div class="right">
-      <div class="lang" data-lang>
-        <button type="button" class="globe" aria-haspopup="true" aria-expanded="false" aria-label={n.lang} set:html={globe} />
-        <div class="pop" role="menu" hidden>
-          {langs.map((x) => (
-            <a role="menuitemradio" href={x.url} hreflang={x.l} lang={x.l} aria-checked={x.l === lang ? 'true' : 'false'}>
-              <span class="flag" aria-hidden="true">{x.flag}</span><span>{x.name}</span><span class="on" aria-hidden="true"></span>
-            </a>
-          ))}
-        </div>
+      <div class="lang-s" role="group" aria-label={n.lang}>
+        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}>{x.short}</a>)}
       </div>
-      <a class="btn primary cta" href={href(lang, 'apply')}>{n.apply}</a>
+      <a class="btn primary cta" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
-        <span class="sr">{n.menu}</span><i></i><i></i>
+        <span class="bl"><span class="b-open">{n.menu}</span><span class="b-close">{n.close}</span></span>
+        <span class="bi" aria-hidden="true"><i></i><i></i></span>
       </button>
     </div>
-    <span class="prog" aria-hidden="true"><i data-prog></i></span>
   </nav>
+
   <div class="menu" id="menu" data-menu hidden>
-    <ul>
-      {links.map(([p, label], i) => <li style={`--i:${i}`}><a href={p}>{label}</a></li>)}
-    </ul>
-    <div class="menu-foot">
-      <div class="langs">
-        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}><span aria-hidden="true">{x.flag}</span> {x.name}</a>)}
-      </div>
-      <a class="btn primary" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
+    <div class="menu-in">
+      <ol class="m-links">
+        {panel.map(([p, label, d], i) => (
+          <li style={`--i:${i}`}>
+            <a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>
+              <span class="m-n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="m-t">{label}</span>
+              <span class="m-d">{d}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+      <aside class="m-side">
+        <a class="m-test" href={`${href(lang, 'apply')}?plan=test`}>
+          <span class="m-k">{n.testK}</span>
+          <span class="m-tt">{n.testT}</span>
+          <span class="m-td">{n.testD}</span>
+          <span class="m-tp">{n.testP}</span>
+          <span class="m-tc">{n.testCta} <span aria-hidden="true">→</span></span>
+        </a>
+        <div class="m-reach">
+          <p class="m-k">{n.reach}</p>
+          <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
+          <a href={`mailto:${site.email}`}>{site.email}</a>
+          <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
+        </div>
+        <div class="m-langs">
+          {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}>{x.name}</a>)}
+        </div>
+      </aside>
     </div>
   </div>
 </header>
@@ -58,100 +81,109 @@ const globe = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" strok
   const header = document.querySelector<HTMLElement>('[data-header]')!;
   const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
-  const prog = header.querySelector<HTMLElement>('[data-prog]')!;
-  const lang = header.querySelector<HTMLElement>('[data-lang]')!;
-  const globe = lang.querySelector<HTMLButtonElement>('.globe')!;
-  const pop = lang.querySelector<HTMLElement>('.pop')!;
-  // Wide after a short scroll down, compact again on the way up. A few pixels of slack stop it flickering.
+  // Solid once you leave the top; hidden while reading down, back on the way up. A few pixels of slack stop flicker.
   let last = scrollY, ticking = false;
   const update = () => {
     const y = scrollY, d = y - last;
-    if (y < 48) header.classList.remove('wide');
-    else if (d > 4) header.classList.add('wide');
-    else if (d < -4) header.classList.remove('wide');
-    if (Math.abs(d) > 4 || y < 48) last = y;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    prog.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`;
+    header.classList.toggle('solid', y > 24);
+    if (y < 160 || header.classList.contains('open')) header.classList.remove('away');
+    else if (d > 6) header.classList.add('away');
+    else if (d < -6) header.classList.remove('away');
+    if (Math.abs(d) > 6 || y < 160) last = y;
     ticking = false;
   };
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   update();
 
-  const setPop = (open: boolean) => {
-    globe.setAttribute('aria-expanded', String(open));
-    if (open) { pop.hidden = false; requestAnimationFrame(() => pop.classList.add('in')); }
-    else { pop.classList.remove('in'); setTimeout(() => { if (!pop.classList.contains('in')) pop.hidden = true; }, 200); }
-  };
-  globe.addEventListener('click', (e) => { e.stopPropagation(); setPop(pop.hidden); });
-  document.addEventListener('click', (e) => { if (!pop.hidden && !lang.contains(e.target as Node)) setPop(false); });
-
   const setMenu = (open: boolean) => {
     burger.setAttribute('aria-expanded', String(open));
     header.classList.toggle('open', open);
     document.documentElement.classList.toggle('locked', open);
-    if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('in')); }
-    else { menu.classList.remove('in'); setTimeout(() => (menu.hidden = true), 320); }
+    if (open) { menu.hidden = false; requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('in'))); }
+    else { menu.classList.remove('in'); setTimeout(() => { if (!header.classList.contains('open')) menu.hidden = true; }, 520); }
   };
   burger.addEventListener('click', () => setMenu(menu.hidden));
-  addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (!menu.hidden) setMenu(false);
-    if (!pop.hidden) { setPop(false); globe.focus(); }
-  });
+  menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setMenu(false); });
+  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); burger.focus(); } });
 </script>
 <style>
-  .site-header { --t: 560ms cubic-bezier(.7, 0, .2, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 14px var(--gutter) 0; transition: padding var(--t); pointer-events: none; }
-  .bar { pointer-events: auto; position: relative; z-index: 2; max-width: 1080px; margin-inline: auto; height: 56px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 20px; color: var(--ink);
-    background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 3px 3px 0 var(--ink);
-    transition: max-width var(--t), border-radius var(--t), box-shadow var(--t), padding var(--t), height var(--t); }
-  .wide { padding: 0; }
-  .wide .bar { max-width: 100%; height: 64px; border-radius: 0; border-width: 0 0 var(--line); box-shadow: none; padding-inline: clamp(16px, 2.6vw, 44px); background: rgba(255, 255, 255, .92); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); }
-  .wide .links { position: absolute; left: 50%; transform: translateX(-50%); }
-  .wide .links li { animation: drop 520ms var(--ease) both; animation-delay: calc(120ms + var(--i) * 45ms); }
-  .wide .brand { animation: nudge 640ms var(--spring) both; }
-  .wide .right { margin-left: auto; }
-  @keyframes drop { from { opacity: 0; transform: translateY(-10px); } }
-  @keyframes nudge { 0% { transform: translateX(24px) scale(.92); } 100% { transform: none; } }
-  .prog { position: absolute; left: 0; right: 0; bottom: calc(-1 * var(--line)); height: 3px; overflow: hidden; opacity: 0; transition: opacity 300ms var(--ease); pointer-events: none; }
-  .prog i { display: block; height: 100%; background: var(--pink); transform-origin: left; transform: scaleX(0); }
-  .wide .prog { opacity: 1; }
-  @media (prefers-reduced-motion: reduce) { .site-header, .bar { transition: none; } .wide .links li, .wide .brand { animation: none; } }
-  .brand { display: block; width: 64px; flex: none; }
-  .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; }
-  .links a { display: block; position: relative; isolation: isolate; font-weight: 700; font-size: 14px; letter-spacing: -0.01em; text-decoration: none; padding: 8px 14px; }
-  .links a::before { content: ''; position: absolute; left: 10px; right: 10px; bottom: 9px; height: 8px; border-radius: 2px; background: var(--pink-soft); z-index: -1; transform: scaleX(0); transform-origin: left; transition: transform 260ms var(--ease); }
-  .links a:hover::before, .links a[aria-current='page']::before { transform: scaleX(1); }
-  .links a[aria-current='page']::before { background: var(--pink); }
-  .right { display: flex; align-items: center; gap: 6px; }
-  .lang { position: relative; }
-  .globe { width: 40px; height: 40px; border-radius: 50%; border: 0; background: transparent; color: var(--ink); display: grid; place-items: center; cursor: pointer; transition: background 200ms var(--ease); }
-  .globe:hover, .globe[aria-expanded='true'] { background: var(--pink); }
-  .pop { position: absolute; right: 0; top: calc(100% + 10px); min-width: 196px; padding: 6px; display: grid; gap: 2px; background: var(--paper); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 4px 4px 0 var(--ink); opacity: 0; transform: translateY(-6px) scale(.97); transform-origin: top right; transition: opacity 180ms var(--ease), transform 220ms var(--ease); }
-  .pop.in { opacity: 1; transform: none; }
-  .pop a { display: grid; grid-template-columns: 24px 1fr 16px; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 500; }
-  .pop a:hover { background: var(--pink-soft); }
-  .flag { font-size: 18px; line-height: 1; }
-  .on { width: 10px; height: 6px; border-left: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: rotate(-45deg) translateY(-2px); opacity: 0; }
-  [aria-checked='true'] .on { opacity: 1; }
-  .cta { padding: 11px 18px; font-size: 14px; box-shadow: none; }
-  .burger { display: none; width: 40px; height: 40px; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--pink); position: relative; cursor: pointer; }
-  .burger i { position: absolute; left: 12px; right: 12px; height: 1.6px; border-radius: 2px; background: var(--ink); transition: transform 300ms var(--ease); }
-  .burger i:first-of-type { top: 16px; } .burger i:last-of-type { top: 23px; }
-  .open .burger i:first-of-type { transform: translateY(3.5px) rotate(45deg); }
-  .open .burger i:last-of-type { transform: translateY(-3.5px) rotate(-45deg); }
-  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 1; padding: calc(56px + 56px) var(--gutter) 32px; display: flex; flex-direction: column; justify-content: space-between; background: var(--pink); opacity: 0; transition: opacity 320ms var(--ease); }
-  .menu.in { opacity: 1; }
-  .menu ul { list-style: none; margin: 0; padding: 0; }
-  .menu li { opacity: 0; transform: translateY(14px); transition: opacity 360ms var(--ease), transform 360ms var(--ease); transition-delay: calc(var(--i) * 50ms + 80ms); }
-  .menu.in li { opacity: 1; transform: none; }
-  .menu li a { display: block; padding: 12px 0; text-decoration: none; font-weight: 700; font-size: clamp(36px, 10vw, 52px); letter-spacing: -0.04em; line-height: 1.05; }
-  .menu-foot { display: grid; gap: 16px; }
-  .langs { display: flex; gap: 8px; }
-  .langs a { flex: 1; text-align: center; padding: 12px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--paper); text-decoration: none; font-weight: 500; }
-  .langs a[aria-current] { background: var(--ink); color: #fff; }
+  .site-header { --t: 520ms cubic-bezier(.65, 0, .25, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px var(--gutter) 0; pointer-events: none; transition: transform var(--t); }
+  .site-header.away { transform: translateY(calc(-100% - 12px)); }
+  .bar { pointer-events: auto; position: relative; z-index: 3; max-width: var(--max); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); color: var(--ink);
+    border: var(--line) solid transparent; border-radius: 999px; background: transparent;
+    transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), color 300ms var(--ease); }
+  .solid .bar { max-width: 1120px; background: rgba(255, 255, 255, .96); backdrop-filter: saturate(1.4) blur(14px); -webkit-backdrop-filter: saturate(1.4) blur(14px); border-color: var(--ink); box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .35); }
+  .open .bar { background: transparent; border-color: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; color: #fff; max-width: var(--max); }
+  .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
+  .brand:hover { transform: rotate(-4deg) scale(1.04); }
+  .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; transition: opacity 300ms var(--ease); }
+  .open .links { opacity: 0; pointer-events: none; }
+  .links a { position: relative; display: block; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 14px; border-radius: 999px; transition: background 220ms var(--ease); }
+  .links a:hover { background: rgba(0, 0, 0, .05); }
+  .links a[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--mat); }
+  /* Text rolls up and is replaced by its copy on hover. */
+  .roll { display: inline-block; overflow: hidden; vertical-align: top; line-height: 1.25; }
+  .roll > span { position: relative; display: inline-block; transition: transform 420ms cubic-bezier(.7, 0, .2, 1); }
+  .roll > span::after { content: attr(data-text); position: absolute; left: 0; top: 100%; }
+  a:hover .roll > span { transform: translateY(-100%); }
+  .right { display: flex; align-items: center; gap: 8px; }
+  .lang-s { display: flex; padding: 3px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .18); transition: opacity 300ms var(--ease); }
+  .open .lang-s, .open .cta { opacity: 0; pointer-events: none; }
+  .lang-s a { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-decoration: none; padding: 6px 9px; border-radius: 999px; color: rgba(0, 0, 0, .55); transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .lang-s a[aria-current] { background: var(--ink); color: #fff; }
+  .lang-s a:not([aria-current]):hover { color: var(--ink); }
+  .cta { padding: 12px 18px; font-size: 14px; border-radius: 999px; box-shadow: none; transition: opacity 300ms var(--ease), background 200ms var(--ease); }
+  .burger { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 8px 0 16px; border-radius: 999px; border: var(--line) solid currentColor; background: transparent; color: inherit; font: 700 14px/1 var(--font); cursor: pointer; transition: background 220ms var(--ease), color 220ms var(--ease); }
+  @media (hover: hover) { .burger:hover { background: var(--ink); color: #fff; } }
+  .open .burger { color: #fff; border-color: #fff; }
+  @media (hover: hover) { .open .burger:hover { background: #fff; color: var(--ink); } }
+  .bl { position: relative; display: inline-grid; overflow: hidden; height: 1.1em; }
+  .bl > span { grid-area: 1 / 1; transition: transform 420ms cubic-bezier(.7, 0, .2, 1); }
+  .b-close { transform: translateY(110%); }
+  .open .b-open { transform: translateY(-110%); }
+  .open .b-close { transform: none; }
+  .bi { position: relative; width: 28px; height: 28px; border-radius: 50%; background: var(--yellow); }
+  .bi i { position: absolute; left: 8px; right: 8px; height: 1.6px; border-radius: 2px; background: var(--ink); transition: transform 380ms var(--ease); }
+  .bi i:first-child { top: 11px; } .bi i:last-child { top: 16px; }
+  .open .bi i:first-child { transform: translateY(2.5px) rotate(45deg); }
+  .open .bi i:last-child { transform: translateY(-2.5px) rotate(-45deg); }
+
+  /* The expanded panel. */
+  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 2; overflow-y: auto; background: var(--ink); color: #fff; clip-path: inset(0 0 100% 0); transition: clip-path 620ms cubic-bezier(.75, 0, .2, 1); }
+  .menu.in { clip-path: inset(0 0 0 0); }
+  .menu-in { max-width: var(--max); margin-inline: auto; min-height: 100%; padding: calc(60px + 12px + clamp(32px, 6vh, 72px)) var(--gutter) clamp(28px, 5vh, 48px); display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .m-links { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, .18); }
+  .m-links li { border-bottom: 1px solid rgba(255, 255, 255, .18); opacity: 0; transform: translateY(24px); transition: opacity 500ms var(--ease), transform 600ms var(--ease); }
+  .menu.in .m-links li { opacity: 1; transform: none; transition-delay: calc(220ms + var(--i) * 55ms); }
+  .m-links a { display: grid; grid-template-columns: 44px auto 1fr; align-items: baseline; gap: 16px; padding: clamp(10px, 1.6vh, 16px) 0; text-decoration: none; }
+  .m-n { font-size: 13px; font-weight: 700; color: rgba(255, 255, 255, .45); }
+  .m-t { font-weight: 700; font-size: clamp(34px, 4.6vw, 64px); line-height: 1; letter-spacing: -0.05em; transition: transform 420ms var(--ease), color 300ms var(--ease); }
+  .m-d { justify-self: end; font-size: 15px; color: rgba(255, 255, 255, .55); opacity: 0; transform: translateX(-8px); transition: opacity 300ms var(--ease), transform 400ms var(--ease); }
+  .m-links a:hover .m-t, .m-links a[aria-current='page'] .m-t { transform: translateX(14px); color: var(--pink); }
+  .m-links a:hover .m-d { opacity: 1; transform: none; }
+  .m-side { display: grid; gap: 28px; opacity: 0; transform: translateY(24px); transition: opacity 500ms var(--ease), transform 600ms var(--ease); }
+  .menu.in .m-side { opacity: 1; transform: none; transition-delay: 420ms; }
+  .m-k { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .m-test { display: grid; gap: 8px; padding: 22px; border-radius: var(--r-lg); background: var(--yellow); color: var(--ink); text-decoration: none; transition: transform 300ms var(--ease); }
+  .m-test:hover { transform: translateY(-4px) rotate(-1deg); }
+  .m-tt { font-weight: 700; font-size: 28px; letter-spacing: -0.04em; line-height: 1; }
+  .m-td { font-size: 15px; line-height: 1.4; }
+  .m-tp { font-weight: 700; font-size: 15px; }
+  .m-tc { margin-top: 6px; justify-self: start; padding: 10px 14px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; }
+  .m-reach { display: grid; gap: 10px; }
+  .m-reach .m-k { color: rgba(255, 255, 255, .5); }
+  .m-reach a { text-decoration: none; font-size: 16px; width: fit-content; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms var(--ease); }
+  .m-reach a:hover { background-size: 100% 1px; }
+  .m-langs { display: flex; gap: 8px; }
+  .m-langs a { flex: 1; text-align: center; padding: 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .m-langs a[aria-current] { background: #fff; color: var(--ink); border-color: #fff; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  @media (max-width: 1080px) { .links { display: none; } .right { margin-left: auto; } }
   @media (max-width: 860px) {
-    .links, .cta { display: none; }
-    .burger { display: block; }
-    .right { margin-left: auto; }
+    .menu-in { grid-template-columns: 1fr; gap: 32px; }
+    .m-d { display: none; }
+    .m-links a { grid-template-columns: 32px 1fr; }
   }
+  @media (max-width: 560px) { .cta, .lang-s { display: none; } .bar { height: 56px; } }
+  @media (prefers-reduced-motion: reduce) { .site-header, .bar, .menu, .m-links li, .m-side, .roll > span { transition: none; } }
 </style>

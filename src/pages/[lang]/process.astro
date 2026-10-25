@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Workspace from '../../components/Workspace.astro';
 import Cta from '../../components/Cta.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -44,19 +45,7 @@ const p = c(lang).process;
     </div>
   </section>
 
-  <section class="on-mat section portal-sec">
-    <div class="wrap portal">
-      <div class="stack rv" style="--gap:24px">
-        <h2 class="h2">{p.portal.title}</h2>
-        <p class="text text-l">{p.portal.text}</p>
-        <p class="status"><span class="pulse" aria-hidden="true"></span>{p.portal.status}</p>
-      </div>
-      <div class="room rv" style="--d:100ms">
-        <p class="label">{p.portal.list}</p>
-        <ul class="ticks-list">{p.portal.items.map((it) => <li>{it}</li>)}</ul>
-      </div>
-    </div>
-  </section>
+  <Workspace lang={lang} cta={false} />
 
   <Cta lang={lang} title={p.cta} />
 </Base>
@@ -102,15 +91,8 @@ const p = c(lang).process;
   .card .text { margin: 0; }
   .yours { margin: 2px 0 0; padding: 8px 12px; border-radius: var(--r-sm); background: var(--yellow-soft); font-size: 15px; }
   .yours span { font-weight: 700; margin-right: 6px; }
-  .portal { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
-  .portal .h2 { max-width: 14ch; }
-  .status { margin: 0; display: inline-flex; align-items: center; gap: 10px; justify-self: start; padding: 8px 14px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); font-size: 15px; font-weight: 600; }
-  .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); animation: pulse 2s infinite; }
-  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, .4); } 70% { box-shadow: 0 0 0 9px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
-  .room { display: grid; gap: 18px; padding: clamp(26px, 3vw, 40px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); }
-  .room .ticks-list { gap: 14px; font-size: 18px; }
   @media (max-width: 900px) {
-    .journey, .portal { grid-template-columns: 1fr; }
+    .journey { grid-template-columns: 1fr; }
     .legend { position: static; display: flex; flex-wrap: wrap; align-items: center; }
     .monthly { flex-basis: 100%; }
   }

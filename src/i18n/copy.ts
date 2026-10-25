@@ -2,7 +2,7 @@
 import type { Locale } from './strings';
 
 const en = {
-  nav: { work: 'Case study', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language' },
+  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'The Glucélia case study', process: 'How a project runs, and your workspace', offers: 'Plans from 999 TND', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, testK: 'Start here', testT: 'The Test', testD: '3 reels and 1 static from a 3-hour shoot.', testP: '999 TND, one time', testCta: 'Book the Test', reach: 'Reach us' },
   home: {
     title: ['Ads made', 'to be watched', 'twice.'],
     compare: { title: 'Why brands switch to Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut, so nothing gets lost between hand-offs.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys: the problem, the want, the proof.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more openings per reel on monthly plans, so the results show which one stops people.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film. No surprises on set or in the edit.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We review the results you share and write the next round from what they show.']] },
@@ -10,11 +10,11 @@ const en = {
     badge: 'Case study · Glucélia · 2026 · ',
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
-    kicks: { work: 'Selected work', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
+    kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     sub: 'Gecko is a creative and production studio in Tunis. We develop, shoot and edit short video ads for brands, and take on launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
-    workTitle: 'Four reels for Glucélia.',
+    workTitle: 'Work.',
     workCta: 'See the case study',
     why: {
       title: 'What most studios skip.',
@@ -94,7 +94,7 @@ const en = {
     title: 'Case study',
     label: 'Case study · 2026',
     client: 'Glucélia',
-    intro: 'Four reels for Glucélia, made by our founder’s team at CreativesLab. Same product, four ways in, each one built to stop the scroll and make the product the obvious answer.',
+    intro: 'Made by our founder’s team at CreativesLab: one product, four ways in, each built to stop the scroll and make the product the obvious answer.',
     facts: [['Client', 'Glucélia'], ['Year', '2026'], ['Studio', 'CreativesLab'], ['Made', '4 reels']],
     choicesTitle: 'The choices that made them sell.',
     choices: [
@@ -109,6 +109,27 @@ const en = {
     soundHint: 'Tap a reel to watch it full screen with sound.',
     next: 'Your brand could be the next case study.',
     close: 'Close', prev: 'Previous', nextReel: 'Next', sound: 'Turn sound on', mute: 'Turn sound off', title1: 'Reel',
+  },
+  space: {
+    kick: 'Client workspace',
+    title: 'Your whole project, in one place.',
+    sub: 'Every Gecko client works from a private workspace, from the first brief to the last file, on every plan. Scripts, previews, files, costs and invoices live there, so nothing gets buried in a chat.',
+    points: [
+      ['Approve in one click', 'Scripts and previews wait for your yes, with your comments pinned to the exact second.'],
+      ['Always know where it stands', 'A live timeline from brief to delivery, with the next date and what we need from you.'],
+      ['Money stays clear', 'Deposit, balance and any studio or talent costs we advanced, each with its invoice.'],
+      ['Files you can find', 'Final cuts in 9:16 and 4:5, statics and carousels, ready to download once approved.'],
+    ],
+    example: 'Example workspace',
+    mock: {
+      project: 'Spring launch', meta: '10 reels · Regular plan', status: 'In edit', tabs: ['Overview', 'Approvals', 'Files', 'Invoices'],
+      steps: ['Brief', 'Scripts', 'Shoot', 'Edit', 'Delivery'], next: 'Next', nextV: 'First draft on Thursday', need: 'From you', needV: 'Approve 2 scripts',
+      progress: 'Reels in edit', latest: 'Latest', activity: [['Script 06 approved', '2 h ago'], ['Shoot photos added', 'Yesterday'], ['Studio invoice added', 'Mon']], approvals: [['Reel 07 · Script', 'Waiting for you'], ['Reel 08 · Script', 'Waiting for you'], ['Reel 03 · Preview', 'Approved']],
+      approve: 'Approve', preview: 'Preview · watermarked', comment: 'Can the price show at 0:04 instead?', at: '0:04',
+      files: [['Reel 01 · 9:16', 'MP4 · 42 MB'], ['Reel 01 · 4:5', 'MP4 · 38 MB'], ['Statics · set 1', '4 PNG'], ['Carousel 01', '6 PNG']], locked: 'Unlocks once the balance is paid',
+      invoices: [['Deposit · 50%', 'Paid'], ['Studio rental · advanced', 'Added to balance'], ['Balance · 50%', 'Due on approval']],
+    },
+    cta: 'See how a project runs',
   },
   process: {
     title: 'How a project runs.',
@@ -130,13 +151,6 @@ const en = {
       { t: 'Results and the next round', d: 'We go through your ad and sales results with you and use them to brief the next round.', you: 'Share what the numbers show.' },
     ],
     monthly: 'Monthly plans run the same steps every month. Instead of a deposit and a balance, each month is paid before the 5th.',
-    portal: {
-      title: 'Every project gets its own room.',
-      text: 'Most creative work lives across WhatsApp, email and shared folders, and the latest cut is always three chats away. We’re building a private client portal so each project has one login with everything in it.',
-      list: 'What you’ll follow there',
-      items: ['Scope and status', 'Timeline and milestones', 'Messages and approvals', 'Assets and deliverables', 'Studio, talent and prop costs', 'Invoices and payments', 'Watermarked previews, then final files'],
-      status: 'In development. Clients get access as it rolls out.',
-    },
     cta: 'Ready when you are.',
   },
   about: {
@@ -195,7 +209,7 @@ const en = {
 type Copy = typeof en;
 
 const fr: Copy = {
-  nav: { work: 'Étude de cas', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue' },
+  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'L’étude de cas Glucélia', process: 'Le déroulé d’un projet, et votre espace client', offers: 'Des plans dès 999 TND', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, testK: 'Pour commencer', testT: 'Le Test', testD: '3 reels et 1 visuel fixe, en 3 heures de tournage.', testP: '999 TND, une seule fois', testCta: 'Réserver le Test', reach: 'Nous joindre' },
   home: {
     title: ['Des pubs faites', 'pour être', 'revues.'],
     compare: { title: 'Pourquoi les marques passent chez Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final, sans rien perdre en route.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients : le problème, l’envie, la preuve.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux ouvertures par reel sur les plans mensuels, pour voir laquelle arrête le scroll.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage. Aucune surprise sur le plateau ni au montage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On étudie les résultats que vous partagez et on écrit la suite à partir de ce qu’ils montrent.']] },
@@ -203,11 +217,11 @@ const fr: Copy = {
     badge: 'Étude de cas · Glucélia · 2026 · ',
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
-    kicks: { work: 'Nos réalisations', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
+    kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     sub: 'Gecko est un studio de création et de production à Tunis. On conçoit, tourne et monte des pubs vidéo courtes pour les marques, et on prend en charge lancements et films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
-    workTitle: 'Quatre reels pour Glucélia.',
+    workTitle: 'Réalisations.',
     workCta: 'Voir l’étude de cas',
     why: {
       title: 'Ce que la plupart des studios oublient.',
@@ -286,7 +300,7 @@ const fr: Copy = {
     title: 'Étude de cas',
     label: 'Étude de cas · 2026',
     client: 'Glucélia',
-    intro: 'Quatre reels pour Glucélia, réalisés par l’équipe de notre fondateur chez CreativesLab. Un même produit, quatre angles, chacun pensé pour arrêter le scroll et faire du produit la réponse évidente.',
+    intro: 'Réalisé par l’équipe de notre fondateur chez CreativesLab : un produit, quatre angles, chacun pensé pour arrêter le scroll et faire du produit la réponse évidente.',
     facts: [['Client', 'Glucélia'], ['Année', '2026'], ['Studio', 'CreativesLab'], ['Réalisé', '4 reels']],
     choicesTitle: 'Les choix qui les ont fait vendre.',
     choices: [
@@ -301,6 +315,27 @@ const fr: Copy = {
     soundHint: 'Touchez un reel pour le voir en plein écran avec le son.',
     next: 'Votre marque pourrait être la prochaine étude de cas.',
     close: 'Fermer', prev: 'Précédent', nextReel: 'Suivant', sound: 'Activer le son', mute: 'Couper le son', title1: 'Reel',
+  },
+  space: {
+    kick: 'Espace client',
+    title: 'Tout votre projet, au même endroit.',
+    sub: 'Chaque client Gecko travaille depuis un espace privé, du premier brief au dernier fichier, sur chaque plan. Scripts, aperçus, fichiers, coûts et factures y sont réunis, pour que rien ne se perde dans une conversation.',
+    points: [
+      ['Validez en un clic', 'Scripts et aperçus attendent votre accord, avec vos commentaires placés à la seconde près.'],
+      ['Toujours savoir où on en est', 'Un calendrier en direct du brief à la livraison, avec la prochaine date et ce dont nous avons besoin.'],
+      ['Des comptes clairs', 'Acompte, solde et coûts de studio ou de talents avancés, chacun avec sa facture.'],
+      ['Des fichiers faciles à retrouver', 'Montages finaux en 9:16 et 4:5, visuels fixes et carrousels, à télécharger une fois validés.'],
+    ],
+    example: 'Exemple d’espace',
+    mock: {
+      project: 'Lancement printemps', meta: '10 reels · Plan Regular', status: 'Au montage', tabs: ['Aperçu', 'Validations', 'Fichiers', 'Factures'],
+      steps: ['Brief', 'Scripts', 'Tournage', 'Montage', 'Livraison'], next: 'Prochaine étape', nextV: 'Premier montage jeudi', need: 'De votre côté', needV: 'Valider 2 scripts',
+      progress: 'Reels au montage', latest: 'Activité', activity: [['Script 06 validé', 'Il y a 2 h'], ['Photos du tournage ajoutées', 'Hier'], ['Facture studio ajoutée', 'Lun.']], approvals: [['Reel 07 · Script', 'En attente'], ['Reel 08 · Script', 'En attente'], ['Reel 03 · Aperçu', 'Validé']],
+      approve: 'Valider', preview: 'Aperçu · filigrané', comment: 'Le prix peut-il apparaître à 0:04 ?', at: '0:04',
+      files: [['Reel 01 · 9:16', 'MP4 · 42 Mo'], ['Reel 01 · 4:5', 'MP4 · 38 Mo'], ['Visuels · lot 1', '4 PNG'], ['Carrousel 01', '6 PNG']], locked: 'Disponible une fois le solde réglé',
+      invoices: [['Acompte · 50 %', 'Payé'], ['Location studio · avancée', 'Ajoutée au solde'], ['Solde · 50 %', 'À la validation']],
+    },
+    cta: 'Voir le déroulé d’un projet',
   },
   process: {
     title: 'Comment se déroule un projet.',
@@ -322,13 +357,6 @@ const fr: Copy = {
       { t: 'Résultats et suite', d: 'On passe en revue vos résultats pub et ventes avec vous, et on s’en sert pour briefer la suite.', you: 'Partagez ce que montrent les chiffres.' },
     ],
     monthly: 'Les plans mensuels suivent les mêmes étapes chaque mois. Pas d’acompte ni de solde : chaque mois est réglé avant le 5.',
-    portal: {
-      title: 'Chaque projet a son propre espace.',
-      text: 'Le plus souvent, un projet créatif est éparpillé entre WhatsApp, les e-mails et les dossiers partagés, et le dernier montage est toujours trois conversations plus loin. Nous construisons un portail client privé : un seul accès par projet, avec tout dedans.',
-      list: 'Ce que vous y suivrez',
-      items: ['Périmètre et avancement', 'Calendrier et étapes clés', 'Messages et validations', 'Fichiers et livrables', 'Coûts de studio, talents et accessoires', 'Factures et paiements', 'Aperçus filigranés, puis fichiers finaux'],
-      status: 'En développement. Les clients y ont accès au fil du déploiement.',
-    },
     cta: 'Prêts quand vous l’êtes.',
   },
   about: {
