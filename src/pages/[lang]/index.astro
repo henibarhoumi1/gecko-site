@@ -178,7 +178,7 @@ const h = c(lang).home;
 
   .hero-art { position: relative; display: block; height: clamp(440px, 46vw, 660px); color: var(--ink); text-decoration: none; }
   .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
-  .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--pink); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
+  .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
   .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); transition: transform 800ms var(--ease); }
   .fan img, .fan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .f0 { left: 4%; top: 14%; transform: rotate(-9deg) translate(calc(var(--mx) * 18px), calc(var(--my) * 14px)); }
@@ -191,7 +191,7 @@ const h = c(lang).home;
   .badge svg { position: absolute; inset: 4px; width: calc(100% - 8px); height: calc(100% - 8px); animation: spin 16s linear infinite; }
   .badge text { font: 700 10.5px var(--font); letter-spacing: .12em; text-transform: uppercase; fill: var(--ink); }
   .badge b { width: 42%; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--white); font-size: 15px; padding-left: 3px; }
-  .hero-art:hover .badge { transform: scale(1.08) rotate(-6deg); background: var(--pink); }
+  .hero-art:hover .badge { transform: scale(1.08) rotate(-6deg); background: var(--yellow); }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   @media (max-width: 960px) {
@@ -208,7 +208,7 @@ const h = c(lang).home;
   .ticker:hover .track { animation-play-state: paused; }
   .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .ticker li { white-space: nowrap; font-weight: 700; font-size: 15px; padding-inline: 18px; }
-  .ticker li::after { content: '✱'; padding-left: 36px; color: var(--pink); -webkit-text-stroke: .5px var(--ink); }
+  .ticker li::after { content: '✱'; padding-left: 36px; color: var(--yellow); -webkit-text-stroke: .5px var(--ink); }
   @keyframes slide { to { transform: translateX(-50%); } }
   @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .ticker .track, .badge svg, .pulse::after { animation: none; } }
 

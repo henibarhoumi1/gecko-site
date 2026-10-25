@@ -132,7 +132,7 @@ a { color: inherit; }
 
 /* Section labels: a number and a name above the title. */
 .kick { display: flex; align-items: center; gap: 12px; margin: 0 0 clamp(18px, 2vw, 28px); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
-.on-black .kick span, .on-mat .kick span { background: var(--pink); }
-.kick span { display: inline-grid; place-items: center; min-width: 34px; height: 24px; padding-inline: 8px; border-radius: 999px; background: var(--pink); color: var(--ink); letter-spacing: 0; }
+.on-black .kick span, .on-mat .kick span { background: var(--yellow); }
+.kick span { display: inline-grid; place-items: center; min-width: 34px; height: 24px; padding-inline: 8px; border-radius: 999px; background: var(--yellow); color: var(--ink); letter-spacing: 0; }
 .kick::after { content: ''; flex: 0 1 120px; height: var(--line); background: currentColor; opacity: .4; }
 
