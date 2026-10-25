@@ -40,7 +40,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       <p class="label">{a.brief}</p>
       <p class="empty" data-brief-empty>{a.briefEmpty}</p>
       <ul data-rows></ul>
-      <div class="sugg mat" data-sugg hidden>
+      <div class="sugg" data-sugg hidden>
         <p class="label">{a.start}</p>
         <p class="pick" data-sugg-text></p>
       </div>
@@ -112,6 +112,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
       <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-error={s.error}>{a.done}</p>
+      <p class="text fallback" data-fallback hidden>{a.waFallback} <a data-wa-link href="#" target="_blank" rel="noopener">{a.waLink}</a> · <a href={`mailto:${site.email}`}>{site.email}</a></p>
       <button type="button" class="again" data-again>{a.again}</button>
     </div>
 
@@ -259,7 +260,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       form.reset(); Object.keys(ans).forEach((k) => delete ans[k]); prefilled.clear(); history = [];
       form.querySelectorAll('.chip').forEach((x) => { x.classList.remove('picked'); x.setAttribute('aria-pressed', 'false'); });
       form.querySelectorAll<HTMLButtonElement>('[data-next]').forEach((b) => (b.disabled = true));
-      pill.hidden = true; setReach(0); done.hidden = true; brief();
+      pill.hidden = true; setReach(0); done.hidden = true; $('[data-fallback]').hidden = true; brief();
       steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
 
@@ -270,7 +271,9 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       if (bad) { bad.focus(); anim(bad.closest('.field')!, [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       if (!form.dataset.key) {
         const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
-        open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`, '_blank', 'noopener');
+        const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`;
+        open(url, '_blank', 'noopener');
+        $<HTMLAnchorElement>('[data-wa-link]').href = url; $('[data-fallback]').hidden = false;
         finish(msg.dataset.waDone!);
         return;
       }
@@ -300,7 +303,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .brief :global(.k) { font-weight: 700; font-size: 14px; flex: none; }
   .brief :global(.v) { font-size: 15px; text-align: right; font-weight: 700; }
   .brief :global(li button:hover .k) { text-decoration: underline; text-underline-offset: 3px; }
-  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--r-sm); }
+  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: var(--r-sm); background: var(--ink); color: #fff; }
   .sugg .pick { margin: 0; font-weight: 700; }
   .sugg :global(.label) { color: rgba(255, 255, 255, .8); }
   .direct { display: grid; gap: 6px; }
@@ -312,7 +315,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .count { margin: 0; font-weight: 700; font-size: 15px; }
   .count b { font-size: 28px; letter-spacing: -0.04em; }
   .bar { width: clamp(96px, 14vw, 168px); height: 10px; border-radius: 999px; border: var(--line) solid var(--ink); overflow: hidden; background: var(--white); }
-  .bar i { display: block; height: 100%; background: var(--mat); transform-origin: left; transform: scaleX(0); transition: transform 520ms var(--spring); }
+  .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform 520ms var(--spring); }
   .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--mat-soft); color: var(--mat-deep); opacity: 0; }
   .cheer.show { animation: cheer 1600ms var(--ease) both; }
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
@@ -322,7 +325,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .empty { margin: 0; font-size: 15px; color: var(--ink-2); }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
-  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--mat-soft); border: var(--line) solid var(--ink); font-size: 15px; }
+  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--yellow-soft); border: var(--line) solid var(--ink); font-size: 15px; }
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--white); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .step[data-key='make'] .chip.picked::after { content: '✓'; margin-left: 2px; }
@@ -344,6 +347,8 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--ink); }
   .done { justify-items: start; align-content: center; min-height: 320px; }
+  .fallback { margin: 0; font-size: 15px; }
+  .fallback a { font-weight: 700; }
   .ok { width: 64px; height: 64px; border-radius: 50%; border: var(--line) solid var(--ink); background: var(--mat-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 44px no-repeat; }
   .again { background: none; border: 0; padding: 0; cursor: pointer; font: 700 15px var(--font); color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; }
   @media (max-width: 860px) {

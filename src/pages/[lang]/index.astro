@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
 import PlanPicker from '../../components/PlanPicker.astro';
-import WhyGecko from '../../components/WhyGecko.astro';
+import Compare from '../../components/Compare.astro';
 import ReelCard from '../../components/ReelCard.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
 import { t, type Locale } from '../../i18n/strings';
@@ -22,9 +22,9 @@ const h = c(lang).home;
       <div class="hero-copy">
         <p class="kicker rise" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
         <h1 class="h1 big" aria-label={h.title.join(' ')}>
-          <span class="line" aria-hidden="true"><span class="rise" style="--d:80ms">{h.title[0]}</span></span>
-          <span class="line" aria-hidden="true"><span class="rise hl" style="--d:190ms"><span class="rot" data-rot>{h.words.map((w, i) => <span class={i === 0 ? 'on' : ''}>{w}</span>)}</span></span></span>
-          <span class="line" aria-hidden="true"><span class="rise" style="--d:300ms">{h.title[2]}</span></span>
+          {h.title.map((line, i) => (
+            <span class="line" aria-hidden="true"><span class={`rise ${i === 2 ? 'hl' : ''}`} style={`--d:${80 + i * 110}ms`}>{line}</span></span>
+          ))}
         </h1>
         <p class="text text-l lede rise" style="--d:420ms">{h.sub}</p>
         <div class="actions rise" style="--d:500ms">
@@ -34,7 +34,7 @@ const h = c(lang).home;
       </div>
       {ads.length >= 3 && (
         <a class="hero-art rise" style="--d:260ms" href={href(lang, 'work')} data-fan data-cursor={h.watch} aria-label={h.workCta}>
-          <span class="art-mat mat" aria-hidden="true"></span>
+          <span class="art-mat" aria-hidden="true"></span>
           <span class="art-blob" aria-hidden="true"></span>
           {ads.slice(0, 3).map((ad, i) => (
             <span class={`fan f${i}`} aria-hidden="true">
@@ -48,11 +48,6 @@ const h = c(lang).home;
           </span>
         </a>
       )}
-    </div>
-    <div class="ticker" aria-hidden="true">
-      <div class="track">
-        {[0, 1].map(() => <ul>{s.home.formats.map((f) => <li>{f}</li>)}</ul>)}
-      </div>
     </div>
   </section>
 
@@ -74,7 +69,7 @@ const h = c(lang).home;
     </section>
   )}
 
-  <WhyGecko lang={lang} />
+  <Compare lang={lang} />
 
   <section class="on-white section" id="plans">
     <div class="wrap">
@@ -110,21 +105,6 @@ const h = c(lang).home;
 <script>
   const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // The highlighted words in the headline take turns.
-  document.querySelectorAll<HTMLElement>('[data-rot]').forEach((rot) => {
-    const words = [...rot.children] as HTMLElement[];
-    if (still || words.length < 2) return;
-    let at = 0;
-    const fit = () => { rot.style.width = `${words[at].offsetWidth}px`; };
-    addEventListener('load', fit); addEventListener('resize', fit); fit();
-    setInterval(() => {
-      const prev = words[at]; at = (at + 1) % words.length;
-      prev.classList.remove('on'); prev.classList.add('out');
-      words[at].classList.remove('out'); words[at].classList.add('on');
-      setTimeout(() => prev.classList.remove('out'), 700);
-      fit();
-    }, 2800);
-  });
   // The reels in the hero lean toward the pointer.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   if (hero && fine && !still) {
@@ -153,11 +133,11 @@ const h = c(lang).home;
 <style>
   /* Hero: words on the left, a fan of reels on the right that leans toward the pointer. */
   .hero { position: relative; padding-top: calc(var(--header) + clamp(36px, 6vh, 72px)); overflow: hidden; --mx: 0; --my: 0; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(24px, 4vw, 64px); align-items: center; min-height: calc(100svh - var(--header) - 140px); padding-bottom: clamp(40px, 6vh, 72px); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(24px, 4vw, 64px); align-items: center; min-height: calc(100svh - var(--header) - 140px); padding-bottom: clamp(48px, 8vh, 96px); }
   .hero-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; }
   .kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: var(--line) solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
-  .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--mat); }
-  .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--mat); opacity: 0; animation: ping 2.2s var(--ease) infinite; }
+  .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+  .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; animation: ping 2.2s var(--ease) infinite; }
   @keyframes ping { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
   .big { font-size: clamp(50px, 7.3vw, 124px); line-height: .9; letter-spacing: -0.06em; max-width: none !important; }
   .line { display: block; overflow: hidden; padding: .02em .08em .17em 0; margin-bottom: -.06em; width: fit-content; }
@@ -165,11 +145,6 @@ const h = c(lang).home;
   .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }
   .hl { position: relative; isolation: isolate; padding: 0 .12em; margin-left: -.12em; }
   .hl::before { content: ''; position: absolute; inset: .16em 0 -.04em; background: var(--pink); border-radius: .14em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
-  .rot { position: relative; display: inline-block; vertical-align: top; white-space: nowrap; transition: width 600ms var(--ease); }
-  .rot > span { display: inline-block; }
-  .rot > span:not(.on) { position: absolute; left: 0; top: 0; opacity: 0; transform: translateY(70%); }
-  .rot > span.on { transition: transform 650ms var(--ease), opacity 400ms var(--ease); }
-  .rot > span.out { opacity: 0; transform: translateY(-45%); transition: transform 500ms var(--ease), opacity 220ms linear; }
   .lede { margin: 0; max-width: 34rem; }
   .big-btn { padding: 17px 26px; font-size: 16px; }
   [data-magnet] { transition: transform 300ms var(--ease), background 180ms var(--ease), box-shadow 220ms var(--ease); }
@@ -177,7 +152,7 @@ const h = c(lang).home;
   @keyframes wipe { from { transform: scaleX(0); } }
 
   .hero-art { position: relative; display: block; height: clamp(440px, 46vw, 660px); color: var(--ink); text-decoration: none; }
-  .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
+  .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; border-radius: var(--r-lg); background: var(--pink); border: var(--line) solid var(--ink); transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
   .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
   .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); transition: transform 800ms var(--ease); }
   .fan img, .fan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -203,14 +178,8 @@ const h = c(lang).home;
   }
   @media (max-width: 560px) { .big-btn { padding: 15px 20px; font-size: 15px; } .hero-copy .actions { width: 100%; } .hero-copy .actions .btn { flex: 1 1 auto; } }
 
-  .ticker { overflow: hidden; padding-block: 16px; background: var(--white); border-block: var(--line) solid var(--ink); }
-  .ticker .track { display: flex; width: max-content; animation: slide 60s linear infinite; }
-  .ticker:hover .track { animation-play-state: paused; }
-  .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }
-  .ticker li { white-space: nowrap; font-weight: 700; font-size: 15px; padding-inline: 18px; }
-  .ticker li::after { content: '✱'; padding-left: 36px; color: var(--yellow); -webkit-text-stroke: .5px var(--ink); }
   @keyframes slide { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .ticker .track, .badge svg, .pulse::after { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .badge svg, .pulse::after { animation: none; } }
 
   /* Work: title on the left, note and link on the right, reels on a broken grid. */
   .work-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 24px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(36px, 5vw, 72px); }

@@ -1,11 +1,11 @@
 ---
-// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself (the smooth scroller leaves it alone),
+// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
 // fades out at the bottom while there is more, and shows `hint` until the visitor reaches the end.
 interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string }
 const { items, scroll = false, hint } = Astro.props;
 ---
 <div class={scroll ? 'faq-box' : undefined} data-faq-box={scroll ? '' : undefined}>
-  <div class={`faq ${scroll ? 'scroll' : ''}`} data-lenis-prevent={scroll ? '' : undefined} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
+  <div class={`faq ${scroll ? 'scroll' : ''}`} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
     {items.map((f) => (
       <details>
         <summary><span>{f.q}</span><span class="pm" aria-hidden="true"></span></summary>
@@ -21,6 +21,11 @@ const { items, scroll = false, hint } = Astro.props;
       const list = box.querySelector<HTMLElement>('.faq')!;
       const check = () => box.classList.toggle('end', list.scrollTop + list.clientHeight >= list.scrollHeight - 8);
       list.addEventListener('scroll', check, { passive: true });
+      // The list scrolls on its own while it can; at either end the page takes over again, so the wheel never gets stuck here.
+      list.addEventListener('wheel', (e) => {
+        const can = e.deltaY < 0 ? list.scrollTop > 0 : list.scrollTop + list.clientHeight < list.scrollHeight - 1;
+        if (can) e.stopPropagation();
+      }, { passive: true });
       list.addEventListener('toggle', check, true);
       check();
     });

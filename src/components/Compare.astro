@@ -1,0 +1,68 @@
+---
+// Why brands switch: the usual way next to the Gecko way, one row per place where ads usually go wrong.
+// On wide screens it reads as a table; on phones each row becomes a card. Green ticks mark the Gecko side.
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const h = c(lang).home;
+const k = h.compare;
+---
+<section class="on-white section cmp-sec">
+  <div class="wrap">
+    <p class="kick rv"><span>02</span>{h.kicks.why}</p>
+    <div class="cmp-head">
+      <h2 class="h2 rv">{k.title}</h2>
+      <p class="text text-l rv" style="--d:80ms">{k.sub}</p>
+    </div>
+    <div class="cmp" role="table" aria-label={k.title}>
+      <div class="row th rv" role="row">
+        <span role="columnheader"></span>
+        <span role="columnheader" class="usual-h">{k.usual}</span>
+        <span role="columnheader" class="gecko-h">{k.gecko}</span>
+      </div>
+      {k.rows.map(([topic, usual, gecko], i) => (
+        <div class="row rv" role="row" style={`--d:${i * 60}ms`}>
+          <span role="rowheader" class="topic"><i>{String(i + 1).padStart(2, '0')}</i>{topic}</span>
+          <p role="cell" class="usual"><span class="mk no" aria-hidden="true"></span><span class="lbl">{k.usual}</span>{usual}</p>
+          <p role="cell" class="gecko"><span class="mk yes" aria-hidden="true"></span><span class="lbl">{k.gecko}</span>{gecko}</p>
+        </div>
+      ))}
+    </div>
+    <a class="btn primary cmp-cta rv" href={href(lang, 'apply')} data-magnet>{h.compareCta} <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<style>
+  .cmp-head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 20px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(32px, 4vw, 56px); }
+  .cmp-head .h2 { max-width: 12ch; }
+  .cmp-head .text { margin: 0; max-width: 30rem; }
+  .cmp { display: grid; border-top: var(--line) solid var(--ink); }
+  .row { display: grid; grid-template-columns: minmax(150px, .5fr) minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; padding-block: clamp(18px, 2vw, 26px); border-bottom: var(--line) solid var(--ink); transition: background 300ms var(--ease); }
+  .row:not(.th):hover { background: var(--pink-soft); }
+  .th { padding-block: 14px; font-weight: 700; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; }
+  .usual-h { opacity: .6; }
+  .gecko-h { justify-self: start; padding: 4px 12px; border-radius: 999px; background: var(--ink); color: var(--yellow); letter-spacing: .04em; }
+  .topic { display: flex; gap: 12px; align-items: baseline; font-weight: 700; font-size: clamp(18px, 1.5vw, 21px); letter-spacing: -0.02em; padding-left: 8px; }
+  .topic i { font-style: normal; font-size: 13px; opacity: .55; letter-spacing: 0; }
+  .usual, .gecko { position: relative; margin: 0; padding-left: 34px; font-size: clamp(16px, 1.25vw, 18px); line-height: 1.5; }
+  .usual { color: var(--ink-2); }
+  .gecko { font-weight: 600; }
+  .mk { position: absolute; left: 0; top: .2em; width: 22px; height: 22px; border-radius: 50%; border: var(--line) solid var(--ink); background-position: center; background-repeat: no-repeat; background-size: 14px; }
+  .mk.no { background-color: var(--white); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6.5 6.5l7 7M13.5 6.5l-7 7' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E"); }
+  .mk.yes { background-color: #2E6B4E; border-color: #2E6B4E; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.4l3 3L14.5 7' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  .lbl { display: none; }
+  .cmp-cta { margin-top: clamp(28px, 3vw, 44px); }
+  @media (max-width: 860px) {
+    .cmp-head { grid-template-columns: 1fr; }
+    .cmp { border-top: 0; gap: 14px; }
+    .th { display: none; }
+    .row { grid-template-columns: 1fr; gap: 12px; padding: 18px; border: var(--line) solid var(--ink); border-radius: var(--r); }
+    .row:not(.th):hover { background: none; }
+    .topic { padding-left: 0; }
+    .lbl { display: block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; opacity: .65; }
+    .gecko { padding-top: 12px; border-top: 1px dashed var(--ink); }
+    .gecko .mk { top: calc(12px + .2em); }
+  }
+</style>

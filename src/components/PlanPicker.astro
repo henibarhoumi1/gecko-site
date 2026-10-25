@@ -25,6 +25,10 @@ const start = 2;
           <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)} ${cur}`}</span>
         </button>
       ))}
+      <button type="button" role="tab" id="tab-bespoke" aria-controls="panel-bespoke" aria-selected="false" tabindex="-1" data-tab={plans.length} class="bes">
+        <span class="nm">{p.bespokeName}</span>
+        <span class="meta">{p.bespokeMeta}</span>
+      </button>
     </div>
     <a class="all rv" style="--d:140ms" href={href(lang, 'offers')}>{h.plansCta} <span aria-hidden="true">→</span></a>
   </div>
@@ -49,11 +53,25 @@ const start = 2;
           {(m.custom || m.once) && <p class="was">{m.custom ? p.customNote : p.onceNote}</p>}
         </div>
         <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {m.once ? p.reelsOnce : p.reels}</p>
+        <dl class="spec">
+          <div><dt>{p.spec.shoot}</dt><dd>{m.shoot?.[lang]}</dd></div>
+          <div><dt>{p.spec.review}</dt><dd>{m.review?.[lang]}</dd></div>
+        </dl>
         <ul class="ticks-list">{m.items[lang].map((it) => <li>{it}</li>)}</ul>
-        <p class="scope">{m.once ? p.scopeOnce : p.scope}</p>
+        <p class="out">{p.spec.out}</p>
         <a class={`btn ${m.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${m.key}`}>{m.custom ? p.talk : `${p.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
       </article>
     ))}
+    <article class="card bespoke" role="tabpanel" id="panel-bespoke" aria-labelledby="tab-bespoke" hidden data-panel={plans.length}>
+      <header>
+        <h3 class="name">{p.bespokeName}</h3>
+        <p class="for">{p.bespokeFor}</p>
+      </header>
+      <div class="price"><p class="amount"><span class="num word">{p.bespokePrice}</span></p></div>
+      <ul class="kinds">{c(lang).offers.beyond.items.map((it) => <li><b>{it.t}</b><span>{it.d}</span></li>)}</ul>
+      <p class="out">{p.bespokeNote}</p>
+      <a class="btn primary" href={`${href(lang, 'apply')}?plan=bespoke`}>{c(lang).offers.beyond.cta} <span class="arr" aria-hidden="true">→</span></a>
+    </article>
   </div>
 </div>
 
@@ -109,7 +127,7 @@ const start = 2;
   .intro .text { margin: 0; max-width: 30rem; }
   .tabs { display: grid; gap: 10px; }
   .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-  .tabs button:hover { background: var(--mat-soft); }
+  .tabs button:hover { background: var(--pink-soft); }
   .tabs [aria-selected='true'] { background: var(--mat); color: #fff; transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--ink); }
   .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
   .meta { font-size: 15px; font-weight: 600; white-space: nowrap; }
@@ -129,18 +147,31 @@ const start = 2;
   .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
   .num.word { font-size: clamp(48px, 5vw, 80px); }
   .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: 1; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
-  .sticker.once { background: var(--mat); color: #fff; }
+  .sticker.once { background: var(--yellow); }
   .unit { font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); }
   .was { margin: 0; font-size: 15px; }
   .was s { text-decoration-thickness: 1.5px; }
   .reels { margin: 0; font-size: 17px; }
   .reels b { font-size: 22px; letter-spacing: -0.02em; }
   .card .ticks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; font-size: 16px; }
-  .scope { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--pink-soft); font-size: 15px; line-height: 1.4; }
+  .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: var(--line) solid var(--ink); border-radius: var(--r-sm); overflow: hidden; }
+  .spec div { padding: 12px 14px; display: grid; gap: 4px; }
+  .spec div + div { border-left: var(--line) solid var(--ink); }
+  .spec dt { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; opacity: .7; }
+  .spec dd { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .dark .spec, .dark .spec div + div { border-color: rgba(255, 255, 255, .3); }
+  .out { margin: 0; font-size: 15px; line-height: 1.45; }
+  .dark .out { color: rgba(255, 255, 255, .8); }
+  .kinds { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
+  .kinds li { display: grid; gap: 4px; padding-top: 12px; border-top: var(--line) solid var(--ink); }
+  .kinds b { font-size: 17px; letter-spacing: -0.01em; }
+  .kinds span { font-size: 15px; line-height: 1.45; }
+  .bespoke { background: var(--yellow-soft); }
+  .tabs .bes { border-style: dashed; }
+  @media (max-width: 560px) { .spec, .kinds { grid-template-columns: 1fr; } .spec div + div { border-left: 0; border-top: var(--line) solid var(--ink); } }
   .card .btn { justify-self: start; }
   .dark { background: var(--ink); color: #fff; box-shadow: 10px 10px 0 var(--pink); }
   .dark .price { border-color: rgba(255, 255, 255, .25); }
-  .dark .scope { background: rgba(255, 255, 255, .1); }
   .dark .for, .dark .was { color: rgba(255, 255, 255, .8); }
   .dark .btn { background: var(--pink); border-color: var(--pink); color: var(--ink); }
   .dark :global(.ticks-list li::before) { background-color: var(--pink); }
@@ -150,6 +181,7 @@ const start = 2;
     .side { display: contents; }
     .stage { order: 3; }
     .tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .tabs .bes { grid-column: 1 / -1; }
     .tabs button { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px; }
     .nm { font-size: 16px; }
     .meta { font-size: 13px; white-space: normal; }

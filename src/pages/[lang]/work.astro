@@ -50,7 +50,7 @@ const w = c(lang).work;
     </div>
   </section>
 
-  <section class="on-mat section team-sec">
+  <section class="on-white section team-sec">
     <div class="wrap team">
       <p class="label rv">{w.team}</p>
       <ul class="people">
@@ -79,14 +79,15 @@ const w = c(lang).work;
   .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: var(--line) solid var(--ink); }
   .choices li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 3vw, 44px) clamp(0px, 2vw, 32px) clamp(24px, 3vw, 44px) 0; border-bottom: var(--line) solid var(--ink); }
   .choices li:nth-child(even) { padding-left: clamp(20px, 3vw, 44px); border-left: var(--line) solid var(--ink); }
-  .choices .n { font-weight: 700; font-size: 14px; color: var(--mat); }
+  .choices .n { font-weight: 700; font-size: 14px; }
   .choices .t { margin: 0; font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.04; letter-spacing: -0.04em; max-width: 16ch; }
   .choices .text { margin: 0; max-width: 30rem; }
   .team { display: grid; gap: 22px; }
   .team .label { margin: 0; }
   .people { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 0; }
   .people li { font-weight: 700; font-size: clamp(32px, 5.4vw, 84px); line-height: 1.02; letter-spacing: -0.05em; }
-  .people li:not(:last-child)::after { content: ','; margin-right: .35em; color: var(--pink); }
+  .people li:not(:last-child)::after { content: ','; margin-right: .35em; }
+  .team-sec { border-top: var(--line) solid var(--ink); }
   @media (max-width: 860px) {
     .intro-row, .choices { grid-template-columns: 1fr; }
     .choices li:nth-child(even) { padding-left: 0; border-left: 0; }

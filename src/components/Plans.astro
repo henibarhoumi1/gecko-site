@@ -24,22 +24,30 @@ const launch = t(lang).offers.launch;
           : <p class="amount"><span class="num">{fmt(o.launch, lang)}</span>{' '}<span class="unit">{cur} {o.once ? p.once : p.month}</span></p>}
         {(o.custom || o.once) && <p class="was">{o.custom ? p.customNote : p.onceNote}</p>}
       </div>
+      <dl class="spec">
+        <div><dt>{p.spec.shoot}</dt><dd>{o.shoot?.[lang]}</dd></div>
+        <div><dt>{p.spec.review}</dt><dd>{o.review?.[lang]}</dd></div>
+      </dl>
       <ul class="ticks-list">{o.items[lang].map((it) => <li>{it}</li>)}</ul>
-      <p class="scope">{o.once ? p.scopeOnce : p.scope}</p>
+      <p class="out">{p.spec.out}</p>
       <a class={`btn ${o.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${o.key}`}>{o.custom ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
     </article>
   ))}
 </div>
 <style>
   .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
-  .plan { display: grid; grid-template-rows: auto auto 1fr auto auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
+  .plan { display: grid; grid-template-rows: auto auto auto 1fr auto auto; gap: 20px; padding: clamp(24px, 2.4vw, 34px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
   .plan.in:hover { transform: translate(-4px, -4px); box-shadow: 6px 6px 0 var(--ink); }
   .plan header { display: grid; gap: 8px; }
   .for { margin: 0; font-size: 15px; line-height: 1.4; min-height: 4.2em; }
   .amount, .was { margin: 0; }
   .was { font-size: 14px; }
-  .scope { margin: 0; padding: 12px 14px; border-radius: var(--r-sm); background: var(--pink-soft); font-size: 14px; line-height: 1.4; }
-  .dark .scope { background: rgba(255, 255, 255, .1); }
+  .spec { margin: 0; display: grid; gap: 10px; }
+  .spec div { display: grid; gap: 2px; }
+  .spec dt { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; opacity: .65; }
+  .spec dd { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .out { margin: 0; font-size: 14px; line-height: 1.45; padding-top: 14px; border-top: 1px dashed currentColor; }
+  .dark .out { color: rgba(255, 255, 255, .8); }
   .reels { margin: 0 0 6px; display: flex; align-items: baseline; gap: 8px; font-size: 16px; }
   .reels .n { font-weight: 700; font-size: clamp(40px, 3.8vw, 56px); line-height: 1; letter-spacing: -0.05em; }
   .price { display: grid; gap: 4px; padding-block: 14px; border-block: var(--line) solid var(--ink); }
@@ -57,8 +65,7 @@ const launch = t(lang).offers.launch;
   .pill.vip { background: var(--pink); border-color: var(--pink); color: var(--ink); }
   .dark .amount .num { font-size: clamp(24px, 2vw, 30px); }
   .pill { padding: 4px 10px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--pink-soft); font-size: 12px; font-weight: 700; white-space: nowrap; }
-  .pill.ex { background: var(--mat); border-color: var(--mat); color: #fff; }
-  .once { border-color: var(--mat); box-shadow: inset 0 0 0 1px var(--mat); }
+  .pill.ex { background: var(--yellow); }
   .unit { font-weight: 600; font-size: 15px; }
   .reels .n.sm { font-size: clamp(32px, 3vw, 44px); white-space: nowrap; }
   @media (max-width: 1180px) and (min-width: 761px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
