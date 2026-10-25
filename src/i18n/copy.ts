@@ -2,14 +2,14 @@
 import type { Locale } from './strings';
 
 const en = {
-  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language' },
+  nav: { work: 'Case study', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language' },
   home: {
     title: ['Ads that', 'stop the scroll', 'and sell.'],
     sub: 'Gecko is a creative and production studio in Tunis. Our signature is short video ads for brands that sell online: we write them, shoot them, cut them, then read the results with you.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
     workTitle: 'Made to be watched twice.',
-    workCta: 'All work',
+    workCta: 'See the case study',
     why: {
       title: 'What other agencies skip.',
       prev: 'Previous', next: 'Next',
@@ -80,9 +80,23 @@ const en = {
     project: 'Starting a project?', projectCta: 'Answer a few quick questions',
   },
   work: {
-    title: 'Work',
-    credit: 'These four were made by our founder for Hismile and Glucélia, before Gecko opened.',
-    next: 'Your brand could be next.',
+    title: 'Case study',
+    label: 'Case study · 2026',
+    client: 'Glucélia',
+    intro: 'Four reels for Glucélia, made by our founder’s team at CreativesLab. Same product, four ways in, each one built to stop the scroll and make the product the obvious answer.',
+    facts: [['Client', 'Glucélia'], ['Year', '2026'], ['Studio', 'CreativesLab'], ['Made', '4 reels']],
+    choicesTitle: 'The choices that made them sell.',
+    choices: [
+      { t: 'Show the change, don’t explain it.', d: 'No long voiceover about benefits. The reel shows life before and life with Glucélia, and lets the switch do the selling.' },
+      { t: 'Give the product a rival.', d: 'Putting Glucélia up against the usual options turns an ad into a contest people want to see the end of.' },
+      { t: 'Win the first second.', d: 'Every reel opens on something odd, loud or beautiful enough to stop a thumb, before the brand ever appears.' },
+      { t: 'Made to be watched twice.', d: 'Small details, quick cuts and a payoff at the end, so people replay it, and every replay is another look at the product.' },
+    ],
+    team: 'The people behind it',
+    people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
+    reelsTitle: 'The four reels.',
+    soundHint: 'Tap a reel to watch it full screen with sound.',
+    next: 'Your brand could be the next case study.',
     close: 'Close', prev: 'Previous', nextReel: 'Next', sound: 'Turn sound on', mute: 'Turn sound off', title1: 'Reel',
   },
   process: {
@@ -124,7 +138,7 @@ const en = {
     heniLabel: 'The founder',
     heniTitle: 'Heni Barhoumi',
     heniRole: 'Founder and creative director',
-    heniText: 'Heni started Gecko so brands get ads made with the care of a short film and the discipline of a sales pitch. Before Gecko, Heni made ads for Hismile and Glucélia; you can watch them on the Work page.',
+    heniText: 'Heni started Gecko so brands get ads made with the care of a short film and the discipline of a sales pitch. Before Gecko, Heni led the Glucélia campaign at CreativesLab; you can see it in our case study.',
     thinkTitle: 'How we think.',
     think: [
       { t: 'Ideas before cameras', d: 'Every ad starts from a written angle, a real reason to buy. The camera comes after.' },
@@ -170,14 +184,14 @@ const en = {
 type Copy = typeof en;
 
 const fr: Copy = {
-  nav: { work: 'Projets', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue' },
+  nav: { work: 'Étude de cas', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue' },
   home: {
     title: ['Des pubs qui', 'arrêtent le scroll', 'et qui vendent.'],
     sub: 'Gecko est un studio de création et de production à Tunis. Notre signature : des pubs vidéo courtes pour les marques qui vendent en ligne. On les écrit, on les tourne, on les monte, puis on lit les résultats avec vous.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
     workTitle: 'Faites pour être revues.',
-    workCta: 'Tous les projets',
+    workCta: 'Voir l’étude de cas',
     why: {
       title: 'Ce que les autres agences oublient.',
       prev: 'Précédent', next: 'Suivant',
@@ -247,9 +261,23 @@ const fr: Copy = {
     project: 'Vous lancez un projet ?', projectCta: 'Répondre à quelques questions',
   },
   work: {
-    title: 'Projets',
-    credit: 'Ces quatre pubs ont été réalisées par notre fondateur pour Hismile et Glucélia, avant l’ouverture de Gecko.',
-    next: 'Votre marque pourrait être la prochaine.',
+    title: 'Étude de cas',
+    label: 'Étude de cas · 2026',
+    client: 'Glucélia',
+    intro: 'Quatre reels pour Glucélia, réalisés par l’équipe de notre fondateur chez CreativesLab. Un même produit, quatre angles, chacun pensé pour arrêter le scroll et faire du produit la réponse évidente.',
+    facts: [['Client', 'Glucélia'], ['Année', '2026'], ['Studio', 'CreativesLab'], ['Réalisé', '4 reels']],
+    choicesTitle: 'Les choix qui les ont fait vendre.',
+    choices: [
+      { t: 'Montrer le changement, pas l’expliquer.', d: 'Pas de longue voix off sur les bénéfices. Le reel montre la vie avant et la vie avec Glucélia, et laisse le contraste vendre.' },
+      { t: 'Donner un rival au produit.', d: 'Opposer Glucélia aux options habituelles transforme la pub en un duel dont on veut voir la fin.' },
+      { t: 'Gagner la première seconde.', d: 'Chaque reel s’ouvre sur quelque chose d’étrange, de fort ou de beau, assez pour arrêter le pouce avant même que la marque apparaisse.' },
+      { t: 'Fait pour être regardé deux fois.', d: 'Des détails, des coupes rapides et une chute à la fin, pour qu’on le revoie, et chaque revisionnage est un regard de plus sur le produit.' },
+    ],
+    team: 'L’équipe derrière le projet',
+    people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
+    reelsTitle: 'Les quatre reels.',
+    soundHint: 'Touchez un reel pour le voir en plein écran avec le son.',
+    next: 'Votre marque pourrait être la prochaine étude de cas.',
     close: 'Fermer', prev: 'Précédent', nextReel: 'Suivant', sound: 'Activer le son', mute: 'Couper le son', title1: 'Reel',
   },
   process: {
@@ -291,7 +319,7 @@ const fr: Copy = {
     heniLabel: 'Le fondateur',
     heniTitle: 'Heni Barhoumi',
     heniRole: 'Fondateur et directeur de création',
-    heniText: 'Heni a créé Gecko pour que les marques aient des pubs faites avec le soin d’un court métrage et la rigueur d’un argumentaire de vente. Avant Gecko, Heni a réalisé des pubs pour Hismile et Glucélia ; elles sont sur la page Projets.',
+    heniText: 'Heni a créé Gecko pour que les marques aient des pubs faites avec le soin d’un court métrage et la rigueur d’un argumentaire de vente. Avant Gecko, Heni a mené la campagne Glucélia chez CreativesLab, à voir dans notre étude de cas.',
     thinkTitle: 'Notre façon de penser.',
     think: [
       { t: 'L’idée avant la caméra', d: 'Chaque pub part d’un angle écrit, une vraie raison d’acheter. La caméra vient après.' },

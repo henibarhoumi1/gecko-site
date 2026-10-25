@@ -1,49 +1,99 @@
 ---
+// The Glucélia case study: who it was for, the reels, the creative choices behind them and the people who made them.
 import Base from '../../layouts/Base.astro';
-import CaseCard from '../../components/CaseCard.astro';
 import ReelCard from '../../components/ReelCard.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
 import Cta from '../../components/Cta.astro';
-import { t, type Locale } from '../../i18n/strings';
+import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
-import { cases, ads } from '../../data/work';
+import { ads } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
-const s = t(lang);
 const w = c(lang).work;
 ---
-<Base lang={lang} footerCta={false} title={w.title}>
-  <section class="page-head">
+<Base lang={lang} footerCta={false} title={`${w.title}: ${w.client}`}>
+  <section class="case-head">
     <div class="wrap">
-      <h1 class="h1 rv">{w.title}</h1>
+      <p class="case-tag rv">{w.label}</p>
+      <h1 class="name rv" style="--d:60ms">{w.client}</h1>
+      <div class="intro-row">
+        <p class="text text-l intro rv" style="--d:120ms">{w.intro}</p>
+        <dl class="facts rv" style="--d:180ms">
+          {w.facts.map(([k, v]) => <div><dt class="label">{k}</dt><dd>{v}</dd></div>)}
+        </dl>
+      </div>
     </div>
   </section>
 
-  <section class="reels-sec">
+  <section class="on-black reels-sec">
     <div class="wrap">
-      <div class="reels">
-        {ads.map((a, i) => <div class="rv" style={`--d:${i * 70}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
+      <div class="head rv"><h2 class="h2">{w.reelsTitle}</h2><p class="hint">{w.soundHint}</p></div>
+      <div class={`reels scroll-row n${ads.length}`} data-swipe>
+        {ads.map((a, i) => <div class="rv" style={`--d:${i * 80}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
       </div>
-      <p class="credit rv">{w.credit}</p>
     </div>
   </section>
 
-  {cases.length > 0 && (
-    <section class="section">
-      <div class="wrap">
-        <div class="head"><h2 class="h2">{s.home.casesTitle}</h2></div>
-        <div class="grid g3">{cases.map((cs) => <CaseCard c={cs} lang={lang} />)}</div>
-      </div>
-    </section>
-  )}
+  <section class="section choices-sec">
+    <div class="wrap">
+      <div class="head rv"><h2 class="h2 ch-h">{w.choicesTitle}</h2></div>
+      <ol class="choices">
+        {w.choices.map((ch, i) => (
+          <li class="rv" style={`--d:${i * 70}ms`}>
+            <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h3 class="t">{ch.t}</h3>
+            <p class="text">{ch.d}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="on-mat section team-sec">
+    <div class="wrap team">
+      <p class="label rv">{w.team}</p>
+      <ul class="people">
+        {w.people.map((p, i) => <li class="rv" style={`--d:${i * 80}ms`}>{p}</li>)}
+      </ul>
+    </div>
+  </section>
 
   <Cta lang={lang} title={w.next} />
   <ReelViewer lang={lang} />
 </Base>
 <style>
-  .reels-sec { padding-bottom: clamp(24px, 4vw, 48px); }
+  .case-head { padding-top: calc(var(--header) + clamp(56px, 8vw, 120px)); padding-bottom: clamp(48px, 6vw, 88px); }
+  .case-tag { margin: 0 0 18px; display: inline-flex; padding: 7px 14px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--mat-soft); color: var(--mat-deep); font-weight: 700; font-size: 14px; }
+  .name { margin: 0; font-weight: 700; font-size: clamp(72px, 15vw, 240px); line-height: .86; letter-spacing: -0.065em; }
+  .intro-row { margin-top: clamp(28px, 4vw, 56px); padding-top: 24px; border-top: var(--line) solid var(--ink); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(28px, 5vw, 80px); align-items: start; }
+  .intro { margin: 0; max-width: 40rem; }
+  .facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
+  .facts dd { margin: 4px 0 0; font-weight: 700; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.02em; }
+  .reels-sec { padding-block: var(--section); }
+  .hint { margin: 0; font-size: 15px; color: rgba(255, 255, 255, .72); }
   .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); }
-  .credit { margin: clamp(24px, 3vw, 36px) 0 0; font-size: 17px; max-width: 40rem; }
-  @media (max-width: 960px) { .reels { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .reels.n2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
+  .reels.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ch-h { max-width: 14ch; }
+  .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: var(--line) solid var(--ink); }
+  .choices li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 3vw, 44px) clamp(0px, 2vw, 32px) clamp(24px, 3vw, 44px) 0; border-bottom: var(--line) solid var(--ink); }
+  .choices li:nth-child(even) { padding-left: clamp(20px, 3vw, 44px); border-left: var(--line) solid var(--ink); }
+  .choices .n { font-weight: 700; font-size: 14px; color: var(--mat); }
+  .choices .t { margin: 0; font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.04; letter-spacing: -0.04em; max-width: 16ch; }
+  .choices .text { margin: 0; max-width: 30rem; }
+  .team { display: grid; gap: 22px; }
+  .team .label { margin: 0; }
+  .people { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 0; }
+  .people li { font-weight: 700; font-size: clamp(32px, 5.4vw, 84px); line-height: 1.02; letter-spacing: -0.05em; }
+  .people li:not(:last-child)::after { content: ','; margin-right: .35em; color: var(--pink); }
+  @media (max-width: 860px) {
+    .intro-row, .choices { grid-template-columns: 1fr; }
+    .choices li:nth-child(even) { padding-left: 0; border-left: 0; }
+    .reels.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .reels :global(.reel) { transform: translateY(calc((1 - var(--near, 1)) * 22px)) scale(calc(.86 + .14 * var(--near, 1))); opacity: calc(.55 + .45 * var(--near, 1)); transform-origin: 50% 60%; }
+    .reels > * { flex-basis: 72%; }
+  }
 </style>
