@@ -18,8 +18,8 @@ const p = c(lang).plans;
       </header>
       <div class="price">
         <p class="reels"><span class="n">{o.max ? `${o.reels}–${o.max}` : o.reels}</span> {p.reels}</p>
-        <p class="amount">{o.custom ? <span class="num">{p.custom}</span> : <><span class="num">{fmt(o.launch, lang)}</span> {cur} {p.month}</>}</p>
-        <p class="was">{o.standard ? `${p.usually} ${fmt(o.standard, lang)} ${cur}` : p.customNote}</p>
+        <p class="amount">{o.custom ? <span class="num">{p.custom}</span> : <><span class="num">{fmt(o.launch, lang)}–{fmt(o.top ?? o.launch, lang)}</span> {cur} {p.month}</>}</p>
+        <p class="was">{o.custom ? p.customNote : p.rangeNote}</p>
       </div>
       <ul class="ticks-list">{o.items[lang].map((it) => <li>{it}</li>)}</ul>
       <p class="scope">{p.scope}</p>

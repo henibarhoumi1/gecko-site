@@ -21,10 +21,12 @@ export type Case = {
 // { src: '/work/gecko/ad-01.mp4', poster: '/work/gecko/ad-01.jpg', brand: 'Gecko', angle: { en: 'The price', fr: 'Le prix' }, result: { en: '0.9 TND / message', fr: '0,9 TND / message' } }
 const allCases: Case[] = [];
 const heroAd: Ad | undefined = undefined;
-// The Glucélia case study reels (CreativesLab, 2026). The four new reels replace these when they arrive.
+// The four Glucélia case study reels (CreativesLab, 2026).
 const allAds: Ad[] = [
-  { src: '/work/glucelia-on-off.mp4', poster: '/work/glucelia-on-off.jpg', brand: 'Glucélia', angle: { en: 'On / Off', fr: 'On / Off' } },
-  { src: '/work/glucelia-vs-the-world.mp4', poster: '/work/glucelia-vs-the-world.jpg', brand: 'Glucélia', angle: { en: 'Vs the world', fr: 'Contre le monde' } },
+  { src: '/work/glucelia-on-off.mp4', poster: '/work/glucelia-on-off.jpg', brand: 'Glucélia', angle: { en: 'Sad vs Happy', fr: 'Triste vs heureux' } },
+  { src: '/work/glucelia-vs-the-world.mp4', poster: '/work/glucelia-vs-the-world.jpg', brand: 'Glucélia', angle: { en: 'Glucélia vs the world', fr: 'Glucélia contre le monde' } },
+  { src: '/work/glucelia-chatgpt.mp4', poster: '/work/glucelia-chatgpt.jpg', brand: 'Glucélia', angle: { en: 'ChatGPT, Fad Meni!', fr: 'ChatGPT, Fad Meni !' } },
+  { src: '/work/glucelia-atef-the-chef.mp4', poster: '/work/glucelia-atef-the-chef.jpg', brand: 'Glucélia', angle: { en: 'Atef the chef', fr: 'Atef le chef' } },
 ];
 // Logos need the brand's written OK. Shown only once there are 3.
 const allLogos: { name: string; src?: string; sample?: boolean }[] = [];

@@ -22,7 +22,7 @@ const start = 1;
       {monthly.map((m, i) => (
         <button type="button" role="tab" id={`tab-${m.key}`} aria-controls={`panel-${m.key}`} aria-selected={String(i === start)} tabindex={i === start ? 0 : -1} data-tab={i}>
           <span class="nm">{m.name}</span>
-          <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)} ${cur}`}</span>
+          <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)}–${fmt(m.top ?? m.launch, lang)} ${cur}`}</span>
         </button>
       ))}
     </div>
@@ -32,7 +32,6 @@ const start = 1;
   <div class="stage rv" style="--d:120ms">
     {monthly.map((m, i) => (
       <article class={`card ${m.custom ? 'dark' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
-        {m.standard && <span class="sticker" aria-hidden="true">{o.launch}</span>}
         <header>
           <h3 class="name">{m.name}</h3>
           {m.for && <p class="for">{m.for[lang]}</p>}
@@ -42,11 +41,11 @@ const start = 1;
             <p class="amount"><span class="num word">{p.custom}</span></p>
           ) : (
             <p class="amount">
-              <span class="num" data-num={m.launch}>{fmt(m.launch, lang)}</span>
+              <span class="num range">{fmt(m.launch, lang)}<span class="dash">–</span>{fmt(m.top ?? m.launch, lang)}</span>
               <span class="unit">{cur} {p.month}</span>
             </p>
           )}
-          <p class="was">{m.standard ? <>{`${p.usually} `}<s>{fmt(m.standard, lang)} {cur}</s></> : p.customNote}</p>
+          <p class="was">{m.custom ? p.customNote : p.rangeNote}</p>
         </div>
         <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {p.reels}</p>
         <ul class="ticks-list">{m.items[lang].map((it) => <li>{it}</li>)}</ul>
@@ -120,7 +119,7 @@ const start = 1;
 
   .stage { display: grid; }
   .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
-  .card header { display: grid; gap: 8px; padding-right: 110px; }
+  .card header { display: grid; gap: 8px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
   .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; }
   .sticker { position: absolute; top: clamp(18px, 2vw, 28px); right: clamp(18px, 2vw, 28px); width: 96px; height: 96px; display: grid; place-items: center; text-align: center; padding: 12px; border-radius: 50%; background: var(--pink); border: var(--line) solid var(--ink); font-weight: 700; font-size: 14px; line-height: 1.1; transform: rotate(10deg); animation: spin-in 700ms var(--spring) both; }
@@ -129,6 +128,8 @@ const start = 1;
   .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
   .num.word { font-size: clamp(48px, 5vw, 80px); }
   .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: 1; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .range { font-size: clamp(46px, 5.2vw, 84px); letter-spacing: -0.05em; white-space: nowrap; }
+  .dash { padding-inline: .06em; font-weight: 400; }
   .unit { font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); }
   .was { margin: 0; font-size: 15px; }
   .was s { text-decoration-thickness: 1.5px; }
@@ -157,7 +158,6 @@ const start = 1;
   @media (max-width: 560px) {
     .card { box-shadow: 6px 6px 0 var(--ink); }
     .dark { box-shadow: 6px 6px 0 var(--pink); }
-    .card header { padding-right: 76px; }
     .sticker { width: 76px; height: 76px; font-size: 11px; padding: 6px; }
     .card .ticks-list { grid-template-columns: 1fr; }
     .card .btn { justify-self: stretch; }

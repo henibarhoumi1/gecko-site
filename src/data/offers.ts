@@ -1,5 +1,5 @@
-// Prices and plans as Heni set them on 25 Oct (Regular and Pro standard prices lowered, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
-export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; from?: boolean; custom?: boolean; max?: number; monthly: boolean };
+// Prices and plans as Heni set them on 25 Oct (Regular 2,200 to 2,900 and Pro 3,200 to 3,500 as price ranges, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
+export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; top?: number; from?: boolean; custom?: boolean; max?: number; monthly: boolean };
 
 export const test: Offer = {
   key: 'test', name: 'Test Campaign', launch: 1000, standard: 1500, monthly: false,
@@ -12,7 +12,7 @@ export const test: Offer = {
 export const monthly: Offer[] = [
   {
     key: 'regular', name: 'Regular', reels: 10,
-    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2200, standard: 2900, monthly: true,
+    for: { en: 'For brands starting to test new ads every month.', fr: 'Pour les marques qui commencent à tester de nouvelles pubs chaque mois.' }, launch: 2200, top: 2900, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '4 statics', '1 carousel', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '4 visuels fixes', '1 carrousel', 'Revue mensuelle des résultats et plan pour la suite'],
@@ -20,7 +20,7 @@ export const monthly: Offer[] = [
   },
   {
     key: 'pro', name: 'Pro', reels: 15,
-    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3200, standard: 3500, monthly: true,
+    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3200, top: 3500, monthly: true,
     items: {
       en: ['1 production day', '2 hooks per reel', '6 statics', '2 recut ads from your footage', '2 carousels', 'Monthly results review and next-round plan'],
       fr: ['1 journée de production', '2 accroches par reel', '6 visuels fixes', '2 pubs remontées à partir de vos images', '2 carrousels', 'Revue mensuelle des résultats et plan pour la suite'],
