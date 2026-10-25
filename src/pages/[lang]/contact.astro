@@ -40,7 +40,10 @@ const ways = [
           ))}
         </ul>
         <p class="text soft rv"><span class="label">{k.based}</span> {k.place}</p>
-        <p class="text rv">{k.project} <a class="link" href={href(lang, 'apply')}>{k.projectCta} →</a></p>
+        <a class="proj rv" href={href(lang, 'apply')}>
+          <span class="pt">{k.project}</span>
+          <span class="text">{k.projectCta} <span aria-hidden="true">→</span></span>
+        </a>
       </div>
       <div class="rv" style="--d:120ms"><ContactForm lang={lang} /></div>
     </div>
@@ -58,5 +61,9 @@ const ways = [
   @media (max-width: 420px) { .val { font-size: 15px; } }
   .go { font-weight: 700; transition: transform 240ms var(--ease); }
   .ways a:hover .go { transform: translateX(4px); }
+  .proj { display: grid; gap: 6px; padding: 22px 24px; text-decoration: none; background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 5px 5px 0 var(--ink); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease); }
+  .proj:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+  .proj .pt { font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
+  .proj .text { font-weight: 600; }
   @media (max-width: 860px) { .grid-c { grid-template-columns: 1fr; } }
 </style>

@@ -1,4 +1,4 @@
-// Prices and plans as Heni set them on 25 Oct (Test 999 one time, Regular 2,900 and Pro 3,500 launch prices with no original price shown, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
+// Prices and plans as Heni set them on 25 Oct (Test 999 one time, Regular 2,900 and Pro 3,800 launch prices with no original price shown, Creative Partner custom, no media buying) (they replace the draft in gecko/plan/offers-and-pricing.md). Prices in TND, excluding VAT.
 export type Offer = { key: string; name: string; for?: { en: string; fr: string }; reels?: number; more?: boolean; items: { en: string[]; fr: string[] }; launch: number; standard?: number; top?: number; from?: boolean; custom?: boolean; once?: boolean; max?: number; shoot?: { en: string; fr: string }; review?: { en: string; fr: string }; monthly: boolean };
 
 export const test: Offer = {
@@ -25,7 +25,7 @@ export const monthly: Offer[] = [
   },
   {
     key: 'pro', name: 'Pro', reels: 15,
-    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3500, monthly: true,
+    for: { en: 'For brands already running ads that need more variations.', fr: 'Pour les marques qui lancent déjà des pubs et ont besoin de plus de variations.' }, launch: 3800, monthly: true,
     items: {
       en: ['2 hooks per reel', '6 statics', '2 carousels', '2 recut ads from your footage'],
       fr: ['2 accroches par reel', '6 visuels fixes', '2 carrousels', '2 pubs remontées à partir de vos images'],
