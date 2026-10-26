@@ -1,4 +1,5 @@
 ---
+import Wa from '../../components/Wa.astro';
 import Base from '../../layouts/Base.astro';
 import ContactForm from '../../components/ContactForm.astro';
 import { type Locale } from '../../i18n/strings';
@@ -12,13 +13,12 @@ const k = c(lang).contact;
 const n = c(lang).nav;
 // Line icons drawn in SVG, so they look the same on every phone and computer (emoji differ a lot on Windows).
 const icons = {
-  chat: '<path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z"/><path d="M9 10.5h.01M12 10.5h.01M15 10.5h.01" stroke-width="2.4"/>',
   call: '<path d="M6.6 3.5h2.6l1.5 4-2 1.3a10.5 10.5 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2.1 2.1 0 0 1-2.3 2.1A16.5 16.5 0 0 1 4.5 5.8a2.1 2.1 0 0 1 2.1-2.3z"/>',
   mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/>',
   insta: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17 7h.01" stroke-width="2.4"/>',
 };
 const ways = [
-  { e: icons.chat, name: k.whatsapp, value: site.phone, url: site.whatsapp },
+  { e: '', wa: true, name: k.whatsapp, value: site.phone, url: site.whatsapp },
   { e: icons.call, name: k.call, value: site.phone, url: `tel:${site.phone.replace(/\s/g, '')}` },
   { e: icons.mail, name: k.email, value: site.email, url: `mailto:${site.email}` },
   ...site.socials.map((x) => ({ e: icons.insta, name: x.name, value: x.handle, url: x.url })),
@@ -26,7 +26,7 @@ const ways = [
 ---
 <Base lang={lang} footerCta={false} title={n.contact}>
   <section class="on-pink page-head">
-    <div class="wrap stack" style="--gap:20px">
+    <div class="wrap wide stack" style="--gap:20px">
       <h1 class="h1 rv">{k.title}</h1>
     </div>
   </section>
@@ -39,7 +39,7 @@ const ways = [
           {ways.map((w, i) => (
             <li class="rv" style={`--d:${i * 70}ms`}>
               <a href={w.url} rel="noopener">
-                <span class="em" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={w.e} /></span>
+                <span class={`em ${w.wa ? 'is-wa' : ''}`} aria-hidden="true">{w.wa ? <Wa /> : <svg viewBox="0 0 24 24" set:html={w.e} />}</span>
                 <span class="who"><span class="label">{w.name}</span><span class="val">{w.value}</span></span>
                 <span class="go" aria-hidden="true">→</span>
               </a>
@@ -65,6 +65,8 @@ const ways = [
   .em { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--pink-soft); border: var(--line) solid var(--ink); transition: background 200ms var(--ease), transform 300ms var(--ease); }
   .em svg { width: 22px; height: 22px; fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .ways a:hover .em { background: var(--yellow); transform: rotate(-6deg); }
+  .em.is-wa { background: #E3F8EA; }
+  .em :global(.wa) { width: 28px; height: 28px; }
   .who { display: grid; gap: 2px; min-width: 0; }
   .val { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; }
   @media (max-width: 420px) { .val { font-size: 15px; } }

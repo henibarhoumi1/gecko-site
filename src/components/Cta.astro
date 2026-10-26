@@ -1,5 +1,6 @@
 ---
 // Closing call to action: a pink block with the two ways to reach us.
+import Wa from './Wa.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
@@ -9,11 +10,11 @@ const { lang, title } = Astro.props;
 const n = c(lang).nav;
 ---
 <section class="on-pink section cta-sec">
-  <div class="wrap cta">
+  <div class="wrap wide cta">
     <h2 class="h2 rv">{title}</h2>
     <div class="actions rv" style="--d:120ms">
       <a class="btn primary" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
-      <a class="btn" href={site.whatsapp} rel="noopener">WhatsApp</a>
+      <a class="btn" href={site.whatsapp} rel="noopener"><Wa /> WhatsApp</a>
     </div>
   </div>
 </section>

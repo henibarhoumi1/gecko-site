@@ -1,0 +1,64 @@
+---
+// Two bold bands that cross the full width before pricing: a big yellow one with the launch offer, and a green
+// cutting-mat one behind it running the other way. They tilt a little further as the page scrolls past.
+import { c } from '../i18n/copy';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const b = c(lang).home.bands;
+const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
+---
+<div class="bands" aria-hidden="true" data-bands>
+  <div class="band back mat">
+    <div class="run rev">{[0, 1, 2, 3].map(() => <ul>{b.small.map((x) => <li>{x}<svg viewBox="0 0 16 16" set:html={star} /></li>)}</ul>)}</div>
+  </div>
+  <div class="band front">
+    <div class="run">{[0, 1].map(() => <ul>{b.big.map((x) => <li>{x}<svg viewBox="0 0 16 16" set:html={star} /></li>)}</ul>)}</div>
+  </div>
+</div>
+
+<script>
+  // The bands lean a little more while they cross the screen. Transform only, one write per frame.
+  const box = document.querySelector<HTMLElement>('[data-bands]');
+  if (box && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let on = false, queued = false;
+    const paint = () => {
+      queued = false;
+      const r = box.getBoundingClientRect();
+      const p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - innerHeight / 2) / innerHeight));
+      box.style.setProperty('--tilt', p.toFixed(3));
+    };
+    const ask = () => { if (on && !queued) { queued = true; requestAnimationFrame(paint); } };
+    new IntersectionObserver(([e]) => { on = e.isIntersecting; ask(); }).observe(box);
+    addEventListener('scroll', ask, { passive: true });
+  }
+</script>
+
+<style>
+  .bands { --tilt: 0; --hb: calc(28px + 1.3em); --hf: calc(clamp(30px, 4.6vw, 72px) + 2 * clamp(14px, 1.6vw, 22px)); position: relative; overflow: hidden; overflow: clip; padding-block: clamp(72px, 9vw, 136px); background: var(--white); font-size: clamp(15px, 1.3vw, 19px); }
+  .band { position: relative; width: 112%; margin-left: -6%; overflow: hidden; border-block: var(--line) solid var(--ink); }
+  .band.mat { border-radius: 0; border-inline: 0; }
+    /* The two bands share a centre line and lean opposite ways, so they cross like an X in the middle. */
+  .front { z-index: 2; margin-top: calc(-1 * (var(--hb) / 2 + var(--hf) / 2)); background: var(--yellow); color: var(--ink); transform: rotate(calc(-3deg - var(--tilt) * 1.4deg)); box-shadow: 0 10px 0 var(--ink); }
+  .back { z-index: 1; color: #fff; transform: rotate(calc(4deg + var(--tilt) * 1.2deg)); }
+  .run { display: flex; width: max-content; animation: band-slide 46s linear infinite; }
+  .run.rev { animation-duration: 60s; animation-direction: reverse; }
+  .run ul { display: flex; list-style: none; margin: 0; padding: 0; }
+  .run li { display: flex; align-items: center; white-space: nowrap; }
+  .front li { gap: clamp(20px, 2.4vw, 36px); padding: clamp(14px, 1.6vw, 22px) clamp(20px, 2.4vw, 36px) clamp(14px, 1.6vw, 22px) 0; font-weight: 700; font-size: clamp(30px, 4.6vw, 72px); line-height: 1; letter-spacing: -0.045em; }
+  .back li { gap: 22px; padding: 14px 22px 14px 0; font-weight: 700; font-size: 1em; line-height: 1.3; letter-spacing: -0.01em; }
+  .run svg { flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+  .front svg { width: .5em; height: .5em; }
+  .back svg { width: 13px; height: 13px; }
+  .bands:hover .run { animation-play-state: paused; }
+  @keyframes band-slide { to { transform: translateX(-50%); } }
+  .run.rev { animation-name: band-slide-4; }
+  @keyframes band-slide-4 { to { transform: translateX(-25%); } }
+  /* Phones are narrow, so the bands lean more to still cross clearly. */
+  @media (max-width: 760px) {
+    .front { transform: rotate(calc(-6deg - var(--tilt) * 1.4deg)); }
+    .back { transform: rotate(calc(8deg + var(--tilt) * 1.2deg)); }
+    .bands { padding-block: 84px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .run { animation: none; } }
+</style>

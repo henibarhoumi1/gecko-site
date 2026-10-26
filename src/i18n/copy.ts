@@ -11,6 +11,8 @@ const en = {
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
     kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
+    // The two crossing bands before pricing.
+    bands: { big: ['Plans from 999 TND', 'Launch prices until 31 December 2026', 'For our first 5 clients'], small: ['Ads made to be watched twice', 'Scripts approved before the shoot', 'First draft 7 days after the shoot'] },
     sub: 'Gecko is a creative and production studio in Tunis. We develop, shoot and edit short video ads for brands, and take on launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -51,14 +53,14 @@ const en = {
     title: 'Tell us what you’re making.',
     sub: 'A few taps. The questions change with your answers, then WhatsApp opens with your brief ready to send.',
     direct: 'Rather talk now?',
-    // Each question: key, question, row label for the brief, options as [emoji, label]. `when` shows it only after certain answers (by option number).
+    // Each question: key, question, row label for the brief, options as [emoji, label] (flag:xx shows the flag image from /flags). `when` shows it only after certain answers (by option number).
     qs: [
       { key: 'type', q: 'First, who are we talking to?', row: 'You', opts: [['🛍️', 'A brand that sells online'], ['🏪', 'A shop, café or local business'], ['🙋', 'A personal brand or creator'], ['🏢', 'A company or startup'], ['🎤', 'An event, artist or cultural project'], ['✨', 'Something else']] },
       { key: 'make', q: 'What should we make together?', row: 'Making', multi: true, hint: 'Pick as many as you like.', opts: [['📱', 'Video ads'], ['🎞️', 'Social media content'], ['🎬', 'A brand film'], ['📦', 'Product photos and video'], ['🎉', 'Event coverage'], ['📸', 'A photo shoot'], ['🧭', 'Creative direction'], ['🤔', 'Not sure yet']] },
       { key: 'sector', q: 'What do you sell?', row: 'Sells', when: { type: [0, 1] }, opts: [['💄', 'Beauty and skincare'], ['🍔', 'Food and drinks'], ['👗', 'Fashion'], ['💪', 'Health and wellness'], ['🏠', 'Home and tech'], ['🛠️', 'Services'], ['✨', 'Something else']] },
       { key: 'ads', q: 'Do you run paid ads today?', row: 'Paid ads', when: { type: [0, 1, 2, 3], make: [0, 1, 7] }, opts: [['🔥', 'Yes, every month'], ['🌤️', 'Now and then'], ['🌱', 'Not yet, but I want to'], ['🙅', 'No']] },
       { key: 'spend', q: 'Roughly how much a month on ads?', row: 'Ad spend', when: { ads: [0, 1] }, opts: [['', 'Under 1,500 TND'], ['', '1,500 to 3,000 TND'], ['', '3,000 to 6,000 TND'], ['', 'Over 6,000 TND'], ['🤷', 'Not sure']] },
-      { key: 'where', q: 'Where are your customers?', row: 'Customers', when: { type: [0, 1, 2, 3] }, opts: [['📍', 'In Tunisia'], ['🌍', 'Abroad'], ['🔀', 'Both']] },
+      { key: 'where', q: 'Where are your customers?', row: 'Customers', when: { type: [0, 1, 2, 3] }, opts: [['flag:tn', 'In Tunisia'], ['🌍', 'Abroad'], ['🔀', 'Both']] },
       { key: 'rhythm', q: 'One project, or something ongoing?', row: 'Rhythm', opts: [['🎯', 'One project'], ['🔁', 'Something every month'], ['🤷', 'Not sure yet']] },
       { key: 'budget', q: 'What budget do you have in mind?', row: 'Budget', opts: [['', 'Under 1,500 TND'], ['', '1,500 to 3,500 TND'], ['', '3,500 to 8,000 TND'], ['', 'Over 8,000 TND'], ['🧮', 'Help me figure it out']] },
       { key: 'when', q: 'When do you want to start?', row: 'Start', opts: [['⚡', 'As soon as possible'], ['📅', 'Next month'], ['🎯', 'For a set date'], ['👀', 'Just looking for now']] },
@@ -218,6 +220,7 @@ const fr: Copy = {
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
+    bands: { big: ['Offres dès 999 TND', 'Prix de lancement jusqu’au 31 décembre 2026', 'Pour nos 5 premiers clients'], small: ['Des pubs faites pour être revues', 'Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage'] },
     sub: 'Gecko est un studio de création et de production à Tunis. On conçoit, tourne et monte des pubs vidéo courtes pour les marques, et on prend en charge lancements et films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
@@ -264,7 +267,7 @@ const fr: Copy = {
       { key: 'sector', q: 'Que vendez-vous ?', row: 'Vend', when: { type: [0, 1] }, opts: [['💄', 'Beauté et soin'], ['🍔', 'Food et boissons'], ['👗', 'Mode'], ['💪', 'Santé et bien-être'], ['🏠', 'Maison et tech'], ['🛠️', 'Services'], ['✨', 'Autre chose']] },
       { key: 'ads', q: 'Faites-vous de la pub payante aujourd’hui ?', row: 'Pub payante', when: { type: [0, 1, 2, 3], make: [0, 1, 7] }, opts: [['🔥', 'Oui, chaque mois'], ['🌤️', 'De temps en temps'], ['🌱', 'Pas encore, mais je veux'], ['🙅', 'Non']] },
       { key: 'spend', q: 'Combien par mois en pub, à peu près ?', row: 'Budget pub', when: { ads: [0, 1] }, opts: [['', 'Moins de 1 500 TND'], ['', '1 500 à 3 000 TND'], ['', '3 000 à 6 000 TND'], ['', 'Plus de 6 000 TND'], ['🤷', 'Je ne sais pas']] },
-      { key: 'where', q: 'Où sont vos clients\u00a0?', row: 'Clients', when: { type: [0, 1, 2, 3] }, opts: [['📍', 'En Tunisie'], ['🌍', 'À l’étranger'], ['🔀', 'Les deux']] },
+      { key: 'where', q: 'Où sont vos clients\u00a0?', row: 'Clients', when: { type: [0, 1, 2, 3] }, opts: [['flag:tn', 'En Tunisie'], ['🌍', 'À l’étranger'], ['🔀', 'Les deux']] },
       { key: 'rhythm', q: 'Un projet, ou quelque chose de suivi ?', row: 'Rythme', opts: [['🎯', 'Un projet'], ['🔁', 'Quelque chose chaque mois'], ['🤷', 'Pas encore sûr']] },
       { key: 'budget', q: 'Quel budget avez-vous en tête ?', row: 'Budget', opts: [['', 'Moins de 1 500 TND'], ['', '1 500 à 3 500 TND'], ['', '3 500 à 8 000 TND'], ['', 'Plus de 8 000 TND'], ['🧮', 'Aidez-moi à le définir']] },
       { key: 'when', q: 'Quand voulez-vous commencer ?', row: 'Début', opts: [['⚡', 'Dès que possible'], ['📅', 'Le mois prochain'], ['🎯', 'Pour une date précise'], ['👀', 'Je me renseigne']] },

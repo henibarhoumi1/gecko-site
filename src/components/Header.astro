@@ -2,6 +2,7 @@
 // The top bar. At the top of a page it sits open and borderless; once you scroll it becomes a floating white bar,
 // hides while you read down and slides back as soon as you scroll up. "Menu" opens a full panel that drops from
 // the top: numbered pages on the left, the Test offer, contacts and language on the right.
+import Wa from './Wa.astro';
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -66,7 +67,7 @@ const langs = [
         </a>
         <div class="m-reach">
           <p class="m-k">{n.reach}</p>
-          <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
+          <a href={site.whatsapp} rel="noopener"><Wa /> WhatsApp {site.phone}</a>
           <a href={`mailto:${site.email}`}>{site.email}</a>
           <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
         </div>
@@ -123,11 +124,12 @@ const langs = [
 <style>
   .site-header { --t: 560ms cubic-bezier(.16, 1, .3, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px var(--gutter) 0; pointer-events: none; transition: transform var(--t); }
   .site-header.away { transform: translateY(calc(-100% - 12px)); }
-  .bar { pointer-events: auto; position: relative; z-index: 3; max-width: var(--max); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); color: var(--ink);
+  /* At the top of a page the bar lines up with the wide sections, edge to edge; once you scroll it gathers into a pill. */
+  .bar { pointer-events: auto; position: relative; z-index: 3; max-width: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0; color: var(--ink);
     border: var(--line) solid transparent; border-radius: 999px; background: transparent;
-    transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), color 300ms var(--ease); }
-  .solid .bar { max-width: 1120px; background: var(--white); border-color: var(--ink); box-shadow: 0 12px 32px -20px rgba(0, 0, 0, .45); }
-  .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: var(--max); }
+    transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
+  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: var(--white); border-color: var(--ink); box-shadow: 0 12px 32px -20px rgba(0, 0, 0, .45); }
+  .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
   .brand:hover { transform: rotate(-4deg) scale(1.04); }
   .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; transition: opacity 300ms var(--ease); }
@@ -165,7 +167,7 @@ const langs = [
   /* The expanded panel. */
   .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 2; overflow-y: auto; background: var(--ink); color: #fff; clip-path: inset(0 0 100% 0); transition: clip-path 620ms cubic-bezier(.75, 0, .2, 1); }
   .menu.in { clip-path: inset(0 0 0 0); }
-  .menu-in { max-width: var(--max); margin-inline: auto; min-height: 100%; padding: calc(60px + 12px + clamp(32px, 6vh, 72px)) var(--gutter) clamp(28px, 5vh, 48px); display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .menu-in { max-width: var(--wide); margin-inline: auto; min-height: 100%; padding: calc(60px + 12px + clamp(32px, 6vh, 72px)) var(--gutter) clamp(28px, 5vh, 48px); display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .m-links { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, .18); }
   .m-links li { border-bottom: 1px solid rgba(255, 255, 255, .18); opacity: 0; transform: translateY(24px); transition: opacity 500ms var(--ease), transform 600ms var(--ease); }
   .menu.in .m-links li { opacity: 1; transform: none; transition-delay: calc(220ms + var(--i) * 55ms); }

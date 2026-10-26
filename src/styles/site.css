@@ -4,6 +4,8 @@
   --gutter: clamp(16px, 4vw, 48px);
   --section: clamp(60px, 7vw, 108px);
   --max: 1280px;
+  /* Wide sections run almost edge to edge, left aligned to the page margin. Capped for very large screens. */
+  --wide: 1840px;
   --header: 80px;
 }
 
@@ -19,6 +21,7 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap.wide { max-width: var(--wide); }
 .section { padding-block: var(--section); }
 .page-head { padding-top: calc(var(--header) + clamp(48px, 7vw, 104px)); padding-bottom: clamp(40px, 5vw, 72px); }
 .page-head .h1 { max-width: 16ch; }

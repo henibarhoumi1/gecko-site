@@ -14,7 +14,7 @@ const w = c(lang).work;
 ---
 <Base lang={lang} footerCta={false} title={`${w.title}: ${w.client}`}>
   <section class="case-head">
-    <div class="wrap">
+    <div class="wrap wide">
       <p class="case-tag rv">{w.label}</p>
       <h1 class="name rv" style="--d:60ms">{w.client}</h1>
       <div class="intro-row">
@@ -26,7 +26,7 @@ const w = c(lang).work;
   </section>
 
   <section class="on-black reels-sec">
-    <div class="wrap">
+    <div class="wrap wide">
       <div class="head rv"><h2 class="h2">{w.reelsTitle}</h2><p class="hint">{w.soundHint}</p></div>
       <div class={`reels scroll-row n${ads.length}`} data-swipe>
         {ads.map((a, i) => <div class="rv" style={`--d:${i * 80}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
@@ -50,7 +50,7 @@ const w = c(lang).work;
   </section>
 
   <section class="on-white section team-sec">
-    <div class="wrap team">
+    <div class="wrap wide team">
       <p class="label rv">{w.team}</p>
       <ul class="people">
         {w.people.map((p, i) => <li class="rv" style={`--d:${i * 80}ms`}>{p}</li>)}
