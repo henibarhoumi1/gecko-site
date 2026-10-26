@@ -49,14 +49,14 @@ const h = c(lang).home;
   </section>
 
   <div class="ticker" aria-hidden="true">
-    <div class="track">
-      {[0, 1].map(() => <ul>{s.home.formats.map((f) => <li>{f}<svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" /></svg></li>)}</ul>)}
+    <div class="track" data-marquee="45">
+      {[0, 1, 2].map(() => <ul>{s.home.formats.map((f) => <li>{f}<svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" /></svg></li>)}</ul>)}
     </div>
   </div>
 
   {ads.length > 0 && (
     <section class="on-black section work-sec" id="work">
-      <div class="wrap wide">
+      <div class="wrap">
         <p class="kick rv"><span>01</span>{h.kicks.work}</p>
         <div class="work-head">
           <h2 class="h2 work-h rv">{h.workTitle}</h2>
@@ -93,6 +93,8 @@ const h = c(lang).home;
     </div>
   </section>
 
+  <Bands lang={lang} mini />
+
   <section class="on-white section apply-sec" id="apply">
     <div class="wrap"><ApplyFlow lang={lang} /></div>
   </section>
@@ -101,6 +103,7 @@ const h = c(lang).home;
 </Base>
 
 <script>
+  import '../../scripts/marquee';
   // The reels in the hero drift a little with the pointer, each by a different amount, so the fan feels alive.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   if (hero && matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -158,15 +161,13 @@ const h = c(lang).home;
   }
   @media (max-width: 560px) { .big-btn { padding: 15px 20px; font-size: 15px; } .hero-copy .actions { width: 100%; } .hero-copy .actions .btn { flex: 1 1 auto; } }
 
-  @keyframes slide { to { transform: translateX(-50%); } }
   /* The formats we make, running in a black band under the hero. */
   .ticker { overflow: hidden; padding-block: 18px; background: var(--ink); color: #fff; }
-  .ticker .track { display: flex; width: max-content; animation: slide 70s linear infinite; }
-  .ticker:hover .track { animation-play-state: paused; }
+  .ticker .track { display: flex; width: max-content; will-change: transform; }
   .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .ticker li { display: flex; align-items: center; gap: 30px; white-space: nowrap; font-weight: 600; font-size: 16px; letter-spacing: -0.005em; padding-right: 30px; }
   .ticker svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; }
-  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .pulse::after, .ticker .track { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .pulse::after { animation: none; } }
 
   /* Work: title on the left, note and link on the right, reels on a broken grid. */
   .work-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 24px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(36px, 5vw, 72px); }

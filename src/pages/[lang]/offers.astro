@@ -31,7 +31,7 @@ const oneOffs = [
   <section class="plans-sec">
     <div class="wrap">
       <Plans lang={lang} />
-      <p class="note rv">{o.launchNote} {o.monthlyNote}</p>
+      <p class="note rv">{p.spec.out} {o.launchNote} {o.monthlyNote}</p>
     </div>
   </section>
 
@@ -103,10 +103,6 @@ const oneOffs = [
           <details>
             <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
             <ul class="terms text">{o.terms.map((i) => <li>{i}</li>)}</ul>
-          </details>
-          <details>
-            <summary><span>{o.intlTitle}</span><span class="pm" aria-hidden="true"></span></summary>
-            <p class="text a">{o.intl}</p>
           </details>
         </div>
         <Faq items={s.faq} scroll hint={h.faqHint} />

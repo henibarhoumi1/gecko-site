@@ -36,7 +36,7 @@ const langs = [
       <div class="lang-s" role="group" aria-label={n.lang}>
         {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="18" height="12" />{x.short}</a>)}
       </div>
-      <a class="btn primary cta" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
+      <a class="btn primary cta shine" style="--shine-d:2.4s" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
         <span class="bl"><span class="b-open">{n.menu}</span><span class="b-close">{n.close}</span></span>
         <span class="bi" aria-hidden="true"><i></i><i></i></span>
@@ -58,7 +58,7 @@ const langs = [
         ))}
       </ol>
       <aside class="m-side">
-        <a class="m-test" href={`${href(lang, 'apply')}?plan=test`}>
+        <a class="m-test shine" href={`${href(lang, 'apply')}?plan=test`}>
           <span class="m-k">{n.testK}</span>
           <span class="m-tt">{n.testT}</span>
           <span class="m-td">{n.testD}</span>
@@ -70,6 +70,7 @@ const langs = [
           <a href={site.whatsapp} rel="noopener"><Wa /> WhatsApp {site.phone}</a>
           <a href={`mailto:${site.email}`}>{site.email}</a>
           <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
+          <a class="m-hire" href={href(lang, 'join')}>{c(lang).join.nav} <span aria-hidden="true">→</span></a>
         </div>
         <div class="m-langs">
           {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="21" height="14" />{x.name}</a>)}
@@ -190,12 +191,20 @@ const langs = [
   .m-reach .m-k { color: rgba(255, 255, 255, .5); }
   .m-reach a { text-decoration: none; font-size: 16px; width: fit-content; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms var(--ease); }
   .m-reach a:hover { background-size: 100% 1px; }
+  .m-hire { margin-top: 6px; color: var(--yellow); font-weight: 700; }
   .m-langs { display: flex; gap: 8px; }
   .flag { display: block; flex: none; border-radius: 2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
   .lang-s a:not([aria-current]) .flag { opacity: .7; }
   .m-langs a { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); text-decoration: none; font-size: 14px; font-weight: 600; }
   .m-langs a[aria-current] { background: #fff; color: var(--ink); border-color: #fff; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  /* Pages that open on a dark or green block get a white bar until it gathers into the white pill. */
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .bar { color: #fff; }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s { border-color: rgba(255, 255, 255, .35); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s a { color: rgba(255, 255, 255, .75); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s a[aria-current] { background: #fff; color: var(--ink); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .links a:hover { background: rgba(255, 255, 255, .12); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .links a[aria-current='page']::after { background: var(--yellow); }
   @media (max-width: 1080px) { .links { display: none; } .right { margin-left: auto; } }
   @media (max-width: 860px) {
     .menu-in { grid-template-columns: 1fr; gap: 32px; }

@@ -136,6 +136,14 @@ a { color: inherit; }
 /* Until the page has drawn its first frames, nothing in the top bar animates, so it never visibly settles on load. */
 html.pre .site-header, html.pre .site-header * { transition: none !important; }
 
+/* A soft band of light sweeps across now and then, on the few things that deserve a second look. */
+.shine { position: relative; overflow: hidden; isolation: isolate; }
+.shine::after { content: ''; position: absolute; top: -50%; bottom: -50%; left: -45%; width: 32%; z-index: 1; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .6) 50%, transparent); transform: translateX(0) skewX(-18deg);
+  animation: shine-sweep 6s cubic-bezier(.45, 0, .2, 1) var(--shine-d, 1.2s) infinite; }
+@keyframes shine-sweep { 0%, 70% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(600%) skewX(-18deg); } }
+@media (prefers-reduced-motion: reduce) { .shine::after { display: none; } }
+
 /* Section labels: a number and a name above the title. */
 .kick { display: flex; align-items: center; gap: 12px; margin: 0 0 clamp(18px, 2vw, 28px); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
 .on-black .kick span { background: var(--yellow); }

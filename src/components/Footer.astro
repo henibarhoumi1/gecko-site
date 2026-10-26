@@ -1,6 +1,5 @@
 ---
 // Black footer: an optional big call to action, the monogram, then pages, contact and socials in columns across the full width.
-import Wa from './Wa.astro';
 import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
@@ -28,14 +27,14 @@ const n = k.nav;
     </nav>
     <div class="col">
       <p class="h">{k.footer.reach}</p>
-      <a href={site.whatsapp} rel="noopener"><Wa /> WhatsApp {site.phone}</a>
+      <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
       <span>{s.footer.address}</span>
     </div>
     <div class="col">
       <p class="h">{k.footer.follow}</p>
       {site.socials.map((x) => <a href={x.url} rel="noopener">{x.name} {x.handle}</a>)}
-      <a href={href(lang, 'creators')}>{s.creators.footer}</a>
+      <a href={href(lang, 'join')}>{k.join.nav}</a>
     </div>
   </div>
   <div class="wrap wide"><div class="base">
