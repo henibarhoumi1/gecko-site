@@ -1,29 +1,46 @@
 ---
-// First-visit intro, about 3.5 seconds, once per browser session. Plays like a fast edit: a viewfinder with REC and a
-// running timecode, five jump cuts (brief to ads) on the brand colours, then the logo, then the frame lifts away.
-// The head script decides whether to play (not on repeat visits, not with reduced motion); without JS nothing shows.
-// A click, tap or key skips it.
+// First-visit intro, about 5 seconds, once per browser session. Shot like a film:
+// a viewfinder snaps in with REC and timecode, a film leader counts 3-2-1, a burst of jump cuts alternates the
+// making-of words with frames from our reels, the tagline slams in, and the frame opens like a shutter onto the site.
+// The head script in Base decides whether it plays (not on repeat visits, not with reduced motion). A tap, scroll or key skips it.
 import Logo from './Logo.astro';
 import { c } from '../i18n/copy';
 import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const h = c(lang).home;
 const words = h.why.flow.steps;
-const line = h.title.join(' ');
+const posters = ads.map((a) => a.poster).filter(Boolean) as string[];
+// Word, reel, word, reel... ending on the last word.
+const frames: ({ w: string; k: number } | { img: string })[] = [];
+words.forEach((w, i) => { frames.push({ w, k: i }); if (i < words.length - 1 && posters.length) frames.push({ img: posters[i % posters.length] }); });
 ---
 <div class="intro" data-intro aria-hidden="true">
-  <div class="cuts">
-    {words.map((w, i) => <div class={`cut k${i}`} style={`--i:${i}`}><span>{w}.</span></div>)}
+  <span class="sh t"></span><span class="sh b"></span>
+  <div class="stage">
+    <div class="leader">
+      <span class="ring"></span><span class="sweep"></span><span class="cross"></span>
+      {[3, 2, 1].map((n, i) => <b style={`--i:${i}`}>{n}</b>)}
+    </div>
+    <span class="flash"></span>
+    <div class="cuts">
+      {frames.map((f, i) => 'w' in f
+        ? <div class={`cut k${f.k}`} style={`--i:${i}`}><span>{f.w}.</span></div>
+        : <div class="cut img" style={`--i:${i}`}><img src={f.img} alt="" /></div>)}
+    </div>
+    <div class="slam">
+      {h.title.map((l, i) => <span class={`sl s${i}`} style={`--i:${i}`}><span class={i === 2 ? 'hl' : ''}>{l}</span></span>)}
+      <span class="mark"><Logo /></span>
+    </div>
   </div>
-  <div class="end">
-    <span class="logo-in"><Logo /></span>
-    <p class="in-line">{line}</p>
+  <div class="hud">
+    <span class="vf tl"></span><span class="vf tr"></span><span class="vf bl"></span><span class="vf br"></span>
+    <p class="rec"><i></i>REC</p>
+    <p class="tc" data-tc>00:00:00:00</p>
+    <p class="iso">ISO 800 · 24 FPS · 9:16</p>
+    <div class="load"><i></i></div>
   </div>
-  <span class="vf tl"></span><span class="vf tr"></span><span class="vf bl"></span><span class="vf br"></span>
-  <p class="rec"><i></i>REC</p>
-  <p class="tc" data-tc>00:00:00:00</p>
-  <div class="load"><i></i></div>
 </div>
 
 <script is:inline>
@@ -36,7 +53,7 @@ const line = h.title.join(' ');
     var pad = function (n) { return (n < 10 ? '0' : '') + n; };
     var tick = function (now) {
       if (done) return;
-      var ms = now - t0, s = Math.floor(ms / 1000), f = Math.floor((ms % 1000) / 40);
+      var ms = now - t0, s = Math.floor(ms / 1000), f = Math.floor((ms % 1000) / 41.67);
       tc.textContent = '00:00:' + pad(s) + ':' + pad(f);
       requestAnimationFrame(tick);
     };
@@ -45,9 +62,10 @@ const line = h.title.join(' ');
       if (done) return; done = true;
       el.classList.add('out');
       root.classList.remove('intro');
-      setTimeout(function () { el.remove(); }, 900);
+      document.dispatchEvent(new Event('intro:done'));
+      setTimeout(function () { el.remove(); }, 1000);
     };
-    setTimeout(finish, 3000);
+    setTimeout(finish, 5000);
     ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, finish, { once: true, passive: true }); });
   })();
 </script>
@@ -55,49 +73,81 @@ const line = h.title.join(' ');
 <style is:global>
   html.intro { overflow: hidden; }
   html.intro .rise, html.intro .hl::before { animation-play-state: paused !important; }
+  html.intro .intro .hl::before { animation-play-state: running !important; }
+  @property --sweep { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 </style>
 
 <style>
   .intro { display: none; }
-  :global(html.intro) .intro, .intro.out { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; overflow: hidden; background: var(--ink); color: #fff; font-family: var(--font); }
-  .intro.out { transform: translateY(-100%); border-radius: 0 0 50% 50% / 0 0 18% 18%; transition: transform 850ms cubic-bezier(.76, 0, .24, 1), border-radius 850ms cubic-bezier(.76, 0, .24, 1); }
+  :global(html.intro) .intro, .intro.out { position: fixed; inset: 0; z-index: 200; display: block; overflow: hidden; color: #fff; font-family: var(--font); pointer-events: none; }
+  :global(html.intro) .intro { pointer-events: auto; }
+  .sh { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--ink); transition: transform 900ms cubic-bezier(.76, 0, .24, 1); }
+  .sh.t { top: 0; } .sh.b { bottom: 0; }
+  .stage, .hud { position: absolute; inset: 0; transition: opacity 260ms var(--ease); }
+  .out .sh.t { transform: translateY(-100%); }
+  .out .sh.b { transform: translateY(100%); }
+  .out .stage { opacity: 0; }
+  .out .hud { opacity: 0; transition-delay: 450ms; }
 
-  /* The five jump cuts, one every 340 ms from 0.25 s. */
-  .cuts { position: absolute; inset: 0; }
-  .cut { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; animation: cut 340ms steps(1); animation-delay: calc(250ms + var(--i) * 340ms); }
-  .cut span { font-weight: 700; font-size: clamp(64px, 15vw, 240px); letter-spacing: -0.06em; line-height: 1; animation: punch 340ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: inherit; }
+  /* 1. Film leader: 3, 2, 1 with a sweeping hand (0.3 to 1.65 s). */
+  .leader { position: absolute; left: 50%; top: 50%; width: clamp(200px, 28vw, 320px); aspect-ratio: 1; translate: -50% -50%; display: grid; place-items: center; opacity: 0; animation: gi-on 1ms 300ms both, gi-off 1ms 1650ms forwards; }
+  .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .85); box-shadow: inset 0 0 0 14px var(--ink), inset 0 0 0 15px rgba(255, 255, 255, .35); }
+  .sweep { position: absolute; inset: 2px; border-radius: 50%; background: conic-gradient(rgba(255, 255, 255, .16) var(--sweep), transparent 0); animation: gi-sweep 450ms linear 300ms 3; }
+  .cross { position: absolute; inset: -40%; background: linear-gradient(rgba(255, 255, 255, .35), rgba(255, 255, 255, .35)) center / 1px 100% no-repeat, linear-gradient(rgba(255, 255, 255, .35), rgba(255, 255, 255, .35)) center / 100% 1px no-repeat; }
+  .leader b { position: absolute; font-weight: 700; font-size: clamp(110px, 15vw, 190px); letter-spacing: -0.06em; line-height: 1; opacity: 0; animation: gi-blip 450ms steps(1); animation-delay: calc(300ms + var(--i) * 450ms); }
+  @keyframes gi-sweep { from { --sweep: 0deg; } to { --sweep: 360deg; } }
+  @keyframes gi-blip { 0% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes gi-on { to { opacity: 1; } }
+  @keyframes gi-off { to { opacity: 0; } }
+  .flash { position: absolute; inset: 0; background: #fff; opacity: 0; animation: gi-blip 70ms steps(1) 1650ms; }
+
+  /* 2. Jump cuts: word, reel, word, reel... 180 ms each from 1.72 s. */
+  .cut { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; animation: gi-blip 180ms steps(1); animation-delay: calc(1720ms + var(--i) * 180ms); }
+  .cut span { font-weight: 700; font-size: clamp(72px, 17vw, 260px); letter-spacing: -0.065em; line-height: 1; animation: gi-punch 180ms cubic-bezier(.2, .7, .2, 1); animation-delay: inherit; }
+  .cut.img { background: var(--ink); }
+  .cut.img img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.08) saturate(1.1); animation: gi-zoom 180ms linear; animation-delay: inherit; }
   .k0 { background: var(--ink); color: #fff; }
   .k1 { background: var(--pink); color: var(--ink); }
   .k2 { background: var(--yellow); color: var(--ink); }
   .k3 { background-color: var(--mat); color: #fff; background-image: linear-gradient(rgba(255, 255, 255, .17) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .17) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .07) 1px, transparent 1px); background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
   .k4 { background: #fff; color: var(--ink); }
-  @keyframes cut { 0% { opacity: 1; } 100% { opacity: 0; } }
-  @keyframes punch { from { transform: scale(1.18); filter: blur(6px); } to { transform: none; filter: none; } }
+  @keyframes gi-punch { from { transform: scale(1.25) rotate(-2deg); filter: blur(8px); } to { transform: none; filter: none; } }
+  @keyframes gi-zoom { from { transform: scale(1.12); } to { transform: scale(1); } }
 
-  /* Last frame: the logo and the line. */
-  .end { position: relative; display: grid; justify-items: center; gap: 22px; opacity: 0; animation: show 1ms 1950ms both; }
-  .logo-in { display: block; width: clamp(150px, 20vw, 260px); clip-path: inset(100% 0 0 0); animation: wipe-up 700ms 1980ms cubic-bezier(.2, .7, .2, 1) both; }
-  .in-line { margin: 0; font-size: clamp(14px, 1.3vw, 17px); font-weight: 600; letter-spacing: .02em; color: rgba(255, 255, 255, .75); opacity: 0; transform: translateY(8px); animation: fade-up 600ms 2300ms var(--ease) both; }
-  @keyframes show { to { opacity: 1; } }
-  @keyframes wipe-up { to { clip-path: inset(0 0 0 0); } }
-  @keyframes fade-up { to { opacity: 1; transform: none; } }
+  /* 3. The line slams in group by group, then "twice." gets its pink (from 3.4 s). */
+  .slam { position: absolute; inset: 0; display: grid; place-content: center; justify-items: start; padding-inline: var(--gutter); opacity: 0; animation: gi-on 1ms 3360ms both; }
+  .sl { display: block; overflow: hidden; padding: .02em .12em .16em 0; margin-bottom: -.08em; font-weight: 700; font-size: clamp(54px, 9vw, 150px); line-height: .9; letter-spacing: -0.06em; }
+  .sl > span { display: inline-block; animation: gi-slam 520ms cubic-bezier(.2, .9, .1, 1) both; animation-delay: calc(3400ms + var(--i) * 220ms); }
+  .s2 .hl { position: relative; isolation: isolate; padding: 0 .1em; margin-left: -.1em; animation: gi-slam 520ms cubic-bezier(.2, .9, .1, 1) 3840ms both, gi-ink 1ms 4050ms both; }
+  .s2 .hl::before { content: ''; position: absolute; inset: .14em 0 -.04em; z-index: -1; border-radius: .14em; background: var(--pink); transform: scaleX(0); transform-origin: left; animation: gi-wipe 420ms cubic-bezier(.2, .7, .2, 1) 4050ms both; }
+  .mark { display: block; width: clamp(72px, 7vw, 110px); margin-top: clamp(18px, 2.4vw, 32px); opacity: 0; transform: translateY(10px); animation: gi-rise-in 500ms var(--ease) 4300ms both; }
+  @keyframes gi-slam { from { transform: translateY(105%) skewY(6deg); } to { transform: none; } }
+  @keyframes gi-wipe { to { transform: scaleX(1); } }
+  @keyframes gi-ink { from { color: #fff; } to { color: var(--ink); } }
+  @keyframes gi-rise-in { to { opacity: 1; transform: none; } }
 
-  /* Viewfinder, REC, timecode and the load line stay on top of every cut. */
-  .vf { position: absolute; z-index: 2; width: 34px; height: 34px; border: 2px solid currentColor; mix-blend-mode: difference; color: #fff; opacity: 0; animation: show 300ms 80ms both; }
-  .tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; } .tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
-  .bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; } .br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
-  .rec, .tc { position: absolute; z-index: 2; top: 30px; margin: 0; font: 700 13px/1 var(--font); letter-spacing: .1em; color: #fff; mix-blend-mode: difference; font-variant-numeric: tabular-nums; }
-  .rec { left: 72px; display: flex; align-items: center; gap: 8px; }
-  .rec i { width: 9px; height: 9px; border-radius: 50%; background: #FF3B30; animation: blink 800ms steps(1) infinite; }
-  .tc { right: 72px; }
-  @keyframes blink { 50% { opacity: 0; } }
-  .load { position: absolute; z-index: 2; left: 72px; right: 72px; bottom: 40px; height: 2px; background: rgba(255, 255, 255, .2); mix-blend-mode: difference; }
-  .load i { display: block; height: 100%; background: #fff; transform-origin: left; animation: load 2900ms cubic-bezier(.4, 0, .2, 1) both; }
-  @keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  /* The viewfinder sits on top of everything and stays until the shutter opens. */
+  .hud { z-index: 3; mix-blend-mode: difference; }
+  .vf { position: absolute; width: 38px; height: 38px; border: 0 solid #fff; animation: gi-snap 500ms cubic-bezier(.2, .9, .1, 1) both; }
+  .tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; --x: 40vw; --y: 40vh; }
+  .tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; --x: -40vw; --y: 40vh; }
+  .bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; --x: 40vw; --y: -40vh; }
+  .br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; --x: -40vw; --y: -40vh; }
+  @keyframes gi-snap { from { transform: translate(var(--x), var(--y)); opacity: 0; } to { transform: none; opacity: 1; } }
+  .rec, .tc, .iso { position: absolute; margin: 0; font: 700 13px/1 var(--font); letter-spacing: .1em; color: #fff; font-variant-numeric: tabular-nums; opacity: 0; animation: gi-on 1ms 250ms both; }
+  .rec { top: 34px; left: 76px; display: flex; align-items: center; gap: 8px; }
+  .rec i { width: 9px; height: 9px; border-radius: 50%; background: #fff; animation: gi-dot 800ms steps(1) infinite; }
+  .tc { top: 34px; right: 76px; }
+  .iso { bottom: 54px; right: 76px; font-size: 11px; letter-spacing: .14em; }
+  @keyframes gi-dot { 50% { opacity: 0; } }
+  .load { position: absolute; left: 76px; right: 260px; bottom: 58px; height: 2px; background: rgba(255, 255, 255, .25); }
+  .load i { display: block; height: 100%; background: #fff; transform-origin: left; animation: gi-load 5000ms cubic-bezier(.4, 0, .2, 1) both; }
+  @keyframes gi-load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @media (max-width: 560px) {
-    .vf { width: 24px; height: 24px; }
+    .vf { width: 26px; height: 26px; }
     .tl, .tr { top: 16px; } .bl, .br { bottom: 16px; } .tl, .bl { left: 16px; } .tr, .br { right: 16px; }
-    .rec, .tc { top: 22px; font-size: 11px; } .rec { left: 52px; } .tc { right: 52px; }
-    .load { left: 52px; right: 52px; bottom: 28px; }
+    .rec, .tc { top: 24px; font-size: 11px; } .rec { left: 54px; } .tc { right: 54px; }
+    .iso { display: none; }
+    .load { left: 54px; right: 54px; bottom: 30px; }
   }
 </style>
