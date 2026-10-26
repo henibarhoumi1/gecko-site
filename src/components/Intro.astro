@@ -71,11 +71,7 @@ words.forEach((w, i) => { frames.push({ w, k: i }); if (i < words.length - 1 && 
 </script>
 
 <style is:global>
-  /* Failsafe: if the script never finishes the intro, CSS lets the page go after 6 s anyway. */
-  html.intro { overflow: hidden; animation: gi-free 1ms 6000ms forwards; }
-  html.intro .intro { animation: gi-gone 1ms 6000ms forwards; }
-  @keyframes gi-free { to { overflow: visible; } }
-  @keyframes gi-gone { to { visibility: hidden; pointer-events: none; } }
+  html.intro { overflow: hidden; }
   html.intro .rise, html.intro .hl::before { animation-play-state: paused !important; }
   html.intro .intro .hl::before { animation-play-state: running !important; }
   @property --sweep { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
