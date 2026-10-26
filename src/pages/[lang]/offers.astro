@@ -55,8 +55,8 @@ const oneOffs = [
   </section>
 
   <section class="section">
-    <div class="wrap">
-      <div class="head rv"><div class="stack" style="--gap:16px"><h2 class="h2">{k.oneOff}</h2><p class="text text-l sub-l">{k.oneOffSub}</p></div></div>
+    <div class="wrap ones-grid">
+      <div class="stack rv" style="--gap:16px"><h2 class="h2">{k.oneOff}</h2><p class="text text-l sub-l">{k.oneOffSub}</p></div>
       <div class="ones">
         {oneOffs.map((x, i) => (
           <article class="one rv" style={`--d:${i * 70}ms`}>
@@ -99,7 +99,7 @@ const oneOffs = [
         <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
       </div>
       <div class="stack rv" style="--gap:10px">
-        <div class="faq">
+        <div class="faq lead-faq">
           <details>
             <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
             <ul class="terms text">{o.terms.map((i) => <li>{i}</li>)}</ul>
@@ -128,7 +128,8 @@ const oneOffs = [
   .every .ticks-list li { white-space: nowrap; }
   .every .label { padding-top: 2px; }
   .sub-l { max-width: 34rem; margin: 0; }
-  .ones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
+  .ones-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .ones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
   .one { display: grid; grid-template-rows: auto auto 1fr auto; gap: 16px; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), opacity 600ms var(--ease); }
   .one.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
   .one .foot { padding-bottom: 14px; border-bottom: var(--line) solid var(--ink); }
@@ -150,6 +151,8 @@ const oneOffs = [
   .terms { margin: 0; padding: 0 64px 22px 40px; display: grid; gap: 10px; color: var(--ink-2); }
   .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .faq-lead { display: grid; gap: 28px; justify-items: start; }
-  @media (max-width: 960px) { .split, .ones { grid-template-columns: 1fr; } .beyond { grid-template-columns: 1fr; } }
+  .lead-faq { padding-left: 2px; }
+  @media (max-width: 960px) { .split, .ones-grid { grid-template-columns: 1fr; } .beyond { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .ones { grid-template-columns: 1fr; } }
   @media (max-width: 860px) { .faq-grid, .every { grid-template-columns: 1fr; } }
 </style>

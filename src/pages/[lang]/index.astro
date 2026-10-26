@@ -39,7 +39,7 @@ const h = c(lang).home;
           {ads.slice(0, 3).map((ad, i) => (
             <span class={`fan f${i}`} aria-hidden="true">
               <img src={ad.poster} alt="" loading="eager" />
-              {i === 1 && <video src={ad.src} poster={ad.poster} muted loop playsinline autoplay preload="metadata"></video>}
+              {i === 1 && <video src="/work/hero-loop.mp4" poster={ad.poster} muted loop playsinline autoplay preload="auto"></video>}
             </span>
           ))}
         </a>
@@ -60,7 +60,6 @@ const h = c(lang).home;
         <div class="work-head">
           <h2 class="h2 work-h rv">{h.workTitle}</h2>
           <div class="work-side rv" style="--d:100ms">
-            <p class="text soft">{c(lang).work.intro}</p>
             <a class="btn" href={href(lang, 'work')}>{h.workCta} <span class="arr" aria-hidden="true">→</span></a>
           </div>
         </div>
@@ -98,6 +97,21 @@ const h = c(lang).home;
   <ReelViewer lang={lang} />
 </Base>
 
+<script>
+  // The reels in the hero drift a little with the pointer, each by a different amount, so the fan feels alive.
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  if (hero && matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let x = 0, y = 0, queued = false;
+    const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5;
+      if (!queued) { queued = true; requestAnimationFrame(paint); }
+    });
+    hero.addEventListener('pointerleave', () => { x = 0; y = 0; requestAnimationFrame(paint); });
+  }
+</script>
+
 <style>
   /* Hero: words on the left, a fan of reels on the right that opens up on hover. */
   .hero { position: relative; padding-top: calc(var(--header) + clamp(36px, 6vh, 72px)); overflow: hidden; --mx: 0; --my: 0; }
@@ -107,7 +121,10 @@ const h = c(lang).home;
   .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
   .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; animation: ping 2.2s var(--ease) infinite; }
   @keyframes ping { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
-  .big { font-size: clamp(50px, 7.3vw, 124px); line-height: .9; letter-spacing: -0.06em; max-width: none !important; }
+  /* The title is sized to its column as well as the screen, so each line stays on one line in both languages. */
+  .hero-copy { container-type: inline-size; }
+  .big { font-size: min(clamp(50px, 7.3vw, 124px), 15.2cqi); line-height: .9; letter-spacing: -0.06em; max-width: none !important; }
+  :global(html[lang='fr']) .big { font-size: min(clamp(48px, 7.3vw, 124px), 14.2cqi); }
   .line { display: block; overflow: hidden; padding: .02em .08em .17em 0; margin-bottom: -.06em; width: fit-content; }
   .line .rise { display: inline-block; }
   .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }

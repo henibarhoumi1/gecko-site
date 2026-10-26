@@ -10,11 +10,18 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const k = c(lang).contact;
 const n = c(lang).nav;
+// Line icons drawn in SVG, so they look the same on every phone and computer (emoji differ a lot on Windows).
+const icons = {
+  chat: '<path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z"/><path d="M9 10.5h.01M12 10.5h.01M15 10.5h.01" stroke-width="2.4"/>',
+  call: '<path d="M6.6 3.5h2.6l1.5 4-2 1.3a10.5 10.5 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2.1 2.1 0 0 1-2.3 2.1A16.5 16.5 0 0 1 4.5 5.8a2.1 2.1 0 0 1 2.1-2.3z"/>',
+  mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/>',
+  insta: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17 7h.01" stroke-width="2.4"/>',
+};
 const ways = [
-  { e: '💬', name: k.whatsapp, value: site.phone, url: site.whatsapp },
-  { e: '📞', name: k.call, value: site.phone, url: `tel:${site.phone.replace(/\s/g, '')}` },
-  { e: '✉️', name: k.email, value: site.email, url: `mailto:${site.email}` },
-  ...site.socials.map((x) => ({ e: '📸', name: x.name, value: x.handle, url: x.url })),
+  { e: icons.chat, name: k.whatsapp, value: site.phone, url: site.whatsapp },
+  { e: icons.call, name: k.call, value: site.phone, url: `tel:${site.phone.replace(/\s/g, '')}` },
+  { e: icons.mail, name: k.email, value: site.email, url: `mailto:${site.email}` },
+  ...site.socials.map((x) => ({ e: icons.insta, name: x.name, value: x.handle, url: x.url })),
 ];
 ---
 <Base lang={lang} footerCta={false} title={n.contact}>
@@ -32,7 +39,7 @@ const ways = [
           {ways.map((w, i) => (
             <li class="rv" style={`--d:${i * 70}ms`}>
               <a href={w.url} rel="noopener">
-                <span class="em" aria-hidden="true">{w.e}</span>
+                <span class="em" aria-hidden="true"><svg viewBox="0 0 24 24" set:html={w.e} /></span>
                 <span class="who"><span class="label">{w.name}</span><span class="val">{w.value}</span></span>
                 <span class="go" aria-hidden="true">→</span>
               </a>
@@ -55,7 +62,9 @@ const ways = [
   .ways { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .ways a { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 16px; padding: 16px 18px; text-decoration: none; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease), background 200ms var(--ease); }
   .ways a:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--ink); background: var(--pink-soft); }
-  .em { width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; border-radius: 12px; background: var(--pink-soft); border: var(--line) solid var(--ink); }
+  .em { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--pink-soft); border: var(--line) solid var(--ink); transition: background 200ms var(--ease), transform 300ms var(--ease); }
+  .em svg { width: 22px; height: 22px; fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .ways a:hover .em { background: var(--yellow); transform: rotate(-6deg); }
   .who { display: grid; gap: 2px; min-width: 0; }
   .val { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; }
   @media (max-width: 420px) { .val { font-size: 15px; } }
