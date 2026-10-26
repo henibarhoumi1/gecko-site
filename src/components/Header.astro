@@ -33,7 +33,7 @@ const langs = [
     </ul>
     <div class="right">
       <div class="lang-s" role="group" aria-label={n.lang}>
-        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}>{x.short}</a>)}
+        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="18" height="12" />{x.short}</a>)}
       </div>
       <a class="btn primary cta" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
@@ -71,7 +71,7 @@ const langs = [
           <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
         </div>
         <div class="m-langs">
-          {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}>{x.name}</a>)}
+          {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="21" height="14" />{x.name}</a>)}
         </div>
       </aside>
     </div>
@@ -129,7 +129,7 @@ const langs = [
   .right { display: flex; align-items: center; gap: 8px; }
   .lang-s { display: flex; padding: 3px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .18); transition: opacity 300ms var(--ease); }
   .open .lang-s, .open .cta { opacity: 0; pointer-events: none; }
-  .lang-s a { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-decoration: none; padding: 6px 9px; border-radius: 999px; color: rgba(0, 0, 0, .55); transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .lang-s a { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-decoration: none; padding: 6px 9px; border-radius: 999px; color: rgba(0, 0, 0, .55); transition: background 200ms var(--ease), color 200ms var(--ease); }
   .lang-s a[aria-current] { background: var(--ink); color: #fff; }
   .lang-s a:not([aria-current]):hover { color: var(--ink); }
   .cta { padding: 12px 18px; font-size: 14px; border-radius: 999px; box-shadow: none; transition: opacity 300ms var(--ease), background 200ms var(--ease); }
@@ -175,7 +175,9 @@ const langs = [
   .m-reach a { text-decoration: none; font-size: 16px; width: fit-content; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms var(--ease); }
   .m-reach a:hover { background-size: 100% 1px; }
   .m-langs { display: flex; gap: 8px; }
-  .m-langs a { flex: 1; text-align: center; padding: 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); text-decoration: none; font-size: 14px; font-weight: 600; }
+  .flag { display: block; flex: none; border-radius: 2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
+  .lang-s a:not([aria-current]) .flag { opacity: .7; }
+  .m-langs a { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); text-decoration: none; font-size: 14px; font-weight: 600; }
   .m-langs a[aria-current] { background: #fff; color: var(--ink); border-color: #fff; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   @media (max-width: 1080px) { .links { display: none; } .right { margin-left: auto; } }
