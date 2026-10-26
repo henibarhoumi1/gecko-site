@@ -1,0 +1,103 @@
+---
+// First-visit intro, about 3.5 seconds, once per browser session. Plays like a fast edit: a viewfinder with REC and a
+// running timecode, five jump cuts (brief to ads) on the brand colours, then the logo, then the frame lifts away.
+// The head script decides whether to play (not on repeat visits, not with reduced motion); without JS nothing shows.
+// A click, tap or key skips it.
+import Logo from './Logo.astro';
+import { c } from '../i18n/copy';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const h = c(lang).home;
+const words = h.why.flow.steps;
+const line = h.title.join(' ');
+---
+<div class="intro" data-intro aria-hidden="true">
+  <div class="cuts">
+    {words.map((w, i) => <div class={`cut k${i}`} style={`--i:${i}`}><span>{w}.</span></div>)}
+  </div>
+  <div class="end">
+    <span class="logo-in"><Logo /></span>
+    <p class="in-line">{line}</p>
+  </div>
+  <span class="vf tl"></span><span class="vf tr"></span><span class="vf bl"></span><span class="vf br"></span>
+  <p class="rec"><i></i>REC</p>
+  <p class="tc" data-tc>00:00:00:00</p>
+  <div class="load"><i></i></div>
+</div>
+
+<script is:inline>
+  (function () {
+    var root = document.documentElement, el = document.querySelector('[data-intro]');
+    if (!el) return;
+    if (!root.classList.contains('intro')) { el.remove(); return; }
+    try { sessionStorage.setItem('gecko-intro', '1'); } catch (e) {}
+    var tc = el.querySelector('[data-tc]'), t0 = performance.now(), done = false;
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    var tick = function (now) {
+      if (done) return;
+      var ms = now - t0, s = Math.floor(ms / 1000), f = Math.floor((ms % 1000) / 40);
+      tc.textContent = '00:00:' + pad(s) + ':' + pad(f);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    var finish = function () {
+      if (done) return; done = true;
+      el.classList.add('out');
+      root.classList.remove('intro');
+      setTimeout(function () { el.remove(); }, 900);
+    };
+    setTimeout(finish, 3000);
+    ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) { addEventListener(ev, finish, { once: true, passive: true }); });
+  })();
+</script>
+
+<style is:global>
+  html.intro { overflow: hidden; }
+  html.intro .rise, html.intro .hl::before { animation-play-state: paused !important; }
+</style>
+
+<style>
+  .intro { display: none; }
+  :global(html.intro) .intro, .intro.out { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; overflow: hidden; background: var(--ink); color: #fff; font-family: var(--font); }
+  .intro.out { transform: translateY(-100%); border-radius: 0 0 50% 50% / 0 0 18% 18%; transition: transform 850ms cubic-bezier(.76, 0, .24, 1), border-radius 850ms cubic-bezier(.76, 0, .24, 1); }
+
+  /* The five jump cuts, one every 340 ms from 0.25 s. */
+  .cuts { position: absolute; inset: 0; }
+  .cut { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; animation: cut 340ms steps(1); animation-delay: calc(250ms + var(--i) * 340ms); }
+  .cut span { font-weight: 700; font-size: clamp(64px, 15vw, 240px); letter-spacing: -0.06em; line-height: 1; animation: punch 340ms cubic-bezier(.2, .7, .2, 1) both; animation-delay: inherit; }
+  .k0 { background: var(--ink); color: #fff; }
+  .k1 { background: var(--pink); color: var(--ink); }
+  .k2 { background: var(--yellow); color: var(--ink); }
+  .k3 { background-color: var(--mat); color: #fff; background-image: linear-gradient(rgba(255, 255, 255, .17) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .17) 1px, transparent 1px), linear-gradient(rgba(255, 255, 255, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .07) 1px, transparent 1px); background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; }
+  .k4 { background: #fff; color: var(--ink); }
+  @keyframes cut { 0% { opacity: 1; } 100% { opacity: 0; } }
+  @keyframes punch { from { transform: scale(1.18); filter: blur(6px); } to { transform: none; filter: none; } }
+
+  /* Last frame: the logo and the line. */
+  .end { position: relative; display: grid; justify-items: center; gap: 22px; opacity: 0; animation: show 1ms 1950ms both; }
+  .logo-in { display: block; width: clamp(150px, 20vw, 260px); clip-path: inset(100% 0 0 0); animation: wipe-up 700ms 1980ms cubic-bezier(.2, .7, .2, 1) both; }
+  .in-line { margin: 0; font-size: clamp(14px, 1.3vw, 17px); font-weight: 600; letter-spacing: .02em; color: rgba(255, 255, 255, .75); opacity: 0; transform: translateY(8px); animation: fade-up 600ms 2300ms var(--ease) both; }
+  @keyframes show { to { opacity: 1; } }
+  @keyframes wipe-up { to { clip-path: inset(0 0 0 0); } }
+  @keyframes fade-up { to { opacity: 1; transform: none; } }
+
+  /* Viewfinder, REC, timecode and the load line stay on top of every cut. */
+  .vf { position: absolute; z-index: 2; width: 34px; height: 34px; border: 2px solid currentColor; mix-blend-mode: difference; color: #fff; opacity: 0; animation: show 300ms 80ms both; }
+  .tl { top: 24px; left: 24px; border-width: 2px 0 0 2px; } .tr { top: 24px; right: 24px; border-width: 2px 2px 0 0; }
+  .bl { bottom: 24px; left: 24px; border-width: 0 0 2px 2px; } .br { bottom: 24px; right: 24px; border-width: 0 2px 2px 0; }
+  .rec, .tc { position: absolute; z-index: 2; top: 30px; margin: 0; font: 700 13px/1 var(--font); letter-spacing: .1em; color: #fff; mix-blend-mode: difference; font-variant-numeric: tabular-nums; }
+  .rec { left: 72px; display: flex; align-items: center; gap: 8px; }
+  .rec i { width: 9px; height: 9px; border-radius: 50%; background: #FF3B30; animation: blink 800ms steps(1) infinite; }
+  .tc { right: 72px; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .load { position: absolute; z-index: 2; left: 72px; right: 72px; bottom: 40px; height: 2px; background: rgba(255, 255, 255, .2); mix-blend-mode: difference; }
+  .load i { display: block; height: 100%; background: #fff; transform-origin: left; animation: load 2900ms cubic-bezier(.4, 0, .2, 1) both; }
+  @keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @media (max-width: 560px) {
+    .vf { width: 24px; height: 24px; }
+    .tl, .tr { top: 16px; } .bl, .br { bottom: 16px; } .tl, .bl { left: 16px; } .tr, .br { right: 16px; }
+    .rec, .tc { top: 22px; font-size: 11px; } .rec { left: 52px; } .tc { right: 52px; }
+    .load { left: 52px; right: 52px; bottom: 28px; }
+  }
+</style>
