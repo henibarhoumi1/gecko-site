@@ -25,7 +25,7 @@ const w = c(lang).work;
     </div>
   </section>
 
-  <section class="reels-sec">
+  <section class="on-black reels-sec">
     <div class="wrap">
       <div class="head rv"><h2 class="h2">{w.reelsTitle}</h2><p class="hint">{w.soundHint}</p></div>
       <div class={`reels scroll-row n${ads.length}`} data-swipe>
@@ -63,7 +63,7 @@ const w = c(lang).work;
 </Base>
 <style>
   .case-head { padding-top: calc(var(--header) + clamp(56px, 8vw, 120px)); padding-bottom: clamp(48px, 6vw, 88px); }
-  .case-tag { margin: 0 0 18px; display: inline-flex; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--hair-2); background: rgba(255, 255, 255, .04); color: var(--fg); font-weight: 600; font-size: 14px; }
+  .case-tag { margin: 0 0 18px; display: inline-flex; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--hair-2); background: var(--tint); color: var(--fg); font-weight: 600; font-size: 14px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(72px, 15vw, 240px); line-height: .86; letter-spacing: -0.065em; }
   .intro-row { margin-top: clamp(28px, 4vw, 56px); padding-top: 24px; border-top: 1px solid var(--hair-2); }
   .facts { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 24px; }
@@ -78,7 +78,7 @@ const w = c(lang).work;
   .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--hair); }
   .choices li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 3vw, 44px) clamp(0px, 2vw, 32px) clamp(24px, 3vw, 44px) 0; border-bottom: 1px solid var(--hair); }
   .choices li:nth-child(even) { padding-left: clamp(20px, 3vw, 44px); border-left: 1px solid var(--hair); }
-  .choices .n { font-weight: 700; font-size: 14px; color: var(--pink); }
+  .choices .n { font-weight: 700; font-size: 14px; color: var(--fg-3); }
   .choices .t { margin: 0; font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.04; letter-spacing: -0.04em; max-width: 16ch; }
   .choices .text { margin: 0; max-width: 30rem; color: var(--fg-2); }
   .team { display: grid; gap: 22px; }

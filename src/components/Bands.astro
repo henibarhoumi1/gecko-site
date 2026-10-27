@@ -47,8 +47,8 @@ const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
   .bands { --tilt: 0; --hb: calc(28px + 1.3em); --hf: calc(clamp(30px, 4.6vw, 72px) + 2 * clamp(14px, 1.6vw, 22px)); position: relative; overflow: hidden; overflow: clip; padding-block: clamp(72px, 9vw, 136px); font-size: clamp(15px, 1.3vw, 19px); }
   .band { position: relative; width: 112%; margin-left: -6%; overflow: hidden; }
   /* The two bands share a centre line and lean opposite ways, so they cross like an X in the middle. */
-  .front { z-index: 2; margin-top: calc(-1 * (var(--hb) / 2 + var(--hf) / 2)); background: var(--yellow); color: var(--ink); transform: rotate(calc(-3deg - var(--tilt) * 1.4deg)); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .8); }
-  .back { z-index: 1; background: var(--pink); color: var(--ink); transform: rotate(calc(4deg + var(--tilt) * 1.2deg)); }
+  .front { z-index: 2; margin-top: calc(-1 * (var(--hb) / 2 + var(--hf) / 2)); background: var(--yellow); color: var(--ink); border-block: 1px solid var(--ink); transform: rotate(calc(-3deg - var(--tilt) * 1.4deg)); box-shadow: var(--lift); }
+  .back { z-index: 1; background: var(--pink); color: var(--ink); border-block: 1px solid var(--ink); transform: rotate(calc(4deg + var(--tilt) * 1.2deg)); }
   .run { display: flex; width: max-content; will-change: transform; }
   .run ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .run li { display: flex; align-items: center; white-space: nowrap; }

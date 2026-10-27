@@ -35,7 +35,7 @@ const start = 2;
 
   <div class="stage rv" style="--d:120ms">
     {plans.map((m, i) => (
-      <article class={`card ${m.custom ? 'dark' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
+      <article class={`card ${m.custom ? 'dark on-black' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
         {!m.custom && <span class={`sticker ${m.once ? 'once' : ''}`} aria-hidden="true">{m.once ? p.exclusive : o.launch}</span>}
         <header>
           <p class="fitb" hidden>✓ {p.fit}</p>
@@ -135,12 +135,12 @@ const start = 2;
   .intro .h2 { max-width: 10ch; }
   .you { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 2px; }
   .you[hidden] { display: none; }
-  .fitb { margin: 0 0 4px; justify-self: start; padding: 6px 12px; border-radius: 999px; background: rgba(244, 193, 196, .14); color: var(--pink); font-size: 13px; font-weight: 700; }
+  .fitb { margin: 0 0 4px; justify-self: start; padding: 6px 12px; border-radius: 999px; background: var(--pink); color: var(--ink); font-size: 13px; font-weight: 700; }
   .fitb[hidden] { display: none; }
   .tabs { display: grid; gap: 8px; }
-  .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--fg); background: transparent; border: 1px solid var(--hair); border-radius: 16px; cursor: pointer; transition: background 220ms var(--ease), border-color 220ms var(--ease), color 220ms var(--ease); }
-  .tabs button:hover { border-color: var(--hair-2); background: rgba(255, 255, 255, .03); }
-  .tabs [aria-selected='true'], .tabs [aria-selected='true']:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--fg); background: transparent; border: 1px solid var(--edge); border-radius: 16px; cursor: pointer; transition: background 220ms var(--ease), border-color 220ms var(--ease), color 220ms var(--ease); }
+  .tabs button:hover { border-color: var(--hair-2); background: var(--tint); }
+  .tabs [aria-selected='true'], .tabs [aria-selected='true']:hover { background: var(--mat); border-color: var(--mat); color: #fff; }
   .tabs .bes { border-style: dashed; border-color: var(--hair-2); }
   .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
   .meta { font-size: 15px; font-weight: 600; white-space: nowrap; opacity: .62; }
@@ -151,7 +151,7 @@ const start = 2;
   .all:hover span { transform: translateX(4px); }
 
   .stage { display: grid; }
-  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--surface); border: 1px solid var(--hair); border-radius: 24px; box-shadow: var(--lift-l); }
+  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--surface); border: 1px solid var(--edge); border-radius: 24px; box-shadow: var(--lift-l); }
   .card header { display: grid; gap: 8px; padding-right: 150px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
   .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; color: var(--fg-2); }
@@ -165,7 +165,7 @@ const start = 2;
   .reels { margin: 0; font-size: 17px; color: var(--fg-2); }
   .reels b { font-size: 22px; letter-spacing: -0.02em; color: var(--fg); }
   .card .ticks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; font-size: 16px; }
-  .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--hair); border-radius: 14px; overflow: hidden; }
+  .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--edge); border-radius: 14px; overflow: hidden; }
   .spec div { padding: 12px 14px; display: grid; gap: 4px; }
   .spec div + div { border-left: 1px solid var(--hair); }
   .spec dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
@@ -177,10 +177,10 @@ const start = 2;
   .kinds span { font-size: 15px; line-height: 1.45; color: var(--fg-2); }
   .card .btn { justify-self: start; }
   /* Creative Partner and bespoke projects carry a faint pink or yellow light. */
-  .dark { background: radial-gradient(120% 70% at 100% 0%, rgba(244, 193, 196, .14), transparent 60%), var(--surface); border-color: rgba(244, 193, 196, .28); }
+  .dark { background: radial-gradient(120% 70% at 100% 0%, rgba(244, 193, 196, .2), transparent 60%), #000; border-color: #000; }
   .dark .btn { background: var(--pink); border-color: var(--pink); color: var(--ink); }
   .dark .btn:hover { background: var(--fg); border-color: var(--fg); }
-  .bespoke { background: radial-gradient(120% 70% at 100% 0%, rgba(243, 223, 158, .1), transparent 60%), var(--surface); }
+  .bespoke { background: radial-gradient(120% 70% at 100% 0%, rgba(243, 223, 158, .4), transparent 60%), var(--surface); }
   @media (max-width: 560px) { .spec, .kinds { grid-template-columns: 1fr; } .spec div + div { border-left: 0; border-top: 1px solid var(--hair); } }
 
   @media (max-width: 960px) {

@@ -1,6 +1,6 @@
-/* Gecko brand tokens. A dark site: near-black pages, warm white type, white hairlines, one sans family.
-   Pink and yellow are accents, used sparingly. The green cutting mat appears once, in the home hero.
-   Corners are softened and depth comes from soft, deep shadows, like a lit product shot in a dark studio. */
+/* Gecko brand tokens. White pages, black type and ink lines, pink and yellow accents, one sans family.
+   Green is the studio's working surface: the hero carries its cutting-mat texture, and it marks ticks and
+   selected states. A few bands go black (the ticker, the reels, the footer) and flip the theme with .on-black. */
 
 :root {
   --pink: #F4C1C4;
@@ -16,15 +16,19 @@
   --ink: #000000;
   --ink-2: #3B3835;
 
-  /* The theme. --white and --ink stay literal for the few light surfaces (the workspace mock, pills). */
-  --bg: #0A0A0B;
-  --surface: #141416;
-  --surface-2: #1C1C1F;
-  --fg: #F5F3EF;
-  --fg-2: rgba(245, 243, 239, .64);
-  --fg-3: rgba(245, 243, 239, .42);
-  --hair: rgba(255, 255, 255, .1);
-  --hair-2: rgba(255, 255, 255, .22);
+  /* The theme. Cards are white with an ink edge; separators are lighter hairlines. */
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-2: #FAF9F6;
+  --fg: #000000;
+  --fg-2: #3B3835;
+  --fg-3: rgba(0, 0, 0, .5);
+  --hair: rgba(0, 0, 0, .12);
+  --hair-2: var(--ink);
+  --edge: var(--ink);
+  --tint: rgba(0, 0, 0, .035);
+  --tint-2: rgba(0, 0, 0, .06);
+  --tint-3: rgba(0, 0, 0, .1);
   --paper: var(--bg);
   --cream: var(--surface);
 
@@ -49,14 +53,14 @@
   --r-lg: 18px;
   --shadow-1: none;
   --shadow-2: var(--lift);
-  --lift: 0 1px 2px rgba(0, 0, 0, .5), 0 24px 48px -24px rgba(0, 0, 0, .9);
-  --lift-l: 0 2px 6px rgba(0, 0, 0, .5), 0 48px 96px -36px rgba(0, 0, 0, 1);
+  --lift: 0 1px 2px rgba(0, 0, 0, .06), 0 22px 44px -24px rgba(0, 0, 0, .32);
+  --lift-l: 0 2px 6px rgba(0, 0, 0, .06), 0 40px 80px -36px rgba(0, 0, 0, .45);
   --shadow-3: var(--lift-l);
   --ease: cubic-bezier(.2, .7, .2, 1);
   --spring: cubic-bezier(.34, 1.4, .64, 1);
 }
 
-html { color-scheme: dark; background: var(--bg); }
+html { color-scheme: light; background: var(--bg); }
 body { font-family: var(--font); background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }
 
 .h1, .h2, .h3 { font-family: var(--font); font-weight: 700; line-height: 1; letter-spacing: -0.04em; margin: 0; text-wrap: balance; }
@@ -85,10 +89,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--fg); -webki
   background-size: 100% 8px, 100% 14px; background-repeat: no-repeat; }
 .on-mat::after, .mat::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(135deg, transparent calc(50% - .5px), rgba(255, 255, 255, .08) 50%, transparent calc(50% + .5px)), radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, .07), transparent 60%); }
-.mat { border-radius: var(--r-lg); overflow: hidden; }
+.mat { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--ink); }
 .on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: rgba(255, 255, 255, .75); }
 
-/* Buttons are pills: white for the main action, a hairline outline for the rest. */
+/* Buttons are pills: black for the main action, an ink outline for the rest. */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: 1px solid var(--hair-2); border-radius: 999px; background: transparent; color: var(--fg); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease), transform 220ms var(--ease); }
 .btn.primary { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 .btn.ghost { background: transparent; }
@@ -96,4 +100,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--fg); -webki
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-.on-black { background: var(--bg); color: var(--fg); }
+.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .68); --fg-3: rgba(255, 255, 255, .46);
+  --hair: rgba(255, 255, 255, .14); --hair-2: rgba(255, 255, 255, .34); --edge: rgba(255, 255, 255, .2);
+  --tint: rgba(255, 255, 255, .05); --tint-2: rgba(255, 255, 255, .08); --tint-3: rgba(255, 255, 255, .12);
+  background: var(--bg); color: var(--fg); }

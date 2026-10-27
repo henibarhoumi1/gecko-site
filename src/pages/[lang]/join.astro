@@ -239,7 +239,7 @@ const icon: Record<string, string> = {
   .lede { margin: 0; max-width: 36rem; }
   .join-head .kick span { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); opacity: 1; font-size: 0; }
   .role-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--surface-2); color: var(--fg); border: 1px solid var(--hair); font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: var(--lift);
+  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--surface-2); color: var(--fg); border: 1px solid var(--edge); font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: var(--lift);
     transform: rotate(calc((var(--i) - 4) * 1.4deg)); animation: jh-bob 4s ease-in-out calc(var(--i) * -.45s) infinite; }
   .role-cloud li:nth-child(3n) { background: var(--yellow); color: var(--ink); border-color: transparent; }
   .role-cloud li:nth-child(4n) { background: var(--pink); color: var(--ink); border-color: transparent; }
@@ -259,36 +259,36 @@ const icon: Record<string, string> = {
   .part legend { padding: 0; margin-bottom: 6px; font-size: clamp(26px, 2.6vw, 38px); letter-spacing: -0.04em; }
   .hint { margin: 0; font-size: 15px; color: var(--fg-2); }
   .sub { margin: 0 0 10px; font-weight: 700; font-size: 15px; }
-  .err { margin: 0; padding: 10px 14px; border-radius: 12px; background: rgba(244, 193, 196, .14); color: var(--pink); font-weight: 600; font-size: 15px; }
+  .err { margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--pink-soft); color: var(--ink); font-weight: 600; font-size: 15px; }
 
   .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
-  .role { position: relative; display: grid; gap: 6px; align-content: start; justify-items: start; padding: 16px; text-align: left; border: 1px solid var(--hair); border-radius: 18px; background: var(--surface); color: var(--fg); font: inherit; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease); }
+  .role { position: relative; display: grid; gap: 6px; align-content: start; justify-items: start; padding: 16px; text-align: left; border: 1px solid var(--edge); border-radius: 18px; background: var(--surface); color: var(--fg); font: inherit; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease); }
   .role:hover { transform: translateY(-2px); border-color: var(--hair-2); }
-  .role[aria-pressed='true'] { background: var(--fg); color: var(--bg); border-color: var(--fg); transform: translateY(-2px); }
-  .ri { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: rgba(255, 255, 255, .07); margin-bottom: 4px; transition: background 200ms var(--ease), transform 300ms var(--ease); }
+  .role[aria-pressed='true'] { background: var(--mat); color: #fff; border-color: var(--mat); transform: translateY(-2px); }
+  .ri { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--tint-2); margin-bottom: 4px; transition: background 200ms var(--ease), transform 300ms var(--ease); }
   .role:hover .ri { transform: rotate(-6deg); }
   .role[aria-pressed='true'] .ri { background: var(--pink); }
   .ri svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .role[aria-pressed='true'] .ri svg { stroke: var(--ink); }
   .rn { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
   .rd { font-size: 14px; line-height: 1.4; color: var(--fg-2); }
-  .role[aria-pressed='true'] .rd { color: rgba(10, 10, 11, .7); }
+  .role[aria-pressed='true'] .rd { color: rgba(255, 255, 255, .8); }
   .tick { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--hair-2); transition: background 200ms var(--ease); }
-  .role[aria-pressed='true'] .tick { border-color: var(--bg); background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
+  .role[aria-pressed='true'] .tick { border-color: #fff; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%232E6B4E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
 
-  .talent { display: grid; gap: 10px; padding: 18px; border-radius: 18px; background: rgba(243, 223, 158, .08); border: 1px solid rgba(243, 223, 158, .3); }
+  .talent { display: grid; gap: 10px; padding: 18px; border-radius: 18px; background: var(--yellow-soft); border: 1px solid var(--yellow); }
   .talent .sub { margin: 0; }
   .age { max-width: 160px; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 28px; margin-top: 6px; }
   .seg { display: flex; flex-wrap: wrap; gap: 8px; }
   .seg button { padding: 11px 16px; border-radius: 999px; border: 1px solid var(--hair-2); background: transparent; color: var(--fg); font: 700 14px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease); }
-  .seg button:hover { background: rgba(255, 255, 255, .07); }
+  .seg button:hover { background: var(--tint-2); }
   .seg button[aria-checked='true'] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 
   .links { display: grid; gap: 12px; }
   .add { justify-self: start; padding: 0; border: 0; background: none; color: var(--fg); font: 700 15px/1.4 var(--font); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .drop { position: relative; display: grid; justify-items: center; gap: 4px; padding: clamp(24px, 3vw, 40px) 20px; border: 1.5px dashed var(--hair-2); border-radius: 20px; background: rgba(255, 255, 255, .02); text-align: center; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), transform 300ms var(--ease); }
-  .drop:hover, .drop.over { background: rgba(255, 255, 255, .05); border-color: var(--fg-2); }
+  .drop:hover, .drop.over { background: var(--tint); border-color: var(--fg-2); }
   .drop.over { transform: scale(1.01); }
   .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .di { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--fg); margin-bottom: 8px; transition: transform 400ms cubic-bezier(.34, 1.4, .64, 1); }
@@ -310,7 +310,7 @@ const icon: Record<string, string> = {
   .field textarea { resize: vertical; }
   .opt { font-weight: 400; color: var(--fg-3); }
   .send { justify-self: start; margin-top: 8px; padding: 17px 24px; font-size: 16px; }
-  .done { display: grid; gap: 12px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: var(--surface); border: 1px solid var(--hair); }
+  .done { display: grid; gap: 12px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: var(--surface); border: 1px solid var(--edge); }
   .done .text { margin: 0; color: var(--fg-2); }
 
   @media (max-width: 960px) { .jh { grid-template-columns: 1fr; align-items: start; } .role-cloud { justify-content: flex-start; } }

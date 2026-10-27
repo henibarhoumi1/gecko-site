@@ -96,10 +96,10 @@ const h = c(lang).home;
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
   .part { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid var(--hair-2); }
   .part .text { margin: 0; color: var(--fg-2); }
-  .tag-pill { margin: 0 0 4px; justify-self: start; padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, .07); color: var(--fg-2); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
-  .part:nth-child(1) .tag-pill { background: rgba(244, 193, 196, .14); color: var(--pink); }
-  .part:nth-child(2) .tag-pill { background: rgba(243, 223, 158, .14); color: var(--yellow); }
-  .every { margin-top: clamp(36px, 4vw, 56px); padding: 20px 24px; display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: center; border-radius: 18px; background: var(--surface); border: 1px solid var(--hair); }
+  .tag-pill { margin: 0 0 4px; justify-self: start; padding: 5px 11px; border-radius: 999px; background: var(--tint-2); color: var(--fg-2); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+  .part:nth-child(1) .tag-pill { background: var(--pink); color: var(--ink); }
+  .part:nth-child(2) .tag-pill { background: var(--yellow); color: var(--ink); }
+  .every { margin-top: clamp(36px, 4vw, 56px); padding: 20px 24px; display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: center; border-radius: 18px; background: var(--surface); border: 1px solid var(--edge); }
   .every .ticks-list { display: flex; flex-wrap: wrap; gap: 12px 32px; }
   .every .ticks-list li { white-space: nowrap; font-size: 15px; }
   .every .label { margin: 0; }
@@ -111,7 +111,7 @@ const h = c(lang).home;
   .quote { margin: 0; padding-left: 16px; border-left: 2px solid var(--pink); font-weight: 600; font-size: 18px; line-height: 1.4; max-width: 30rem; }
   .kinds { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
   .kinds li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: clamp(20px, 2vw, 28px) 0; border-bottom: 1px solid var(--hair); }
-  .kinds .n { font-weight: 700; font-size: 14px; padding-top: 5px; color: var(--pink); font-variant-numeric: tabular-nums; }
+  .kinds .n { font-weight: 700; font-size: 14px; padding-top: 5px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
   .kinds .h3 { margin-bottom: 6px; }
   .kinds .text { margin: 0; color: var(--fg-2); }
 

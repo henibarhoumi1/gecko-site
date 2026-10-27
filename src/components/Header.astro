@@ -51,7 +51,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
     </div>
   </nav>
 
-  <div class="menu" id="menu" data-menu hidden>
+  <div class="menu on-black" id="menu" data-menu hidden>
     <div class="menu-in">
       <ol class="m-links">
         {panel.map(([p, label, d], i) => (
@@ -151,7 +151,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   .bar { pointer-events: auto; position: relative; z-index: 3; max-width: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0; color: var(--fg);
     border: var(--line) solid transparent; border-radius: 999px; background: transparent;
     transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
-  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: rgba(22, 22, 24, .72); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-color: var(--hair); box-shadow: 0 16px 40px -22px rgba(0, 0, 0, .9); }
+  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-color: var(--hair); box-shadow: 0 14px 34px -22px rgba(0, 0, 0, .35); }
   .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
   .brand:hover { transform: rotate(-4deg) scale(1.04); }
@@ -159,30 +159,31 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   .open .links { opacity: 0; pointer-events: none; }
   .links a { position: relative; z-index: 1; display: block; font-weight: 500; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 15px; border-radius: 999px; opacity: .72; transition: opacity 260ms var(--ease); }
   .links a:hover, .links a[aria-current='page'] { opacity: 1; }
-  .glide { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); border-radius: 999px; background: rgba(255, 255, 255, .1); opacity: 0; pointer-events: none;
+  .glide { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); border-radius: 999px; background: var(--tint-2); opacity: 0; pointer-events: none;
     transition: transform 560ms cubic-bezier(.22, 1, .36, 1), width 560ms cubic-bezier(.22, 1, .36, 1), opacity 300ms var(--ease), background 300ms var(--ease); }
   .glide.hot { opacity: 1; }
-  .glide.rest { opacity: 1; background: rgba(255, 255, 255, .07); }
+  .glide.rest { opacity: 1; background: var(--tint); }
   .glide.still { transition: none; }
   .right { display: flex; align-items: center; gap: 8px; }
   .lang { position: relative; transition: opacity 300ms var(--ease); }
   .open .lang, .open .cta { opacity: 0; pointer-events: none; }
   .lang-b { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: 600 13px/1 var(--font); letter-spacing: .04em; cursor: pointer; transition: background 220ms var(--ease); }
-  .lang-b:hover, .lang-b[aria-expanded='true'] { background: rgba(255, 255, 255, .1); }
+  .lang-b:hover, .lang-b[aria-expanded='true'] { background: var(--tint-2); }
   .globe { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; transition: transform 700ms cubic-bezier(.22, 1, .36, 1); }
   .lang-b:hover .globe, .lang-b[aria-expanded='true'] .globe { transform: rotate(180deg); }
-  .lang-m { position: absolute; right: 0; top: calc(100% + 10px); min-width: 168px; margin: 0; padding: 6px; list-style: none; background: #1A1A1D; color: var(--fg); border: 1px solid var(--hair); border-radius: 14px; box-shadow: var(--lift-l); transform-origin: top right; animation: lang-in 260ms cubic-bezier(.22, 1, .36, 1); }
+  .lang-m { position: absolute; right: 0; top: calc(100% + 10px); min-width: 168px; margin: 0; padding: 6px; list-style: none; background: var(--surface); color: var(--fg); border: 1px solid var(--edge); border-radius: 14px; box-shadow: var(--lift-l); transform-origin: top right; animation: lang-in 260ms cubic-bezier(.22, 1, .36, 1); }
   .lang-m[hidden] { display: none; }
   @keyframes lang-in { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
   .lang-m a { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 9px; font-size: 14px; font-weight: 500; text-decoration: none; transition: background 180ms var(--ease); }
-  .lang-m a:hover { background: rgba(255, 255, 255, .07); }
+  .lang-m a:hover { background: var(--tint); }
   .lang-m .tick { opacity: 0; font-weight: 700; }
   .lang-m a[aria-current] .tick { opacity: 1; }
   .cta { padding: 12px 18px; font-size: 14px; border-radius: 999px; box-shadow: none; transition: opacity 300ms var(--ease), background 200ms var(--ease), padding 400ms cubic-bezier(.22, 1, .36, 1); }
   .ca { display: inline-block; width: 0; overflow: hidden; opacity: 0; transform: translateX(-6px); transition: width 400ms cubic-bezier(.22, 1, .36, 1), opacity 300ms var(--ease), transform 400ms cubic-bezier(.22, 1, .36, 1), margin 400ms cubic-bezier(.22, 1, .36, 1); }
   .cta:hover .ca { width: 1em; margin-left: 6px; opacity: 1; transform: none; }
   .burger { display: inline-flex; align-items: center; gap: 6px; height: 44px; padding: 0 10px 0 18px; border-radius: 999px; border: 1px solid var(--hair-2); background: transparent; color: inherit; font: 700 14px/1 var(--font); cursor: pointer; transition: background 220ms var(--ease), color 220ms var(--ease), border-color 220ms var(--ease); }
-  @media (hover: hover) { .burger:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); } }
+  @media (hover: hover) { .burger:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); } .open .burger:hover { background: #fff; border-color: #fff; color: #000; } }
+  .open .burger { border-color: rgba(255, 255, 255, .34); }
   .bl { position: relative; display: inline-grid; overflow: hidden; height: 1.1em; }
   .bl > span { grid-area: 1 / 1; transition: transform 420ms cubic-bezier(.7, 0, .2, 1); }
   .b-close { transform: translateY(110%); }
@@ -195,7 +196,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   .open .bi i:last-child { transform: translateY(-2.5px) rotate(-45deg); }
 
   /* The expanded panel. */
-  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 2; overflow-y: auto; background: #111113; color: var(--fg); clip-path: inset(0 0 100% 0); transition: clip-path 620ms cubic-bezier(.75, 0, .2, 1); }
+  .menu { pointer-events: auto; position: fixed; inset: 0; z-index: 2; overflow-y: auto; background: var(--bg); color: var(--fg); clip-path: inset(0 0 100% 0); transition: clip-path 620ms cubic-bezier(.75, 0, .2, 1); }
   .menu.in { clip-path: inset(0 0 0 0); }
   .menu-in { max-width: var(--wide); margin-inline: auto; min-height: 100%; padding: calc(60px + 12px + clamp(32px, 6vh, 72px)) var(--gutter) clamp(28px, 5vh, 48px); display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .7fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .m-links { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255, 255, 255, .18); }

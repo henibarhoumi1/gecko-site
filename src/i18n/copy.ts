@@ -13,6 +13,8 @@ const en = {
     kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     // The two crossing bands before pricing.
     bands: { big: ['Plans from 999 TND', 'Launch prices until 31 December 2026', 'For our first 5 clients'], small: ['Ads made to be watched twice', 'Scripts approved before the shoot', 'First draft 7 days after the shoot'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
+    // The round sticker on the hero mat.
+    stick: ['Plans from', '999 TND'],
     sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -256,6 +258,7 @@ const fr: Copy = {
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Offres dès 999 TND', 'Prix de lancement jusqu’au 31 décembre 2026', 'Pour nos 5 premiers clients'], small: ['Des pubs faites pour être revues', 'Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
+    stick: ['Offres dès', '999 TND'],
     sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',

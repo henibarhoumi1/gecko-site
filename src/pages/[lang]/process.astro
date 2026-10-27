@@ -82,15 +82,15 @@ const p = c(lang).process;
   .step { position: relative; padding-left: 64px; }
   .dot { position: absolute; left: 0; top: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--bg); color: var(--fg-2); border: 1px solid var(--hair-2); transition: background 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease); }
   .passed .dot { background: var(--fg); border-color: var(--fg); color: var(--bg); }
-  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--surface); border-radius: 20px; border: 1px solid var(--hair); }
+  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--surface); border-radius: 20px; border: 1px solid var(--edge); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .t { font-size: clamp(19px, 1.6vw, 23px); letter-spacing: -0.025em; }
   .chip { display: inline-block; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--ink); }
   .chip.ok { background: var(--yellow); }
   .chip.pay { background: var(--pink); }
   .card .text { margin: 0; color: var(--fg-2); }
-  .yours { margin: 4px 0 0; padding: 9px 12px; border-radius: 12px; background: rgba(255, 255, 255, .05); font-size: 15px; }
-  .yours span { font-weight: 700; margin-right: 6px; color: var(--yellow); }
+  .yours { margin: 4px 0 0; padding: 9px 12px; border-radius: 12px; background: var(--yellow-soft); font-size: 15px; }
+  .yours span { font-weight: 700; margin-right: 6px; }
   @media (max-width: 900px) {
     .journey { grid-template-columns: 1fr; }
     .legend { position: static; display: flex; flex-wrap: wrap; align-items: center; }
