@@ -17,6 +17,8 @@ const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
 const sc = h.why.script;
+// The two reels lying on the hero desk, with their place in the reel list so a click opens the right one.
+const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
 ---
 <Base lang={lang} footerCta={false}>
   <section class="hero" data-hero>
@@ -35,14 +37,30 @@ const sc = h.why.script;
         </div>
       </div>
 
-      <div class="h-art up" style="--d:260ms" aria-hidden="true">
-        <span class="art-mat mat"></span>
-        <div class="paper">
-          <p class="p-top">{sc.title}</p>
-          <ol class="p-list">{sc.scenes.map((x, i) => <li><b>{i + 1}</b>{x}</li>)}</ol>
-          <span class="stamp">{sc.stamp} ✓</span>
+      <div class="desk" data-desk>
+        <div class="desk-mat mat" aria-hidden="true">
+          <span class="ruler">{Array.from({ length: 14 }, (_, k) => <i>{k + 1}</i>)}</span>
+          <p class="desk-hint"><span class="fine">{h.desk[0]}</span><span class="touch">{h.desk[1]}</span></p>
         </div>
-        <span class="stick"><small>{h.stick[0]}</small><b>{h.stick[1]}</b></span>
+        <div class="obj o-paper" data-obj aria-hidden="true">
+          <div class="face paper">
+            <p class="p-top">{sc.title}</p>
+            <ol class="p-list">{sc.scenes.map((x, i) => <li><b>{i + 1}</b>{x}</li>)}</ol>
+            <span class="stamp">{sc.stamp} ✓</span>
+          </div>
+        </div>
+        {prints.map(({ a, i }, k) => (
+          <button type="button" class={`obj print o-print${k + 1}`} data-obj data-print={i} aria-label={`${h.watch}: ${a.angle[lang]}`}>
+            <span class="face">
+              {k === 0 && <span class="tape" aria-hidden="true"></span>}
+              <span class="media"><img src={a.poster} alt="" width="720" height="1280" draggable="false" decoding="async" fetchpriority={k === 0 ? 'high' : 'auto'} /><span class="play" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span></span>
+              <span class="cap"><small>{a.brand}</small>{a.angle[lang]}</span>
+            </span>
+          </button>
+        ))}
+        <div class="obj o-stick" data-obj aria-hidden="true">
+          <span class="face stick"><small>{h.stick[0]}</small><b>{h.stick[1]}</b></span>
+        </div>
       </div>
     </div>
   </section>
@@ -90,22 +108,60 @@ const sc = h.why.script;
 
 <script>
   import '../../scripts/marquee';
-  // The mat, the script page and the sticker drift a few pixels with the pointer, each by a different amount.
+  // The desk on the hero. With a mouse or pen, anything on the mat can be picked up and put down somewhere else;
+  // a click on a reel (or a tap, or Enter) opens it in the viewer. The pointer also shifts each object a little, by its own depth.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  if (hero && matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    let x = 0, y = 0, queued = false;
-    const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
-    const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
-    hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
-    hero.addEventListener('pointerleave', () => { x = 0; y = 0; ask(); });
+  const desk = document.querySelector<HTMLElement>('[data-desk]');
+  if (hero && desk) {
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let top = 10, moved = false;
+    desk.querySelectorAll<HTMLElement>('[data-obj]').forEach((obj) => {
+      let sx = 0, sy = 0, bx = 0, by = 0, cx = 0, cy = 0, w = 1, h = 1;
+      obj.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.button !== 0) return;
+        e.preventDefault();
+        obj.setPointerCapture(e.pointerId);
+        const d = desk.getBoundingClientRect(), r = obj.getBoundingClientRect();
+        moved = false; sx = e.clientX; sy = e.clientY; w = d.width; h = d.height;
+        cx = r.left + r.width / 2 - d.left; cy = r.top + r.height / 2 - d.top;
+        bx = parseFloat(obj.style.getPropertyValue('--dx')) || 0; by = parseFloat(obj.style.getPropertyValue('--dy')) || 0;
+        obj.style.zIndex = String(++top);
+        obj.classList.add('held');
+      });
+      obj.addEventListener('pointermove', (e) => {
+        if (!obj.hasPointerCapture(e.pointerId)) return;
+        let mx = e.clientX - sx, my = e.clientY - sy;
+        if (!moved && Math.hypot(mx, my) < 5) return;
+        moved = true;
+        // The middle of the object stays on the desk.
+        mx = Math.max(16 - cx, Math.min(w - 16 - cx, mx)); my = Math.max(16 - cy, Math.min(h - 16 - cy, my));
+        obj.style.setProperty('--dx', (bx + (mx / w) * 100).toFixed(2));
+        obj.style.setProperty('--dy', (by + (my / h) * 100).toFixed(2));
+      });
+      const drop = () => { obj.classList.remove('held'); if (moved) desk.classList.add('moved'); };
+      obj.addEventListener('pointerup', drop);
+      obj.addEventListener('lostpointercapture', drop);
+    });
+    desk.querySelectorAll<HTMLElement>('[data-print]').forEach((print) => print.addEventListener('click', (e) => {
+      if (e.detail > 0 && moved) return;
+      document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: Number(print.dataset.print), from: print } }));
+    }));
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !still) {
+      let x = 0, y = 0, queued = false;
+      const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
+      const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
+      hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
+      hero.addEventListener('pointerleave', () => { x = 0; y = 0; ask(); });
+    }
   }
 </script>
 
 <style>
-  /* Hero: the headline big on white, and beside it the studio's desk: a green cutting mat with an approved script
-     page and a price sticker on it. Everything settles in once; after that only the pointer moves it, a little. */
+  /* Hero: the headline big on white, and beside it the studio's desk: a green cutting mat running off the edge of the page,
+     with two of our reels printed out, the approved script and a price sticker on it. Everything drops onto the mat once;
+     after that it only moves when someone moves it. */
   .hero { position: relative; overflow: hidden; --mx: 0; --my: 0; }
-  .h-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr); gap: clamp(28px, 5vw, 88px); align-items: center;
+  .h-grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr); gap: clamp(28px, 4.4vw, 80px); align-items: center;
     min-height: calc(100svh - 58px); padding-top: calc(var(--header) + clamp(20px, 4vh, 48px)); padding-bottom: clamp(40px, 7vh, 80px); }
   .h-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; container-type: inline-size; min-width: 0; }
   .h-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
@@ -113,8 +169,8 @@ const sc = h.why.script;
   .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--mat); opacity: 0; animation: ping 2.4s var(--ease) infinite; }
   @keyframes ping { 0% { transform: scale(.5); opacity: .6; } 100% { transform: scale(1.3); opacity: 0; } }
 
-  .h-title { margin: 0; font-weight: 700; font-size: min(clamp(52px, 8.4vw, 150px), 15.4cqi); line-height: .9; letter-spacing: -0.06em; }
-  :global(html[lang='fr']) .h-title { font-size: min(clamp(50px, 8.4vw, 150px), 14.6cqi); }
+  .h-title { margin: 0; font-weight: 700; font-size: min(clamp(52px, 8.6vw, 156px), 15.4cqi); line-height: .9; letter-spacing: -0.06em; }
+  :global(html[lang='fr']) .h-title { font-size: min(clamp(50px, 8.6vw, 156px), 14.6cqi); }
   .ln { display: block; overflow: hidden; padding: .02em .1em .14em 0; margin-bottom: -.08em; width: fit-content; white-space: nowrap; }
   .ln > span { display: inline-block; }
   .hl { position: relative; isolation: isolate; padding: 0 .1em; margin-left: -.1em; }
@@ -127,33 +183,81 @@ const sc = h.why.script;
   .h-lede { margin: 0; max-width: 34rem; color: var(--fg-2); }
   .big-btn { padding: 17px 26px; font-size: 16px; }
 
-  /* The desk. */
-  .h-art { position: relative; height: clamp(440px, 40vw, 620px); }
-  .art-mat { position: absolute; inset: 0 0 4% 10%; border-radius: 24px; box-shadow: var(--lift-l); transform: rotate(-3deg) translate(calc(var(--mx) * -10px), calc(var(--my) * -8px)); transition: transform 900ms var(--ease); }
-  .paper { position: absolute; left: 0; top: 13%; width: 72%; padding: clamp(18px, 1.8vw, 26px) clamp(18px, 1.8vw, 26px) clamp(26px, 2.6vw, 38px); background: var(--white); color: var(--ink); border: 1px solid var(--ink); border-radius: 16px; box-shadow: var(--lift-l);
-    transform: rotate(2.5deg) translate(calc(var(--mx) * 14px), calc(var(--my) * 10px)); transition: transform 900ms var(--ease); }
-  .p-top { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
-  .p-list { list-style: none; margin: 0; padding: 0; }
-  .p-list li { display: grid; grid-template-columns: 24px 1fr; align-items: baseline; gap: 8px; padding: 11px 0; border-top: 1px solid var(--hair); font-weight: 600; font-size: clamp(14px, 1.15vw, 17px); letter-spacing: -0.01em; }
-  .p-list b { font-size: 12px; color: var(--fg-3); }
-  .stamp { position: absolute; right: 16px; bottom: -14px; padding: 7px 12px; border: 2px solid var(--mat); border-radius: 8px; background: var(--white); color: var(--mat); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; transform: rotate(-7deg); animation: stamp 500ms 1300ms cubic-bezier(.3, 1.6, .5, 1) both; }
-  @keyframes stamp { from { opacity: 0; transform: rotate(-7deg) scale(1.6); } }
-  .stick { position: absolute; right: 3%; bottom: 0; width: clamp(112px, 9vw, 144px); aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: 2px; text-align: center; background: var(--yellow); color: var(--ink); border: 1px solid var(--ink); box-shadow: var(--lift);
-    transform: rotate(-10deg) translate(calc(var(--mx) * 22px), calc(var(--my) * 16px)); transition: transform 900ms var(--ease); }
-  .stick small { font-size: 12px; font-weight: 700; }
-  .stick b { font-size: clamp(20px, 1.8vw, 27px); letter-spacing: -0.04em; line-height: 1; }
+  /* The desk. Its size is the unit for everything on it, so the arrangement holds at any width. */
+  .desk { position: relative; height: clamp(540px, 74svh, 720px); container-type: size; user-select: none; -webkit-user-select: none; }
+  .desk-mat { position: absolute; inset: 0 calc(-1 * (var(--gutter) + max(0px, (100vw - var(--wide)) / 2))) 0 0; border-radius: 28px 0 0 28px; border-right: 0;
+    animation: fade-up 1000ms 200ms cubic-bezier(.22, 1, .36, 1) both; }
+  .ruler { position: absolute; left: 0; top: 16px; display: flex; pointer-events: none; }
+  .ruler i { width: 120px; padding-left: 5px; font: 600 10px/1 var(--font); font-style: normal; color: rgba(255, 255, 255, .55); }
+  .desk-hint { position: absolute; left: 22px; bottom: 18px; margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .62); transition: opacity 500ms var(--ease); }
+  .desk-hint .fine { display: none; }
+  @media (hover: hover) and (pointer: fine) { .desk-hint .fine { display: inline; } .desk-hint .touch { display: none; } }
+  .moved .desk-hint { opacity: 0; }
 
+  /* Anything on the mat. --dx and --dy are where it was dragged to, in % of the desk; --depth is how far it follows the pointer. */
+  .obj { position: absolute; z-index: 1; display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left;
+    translate: calc(var(--dx, 0) * 1cqw) calc(var(--dy, 0) * 1cqh);
+    transform: translate(calc(var(--mx) * var(--depth, 10) * 1px), calc(var(--my) * var(--depth, 10) * 1px)); transition: transform 900ms var(--ease); }
+  @media (hover: hover) and (pointer: fine) { .obj { cursor: grab; } .obj.held { cursor: grabbing; } }
+  .face { display: block; position: relative; transform: rotate(var(--r, 0deg)); box-shadow: var(--lift);
+    transition: translate 300ms var(--ease), rotate 300ms var(--ease), scale 300ms var(--ease), box-shadow 300ms var(--ease);
+    animation: drop 1100ms cubic-bezier(.2, 1.15, .4, 1) backwards; animation-delay: var(--in, 400ms); }
+  @keyframes drop { from { opacity: 0; transform: translateY(-7cqh) rotate(calc(var(--r, 0deg) + 7deg)) scale(1.06); box-shadow: 0 60px 90px -30px rgba(0, 0, 0, .35); } 45% { opacity: 1; } }
+  .held .face { scale: 1.035; rotate: calc(var(--r, 0deg) * -.4); box-shadow: 0 2px 6px rgba(0, 0, 0, .08), 0 44px 70px -28px rgba(0, 0, 0, .5); }
+
+  .o-paper { left: 5cqw; top: 20cqh; width: 47cqw; --r: -3deg; --depth: 12; --in: 520ms; }
+  .o-print1 { left: 51cqw; top: 5cqh; width: 30cqw; --r: 4.5deg; --depth: 20; --in: 680ms; z-index: 2; }
+  .o-print2 { left: 64cqw; top: 44cqh; width: 29cqw; --r: -5deg; --depth: 26; --in: 820ms; }
+  .o-stick { left: 9cqw; top: 61cqh; width: 21cqw; --r: -12deg; --depth: 32; --in: 1000ms; z-index: 2; }
+
+  .paper { padding: 3.4cqw 3.4cqw 4.6cqw; background: var(--white); color: var(--ink); border: 1px solid var(--ink); border-radius: 2.4cqw; }
+  .p-top { margin: 0 0 1.6cqw; font-size: clamp(10px, 2.1cqw, 12px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
+  .p-list { list-style: none; margin: 0; padding: 0; }
+  .p-list li { display: grid; grid-template-columns: 4cqw 1fr; align-items: baseline; gap: 1.4cqw; padding: 1.9cqw 0; border-top: 1px solid var(--hair); font-weight: 600; font-size: clamp(12px, 3cqw, 17px); letter-spacing: -0.01em; }
+  .p-list b { font-size: clamp(10px, 2.1cqw, 12px); color: var(--fg-3); }
+  .stamp { position: absolute; right: 3cqw; bottom: -2.6cqw; padding: 1.2cqw 2cqw; border: 2px solid var(--mat); border-radius: 8px; background: var(--white); color: var(--mat); font-weight: 700; font-size: clamp(10px, 2.3cqw, 13px); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; transform: rotate(-7deg);
+    animation: stamp 520ms 1700ms cubic-bezier(.3, 1.6, .5, 1) both; }
+  @keyframes stamp { from { opacity: 0; transform: rotate(-7deg) scale(1.7); } }
+
+  /* The reels, printed: a white border, the photo, and a caption written under it. */
+  .print .face { padding: 1.7cqw 1.7cqw 0; background: var(--white); color: var(--ink); border: 1px solid var(--ink); border-radius: 1cqw; }
+  .print .media { position: relative; display: block; overflow: hidden; border-radius: .5cqw; background: var(--surface-2); aspect-ratio: 9 / 16; }
+  .print img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
+  .play { position: absolute; right: 1.6cqw; bottom: 1.6cqw; display: grid; place-items: center; width: clamp(28px, 7cqw, 40px); aspect-ratio: 1; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--ink);
+    transition: background 220ms var(--ease), scale 300ms var(--ease); }
+  .play svg { width: 42%; height: 42%; margin-left: 8%; fill: currentColor; }
+  .cap { display: grid; gap: .5cqw; padding: 1.6cqw .2cqw 2.2cqw; font-weight: 700; font-size: clamp(11px, 2.4cqw, 14px); letter-spacing: -0.01em; line-height: 1.15; }
+  .cap small { font-size: clamp(9px, 1.7cqw, 10px); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); }
+  .tape { position: absolute; z-index: 1; left: 50%; top: -2.4cqw; width: 46%; height: 4.8cqw; translate: -50% 0; rotate: -5deg; background: rgba(244, 193, 196, .88);
+    clip-path: polygon(0 8%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 8%, 100% 92%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 92%); }
+  @media (hover: hover) and (pointer: fine) {
+    .print:hover:not(.held) .face { translate: 0 -6px; box-shadow: var(--lift-l); }
+    .print:hover .play { background: var(--pink); scale: 1.08; }
+  }
+  .print:focus-visible { outline: none; }
+  .print:focus-visible .face { outline: 2px solid var(--ink); outline-offset: 4px; }
+
+  .stick { aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: .4cqw; text-align: center; background: var(--yellow); color: var(--ink); border: 1px solid var(--ink); }
+  .stick small { font-size: clamp(10px, 2.3cqw, 13px); font-weight: 700; }
+  .stick b { font-size: clamp(17px, 4.6cqw, 28px); letter-spacing: -0.04em; line-height: 1; }
+
+  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); } }
+  /* One column: the desk sits under the copy and the mat runs the full width of the screen. */
   @media (max-width: 960px) {
-    .h-grid { grid-template-columns: 1fr; min-height: 0; gap: 36px; }
-    .h-art { height: clamp(340px, 86vw, 470px); width: min(100%, 520px); justify-self: center; }
+    .h-grid { grid-template-columns: 1fr; min-height: 0; gap: clamp(36px, 6vw, 56px); }
+    .desk { width: min(100%, 600px); height: auto; aspect-ratio: 6 / 7; justify-self: center; }
+    .desk-mat { left: calc(50% - 50vw); right: calc(50% - 50vw); border-radius: 0; border-inline: 0; }
+    .desk-hint { left: calc(50% - 50cqw + 4px); }
   }
   @media (max-width: 560px) {
     .big-btn { padding: 15px 20px; font-size: 15px; } .h-copy .actions { width: 100%; } .h-copy .actions .btn { flex: 1 1 auto; }
-    .h-art { height: 350px; } .art-mat { inset: 0 0 6% 12%; }
-    .paper { top: 9%; width: 80%; padding: 16px 16px 24px; } .p-list li { padding: 8px 0; font-size: 14px; }
-    .stick { width: 96px; } .stick b { font-size: 19px; } .stick small { font-size: 11px; }
+    .desk-hint { bottom: 14px; font-size: 10px; }
+    .o-paper { left: 1cqw; top: 19cqh; width: 54cqw; }
+    .o-print1 { left: 54cqw; top: 4cqh; width: 33cqw; }
+    .o-print2 { left: 64cqw; top: 41cqh; width: 33cqw; }
+    .o-stick { left: 4cqw; top: 66cqh; width: 25cqw; }
   }
-  @media (prefers-reduced-motion: reduce) { .rise, .up, .hl::before, .pulse::after, .stamp { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .rise, .up, .hl::before, .pulse::after, .stamp, .face, .desk-mat { animation: none; } .obj { transition: none; } }
 
   /* The formats we make, running in a band under the hero. */
   .ticker { overflow: hidden; padding-block: 18px; background: var(--ink); color: #fff; }

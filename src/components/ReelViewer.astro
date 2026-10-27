@@ -49,8 +49,8 @@ const icon = {
       player.animate([{ opacity: .4, transform: 'scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
       video.play().catch(() => { setMute(true); video.play().catch(() => {}); });
     };
-    const open = (i: number) => {
-      opener = cards[i];
+    const open = (i: number, el: HTMLElement = cards[i]) => {
+      opener = el;
       document.dispatchEvent(new Event('reel:open'));
       viewer.hidden = false;
       document.documentElement.classList.add('locked');
@@ -73,10 +73,12 @@ const icon = {
       video.pause();
       setTimeout(() => { viewer.hidden = true; video.removeAttribute('src'); video.load(); }, 360);
       document.documentElement.classList.remove('locked');
-      opener?.querySelector<HTMLElement>('[data-open]')?.focus({ preventScroll: true });
+      (opener?.querySelector<HTMLElement>('[data-open]') ?? opener)?.focus({ preventScroll: true });
     };
 
     cards.forEach((card, i) => card.addEventListener('click', () => open(i)));
+    // The reels printed on the hero desk open here too, growing out of the print.
+    document.addEventListener('reel:play', (e) => { const { i, from } = (e as CustomEvent<{ i: number; from: HTMLElement }>).detail; open(i, from); });
     viewer.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
     viewer.querySelector('[data-prev]')!.addEventListener('click', () => load(current - 1));
     viewer.querySelector('[data-next]')!.addEventListener('click', () => load(current + 1));
