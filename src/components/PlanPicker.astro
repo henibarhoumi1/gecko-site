@@ -1,5 +1,6 @@
 ---
 // Home page pricing: pick a plan on the left, its card fills the right. The full comparison lives on Offers.
+// When the brief above is sent, it opens on the plan that fits and marks it (the gecko:plan event).
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
@@ -19,13 +20,13 @@ const start = 2;
     </div>
     <div class="tabs rv" style="--d:80ms" role="tablist" aria-label={h.plansTitle}>
       {plans.map((m, i) => (
-        <button type="button" role="tab" id={`tab-${m.key}`} aria-controls={`panel-${m.key}`} aria-selected={String(i === start)} tabindex={i === start ? 0 : -1} data-tab={i}>
-          <span class="nm">{m.name}</span>
+        <button type="button" role="tab" id={`tab-${m.key}`} aria-controls={`panel-${m.key}`} aria-selected={String(i === start)} tabindex={i === start ? 0 : -1} data-tab={i} data-key={m.key}>
+          <span class="nm">{m.name} <span class="you" hidden>{p.forYou}</span></span>
           <span class="meta">{m.max ? `${m.reels}–${m.max}` : m.reels} reels · {m.custom ? p.customShort : `${fmt(m.launch, lang)} ${cur}`}</span>
         </button>
       ))}
-      <button type="button" role="tab" id="tab-bespoke" aria-controls="panel-bespoke" aria-selected="false" tabindex="-1" data-tab={plans.length} class="bes">
-        <span class="nm">{p.bespokeName}</span>
+      <button type="button" role="tab" id="tab-bespoke" aria-controls="panel-bespoke" aria-selected="false" tabindex="-1" data-tab={plans.length} data-key="bespoke" class="bes">
+        <span class="nm">{p.bespokeName} <span class="you" hidden>{p.forYou}</span></span>
         <span class="meta">{p.bespokeMeta}</span>
       </button>
     </div>
@@ -37,6 +38,7 @@ const start = 2;
       <article class={`card ${m.custom ? 'dark' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
         {!m.custom && <span class={`sticker ${m.once ? 'once' : ''}`} aria-hidden="true">{m.once ? p.exclusive : o.launch}</span>}
         <header>
+          <p class="fitb" hidden>✓ {p.fit}</p>
           <h3 class="name">{m.name}</h3>
           {m.for && <p class="for">{m.for[lang]}</p>}
         </header>
@@ -62,6 +64,7 @@ const start = 2;
     ))}
     <article class="card bespoke" role="tabpanel" id="panel-bespoke" aria-labelledby="tab-bespoke" hidden data-panel={plans.length}>
       <header>
+        <p class="fitb" hidden>✓ {p.fit}</p>
         <h3 class="name">{p.bespokeName}</h3>
         <p class="for">{p.bespokeFor}</p>
       </header>
@@ -107,6 +110,13 @@ const start = 2;
       at = i;
       if (focus) tabs[i].focus();
     };
+    addEventListener('gecko:plan', (e) => {
+      const i = tabs.findIndex((t) => t.dataset.key === (e as CustomEvent).detail);
+      if (i < 0) return;
+      tabs.forEach((t, k) => (t.querySelector<HTMLElement>('.you')!.hidden = k !== i));
+      panels.forEach((x, k) => (x.querySelector<HTMLElement>('.fitb')!.hidden = k !== i));
+      pick(i);
+    });
     tabs.forEach((t, i) => {
       t.addEventListener('click', () => pick(i));
       t.addEventListener('keydown', (e) => {
@@ -123,11 +133,16 @@ const start = 2;
   .side { display: grid; gap: clamp(24px, 3vw, 36px); position: sticky; top: 110px; }
   .intro { display: grid; gap: 16px; }
   .intro .h2 { max-width: 10ch; }
+  .you { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 2px; }
+  .you[hidden] { display: none; }
+  .fitb { margin: 0 0 4px; justify-self: start; padding: 6px 12px; border-radius: 999px; background: var(--mat-soft); color: var(--mat-deep); font-size: 13px; font-weight: 700; }
+  .fitb[hidden] { display: none; }
+  .dark .fitb { background: rgba(255, 255, 255, .14); color: #fff; }
   .intro .text { margin: 0; max-width: 30rem; }
   .tabs { display: grid; gap: 10px; }
-  .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-  .tabs button:hover { background: var(--pink-soft); }
-  .tabs [aria-selected='true'] { background: var(--mat); color: #fff; }
+  .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: 1px solid rgba(0, 0, 0, .14); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
+  .tabs button:hover { border-color: var(--ink); }
+  .tabs [aria-selected='true'] { background: var(--mat); border-color: var(--mat); color: #fff; box-shadow: var(--lift); }
   .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
   .meta { font-size: 15px; font-weight: 600; white-space: nowrap; }
   .all { font-weight: 700; text-decoration: none; width: fit-content; }
@@ -136,12 +151,12 @@ const start = 2;
   .all:hover span { transform: translateX(4px); }
 
   .stage { display: grid; }
-  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift-l); }
+  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: 1px solid rgba(0, 0, 0, .1); border-radius: var(--r-lg); box-shadow: var(--lift-l); }
   .card header { display: grid; gap: 8px; padding-right: 150px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
   .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; }
   .sticker { position: absolute; top: clamp(22px, 2.4vw, 36px); right: clamp(22px, 2.4vw, 36px); padding: 7px 12px; border-radius: 999px; background: var(--pink); font-weight: 600; font-size: 12px; line-height: 1; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
-  .price { display: grid; gap: 6px; padding-block: 18px; border-block: var(--line) solid var(--ink); }
+  .price { display: grid; gap: 6px; padding-block: 18px; border-block: 1px solid rgba(0, 0, 0, .12); }
   .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
   .num.word { font-size: clamp(48px, 5vw, 80px); }
   .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: 1; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
@@ -152,21 +167,21 @@ const start = 2;
   .reels { margin: 0; font-size: 17px; }
   .reels b { font-size: 22px; letter-spacing: -0.02em; }
   .card .ticks-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; font-size: 16px; }
-  .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: var(--line) solid var(--ink); border-radius: var(--r-sm); overflow: hidden; }
+  .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid rgba(0, 0, 0, .12); border-radius: var(--r-sm); overflow: hidden; }
   .spec div { padding: 12px 14px; display: grid; gap: 4px; }
-  .spec div + div { border-left: var(--line) solid var(--ink); }
+  .spec div + div { border-left: 1px solid rgba(0, 0, 0, .12); }
   .spec dt { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; opacity: .7; }
   .spec dd { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
   .dark .spec, .dark .spec div + div { border-color: rgba(255, 255, 255, .3); }
   .out { margin: 0; font-size: 15px; line-height: 1.45; }
   .dark .out { color: rgba(255, 255, 255, .8); }
   .kinds { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 22px; }
-  .kinds li { display: grid; gap: 4px; padding-top: 12px; border-top: var(--line) solid var(--ink); }
+  .kinds li { display: grid; gap: 4px; padding-top: 12px; border-top: 1px solid rgba(0, 0, 0, .14); }
   .kinds b { font-size: 17px; letter-spacing: -0.01em; }
   .kinds span { font-size: 15px; line-height: 1.45; }
   .bespoke { background: var(--yellow-soft); }
-  .tabs .bes { border-style: dashed; }
-  @media (max-width: 560px) { .spec, .kinds { grid-template-columns: 1fr; } .spec div + div { border-left: 0; border-top: var(--line) solid var(--ink); } }
+  .tabs .bes { border-style: dashed; border-color: rgba(0, 0, 0, .3); }
+  @media (max-width: 560px) { .spec, .kinds { grid-template-columns: 1fr; } .spec div + div { border-left: 0; border-top: 1px solid rgba(0, 0, 0, .12); } }
   .card .btn { justify-self: start; }
   .dark { background: var(--ink); color: #fff; box-shadow: var(--lift-l); }
   .dark .price { border-color: rgba(255, 255, 255, .25); }

@@ -103,13 +103,13 @@ const icons = [
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const wrap = app.closest<HTMLElement>('[data-ws-wrap]')!;
     // It comes alive once it is on screen: the timeline and the meter fill, then new activity drops in every few
-    // seconds with a small notice above the window, the way it does for a client during a project.
+    // seconds, the way it does for a client during a project. The small notice shows once, with the first update.
     const feed = app.querySelector<HTMLUListElement>('[data-ws-feed]')!;
     const count = app.querySelector<HTMLElement>('[data-ws-count]')!;
     const toast = wrap.querySelector<HTMLElement>('[data-ws-toast]')!;
     const toastText = wrap.querySelector<HTMLElement>('[data-ws-toast-text]')!;
     const live: string[] = JSON.parse(app.dataset.live || '[]');
-    let n = 0, timer = 0, seen = false;
+    let n = 0, timer = 0, seen = false, toasted = false;
     const drop = () => {
       if (panes[0].hidden || document.hidden) return;
       const text = live[n++ % live.length];
@@ -123,8 +123,7 @@ const icons = [
       const c = Number(count.textContent);
       count.textContent = String(c >= 10 ? 7 : c + 1);
       app.style.setProperty('--fill', `${(Number(count.textContent) / 10) * 100}%`);
-      toastText.textContent = text;
-      toast.classList.remove('up'); void toast.offsetWidth; toast.classList.add('up');
+      if (!toasted) { toasted = true; toastText.textContent = text; toast.classList.add('up'); }
     };
     new IntersectionObserver(([e]) => {
       if (e.isIntersecting) {

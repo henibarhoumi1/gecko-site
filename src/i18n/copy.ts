@@ -48,6 +48,7 @@ const en = {
     spec: { shoot: 'Production', review: 'After delivery', out: 'Not included: ad spend, studio, talent and props.' },
     bespokeName: 'Bespoke project', bespokeMeta: 'Quoted from your brief', bespokeFor: 'For launches, films and campaigns that need more than a monthly plan.', bespokePrice: 'On quote', bespokeNote: 'Scoped and quoted from your brief. Studio, talent and props are on you: you approve each cost, we pay it upfront and invoice it with the remaining 50%.',
     custom: 'Custom price', customShort: 'custom', customNote: 'Priced to your volume, from 20 to 100 reels a month.', upTo: 'to',
+    fit: 'Best fit for your brief', forYou: 'For you',
   },
   apply: {
     title: 'Tell us what you’re making.',
@@ -80,6 +81,7 @@ const en = {
     plan: 'Plan', clear: 'Remove',
     bespoke: 'A bespoke project, quoted from your brief',
     kicker: 'Takes about a minute',
+    fitLead: 'From your answers, start with', fitSee: 'See the plan', keys: 'Tip: press a number to answer.',
   },
   contact: {
     title: 'Tell us what you’re working on.',
@@ -289,6 +291,7 @@ const fr: Copy = {
     spec: { shoot: 'Production', review: 'Après la livraison', out: 'Non inclus\u00a0: budget pub, studio, talents et accessoires.' },
     bespokeName: 'Projet sur mesure', bespokeMeta: 'Sur devis', bespokeFor: 'Pour les lancements, films et campagnes qui demandent plus qu’un plan mensuel.', bespokePrice: 'Sur devis', bespokeNote: 'Cadré et chiffré selon votre brief. Studio, talents et accessoires sont à votre charge : vous validez chaque coût, on l’avance et on le facture avec les 50 % restants.',
     custom: 'Prix sur mesure', customShort: 'sur mesure', customNote: 'Selon votre volume, de 20 à 100 reels par mois.', upTo: 'à',
+    fit: 'Le plus adapté à votre brief', forYou: 'Pour vous',
   },
   apply: {
     title: 'Dites-nous ce que vous préparez.',
@@ -320,6 +323,7 @@ const fr: Copy = {
     plan: 'Plan', clear: 'Retirer',
     bespoke: 'Un projet sur mesure, chiffré selon votre brief',
     kicker: 'Environ une minute',
+    fitLead: 'D’après vos réponses, commencez par', fitSee: 'Voir le plan', keys: 'Astuce : tapez un chiffre pour répondre.',
   },
   contact: {
     title: 'Parlez-nous de votre projet.',

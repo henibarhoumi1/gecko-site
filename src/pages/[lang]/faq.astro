@@ -12,13 +12,13 @@ const s = t(lang);
 const f = c(lang).faqPage;
 const n = c(lang).nav;
 ---
-<Base lang={lang} title={n.faq}>
-  <section class="page-head">
+<Base lang={lang} title={n.faq} darkHead>
+  <section class="page-head lit">
     <div class="wrap wide qa">
       <div class="lead rv">
         <h1 class="h1">{f.title}</h1>
         <div class="more">
-          <p class="text text-l">{f.more}</p>
+          <p class="text text-l lede">{f.more}</p>
           <div class="actions">
             <a class="btn primary" href={site.whatsapp} rel="noopener">{f.moreCta} <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn" href={href(lang, 'offers')}>{n.offers}</a>

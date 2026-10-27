@@ -1,7 +1,8 @@
 ---
 // The top bar. At the top of a page it sits open and borderless; once you scroll it becomes a floating white bar,
-// hides while you read down and slides back as soon as you scroll up. "Menu" opens a full panel that drops from
-// the top: numbered pages on the left, contacts and language on the right.
+// hides while you read down and slides back as soon as you scroll up. A soft pill glides under the links as the
+// pointer moves across them and rests on the current page. The globe opens the language choice.
+// "Menu" opens a full panel that drops from the top: numbered pages on the left, contacts and language on the right.
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -22,20 +23,27 @@ const langs = [
   { l: 'en', short: 'EN', name: 'English' },
   { l: 'fr', short: 'FR', name: 'Français' },
 ].map((x) => ({ ...x, url: !/^\/(en|fr)(\/|$)/.test(path) ? `/${x.l}/` : x.l === lang ? path : swapLang(path, x.l as Locale) }));
+const here = langs.find((x) => x.l === lang)!;
+const there = langs.find((x) => x.l !== lang)!;
+const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.9 5.6 3.9 9s-1.3 6.4-3.9 9c-2.6-2.6-3.9-5.6-3.9-9S9.4 5.6 12 3z" />';
 ---
 <header class="site-header" data-header>
   <nav class="bar" aria-label="Main">
     <a href={href(lang)} class="brand" aria-label="Gecko"><Logo /></a>
-    <ul class="links">
+    <ul class="links" data-links>
+      <li class="glide" aria-hidden="true" role="presentation"></li>
       {links.map(([p, label]) => (
-        <li><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}><span class="roll"><span data-text={label}>{label}</span></span></a></li>
+        <li><a href={p} aria-current={path.startsWith(p) ? 'page' : undefined}>{label}</a></li>
       ))}
     </ul>
     <div class="right">
-      <div class="lang-s" role="group" aria-label={n.lang}>
-        {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="18" height="12" />{x.short}</a>)}
+      <div class="lang" data-lang>
+        <button type="button" class="lang-b" aria-expanded="false" aria-controls="lang-m" aria-label={n.lang} data-lang-b><svg class="globe" viewBox="0 0 24 24" aria-hidden="true" set:html={globe} /><span>{here.short}</span></button>
+        <ul class="lang-m" id="lang-m" data-lang-m hidden>
+          {langs.map((x) => <li><a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}>{x.name}<span class="tick" aria-hidden="true">✓</span></a></li>)}
+        </ul>
       </div>
-      <a class="btn primary cta" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
+      <a class="btn primary cta" href={href(lang, 'apply')}>{n.apply}<span class="ca" aria-hidden="true">→</span></a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
         <span class="bl"><span class="b-open">{n.menu}</span><span class="b-close">{n.close}</span></span>
         <span class="bi" aria-hidden="true"><i></i><i></i></span>
@@ -64,9 +72,7 @@ const langs = [
           <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
           <a class="m-hire" href={href(lang, 'join')}>{c(lang).join.nav} <span aria-hidden="true">→</span></a>
         </div>
-        <div class="m-langs">
-          {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="21" height="14" />{x.name}</a>)}
-        </div>
+        <a class="m-lang" href={there.url} hreflang={there.l} lang={there.l}><svg class="globe" viewBox="0 0 24 24" aria-hidden="true" set:html={globe} />{there.name}</a>
       </aside>
     </div>
   </div>
@@ -99,6 +105,27 @@ const langs = [
     else { menu.classList.remove('in'); setTimeout(() => { if (!header.classList.contains('open')) menu.hidden = true; }, 520); }
   };
   burger.addEventListener('click', () => setMenu(menu.hidden));
+
+  // The gliding pill: it follows the pointer from link to link and settles back on the current page.
+  const list = header.querySelector<HTMLElement>('[data-links]')!;
+  const glide = list.querySelector<HTMLElement>('.glide')!;
+  const current = list.querySelector<HTMLElement>('a[aria-current="page"]');
+  const place = (a: HTMLElement | null, mode: 'hot' | 'rest') => {
+    if (!a) { glide.classList.remove('hot', 'rest'); return; }
+    glide.style.setProperty('--x', `${a.offsetLeft}px`); glide.style.setProperty('--w', `${a.offsetWidth}px`);
+    glide.classList.toggle('hot', mode === 'hot'); glide.classList.toggle('rest', mode === 'rest');
+  };
+  glide.classList.add('still'); place(current, 'rest');
+  requestAnimationFrame(() => requestAnimationFrame(() => glide.classList.remove('still')));
+  list.querySelectorAll<HTMLElement>('a').forEach((a) => a.addEventListener('pointerenter', () => place(a, 'hot')));
+  list.addEventListener('pointerleave', () => place(current, 'rest'));
+
+  // Language: the globe opens a small list; a click outside or Escape closes it.
+  const lb = header.querySelector<HTMLButtonElement>('[data-lang-b]')!;
+  const lm = header.querySelector<HTMLElement>('[data-lang-m]')!;
+  const setLang = (open: boolean) => { lb.setAttribute('aria-expanded', String(open)); lm.hidden = !open; };
+  lb.addEventListener('click', (e) => { e.stopPropagation(); setLang(lm.hidden); });
+  addEventListener('click', (e) => { if (!lm.hidden && !(e.target as HTMLElement).closest('[data-lang]')) setLang(false); });
   // A link to another page leaves the panel open: the page change fades it out together with the old page,
   // instead of freezing it half closed. A link to this same page just closes it.
   menu.addEventListener('click', (e) => {
@@ -112,7 +139,11 @@ const langs = [
     setMenu(false); menu.hidden = true;
     requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove('pre')));
   });
-  addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); burger.focus(); } });
+  addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!lm.hidden) { setLang(false); lb.focus(); }
+    else if (!menu.hidden) { setMenu(false); burger.focus(); }
+  });
 </script>
 <style>
   .site-header { --t: 560ms cubic-bezier(.16, 1, .3, 1); position: fixed; top: 0; left: 0; right: 0; z-index: 50; padding: 12px var(--gutter) 0; pointer-events: none; transition: transform var(--t); }
@@ -125,23 +156,32 @@ const langs = [
   .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
   .brand:hover { transform: rotate(-4deg) scale(1.04); }
-  .links { display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; transition: opacity 300ms var(--ease); }
+  .links { position: relative; display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; transition: opacity 300ms var(--ease); }
   .open .links { opacity: 0; pointer-events: none; }
-  .links a { position: relative; display: block; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 14px; border-radius: 999px; transition: background 220ms var(--ease); }
-  .links a:hover { background: rgba(0, 0, 0, .05); }
-  .links a[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--mat); }
-  /* Text rolls up and is replaced by its copy on hover. */
-  .roll { display: inline-block; overflow: hidden; vertical-align: top; line-height: 1.25; }
-  .roll > span { position: relative; display: inline-block; transition: transform 420ms cubic-bezier(.7, 0, .2, 1); }
-  .roll > span::after { content: attr(data-text); position: absolute; left: 0; top: 100%; }
-  a:hover .roll > span { transform: translateY(-100%); }
+  .links a { position: relative; z-index: 1; display: block; font-weight: 500; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 15px; border-radius: 999px; opacity: .72; transition: opacity 260ms var(--ease); }
+  .links a:hover, .links a[aria-current='page'] { opacity: 1; }
+  .glide { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); border-radius: 999px; background: rgba(0, 0, 0, .065); opacity: 0; pointer-events: none;
+    transition: transform 560ms cubic-bezier(.22, 1, .36, 1), width 560ms cubic-bezier(.22, 1, .36, 1), opacity 300ms var(--ease), background 300ms var(--ease); }
+  .glide.hot { opacity: 1; }
+  .glide.rest { opacity: 1; background: rgba(0, 0, 0, .04); }
+  .glide.still { transition: none; }
   .right { display: flex; align-items: center; gap: 8px; }
-  .lang-s { display: flex; padding: 3px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .18); transition: opacity 300ms var(--ease); }
-  .open .lang-s, .open .cta { opacity: 0; pointer-events: none; }
-  .lang-s a { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-decoration: none; padding: 6px 9px; border-radius: 999px; color: rgba(0, 0, 0, .55); transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .lang-s a[aria-current] { background: var(--ink); color: #fff; }
-  .lang-s a:not([aria-current]):hover { color: var(--ink); }
-  .cta { padding: 12px 18px; font-size: 14px; border-radius: 999px; box-shadow: none; transition: opacity 300ms var(--ease), background 200ms var(--ease); }
+  .lang { position: relative; transition: opacity 300ms var(--ease); }
+  .open .lang, .open .cta { opacity: 0; pointer-events: none; }
+  .lang-b { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px 0 10px; border: 0; border-radius: 999px; background: transparent; color: inherit; font: 600 13px/1 var(--font); letter-spacing: .04em; cursor: pointer; transition: background 220ms var(--ease); }
+  .lang-b:hover, .lang-b[aria-expanded='true'] { background: rgba(0, 0, 0, .065); }
+  .globe { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.4; transition: transform 700ms cubic-bezier(.22, 1, .36, 1); }
+  .lang-b:hover .globe, .lang-b[aria-expanded='true'] .globe { transform: rotate(180deg); }
+  .lang-m { position: absolute; right: 0; top: calc(100% + 10px); min-width: 168px; margin: 0; padding: 6px; list-style: none; background: var(--white); color: var(--ink); border: 1px solid rgba(0, 0, 0, .1); border-radius: 14px; box-shadow: var(--lift-l); transform-origin: top right; animation: lang-in 260ms cubic-bezier(.22, 1, .36, 1); }
+  .lang-m[hidden] { display: none; }
+  @keyframes lang-in { from { opacity: 0; transform: translateY(-6px) scale(.97); } }
+  .lang-m a { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 9px; font-size: 14px; font-weight: 500; text-decoration: none; transition: background 180ms var(--ease); }
+  .lang-m a:hover { background: rgba(0, 0, 0, .05); }
+  .lang-m .tick { opacity: 0; color: var(--mat); font-weight: 700; }
+  .lang-m a[aria-current] .tick { opacity: 1; }
+  .cta { padding: 12px 18px; font-size: 14px; border-radius: 999px; box-shadow: none; transition: opacity 300ms var(--ease), background 200ms var(--ease), padding 400ms cubic-bezier(.22, 1, .36, 1); }
+  .ca { display: inline-block; width: 0; overflow: hidden; opacity: 0; transform: translateX(-6px); transition: width 400ms cubic-bezier(.22, 1, .36, 1), opacity 300ms var(--ease), transform 400ms cubic-bezier(.22, 1, .36, 1), margin 400ms cubic-bezier(.22, 1, .36, 1); }
+  .cta:hover .ca { width: 1em; margin-left: 6px; opacity: 1; transform: none; color: var(--pink); }
   .burger { display: inline-flex; align-items: center; gap: 10px; height: 44px; padding: 0 8px 0 16px; border-radius: 999px; border: var(--line) solid currentColor; background: transparent; color: inherit; font: 700 14px/1 var(--font); cursor: pointer; transition: background 220ms var(--ease), color 220ms var(--ease); }
   @media (hover: hover) { .burger:hover { background: var(--ink); color: #fff; } }
   .open .burger { color: #fff; border-color: #fff; }
@@ -178,25 +218,24 @@ const langs = [
   .m-reach a { text-decoration: none; font-size: 16px; width: fit-content; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms var(--ease); }
   .m-reach a:hover { background-size: 100% 1px; }
   .m-hire { margin-top: 6px; color: var(--yellow); font-weight: 700; }
-  .m-langs { display: flex; gap: 8px; }
-  .flag { display: block; flex: none; border-radius: 2px; object-fit: cover; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12); }
-  .lang-s a:not([aria-current]) .flag { opacity: .7; }
-  .m-langs a { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 11px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); text-decoration: none; font-size: 14px; font-weight: 600; }
-  .m-langs a[aria-current] { background: #fff; color: var(--ink); border-color: #fff; }
+  .m-lang { display: inline-flex; align-items: center; gap: 10px; width: fit-content; padding: 10px 16px 10px 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .3); text-decoration: none; font-size: 14px; font-weight: 600; transition: background 220ms var(--ease), color 220ms var(--ease); }
+  .m-lang:hover { background: #fff; color: var(--ink); }
+  .m-lang:hover .globe { transform: rotate(180deg); }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   /* Pages that open on a dark or green block get a white bar until it gathers into the white pill. */
   :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .bar { color: #fff; }
-  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s { border-color: rgba(255, 255, 255, .35); }
-  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s a { color: rgba(255, 255, 255, .75); }
-  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-s a[aria-current] { background: #fff; color: var(--ink); }
-  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .links a:hover { background: rgba(255, 255, 255, .12); }
-  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .links a[aria-current='page']::after { background: var(--yellow); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .glide { background: rgba(255, 255, 255, .16); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .glide.rest { background: rgba(255, 255, 255, .1); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-b:hover,
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .lang-b[aria-expanded='true'] { background: rgba(255, 255, 255, .14); }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .cta { background: #fff; color: var(--ink); border-color: #fff; }
+  :global(html[data-head='dark']) .site-header:not(.solid):not(.open) .burger:hover { background: #fff; color: var(--ink); }
   @media (max-width: 1080px) { .links { display: none; } .right { margin-left: auto; } }
   @media (max-width: 860px) {
     .menu-in { grid-template-columns: 1fr; gap: 32px; }
     .m-d { display: none; }
     .m-links a { grid-template-columns: 32px 1fr; }
   }
-  @media (max-width: 560px) { .cta, .lang-s { display: none; } .bar { height: 56px; } }
-  @media (prefers-reduced-motion: reduce) { .site-header, .bar, .menu, .m-links li, .m-side, .roll > span { transition: none; } }
+  @media (max-width: 560px) { .cta, .lang { display: none; } .bar { height: 56px; } }
+  @media (prefers-reduced-motion: reduce) { .site-header, .bar, .menu, .m-links li, .m-side, .glide { transition: none; } }
 </style>

@@ -27,7 +27,7 @@ const icon: Record<string, string> = {
 };
 ---
 <Base lang={lang} title={j.nav} darkHead>
-  <section class="on-mat page-head join-head">
+  <section class="lit page-head join-head">
     <div class="wrap wide jh">
       <div class="stack" style="--gap:22px">
         <p class="kick rv"><span>✱</span>{j.kick}</p>
@@ -237,9 +237,9 @@ const icon: Record<string, string> = {
   .jh { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 6vw, 96px); align-items: end; }
   .join-head .h1 { max-width: 11ch; }
   .lede { margin: 0; max-width: 36rem; color: rgba(255, 255, 255, .9); }
-  .join-head .kick span { background: var(--pink); }
+  .join-head .kick span { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); opacity: 1; font-size: 0; }
   .role-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: var(--lift);
+  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--white); color: var(--ink); border: 0; font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: var(--lift);
     transform: rotate(calc((var(--i) - 4) * 1.4deg)); animation: jh-bob 4s ease-in-out calc(var(--i) * -.45s) infinite; }
   .role-cloud li:nth-child(3n) { background: var(--yellow); }
   .role-cloud li:nth-child(4n) { background: var(--pink); }

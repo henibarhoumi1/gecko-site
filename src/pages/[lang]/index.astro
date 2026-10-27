@@ -17,34 +17,54 @@ const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
 ---
-<Base lang={lang} footerCta={false}>
+<Base lang={lang} footerCta={false} darkHead>
   <section class="hero" data-hero>
-    <div class="wrap wide hero-grid">
-      <div class="hero-copy">
-        <p class="kicker rise" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
-        <h1 class="h1 big" aria-label={h.title.join(' ')}>
-          {h.title.map((line, i) => (
-            <span class="line" aria-hidden="true"><span class={`rise ${i === 2 ? 'hl' : ''}`} style={`--d:${80 + i * 110}ms`}>{line}</span></span>
-          ))}
-        </h1>
-        <p class="text text-l lede rise" style="--d:420ms">{h.sub}</p>
-        <div class="actions rise" style="--d:500ms">
-          <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
-        </div>
+    <div class="h-bg" aria-hidden="true">
+      <span class="h-mat sharp"></span>
+      <span class="h-mat soft"></span>
+      <span class="leak l1"></span>
+      <span class="leak l2"></span>
+      <span class="leak l3"></span>
+      <span class="vig"></span>
+      <span class="grain"></span>
+    </div>
+
+    <div class="wrap wide h-in">
+      <div class="h-top rise" style="--d:60ms">
+        <p class="h-kick"><span class="rec" aria-hidden="true"></span>{h.kicker}</p>
+        <p class="h-tc" aria-hidden="true"><span>TC</span> <b data-tc>00:00:00:00</b></p>
       </div>
-      {ads.length >= 3 && (
-        <a class="hero-art rise" style="--d:260ms" href={href(lang, 'work')}  aria-label={h.workCta}>
-          <span class="art-mat mat" aria-hidden="true"></span>
-          <span class="art-blob" aria-hidden="true"></span>
-          {ads.slice(0, 3).map((ad, i) => (
-            <span class={`fan f${i}`} aria-hidden="true">
-              <img src={ad.poster} alt="" loading="eager" />
-              {i === 1 && <video src="/work/hero-loop.mp4" poster={ad.poster} muted loop playsinline autoplay preload="auto"></video>}
-            </span>
-          ))}
+
+      <div class="h-tw">
+      <h1 class="h-title" aria-label={h.title.join(' ')}>
+        {h.title.map((line, i) => (
+          <span class={`ln ln${i + 1}`} aria-hidden="true"><span class="rise" style={`--d:${160 + i * 120}ms`}>{line}</span></span>
+        ))}
+      </h1>
+      </div>
+
+      {ads.length > 0 && (
+        <a class="vf" href="#work" data-vf aria-label={h.workCta}>
+          <span class="vf-glow" style={`background-image:url(${ads[0].poster})`} aria-hidden="true"></span>
+          <span class="vf-body" aria-hidden="true">
+            <video src="/work/hero-loop.mp4" poster={ads[0].poster} muted loop playsinline autoplay preload="auto"></video>
+            <span class="vf-thirds"></span>
+            <span class="vf-c tl"></span><span class="vf-c tr"></span><span class="vf-c bl"></span><span class="vf-c br"></span>
+            <span class="vf-af" data-af><i></i></span>
+            <span class="vf-row top"><span class="vf-rec"><i></i>REC</span><span>4K · 25p</span><span class="vf-bat"><i></i></span></span>
+            <span class="vf-row bot"><span>ISO 800</span><span>f/2.8</span><span>1/50</span><span class="vf-meter"><i></i><i></i></span></span>
+          </span>
+          <span class="vf-tag" aria-hidden="true">{h.workCta} <span>→</span></span>
         </a>
       )}
+
+      <div class="h-foot">
+        <p class="h-lede rise" style="--d:560ms">{h.sub}</p>
+        <div class="actions rise" style="--d:640ms">
+          <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn big-btn ghost" href="#plans">{h.ctaAlt}</a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -75,17 +95,17 @@ const h = c(lang).home;
 
   <Bands lang={lang} />
 
+  <section class="on-white section apply-sec" id="apply">
+    <div class="wrap"><ApplyFlow lang={lang} /></div>
+  </section>
+
+  <Bands lang={lang} mini />
+
   <section class="on-white section" id="plans">
     <div class="wrap">
       <p class="kick rv"><span>03</span>{h.kicks.plans}</p>
       <PlanPicker lang={lang} />
     </div>
-  </section>
-
-  <Bands lang={lang} mini />
-
-  <section class="on-white section apply-sec" id="apply">
-    <div class="wrap"><ApplyFlow lang={lang} /></div>
   </section>
 
   <section class="on-white section faq-sec" id="faq">
@@ -104,62 +124,152 @@ const h = c(lang).home;
 
 <script>
   import '../../scripts/marquee';
-  // The reels in the hero drift a little with the pointer, each by a different amount, so the fan feels alive.
+  // The hero is a lit cutting mat with a camera viewfinder on it. The pointer moves the light, tilts the viewfinder and
+  // pulls its focus square along; scrolling drifts the three lines apart and pushes the viewfinder in. The timecode
+  // runs at 25 frames a second. Transform and opacity only, one write per frame, and nothing under reduced motion.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  if (hero && matchMedia('(hover: hover) and (pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    let x = 0, y = 0, queued = false;
-    const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
-    hero.addEventListener('pointermove', (e) => {
-      const r = hero.getBoundingClientRect();
-      x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5;
-      if (!queued) { queued = true; requestAnimationFrame(paint); }
-    });
-    hero.addEventListener('pointerleave', () => { x = 0; y = 0; requestAnimationFrame(paint); });
+  const tc = hero?.querySelector<HTMLElement>('[data-tc]');
+  if (hero && tc) {
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const t0 = performance.now();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const tick = () => { const f = Math.floor((performance.now() - t0) / 40); tc.textContent = `${pad(Math.floor(f / 90000))}:${pad(Math.floor(f / 1500) % 60)}:${pad(Math.floor(f / 25) % 60)}:${pad(f % 25)}`; };
+    let timer = still ? 0 : window.setInterval(tick, 40);
+    let on = true, queued = false, mx = 0, my = 0, ax = .5, ay = .4;
+    const vf = hero.querySelector<HTMLElement>('[data-vf]');
+    const af = hero.querySelector<HTMLElement>('[data-af]');
+    const paint = () => {
+      queued = false;
+      const p = Math.min(1, Math.max(0, scrollY / (hero.offsetHeight || 1)));
+      hero.style.setProperty('--p', p.toFixed(4));
+      hero.style.setProperty('--mx', mx.toFixed(3)); hero.style.setProperty('--my', my.toFixed(3));
+      if (af) { af.style.setProperty('--ax', `${(ax * 100).toFixed(1)}%`); af.style.setProperty('--ay', `${(ay * 100).toFixed(1)}%`); }
+    };
+    const ask = () => { if (on && !queued && !still) { queued = true; requestAnimationFrame(paint); } };
+    new IntersectionObserver(([e]) => {
+      on = e.isIntersecting;
+      if (!on && timer) { clearInterval(timer); timer = 0; } else if (on && !timer && !still) timer = window.setInterval(tick, 40);
+      ask();
+    }).observe(hero);
+    addEventListener('scroll', ask, { passive: true });
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      hero.addEventListener('pointermove', (e) => {
+        const r = hero.getBoundingClientRect();
+        mx = (e.clientX - r.left) / r.width - .5; my = (e.clientY - r.top) / r.height - .5;
+        if (vf) {
+          const v = vf.getBoundingClientRect();
+          ax = Math.min(.82, Math.max(.18, (e.clientX - v.left) / v.width)); ay = Math.min(.78, Math.max(.22, (e.clientY - v.top) / v.height));
+          af?.classList.add('lock');
+        }
+        ask();
+      });
+      hero.addEventListener('pointerleave', () => { mx = 0; my = 0; ax = .5; ay = .4; af?.classList.remove('lock'); ask(); });
+    }
+    paint();
   }
 </script>
 
 <style>
-  /* Hero: words on the left, a fan of reels on the right that opens up on hover. */
-  .hero { position: relative; padding-top: calc(var(--header) + clamp(36px, 6vh, 72px)); overflow: hidden; --mx: 0; --my: 0; }
-  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: clamp(24px, 4vw, 64px); align-items: center; min-height: calc(100svh - var(--header) - 140px); padding-bottom: clamp(48px, 8vh, 96px); }
-  .hero-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; }
-  .kicker { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: var(--line) solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
-  .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
-  .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; animation: ping 2.2s var(--ease) infinite; }
-  @keyframes ping { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
-  /* The title is sized to its column as well as the screen, so each line stays on one line in both languages. */
-  .hero-copy { container-type: inline-size; }
-  .big { font-size: min(clamp(50px, 7.3vw, 124px), 15.2cqi); line-height: .9; letter-spacing: -0.06em; max-width: none !important; }
-  :global(html[lang='fr']) .big { font-size: min(clamp(48px, 7.3vw, 124px), 14.2cqi); }
-  .line { display: block; overflow: hidden; padding: .02em .08em .17em 0; margin-bottom: -.06em; width: fit-content; }
-  .line .rise { display: inline-block; }
-  .rise { animation: up 1000ms var(--ease) both; animation-delay: var(--d); }
-  .hl { position: relative; isolation: isolate; padding: 0 .12em; margin-left: -.12em; }
-  .hl::before { content: ''; position: absolute; inset: .16em 0 -.04em; background: var(--pink); border-radius: .14em; z-index: -1; transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
-  .lede { margin: 0; max-width: 34rem; }
+  /* Hero: a lit cutting mat. Sharp grid in the middle, softly out of focus toward the edges, three light leaks,
+     a vignette and fine grain. The headline is set big across it and a camera viewfinder sits on top. */
+  .hero { position: relative; isolation: isolate; overflow: hidden; color: #fff; background: #173a2a; --p: 0; --mx: 0; --my: 0; }
+  .h-bg { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+  .h-mat { position: absolute; inset: -2%; background-color: var(--mat-deep);
+    background-image: linear-gradient(rgba(255, 255, 255, .16) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .16) 1px, transparent 1px),
+      linear-gradient(rgba(255, 255, 255, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .06) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px; background-position: center; transform: scale(calc(1 + var(--p) * .08)); }
+  .h-mat.sharp { -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 48%, #000 30%, transparent 75%); mask-image: radial-gradient(ellipse 60% 55% at 50% 48%, #000 30%, transparent 75%); }
+  .h-mat.soft { filter: blur(3px); opacity: .9; -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 48%, transparent 30%, #000 75%); mask-image: radial-gradient(ellipse 60% 55% at 50% 48%, transparent 30%, #000 75%); }
+  .leak { position: absolute; border-radius: 50%; filter: blur(70px); mix-blend-mode: screen; opacity: .38; will-change: transform; }
+  .l1 { width: 46vw; height: 46vw; left: -12vw; top: -18vw; background: radial-gradient(closest-side, var(--pink), transparent); transform: translate(calc(var(--mx) * 60px), calc(var(--my) * 40px)); animation: h-drift 16s ease-in-out infinite alternate; }
+  .l2 { width: 38vw; height: 38vw; right: -10vw; bottom: -16vw; background: radial-gradient(closest-side, var(--yellow), transparent); opacity: .42; transform: translate(calc(var(--mx) * -50px), calc(var(--my) * -36px)); animation: h-drift 20s ease-in-out -6s infinite alternate-reverse; }
+  .l3 { width: 30vw; height: 30vw; left: 46%; top: 18%; background: radial-gradient(closest-side, rgba(255, 255, 255, .55), transparent); opacity: .16; transform: translate(calc(var(--mx) * 90px), calc(var(--my) * 70px)); }
+  @keyframes h-drift { to { translate: 6vw 4vw; } }
+  .vig { position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 45%, transparent 40%, rgba(0, 0, 0, .55) 100%); opacity: calc(.85 + var(--p) * .6); }
+  .grain { position: absolute; inset: -50%; opacity: .14; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: h-grain 1s steps(6) infinite; }
+  @keyframes h-grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-6%, 4%); } 40% { transform: translate(5%, -6%); } 60% { transform: translate(-4%, -3%); } 80% { transform: translate(6%, 5%); } 100% { transform: translate(0, 0); } }
+
+  .h-in { position: relative; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto 1fr auto; column-gap: clamp(24px, 4vw, 72px);
+    padding-top: calc(var(--header) + clamp(20px, 4vh, 48px)); padding-bottom: clamp(28px, 5vh, 56px); }
+  .h-top { grid-column: 1 / -1; grid-row: 1; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .h-kick, .h-tc { margin: 0; display: inline-flex; align-items: center; gap: 10px; }
+  .h-tc { font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .7); }
+  .h-tc span { opacity: .6; }
+  .rec { width: 8px; height: 8px; border-radius: 50%; background: #ff4d4d; box-shadow: 0 0 0 4px rgba(255, 77, 77, .18); animation: h-blink 1.6s steps(2, jump-none) infinite; }
+  @keyframes h-blink { 50% { opacity: .25; } }
+
+  /* The title is sized to the space left of the viewfinder, so each line stays whole in both languages. */
+  .h-tw { grid-column: 1; grid-row: 2; align-self: center; container-type: inline-size; position: relative; z-index: 1; }
+  .h-title { margin: 0; font-weight: 700; font-size: min(13.6cqi, 200px); line-height: .86; letter-spacing: -0.065em; }
+  :global(html[lang='fr']) .h-title { font-size: min(13cqi, 190px); }
+  .ln { display: block; white-space: nowrap; overflow: hidden; padding: .02em .06em .1em 0; margin-bottom: -.08em; width: fit-content; }
+  .ln > span { display: inline-block; }
+  .ln1 { transform: translateX(calc(var(--p) * -9vw)); }
+  .ln2 { margin-left: .5em; transform: translateX(calc(var(--p) * 7vw)); }
+  .ln3 { transform: translateX(calc(var(--p) * -4vw)); color: var(--pink); }
+  .rise { animation: up 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
+  @keyframes up { from { transform: translateY(105%); opacity: 0; } }
+
+  /* The viewfinder. It racks focus in on load, leans toward the pointer and grows a little as the page scrolls. */
+  .vf { grid-column: 2; grid-row: 2 / 4; align-self: center; position: relative; z-index: 2; display: block; width: clamp(230px, 22vw, 360px); aspect-ratio: 9 / 16; margin-bottom: 40px; color: #fff; text-decoration: none;
+    transform: perspective(1200px) translateY(calc(var(--p) * -60px)) scale(calc(1 + var(--p) * .1)) rotateY(calc(var(--mx) * 10deg)) rotateX(calc(var(--my) * -8deg)); transition: transform 600ms cubic-bezier(.22, 1, .36, 1);
+    animation: h-focus 1600ms 300ms cubic-bezier(.22, 1, .36, 1) both; }
+  @keyframes h-focus { from { opacity: 0; filter: blur(14px); scale: .94; } 60% { filter: blur(1px); } }
+  .vf-glow { position: absolute; inset: -18%; z-index: -1; border-radius: 40%; background-size: cover; background-position: center; filter: blur(60px) saturate(1.5); opacity: .55; }
+  .vf-body { position: absolute; inset: 0; overflow: hidden; border-radius: 22px; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .22), 0 50px 100px -30px rgba(0, 0, 0, .7), 0 20px 40px -20px rgba(0, 0, 0, .5); }
+  .vf-body video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .vf-body::after { content: ''; position: absolute; inset: 0; background: linear-gradient(rgba(0, 0, 0, .35), transparent 18%, transparent 80%, rgba(0, 0, 0, .45)); }
+  .vf-thirds { position: absolute; inset: 0; z-index: 1; opacity: .28;
+    background: linear-gradient(90deg, transparent calc(33.33% - .5px), #fff calc(33.33% - .5px) calc(33.33% + .5px), transparent calc(33.33% + .5px) calc(66.66% - .5px), #fff calc(66.66% - .5px) calc(66.66% + .5px), transparent calc(66.66% + .5px)),
+      linear-gradient(transparent calc(33.33% - .5px), #fff calc(33.33% - .5px) calc(33.33% + .5px), transparent calc(33.33% + .5px) calc(66.66% - .5px), #fff calc(66.66% - .5px) calc(66.66% + .5px), transparent calc(66.66% + .5px)); }
+  .vf-c { position: absolute; z-index: 2; width: 22px; height: 22px; border: 0 solid #fff; }
+  .vf-c.tl { left: 14px; top: 14px; border-left-width: 2px; border-top-width: 2px; }
+  .vf-c.tr { right: 14px; top: 14px; border-right-width: 2px; border-top-width: 2px; }
+  .vf-c.bl { left: 14px; bottom: 14px; border-left-width: 2px; border-bottom-width: 2px; }
+  .vf-c.br { right: 14px; bottom: 14px; border-right-width: 2px; border-bottom-width: 2px; }
+  .vf-af { position: absolute; z-index: 2; left: var(--ax, 50%); top: var(--ay, 40%); width: 64px; height: 64px; margin: -32px 0 0 -32px; border: 1.5px solid rgba(255, 255, 255, .9); border-radius: 6px;
+    transition: left 500ms cubic-bezier(.22, 1, .36, 1), top 500ms cubic-bezier(.22, 1, .36, 1), border-color 300ms, transform 300ms; animation: h-hunt 7s ease-in-out infinite; }
+  .vf-af i { position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #fff; }
+  .vf-af.lock { animation: none; border-color: var(--yellow); transform: scale(.82); }
+  .vf-af.lock i { background: var(--yellow); }
+  @keyframes h-hunt { 0%, 100% { translate: 0 0; } 25% { translate: 28px 40px; } 50% { translate: -22px 70px; } 75% { translate: 16px -20px; } }
+  .vf-row { position: absolute; z-index: 2; left: 18px; right: 18px; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; letter-spacing: .1em; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+  .vf-row.top { top: 44px; } .vf-row.bot { bottom: 44px; }
+  .vf-rec { display: inline-flex; align-items: center; gap: 6px; }
+  .vf-rec i { width: 7px; height: 7px; border-radius: 50%; background: #ff4d4d; animation: h-blink 1.6s steps(2, jump-none) infinite; }
+  .vf-bat { width: 20px; height: 10px; border: 1.5px solid #fff; border-radius: 3px; padding: 1px; }
+  .vf-bat i { display: block; width: 70%; height: 100%; border-radius: 1px; background: #fff; }
+  .vf-meter { display: inline-flex; gap: 2px; align-items: end; height: 12px; }
+  .vf-meter i { width: 3px; height: 100%; background: linear-gradient(#ff4d4d 0 15%, var(--yellow) 15% 35%, #7CE0A6 35%); transform-origin: bottom; animation: h-level .9s ease-in-out infinite alternate; }
+  .vf-meter i + i { animation-duration: .7s; animation-delay: -.3s; }
+  @keyframes h-level { 0% { transform: scaleY(.3); } 40% { transform: scaleY(.85); } 70% { transform: scaleY(.5); } 100% { transform: scaleY(1); } }
+  .vf-tag { position: absolute; left: 50%; bottom: -46px; translate: -50% 0; display: inline-flex; gap: 8px; white-space: nowrap; font-size: 13px; font-weight: 600; opacity: .8; transition: opacity 300ms var(--ease); }
+  .vf-tag span { transition: transform 300ms var(--ease); }
+  .vf:hover .vf-tag { opacity: 1; } .vf:hover .vf-tag span { transform: translateX(4px); }
+
+  .h-foot { grid-column: 1 / 2; grid-row: 3; display: grid; grid-template-columns: minmax(0, 30rem) auto; align-items: end; gap: 20px clamp(24px, 4vw, 64px); }
+  .h-lede { margin: 0; font-size: clamp(17px, 1.35vw, 21px); line-height: 1.45; color: rgba(255, 255, 255, .82); }
   .big-btn { padding: 17px 26px; font-size: 16px; }
-  @keyframes up { from { transform: translateY(100%); opacity: 0; } }
-  @keyframes wipe { from { transform: scaleX(0); } }
+  .hero .btn.primary { background: #fff; color: var(--ink); border-color: #fff; }
+  .hero .btn.primary:hover { background: var(--pink); border-color: var(--pink); }
+  .hero .btn.ghost { color: #fff; border-color: rgba(255, 255, 255, .45); background: transparent; }
+  .hero .btn.ghost:hover { background: rgba(255, 255, 255, .1); border-color: #fff; }
 
-  .hero-art { position: relative; display: block; height: clamp(440px, 46vw, 660px); color: var(--ink); text-decoration: none; }
-  .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; border-radius: var(--r-lg); position: absolute; border: var(--line) solid var(--ink); transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
-  .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
-  .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: var(--lift-l); transition: transform 800ms var(--ease); }
-  .fan img, .fan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .f0 { left: 4%; top: 14%; transform: rotate(-9deg) translate(calc(var(--mx) * 18px), calc(var(--my) * 14px)); }
-  .f1 { left: 30%; top: 2%; z-index: 2; width: 48%; transform: rotate(2deg) translate(calc(var(--mx) * 34px), calc(var(--my) * 24px)); box-shadow: var(--lift-l); }
-  .f2 { left: 56%; top: 16%; transform: rotate(10deg) translate(calc(var(--mx) * 22px), calc(var(--my) * 16px)); }
-  .hero-art:hover .f0 { transform: rotate(-15deg) translate(-26px, 10px); }
-  .hero-art:hover .f1 { transform: rotate(0deg) translateY(-14px) scale(1.03); }
-  .hero-art:hover .f2 { transform: rotate(16deg) translate(26px, 12px); }
-
-  @media (max-width: 960px) {
-    .hero-grid { grid-template-columns: 1fr; min-height: 0; gap: 8px; }
-    .hero-art { height: clamp(330px, 92vw, 500px); margin: 16px auto 0; width: min(100%, 520px); }
-    .fan { width: 34%; } .f1 { width: 40%; }
-    .f0 { left: 8%; } .f2 { left: 56%; }
+  @media (max-width: 1100px) { .h-foot { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) {
+    .h-in { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; min-height: 0; row-gap: 28px; padding-bottom: 48px; }
+    .h-tw { grid-column: 1; grid-row: 2; }
+    .h-title { font-size: min(15cqi, 120px); }
+    :global(html[lang='fr']) .h-title { font-size: min(13.4cqi, 110px); }
+    .ln2 { margin-left: 0; }
+    .vf { grid-column: 1; grid-row: 4; justify-self: center; width: min(62vw, 300px); margin: 6px 0 46px; }
+    .h-foot { grid-column: 1; grid-row: 3; }
+    .h-tc { display: none; }
   }
-  @media (max-width: 560px) { .big-btn { padding: 15px 20px; font-size: 15px; } .hero-copy .actions { width: 100%; } .hero-copy .actions .btn { flex: 1 1 auto; } }
+  @media (max-width: 560px) { .big-btn { padding: 15px 20px; font-size: 15px; } .h-foot .actions { width: 100%; } .h-foot .actions .btn { flex: 1 1 auto; } }
+  @media (prefers-reduced-motion: reduce) { .rise, .vf, .grain, .leak, .vf-af, .rec, .vf-rec i, .vf-meter i { animation: none; } }
 
   /* The formats we make, running in a black band under the hero. */
   .ticker { overflow: hidden; padding-block: 18px; background: var(--ink); color: #fff; }
@@ -167,7 +277,6 @@ const h = c(lang).home;
   .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .ticker li { display: flex; align-items: center; gap: 30px; white-space: nowrap; font-weight: 600; font-size: 16px; letter-spacing: -0.005em; padding-right: 30px; }
   .ticker svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; }
-  @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .pulse::after { animation: none; } }
 
   /* Work: title on the left, link on the right, the four reels in one clean row. */
   .work-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 24px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(36px, 5vw, 72px); }
@@ -186,7 +295,6 @@ const h = c(lang).home;
   .faq-lead .kick { margin: 0; }
   .faq-h { font-size: clamp(48px, 6.4vw, 104px); max-width: 8ch; }
   @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } .faq-lead { position: static; } }
-
 
   .apply-sec { border-top: 0; }
 

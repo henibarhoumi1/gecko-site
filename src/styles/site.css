@@ -90,7 +90,8 @@ a { color: inherit; }
 
 /* FAQ */
 .faq { display: grid; gap: 10px; }
-.faq details { background: var(--white); border-radius: var(--r-sm); border: var(--line) solid var(--ink); transition: box-shadow 260ms var(--ease); }
+.faq details { background: var(--white); color: var(--ink); border-radius: var(--r-sm); border: 1px solid rgba(0, 0, 0, .12); transition: box-shadow 260ms var(--ease), border-color 260ms var(--ease); }
+.faq details[open], .faq details:hover { border-color: rgba(0, 0, 0, .3); }
 .faq details[open] { box-shadow: var(--lift); }
 .faq summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px 22px; font-weight: 600; letter-spacing: -0.01em; font-size: 17px; line-height: 1.35; }
 .faq summary::-webkit-details-marker { display: none; }
@@ -150,3 +151,24 @@ html.pre .site-header, html.pre .site-header * { transition: none !important; }
 .kick span { opacity: .45; font-variant-numeric: tabular-nums; letter-spacing: .08em; }
 .kick::after { content: ''; flex: 0 1 120px; height: 1px; background: currentColor; opacity: .22; }
 
+
+/* The lit cutting mat: the home hero's look, used for every page head so the site reads as one piece.
+   A deep green mat with its grid, pink and yellow light leaking in from opposite corners, a vignette and fine grain. */
+.lit { position: relative; isolation: isolate; color: #fff; background-color: var(--mat-deep);
+  background-image:
+    radial-gradient(ellipse 85% 75% at 50% 38%, transparent 40%, rgba(0, 0, 0, .5) 100%),
+    radial-gradient(42% 70% at 4% 0%, rgba(244, 193, 196, .26), transparent 70%),
+    radial-gradient(40% 70% at 100% 100%, rgba(243, 223, 158, .2), transparent 70%),
+    linear-gradient(rgba(255, 255, 255, .14) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .14) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px);
+  background-size: 100% 100%, 100% min(100%, 100vh), 100% 100%, 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, repeat, repeat;
+  background-position: top, top, bottom, center top, center top, center top, center top; }
+.lit::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .12; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.lit .lede { color: rgba(255, 255, 255, .82); }
+/* White cards sitting on the mat (.paper) keep their normal ink look. */
+.lit .label:not(.paper *) { color: rgba(255, 255, 255, .7); }
+.lit .btn.primary:not(.paper *) { background: #fff; color: var(--ink); border-color: #fff; }
+.lit .btn.primary:not(.paper *):hover { background: var(--pink); border-color: var(--pink); }
+.lit .btn:not(.primary, .paper *) { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .45); }
+.lit .btn:not(.primary, .paper *):hover { background: rgba(255, 255, 255, .1); border-color: #fff; }

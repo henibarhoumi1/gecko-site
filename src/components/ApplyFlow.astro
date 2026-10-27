@@ -1,14 +1,17 @@
 ---
 // The brief, one tap at a time. Questions branch on earlier answers (no ad budget question if they don't run ads,
-// no "what do you sell" for an event), and the brief card fills in as they go and suggests where to start.
-// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the brief filled in.
+// no "what do you sell" for an event), and the brief card fills in as they go and names the plan that fits.
+// With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the brief filled in. Once it is sent,
+// the page glides down to pricing with that plan open (on the home page), or links to it.
+// Numbers 1 to 9 answer from the keyboard.
 import Wa from './Wa.astro';
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { site } from '../data/site';
-import { test, campaign, audit, monthly } from '../data/offers';
-interface Props { lang: Locale; heading?: 'h1' | 'h2' }
-const { lang, heading = 'h2' } = Astro.props;
+import { test, campaign, audit, monthly, fmt } from '../data/offers';
+import { href } from '../i18n/paths';
+interface Props { lang: Locale; heading?: 'h1' | 'h2'; dark?: boolean }
+const { lang, heading = 'h2', dark = false } = Astro.props;
 const a = c(lang).apply;
 const s = t(lang).apply;
 const ct = t(lang).contact;
@@ -30,14 +33,22 @@ const plans = Object.fromEntries([
   ['bespoke', [a.bespoke, { rhythm: [0] }]],
 ]);
 const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, when: when ?? null }));
+// The plan each brief points to, as the brief card and the end screen name it.
+const p = c(lang).plans;
+const cur = t(lang).offers.currency;
+const recs: Record<string, string> = {
+  test: `${test.name} · ${test.reels} reels · ${fmt(test.launch, lang)} ${cur}`,
+  ...Object.fromEntries(monthly.map((m) => [m.key, m.custom ? `${m.name} · ${m.reels}–${m.max} ${p.reels}` : `${m.name} · ${m.reels} ${p.reels} · ${fmt(m.launch, lang)} ${cur}`])),
+  bespoke: a.bespoke,
+};
 ---
-<div class="apply">
+<div class:list={['apply', { dark }]}>
   <div class="lead stack" style="--gap:22px">
     <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
     <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{a.title}</H>
     <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
 
-    <aside class="brief rv" style="--d:180ms" data-brief aria-live="polite">
+    <aside class="brief paper rv" style="--d:180ms" data-brief aria-live="polite">
       <p class="label">{a.brief}</p>
       <p class="empty" data-brief-empty>{a.briefEmpty}</p>
       <ul data-rows></ul>
@@ -54,8 +65,8 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
-    data-meta={JSON.stringify(meta)} data-plans={JSON.stringify(plans)} data-sugg={JSON.stringify(a.sugg)} data-cheers={JSON.stringify(a.cheers)} data-contact-row={a.contactRow}
+  <form class="flow paper rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
+    data-meta={JSON.stringify(meta)} data-plans={JSON.stringify(plans)} data-recs={JSON.stringify(recs)} data-cheers={JSON.stringify(a.cheers)} data-contact-row={a.contactRow}
     action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
     <input type="hidden" name="subject" value="New brief from the Gecko website" />
@@ -75,7 +86,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
         <input type="hidden" name={q.key} data-label={q.row} />
         <div class={`chips ${q.opts.length > 6 ? 'many' : ''}`}>
           {q.opts.map(([em, label], j) => (
-            <button type="button" class="chip" data-pick={label} data-i={j} aria-pressed="false">{em.startsWith('flag:') && <img class="flag" src={`/flags/${em.slice(5)}.svg`} alt="" width="24" height="16" />}{label}</button>
+            <button type="button" class="chip" data-pick={label} data-i={j} aria-pressed="false"><kbd aria-hidden="true">{j + 1}</kbd>{em.startsWith('flag:') && <img class="flag" src={`/flags/${em.slice(5)}.svg`} alt="" width="24" height="16" />}{label}</button>
           ))}
         </div>
         {q.multi && <button type="button" class="btn primary next" data-next disabled>{a.next} <span class="arr" aria-hidden="true">→</span></button>}
@@ -113,11 +124,19 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
       <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-error={s.error}>{a.done}</p>
+      <div class="fit-done" data-fit-done hidden>
+        <p class="label">{a.fitLead}</p>
+        <p class="fit-name" data-fit-name></p>
+        <a class="btn primary" data-fit-go href={`${href(lang, 'offers')}`}>{a.fitSee} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
       <p class="text fallback" data-fallback hidden>{a.waFallback} <a data-wa-link href="#" target="_blank" rel="noopener">{a.waLink}</a> · <a href={`mailto:${site.email}`}>{site.email}</a></p>
       <button type="button" class="again" data-again>{a.again}</button>
     </div>
 
-    <button type="button" class="back" data-back hidden>← {a.back}</button>
+    <div class="foot">
+      <button type="button" class="back" data-back hidden>← {a.back}</button>
+      <p class="keys" aria-hidden="true">{a.keys}</p>
+    </div>
   </form>
 </div>
 
@@ -126,7 +145,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   document.querySelectorAll<HTMLFormElement>('[data-flow]').forEach((form) => {
     const root = form.closest('.apply')!;
     const meta: Meta[] = JSON.parse(form.dataset.meta!);
-    const sugg: Record<string, string> = JSON.parse(form.dataset.sugg!);
+    const recs: Record<string, string> = JSON.parse(form.dataset.recs!);
     const cheers: string[] = JSON.parse(form.dataset.cheers!);
     const steps = [...form.querySelectorAll<HTMLElement>('[data-step]')];
     const last = steps.length - 1;
@@ -172,21 +191,24 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       const name = form.querySelector<HTMLInputElement>('#flow-name')!.value.trim();
       if (name) { const li = document.createElement('li'); li.innerHTML = '<button type="button"><span class="k"></span><span class="v"></span></button>'; li.querySelector('.k')!.textContent = form.dataset.contactRow!; li.querySelector('.v')!.textContent = name; rows.append(li); }
       empty.hidden = rows.children.length > 0;
-      const pick = suggest();
+      const pick = recs[rec()] ?? '';
       if (pick && suggText.textContent !== pick) { suggText.textContent = pick; suggBox.hidden = false; anim(suggBox, [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' }); }
       if (!pick) suggBox.hidden = true;
     };
-    // Where we'd start: a monthly plan, a test, an audit, a bespoke quote or just a call.
-    const suggest = () => {
+    // Where we'd start. Films, events and shoots are quoted; monthly ads follow the budget (or the ad spend when
+    // the budget is open); one project, or not sure yet, starts with the Test.
+    const rec = () => {
       if (!ans.make && !ans.rhythm) return '';
       const bigger = has('make', 2, 4, 5, 6) || has('type', 4);
-      const ads = has('make', 0, 1);
-      if (has('rhythm', 1) && ads) return sugg.plans;
-      if (bigger) return sugg.bespoke;
-      if (ads && has('rhythm', 0)) return sugg.test;
-      if (ads && has('ads', 0, 1) && has('rhythm', 2)) return sugg.audit;
-      if (has('make', 3)) return sugg.bespoke;
-      return ans.rhythm ? sugg.call : '';
+      const ads = has('make', 0, 1, 7);
+      if (has('rhythm', 1) && (ads || !bigger)) {
+        if (has('budget', 0)) return 'test';
+        if (has('budget', 3) || (has('budget', 4) && has('spend', 3))) return 'partner';
+        if (has('budget', 2) || (has('budget', 4) && has('spend', 2))) return 'pro';
+        return 'regular';
+      }
+      if (bigger || (has('make', 3) && !ads)) return 'bespoke';
+      return 'test';
     };
 
     const go = (n: number, dir = 1) => {
@@ -194,6 +216,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       const el = steps[at]; el.hidden = false;
       anim(el, [{ opacity: 0, transform: `translateX(${dir * 28}px)` }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
       back.hidden = history.length === 0;
+      form.dataset.at = at === last ? 'last' : '';
       progress();
       if (el.hasAttribute('data-last')) el.querySelector<HTMLInputElement>('.fields input')?.focus({ preventScroll: true });
     };
@@ -252,15 +275,27 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
     };
     $('[data-plan-clear]').addEventListener('click', () => { planIn.value = ''; pill.hidden = true; prefilled.clear(); progress(); });
 
+    // The end screen names the plan that fits. On the home page the pricing below opens on it and the page
+    // glides there; elsewhere the button leads to the offers page.
+    const fitBox = $('[data-fit-done]'), fitGo = $<HTMLAnchorElement>('[data-fit-go]');
+    const pricing = document.querySelector<HTMLElement>('#plans [data-picker]') ? document.querySelector<HTMLElement>('#plans') : null;
+    const glide = () => { if (!pricing) return; const l = (window as any).lenis; l ? l.scrollTo(pricing, { offset: -40, duration: 1.8, easing: (x: number) => 1 - Math.pow(1 - x, 4) }) : pricing.scrollIntoView({ behavior: still ? 'auto' : 'smooth' }); };
+    if (pricing) fitGo.addEventListener('click', (e) => { e.preventDefault(); glide(); });
+    let glideTimer = 0;
     const finish = (text: string) => {
       steps[at].hidden = true; back.hidden = true;
-      msg.textContent = text; done.hidden = false; fill.style.transform = 'scaleX(1)';
+      msg.textContent = text; done.hidden = false; fill.style.transform = 'scaleX(1)'; form.dataset.at = 'done';
+      const key = rec() || 'test';
+      $('[data-fit-name]').textContent = recs[key]; fitBox.hidden = false;
+      dispatchEvent(new CustomEvent('gecko:plan', { detail: key }));
       anim(done, [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+      if (pricing) glideTimer = window.setTimeout(glide, 1800);
     };
     $('[data-again]').addEventListener('click', () => {
       form.reset(); Object.keys(ans).forEach((k) => delete ans[k]); prefilled.clear(); history = [];
       form.querySelectorAll('.chip').forEach((x) => { x.classList.remove('picked'); x.setAttribute('aria-pressed', 'false'); });
       form.querySelectorAll<HTMLButtonElement>('[data-next]').forEach((b) => (b.disabled = true));
+      clearTimeout(glideTimer); fitBox.hidden = true;
       pill.hidden = true; setReach(0); done.hidden = true; $('[data-fallback]').hidden = true; brief();
       steps.forEach((x, i) => (x.hidden = i !== 0)); at = 0; go(0, -1);
     });
@@ -285,6 +320,16 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
       } catch { finish(msg.dataset.error!); }
     });
 
+    // Keyboard: a number picks that answer, Enter moves on from a question with several answers.
+    addEventListener('keydown', (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey || (e.target as HTMLElement).closest('input, textarea, select, [contenteditable]')) return;
+      const r = form.getBoundingClientRect(); if (r.bottom < 80 || r.top > innerHeight - 80 || at === last || !done.hidden) return;
+      if (e.key === 'Enter' && meta[at].multi) { const nx = steps[at].querySelector<HTMLButtonElement>('[data-next]'); if (nx && !nx.disabled) { e.preventDefault(); nx.click(); } return; }
+      const n = Number(e.key); if (!n) return;
+      const chip = steps[at].querySelectorAll<HTMLButtonElement>('.chip')[n - 1];
+      if (chip) { e.preventDefault(); chip.click(); }
+    });
+
     applyPlan(); progress(); brief();
   });
 </script>
@@ -297,9 +342,9 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0 rgba(0, 0, 0, .4); animation: pulse 1.8s infinite; }
   @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(0, 0, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); } }
 
-  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: var(--shadow-2); }
+  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--white); border: 1px solid rgba(0, 0, 0, .12); border-radius: var(--r); box-shadow: var(--lift); }
   .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
-  .brief :global(li + li) { border-top: 1px dashed rgba(0, 0, 0, .3); }
+  .brief :global(li + li) { border-top: 1px solid rgba(0, 0, 0, .08); }
   .brief :global(li button) { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
   .brief :global(.k) { font-weight: 700; font-size: 14px; flex: none; }
   .brief :global(.v) { font-size: 15px; text-align: right; font-weight: 700; }
@@ -312,12 +357,19 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-  .flow { position: relative; display: grid; gap: 26px; padding: clamp(24px, 3vw, 44px); min-height: 480px; align-content: start; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift-l); }
+  /* On the lit mat (apply page): white type, the brief card stays white. */
+  .dark .lead > .h1, .dark .lead > .h2, .dark .lead > .soft, .dark .direct { color: var(--white); }
+  .dark .lead > .soft { opacity: .78; }
+  .dark .kicker { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .5); color: var(--white); backdrop-filter: blur(6px); }
+  .dark .pulse { background: var(--yellow, #ffd84d); }
+  .dark .direct :global(.label) { color: rgba(255, 255, 255, .7); }
+
+  .flow { position: relative; display: grid; gap: 26px; padding: clamp(26px, 3.2vw, 48px); min-height: 500px; align-content: start; background: var(--white); color: var(--ink); border: 1px solid rgba(0, 0, 0, .12); border-radius: 22px; box-shadow: var(--lift-l); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-  .count { margin: 0; font-weight: 700; font-size: 15px; }
-  .count b { font-size: 28px; letter-spacing: -0.04em; }
-  .bar { width: clamp(96px, 14vw, 168px); height: 10px; border-radius: 999px; border: var(--line) solid var(--ink); overflow: hidden; background: var(--white); }
-  .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform 520ms var(--spring); }
+  .count { margin: 0; font-weight: 600; font-size: 14px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .count b { font-size: 28px; letter-spacing: -0.04em; color: var(--ink); }
+  .bar { width: clamp(110px, 16vw, 200px); height: 4px; border-radius: 999px; overflow: hidden; background: rgba(0, 0, 0, .08); }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: var(--mat); transform-origin: left; transform: scaleX(0); transition: transform 620ms cubic-bezier(.22, 1, .36, 1); }
   .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--mat-soft); color: var(--mat-deep); opacity: 0; }
   .cheer.show { animation: cheer 1600ms var(--ease) both; }
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
@@ -331,10 +383,23 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--white); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .step[data-key='make'] .chip.picked::after { content: '✓'; margin-left: 2px; }
-  .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
+  .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1.15 var(--font); padding: 14px 18px 14px 12px; border-radius: 12px; border: 1px solid rgba(0, 0, 0, .18); background: var(--white); color: var(--ink); text-align: left; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 160ms var(--ease); }
   .chip .flag { width: 24px; height: 16px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
-  .chip:hover { background: var(--pink-soft); }
-  .chip.picked { background: var(--pink); box-shadow: inset 0 0 0 1px var(--ink); }
+  .chip:hover { border-color: var(--ink); background: rgba(0, 0, 0, .02); }
+  .chip:active { transform: scale(.98); }
+  .chip.picked { background: var(--mat); border-color: var(--mat); color: #fff; }
+  .chip kbd { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; border: 1px solid rgba(0, 0, 0, .16); font: 600 11px/1 var(--font); color: var(--ink-2); transition: inherit; }
+  .chip.picked kbd { border-color: rgba(255, 255, 255, .45); color: #fff; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; }
+  .keys { margin: 0 0 0 auto; font-size: 13px; color: var(--ink-2); opacity: .8; }
+  .flow[data-at='last'] .keys, .flow[data-at='done'] .keys { display: none; }
+  @media (hover: none), (max-width: 860px) { .chip kbd, .keys { display: none; } .chip { padding-left: 16px; } }
+  .fit-done { display: grid; gap: 10px; justify-items: start; width: 100%; padding: 20px 22px; border-radius: var(--r); background: var(--mat); color: #fff; }
+  .fit-done[hidden] { display: none; }
+  .fit-done .label { color: rgba(255, 255, 255, .75); }
+  .fit-name { margin: 0 0 6px; font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -0.02em; line-height: 1.15; }
+  .fit-done .btn.primary { background: #fff; color: var(--ink); border-color: #fff; }
+  .fit-done .btn.primary:hover { background: var(--pink-soft); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .fields .wide { grid-column: 1 / -1; }
   .field textarea { resize: vertical; min-height: 92px; }
@@ -346,7 +411,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .seg button:hover { background: var(--pink-soft); }
   .seg [aria-checked='true'] { background: var(--ink); color: #fff; }
   .send { justify-self: start; }
-  .back { justify-self: start; margin-top: auto; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
+  .back { justify-self: start; background: none; border: 0; padding: 6px 0; color: var(--ink-2); cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--ink); }
   .done { justify-items: start; align-content: center; min-height: 320px; }
   .fallback { margin: 0; font-size: 15px; }
