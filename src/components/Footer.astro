@@ -1,5 +1,5 @@
 ---
-// Black footer, kept short: an optional call to action, then the monogram, pages, contact and socials in one row.
+// Dark footer, kept short: an optional call to action, then the monogram, pages, contact and socials in one row.
 import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
@@ -45,22 +45,22 @@ const n = k.nav;
   </div></div>
 </footer>
 <style>
-  .site-footer { padding-block: clamp(44px, 5vw, 72px) 22px; background: var(--ink); color: #fff; }
-  .big { display: block; font-weight: 700; font-size: clamp(36px, 6vw, 96px); letter-spacing: -0.05em; line-height: .95; text-decoration: none; color: #fff; padding-bottom: clamp(24px, 3vw, 40px); margin-bottom: clamp(28px, 3.5vw, 48px); border-bottom: 1px solid rgba(255, 255, 255, .22); }
+  .site-footer { padding-block: clamp(44px, 5vw, 72px) 22px; background: var(--bg); color: var(--fg); border-top: 1px solid var(--hair); }
+  .big { display: block; font-weight: 700; font-size: clamp(36px, 6vw, 96px); letter-spacing: -0.05em; line-height: .95; text-decoration: none; color: var(--fg); padding-bottom: clamp(24px, 3vw, 40px); margin-bottom: clamp(28px, 3.5vw, 48px); border-bottom: 1px solid var(--hair); }
   .big span { display: inline-block; color: var(--pink); transition: transform 360ms var(--ease); }
   .big:hover span { transform: translateX(16px); }
   .inner { display: grid; grid-template-columns: 1fr auto auto auto; gap: 28px clamp(36px, 5vw, 96px); align-items: start; }
   .mark { display: block; width: clamp(34px, 3vw, 44px); }
   .mark img { width: 100%; height: auto; }
-  .h { margin: 0 0 4px; font-weight: 700; font-size: 13px; color: rgba(255, 255, 255, .55); }
+  .h { margin: 0 0 4px; font-weight: 700; font-size: 13px; color: var(--fg-3); }
   .col { display: grid; align-content: start; gap: 10px; font-size: 15px; }
   .pages { display: grid; grid-template-columns: repeat(2, auto); gap: 10px 36px; justify-content: start; }
-  .col a { text-decoration: none; color: #fff; width: fit-content; white-space: nowrap; }
+  .col a { text-decoration: none; color: var(--fg); width: fit-content; white-space: nowrap; }
   .col a:hover { color: var(--pink); }
-  .base { margin-top: clamp(32px, 4vw, 52px); padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .22); display: flex; justify-content: space-between; gap: 16px; font-size: 13px; color: rgba(255, 255, 255, .7); }
+  .base { margin-top: clamp(32px, 4vw, 52px); padding-top: 16px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--fg-3); }
   .base p { margin: 0; }
   .base a { color: inherit; text-decoration: none; }
-  .base a:hover { color: #fff; }
+  .base a:hover { color: var(--fg); }
   /* Narrow screens: the monogram steps aside (the bar already carries the logo) and the columns wrap. */
   @media (max-width: 860px) { .inner { grid-template-columns: repeat(3, auto); justify-content: start; } .mark { display: none; } }
   @media (max-width: 560px) { .inner { grid-template-columns: 1fr 1fr; gap: 24px 20px; } .col:nth-child(2) { grid-column: 1 / -1; } .pages { grid-template-columns: repeat(3, auto); gap: 10px 28px; } .col { font-size: 14px; } .col a { white-space: normal; overflow-wrap: anywhere; } }

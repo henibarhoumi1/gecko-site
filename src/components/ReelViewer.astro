@@ -68,6 +68,7 @@ const icon = {
       viewer.querySelector<HTMLButtonElement>('.close')!.focus({ preventScroll: true });
     };
     const close = () => {
+      document.dispatchEvent(new CustomEvent('reel:close', { detail: current }));
       viewer.classList.remove('in');
       video.pause();
       setTimeout(() => { viewer.hidden = true; video.removeAttribute('src'); video.load(); }, 360);

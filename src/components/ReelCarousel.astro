@@ -1,0 +1,207 @@
+---
+// The reels as a cover flow: the reel in front plays muted, the ones beside it turn toward it and fall into the dark,
+// and the light of the reel in front spills onto the page behind. Drag, swipe, the arrows or the keyboard turn it,
+// and it moves on by itself while it's on screen. A click on the reel in front opens it full screen with sound
+// (ReelViewer reads the [data-reel] cards); a click on a reel beside it brings that one to the front.
+import type { Ad } from '../data/work';
+import type { Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+interface Props { ads: Ad[]; lang: Locale }
+const { ads, lang } = Astro.props;
+const w = c(lang).work;
+const pad = (n: number) => String(n).padStart(2, '0');
+const arrow = (d: string) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+---
+<div class="rc" data-rc tabindex="0" role="region" aria-roledescription="carousel" aria-label={w.reelsTitle} data-titles={JSON.stringify(ads.map((a) => a.angle[lang]))}>
+  <div class="amb" aria-hidden="true">{ads.map((a, i) => <span class={i === 0 ? 'on' : ''} style={`background-image:url(${a.poster})`}></span>)}</div>
+  <div class="stage" data-stage>
+    {ads.map((a, i) => (
+      <div class="card" data-reel={i} data-src={a.src} data-poster={a.poster} role="group" aria-roledescription="slide" aria-label={`${i + 1} / ${ads.length}`}>
+        <span class="media">
+          <img src={a.poster} alt="" loading={i < 2 ? 'eager' : 'lazy'} draggable="false" />
+          <video muted loop playsinline preload="none"></video>
+        </span>
+        <button type="button" class="open" data-open tabindex={i === 0 ? 0 : -1} aria-label={`${w.title1} ${i + 1}: ${a.angle[lang]}`}></button>
+      </div>
+    ))}
+  </div>
+  <div class="ui">
+    <button type="button" class="nav" data-step="-1" aria-label={w.prev} set:html={arrow('M15 5l-7 7 7 7')} />
+    <div class="cap" aria-live="polite">
+      <p class="t"><span data-title>{ads[0].angle[lang]}</span></p>
+      <p class="n"><b data-n>01</b> / {pad(ads.length)}<span class="prog" aria-hidden="true"><i data-prog></i></span></p>
+    </div>
+    <button type="button" class="nav" data-step="1" aria-label={w.nextReel} set:html={arrow('M9 5l7 7-7 7')} />
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rc]').forEach((root) => {
+    const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const cards = [...root.querySelectorAll<HTMLElement>('.card')];
+    const amb = [...root.querySelectorAll<HTMLElement>('.amb span')];
+    const titles: string[] = JSON.parse(root.dataset.titles!);
+    const titleEl = root.querySelector<HTMLElement>('[data-title]')!;
+    const nEl = root.querySelector<HTMLElement>('[data-n]')!;
+    const prog = root.querySelector<HTMLElement>('[data-prog]')!;
+    const n = cards.length;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const HOLD = 6500;
+    let at = 0, d = cards.map((_, i) => (i <= n / 2 ? i : i - n));
+    let drag = 0, x0 = 0, down = false, moved = false, hover = false, seen = false, viewing = false, elapsed = 0, last = 0, raf = 0;
+
+    // Where each card sits for a given offset from the front: a step to the side per place, turned toward the
+    // middle, pushed back, dimmed, and gone past the first neighbour on each side.
+    const paint = () => {
+      const step = cards[0].offsetWidth * .84;
+      cards.forEach((card, i) => {
+        const k = d[i] + drag, a = Math.min(Math.abs(k), 2.5);
+        card.style.transform = `translateX(${k * step}px) translateZ(${-a * 190}px) rotateY(${-Math.max(-1.4, Math.min(1.4, k)) * 30}deg)`;
+        card.style.opacity = String(Math.max(0, Math.min(1, 2 - a)));
+        card.style.setProperty('--dim', String(Math.min(1, a) * .58));
+        card.style.zIndex = String(10 - Math.round(a * 2));
+        card.style.pointerEvents = a > 1.5 ? 'none' : '';
+      });
+    };
+    // Before turning, park the hidden reels on the side the turn brings them in from. They are invisible, so they jump.
+    const park = (dir: number) => {
+      cards.forEach((card, i) => {
+        const want = dir > 0 ? (d[i] < -1 ? d[i] + n : d[i]) : (d[i] > 1 ? d[i] - n : d[i]);
+        if (want !== d[i]) { d[i] = want; card.classList.add('jump'); }
+      });
+      paint(); void stage.offsetWidth;
+      cards.forEach((card) => card.classList.remove('jump'));
+    };
+    const video = (i: number) => cards[i].querySelector('video')!;
+    const play = () => {
+      if (still || viewing || !seen) return;
+      const i = at, v = video(i);
+      if (!v.src) { v.src = cards[i].dataset.src!; v.preload = 'auto'; }
+      v.play().then(() => { if (i === at) cards[i].classList.add('live'); else v.pause(); }).catch(() => {});
+    };
+    const go = (steps: number) => {
+      if (!steps || n < 2) return;
+      const dir = Math.sign(steps);
+      for (let s = 0; s < Math.abs(steps); s++) { park(dir); d = d.map((x) => x - dir); }
+      video(at).pause(); cards[at].classList.remove('live');
+      at = (at + steps % n + n) % n;
+      cards.forEach((card, i) => card.querySelector<HTMLButtonElement>('[data-open]')!.tabIndex = i === at ? 0 : -1);
+      amb.forEach((s, i) => s.classList.toggle('on', i === at));
+      titleEl.textContent = titles[at]; nEl.textContent = String(at + 1).padStart(2, '0');
+      titleEl.animate?.([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)' });
+      elapsed = 0; paint(); play();
+    };
+
+    // It moves on by itself while it's on screen, unless the pointer rests on it or a reel is open full screen.
+    const loop = (t: number) => {
+      raf = 0;
+      if (!seen || viewing || still) return;
+      if (!hover && !down && !document.hidden) elapsed += Math.min(64, t - (last || t));
+      last = t;
+      prog.style.transform = `scaleX(${Math.min(1, elapsed / HOLD)})`;
+      if (elapsed >= HOLD) go(1);
+      raf = requestAnimationFrame(loop);
+    };
+    const run = () => { if (!raf) { last = 0; raf = requestAnimationFrame(loop); } };
+    new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting;
+      if (seen) { play(); run(); } else { video(at).pause(); }
+    }, { threshold: .35 }).observe(stage);
+
+    root.querySelectorAll<HTMLButtonElement>('[data-step]').forEach((b) => b.addEventListener('click', () => go(Number(b.dataset.step))));
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    });
+    if (matchMedia('(hover: hover)').matches) {
+      stage.addEventListener('pointerenter', () => (hover = true));
+      stage.addEventListener('pointerleave', () => (hover = false));
+    }
+
+    // Dragging: the cards follow the pointer, and letting go past a third of a step turns it.
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      down = true; moved = false; x0 = e.clientX; drag = 0;
+    });
+    addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - x0;
+      if (!moved && Math.abs(dx) < 8) return;
+      if (!moved) { moved = true; stage.classList.add('dragging'); park(dx < 0 ? 1 : -1); }
+      drag = Math.max(-1.2, Math.min(1.2, dx / (cards[0].offsetWidth * .84)));
+      paint();
+    });
+    const release = () => {
+      if (!down) return;
+      down = false; stage.classList.remove('dragging');
+      const t = drag; drag = 0;
+      if (moved && Math.abs(t) > .3) go(t < 0 ? 1 : -1); else paint();
+      // The click that ends a drag comes right after this; forget the drag once it has been swallowed.
+      if (moved) setTimeout(() => (moved = false));
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
+
+    // A click on a reel beside the front one brings it forward instead of opening it. Clicks that end a drag do nothing.
+    stage.addEventListener('click', (e) => {
+      const card = (e.target as HTMLElement).closest<HTMLElement>('.card');
+      if (!card) return;
+      const i = cards.indexOf(card);
+      if (moved || i !== at) { e.stopPropagation(); e.preventDefault(); if (!moved) go(d[i]); moved = false; }
+    }, true);
+
+    document.addEventListener('reel:open', () => { viewing = true; video(at).pause(); });
+    document.addEventListener('reel:close', (e) => {
+      viewing = false;
+      const i = (e as CustomEvent).detail;
+      if (typeof i === 'number' && i !== at) { const s = ((i - at) % n + n) % n; go(s <= n / 2 ? s : s - n); }
+      elapsed = 0; play(); run();
+    });
+    addEventListener('resize', paint);
+    stage.classList.add('jump'); paint(); void stage.offsetWidth; stage.classList.remove('jump');
+  });
+</script>
+
+<style>
+  .rc { position: relative; --cw: clamp(240px, 23vw, 370px); outline: none; }
+  .rc:focus-visible { outline: 2px solid var(--fg); outline-offset: 12px; border-radius: 28px; }
+
+  /* The light of the reel in front, blurred and spilled behind everything. */
+  .amb { position: absolute; z-index: 0; left: 50%; top: 42%; width: min(1400px, 140vw); height: calc(var(--cw) * 2.2); translate: -50% -50%; pointer-events: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent); mask-image: radial-gradient(closest-side, #000 30%, transparent); }
+  .amb span { position: absolute; inset: 18% 30%; background-size: cover; background-position: center; filter: blur(70px) saturate(1.6); opacity: 0; transition: opacity 1400ms var(--ease); }
+  .amb span.on { opacity: .55; }
+
+  .stage { position: relative; z-index: 1; height: calc(var(--cw) * 16 / 9); perspective: 1700px; touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+  .stage.dragging { cursor: grabbing; }
+  .card { position: absolute; left: 50%; top: 0; width: var(--cw); margin-left: calc(var(--cw) / -2); aspect-ratio: 9 / 16; border-radius: 22px; --dim: 0;
+    transition: transform 900ms cubic-bezier(.22, 1, .36, 1), opacity 700ms var(--ease); will-change: transform; -webkit-tap-highlight-color: transparent; }
+  .dragging .card, .card.jump, .jump .card { transition: none; }
+  .media { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; background: #000; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 50px 90px -40px rgba(0, 0, 0, 1); }
+  .media::after { content: ''; position: absolute; inset: 0; background: #000; opacity: var(--dim); transition: opacity 700ms var(--ease); pointer-events: none; }
+  .dragging .media::after { transition: none; }
+  .media img, .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; }
+  .media video { opacity: 0; transition: opacity 500ms var(--ease); }
+  .card.live .media video { opacity: 1; }
+  .open { position: absolute; inset: 0; z-index: 2; width: 100%; padding: 0; border: 0; border-radius: inherit; background: none; cursor: pointer; }
+  .open:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+
+  .ui { position: relative; z-index: 1; display: grid; grid-template-columns: auto minmax(0, 22rem) auto; justify-content: center; align-items: center; gap: clamp(16px, 3vw, 40px); margin-top: clamp(26px, 3vw, 40px); }
+  .cap { display: grid; gap: 10px; justify-items: center; text-align: center; }
+  .t { margin: 0; font-weight: 700; font-size: clamp(19px, 1.6vw, 24px); letter-spacing: -0.03em; line-height: 1.15; }
+  .t span { display: inline-block; }
+  .n { margin: 0; display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: .08em; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+  .n b { color: var(--fg); font-weight: 700; }
+  .prog { width: 64px; height: 2px; border-radius: 2px; overflow: hidden; background: var(--hair); }
+  .prog i { display: block; height: 100%; background: var(--fg); transform-origin: left; transform: scaleX(0); }
+  .nav { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--hair-2); background: rgba(255, 255, 255, .04); color: var(--fg); cursor: pointer; transition: background 220ms var(--ease), color 220ms var(--ease), border-color 220ms var(--ease), transform 300ms var(--spring); }
+  .nav:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .nav:active { transform: scale(.94); }
+
+  @media (max-width: 760px) {
+    .rc { --cw: min(60vw, 280px); }
+    .ui { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; padding-inline: var(--gutter); }
+    .nav { width: 46px; height: 46px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .card, .media::after, .amb span { transition: none; } }
+</style>

@@ -9,7 +9,7 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const p = c(lang).process;
 ---
-<Base lang={lang} footerCta={false} title={p.title} darkHead>
+<Base lang={lang} footerCta={false} title={p.title}>
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:22px">
       <h1 class="h1 rv">{p.title}</h1>
@@ -69,28 +69,28 @@ const p = c(lang).process;
 
 <style>
   .lede { max-width: 44rem; }
-  .road-sec { padding-bottom: var(--section); }
+  .road-sec { padding-block: clamp(48px, 6vw, 88px) var(--section); }
   .journey { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .legend { position: sticky; top: 120px; display: grid; gap: 12px; justify-items: start; }
-  .key { margin: 0; display: grid; gap: 8px; justify-items: start; font-size: 17px; line-height: 1.4; }
+  .key { margin: 0; display: grid; gap: 8px; justify-items: start; font-size: 16px; line-height: 1.45; color: var(--fg-2); }
   .key + .key { margin-top: 10px; }
-  .monthly { margin: 12px 0 0; max-width: 24rem; padding-top: 18px; border-top: var(--line) solid var(--ink); }
+  .monthly { margin: 12px 0 0; max-width: 24rem; padding-top: 18px; border-top: 1px solid var(--hair); color: var(--fg-2); font-size: 16px; }
   .road { position: relative; }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .rail { position: absolute; left: 19px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; background: rgba(0, 0, 0, .1); }
-  .rail i { position: absolute; inset: 0; background: var(--mat); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
+  .rail { position: absolute; left: 19px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; background: var(--hair); }
+  .rail i { position: absolute; inset: 0; background: var(--fg); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
   .step { position: relative; padding-left: 64px; }
-  .dot { position: absolute; left: 0; top: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--white); border: var(--line) solid var(--ink); transition: background 300ms var(--ease), color 300ms var(--ease); }
-  .passed .dot { background: var(--mat); border-color: var(--mat-deep); color: #fff; }
-  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); }
+  .dot { position: absolute; left: 0; top: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--bg); color: var(--fg-2); border: 1px solid var(--hair-2); transition: background 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease); }
+  .passed .dot { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--surface); border-radius: 20px; border: 1px solid var(--hair); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
   .t { font-size: clamp(19px, 1.6vw, 23px); letter-spacing: -0.025em; }
-  .chip { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; border: var(--line) solid var(--ink); }
+  .chip { display: inline-block; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--ink); }
   .chip.ok { background: var(--yellow); }
   .chip.pay { background: var(--pink); }
-  .card .text { margin: 0; }
-  .yours { margin: 2px 0 0; padding: 8px 12px; border-radius: var(--r-sm); background: var(--yellow-soft); font-size: 15px; }
-  .yours span { font-weight: 700; margin-right: 6px; }
+  .card .text { margin: 0; color: var(--fg-2); }
+  .yours { margin: 4px 0 0; padding: 9px 12px; border-radius: 12px; background: rgba(255, 255, 255, .05); font-size: 15px; }
+  .yours span { font-weight: 700; margin-right: 6px; color: var(--yellow); }
   @media (max-width: 900px) {
     .journey { grid-template-columns: 1fr; }
     .legend { position: static; display: flex; flex-wrap: wrap; align-items: center; }

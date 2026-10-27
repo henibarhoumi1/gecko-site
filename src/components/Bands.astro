@@ -1,7 +1,7 @@
 ---
-// Bold bands that run across the full width. The full version, before pricing: a big yellow band with the launch
-// offer crossing a green cutting-mat band like an X. The mini version, before the brief: one pink band with the
-// Test. They never stop; scrolling speeds them up, and they lean a little more as the page passes.
+// Bold bands that run across the full width: a big yellow band with the launch offer crossing a pink band like an X,
+// bright against the dark page. The mini version is one pink band. They never stop, and they lean a little more
+// as the page passes.
 import { c } from '../i18n/copy';
 import type { Locale } from '../i18n/strings';
 interface Props { lang: Locale; mini?: boolean }
@@ -17,7 +17,7 @@ const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
   </div>
 ) : (
   <div class="bands" aria-hidden="true" data-bands>
-    <div class="band back mat">
+    <div class="band back">
       <div class="run" data-marquee="38" data-rev>{[0, 1, 2, 3, 4].map(() => <ul>{b.small.map((x) => <li>{x}<svg viewBox="0 0 16 16" set:html={star} /></li>)}</ul>)}</div>
     </div>
     <div class="band front">
@@ -44,12 +44,11 @@ const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
 </script>
 
 <style>
-  .bands { --tilt: 0; --hb: calc(28px + 1.3em); --hf: calc(clamp(30px, 4.6vw, 72px) + 2 * clamp(14px, 1.6vw, 22px)); position: relative; overflow: hidden; overflow: clip; padding-block: clamp(72px, 9vw, 136px); background: var(--white); font-size: clamp(15px, 1.3vw, 19px); }
-  .band { position: relative; width: 112%; margin-left: -6%; overflow: hidden; border-block: var(--line) solid var(--ink); }
-  .band.mat { border-radius: 0; border-inline: 0; }
+  .bands { --tilt: 0; --hb: calc(28px + 1.3em); --hf: calc(clamp(30px, 4.6vw, 72px) + 2 * clamp(14px, 1.6vw, 22px)); position: relative; overflow: hidden; overflow: clip; padding-block: clamp(72px, 9vw, 136px); font-size: clamp(15px, 1.3vw, 19px); }
+  .band { position: relative; width: 112%; margin-left: -6%; overflow: hidden; }
   /* The two bands share a centre line and lean opposite ways, so they cross like an X in the middle. */
-  .front { z-index: 2; margin-top: calc(-1 * (var(--hb) / 2 + var(--hf) / 2)); background: var(--yellow); color: var(--ink); transform: rotate(calc(-3deg - var(--tilt) * 1.4deg)); box-shadow: 0 10px 0 var(--ink); }
-  .back { z-index: 1; color: #fff; transform: rotate(calc(4deg + var(--tilt) * 1.2deg)); }
+  .front { z-index: 2; margin-top: calc(-1 * (var(--hb) / 2 + var(--hf) / 2)); background: var(--yellow); color: var(--ink); transform: rotate(calc(-3deg - var(--tilt) * 1.4deg)); box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .8); }
+  .back { z-index: 1; background: var(--pink); color: var(--ink); transform: rotate(calc(4deg + var(--tilt) * 1.2deg)); }
   .run { display: flex; width: max-content; will-change: transform; }
   .run ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .run li { display: flex; align-items: center; white-space: nowrap; }
@@ -62,7 +61,7 @@ const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
 
   /* The mini band: one pink strip, slightly tilted, between the questions and the brief. */
   .mini { padding-block: clamp(36px, 4.5vw, 64px); }
-  .pinkb { background: var(--pink); color: var(--ink); transform: rotate(calc(-1.6deg - var(--tilt) * .8deg)); box-shadow: 0 6px 0 var(--ink); }
+  .pinkb { background: var(--pink); color: var(--ink); transform: rotate(calc(-1.6deg - var(--tilt) * .8deg)); }
   .pinkb li { gap: 22px; padding: 14px 22px 14px 0; font-weight: 700; font-size: clamp(20px, 2vw, 30px); line-height: 1.1; letter-spacing: -0.03em; }
   .pinkb svg { width: .55em; height: .55em; }
 

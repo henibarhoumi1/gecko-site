@@ -16,7 +16,7 @@ const en = {
     sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
-    workTitle: 'Work.',
+    workTitle: 'Work',
     workCta: 'See the case study',
     why: {
       title: 'What most studios skip.',
@@ -259,7 +259,7 @@ const fr: Copy = {
     sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
-    workTitle: 'Réalisations.',
+    workTitle: 'Réalisations',
     workCta: 'Voir l’étude de cas',
     why: {
       title: 'Ce que la plupart des studios oublient.',

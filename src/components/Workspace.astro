@@ -4,8 +4,8 @@
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
 import type { Locale } from '../i18n/strings';
-interface Props { lang: Locale; num?: string; cta?: boolean }
-const { lang, num, cta = true } = Astro.props;
+interface Props { lang: Locale; cta?: boolean }
+const { lang, cta = true } = Astro.props;
 const k = c(lang).space;
 const m = k.mock;
 const icons = [
@@ -15,10 +15,9 @@ const icons = [
   '<svg viewBox="0 0 20 20"><rect x="3" y="5" width="14" height="10" rx="2"/><path d="M3 9h14"/></svg>',
 ];
 ---
-<section class="on-white section ws-sec" id="workspace">
+<section class="section ws-sec" id="workspace">
   <div class="wrap ws">
     <div class="ws-copy">
-      <p class="kick rv">{num && <span>{num}</span>}{k.kick}</p>
       <h2 class="h2 rv">{k.title}</h2>
       <p class="text text-l rv" style="--d:80ms">{k.sub}</p>
       <ul class="pts">
@@ -33,7 +32,7 @@ const icons = [
       <span class="glow" aria-hidden="true"></span>
       <p class="eg">{k.example}</p>
       <p class="toast" data-ws-toast aria-hidden="true"><span class="tdot"></span><span><b>{m.toast}</b><span data-ws-toast-text></span></span></p>
-      <div class="app shine" style="--shine-d:3s" data-ws data-live={JSON.stringify(m.live)} data-now={m.now}>
+      <div class="app" data-ws data-live={JSON.stringify(m.live)} data-now={m.now}>
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>gecko / {m.project}</span></div>
         <div class="body">
           <aside class="side" role="tablist" aria-label={k.title}>
@@ -153,23 +152,23 @@ const icons = [
 <style>
   .ws { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(36px, 6vw, 96px); align-items: center; }
   .ws-copy { display: grid; gap: 20px; justify-items: start; }
-  .ws-copy .kick { margin: 0; width: 100%; white-space: nowrap; }
   .ws-copy .h2 { max-width: 12ch; }
   .ws-copy .text { margin: 0; max-width: 32rem; }
   .pts { list-style: none; margin: 6px 0 4px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 24px; }
-  .pts li { display: grid; gap: 4px; padding-top: 14px; border-top: var(--line) solid var(--ink); }
+  .pts li { display: grid; gap: 4px; padding-top: 14px; border-top: 1px solid var(--hair); }
   .pts b { font-size: 16px; letter-spacing: -0.01em; }
-  .pts span { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+  .pts span { font-size: 15px; line-height: 1.45; color: var(--fg-2); }
 
-  .ws-sec { overflow-x: clip; }
+  .ws-sec { overflow-x: clip; border-top: 1px solid var(--hair); }
+  .ws-copy .text { color: var(--fg-2); }
   .app-wrap { position: relative; }
-  .eg { position: absolute; z-index: 2; top: -14px; right: 22px; margin: 0; padding: 6px 12px; border-radius: 999px; background: var(--yellow); border: var(--line) solid var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-  .app { position: relative; z-index: 1; border: var(--line) solid var(--ink); border-radius: 18px; background: var(--white); box-shadow: var(--lift-l); overflow: hidden; font-size: 14px; transition: transform 700ms var(--ease); --fill: 70%; }
+  .eg { position: absolute; z-index: 2; top: -14px; right: 22px; margin: 0; padding: 6px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .app { position: relative; z-index: 1; border: 1px solid rgba(255, 255, 255, .14); border-radius: 18px; background: var(--white); color: var(--ink); box-shadow: var(--lift-l); overflow: hidden; font-size: 14px; transition: transform 700ms var(--ease); --fill: 70%; }
   /* A soft glow of the brand colours drifts behind the window. */
   .glow { position: absolute; z-index: 0; inset: 8% 4% 4% 10%; border-radius: 40%; background: radial-gradient(closest-side at 30% 40%, rgba(246, 183, 196, .9), transparent), radial-gradient(closest-side at 70% 60%, rgba(244, 222, 155, .9), transparent), radial-gradient(closest-side at 50% 90%, rgba(46, 107, 78, .45), transparent);
-    filter: blur(40px); opacity: .85; animation: ws-drift 14s ease-in-out infinite alternate; pointer-events: none; }
+    filter: blur(50px); opacity: .45; animation: ws-drift 14s ease-in-out infinite alternate; pointer-events: none; }
   @keyframes ws-drift { from { transform: translate(-4%, -3%) scale(1) rotate(0deg); } to { transform: translate(5%, 4%) scale(1.12) rotate(12deg); } }
-  .toast { position: absolute; z-index: 3; left: -18px; top: 30%; margin: 0; display: flex; align-items: center; gap: 10px; max-width: 260px; padding: 10px 14px 10px 10px; border-radius: 14px; background: var(--ink); color: #fff; box-shadow: var(--lift); font-size: 13px; line-height: 1.3; opacity: 0; transform: translate(-10px, 10px) scale(.92); pointer-events: none; }
+  .toast { position: absolute; z-index: 3; left: -18px; top: 30%; margin: 0; display: flex; align-items: center; gap: 10px; max-width: 260px; padding: 10px 14px 10px 10px; border-radius: 14px; background: #1A1A1D; color: var(--fg); border: 1px solid var(--hair); box-shadow: var(--lift); font-size: 13px; line-height: 1.3; opacity: 0; transform: translate(-10px, 10px) scale(.92); pointer-events: none; }
   .toast b { display: block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--yellow); }
   .tdot { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--mat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
   .toast.up { animation: ws-toast 3.2s cubic-bezier(.2, .9, .3, 1.2) both; }

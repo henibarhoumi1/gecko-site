@@ -10,7 +10,7 @@ const lang = Astro.params.lang as Locale;
 const a = c(lang).about;
 const n = c(lang).nav;
 ---
-<Base lang={lang} footerCta={false} title={n.about} darkHead>
+<Base lang={lang} footerCta={false} title={n.about}>
   <section class="page-head lit">
     <div class="wrap wide">
       <h1 class="h1 rv">{a.title}</h1>
@@ -32,14 +32,14 @@ const n = c(lang).nav;
 
 <style>
   .page-head .h1 { max-width: 13ch; }
-  .facts { margin: clamp(40px, 5vw, 72px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgba(255, 255, 255, .25); }
+  .facts { margin: clamp(40px, 5vw, 72px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-2); }
   .fact { padding: 24px clamp(16px, 2.4vw, 32px) 0 0; }
-  .fact + .fact { padding-left: clamp(16px, 2.4vw, 32px); border-left: 1px solid rgba(255, 255, 255, .25); }
+  .fact + .fact { padding-left: clamp(16px, 2.4vw, 32px); border-left: 1px solid var(--hair); }
   .fact dd { margin: 12px 0 0; display: grid; gap: 10px; }
   .fact .v { font-weight: 700; font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.04em; line-height: 1; }
-  .fact .d { font-size: 17px; line-height: 1.45; max-width: 24rem; color: rgba(255, 255, 255, .78); }
+  .fact .d { font-size: 17px; line-height: 1.45; max-width: 24rem; color: var(--fg-2); }
   @media (max-width: 860px) {
     .facts { grid-template-columns: 1fr; }
-    .fact, .fact + .fact { padding: 22px 0; border-left: 0; border-bottom: 1px solid rgba(255, 255, 255, .25); }
+    .fact, .fact + .fact { padding: 22px 0; border-left: 0; border-bottom: 1px solid var(--hair); }
   }
 </style>

@@ -9,7 +9,7 @@ const n = c('en').nav;
 const links = [['/en/work/', n.work], ['/en/offers/', n.offers], ['/en/contact/', n.contact]] as const;
 ---
 <Base lang="en" title="404" noindex>
-  <section class="on-white page-head nf">
+  <section class="page-head lit nf">
     <div class="wrap wide nf-grid">
       <div class="stack" style="--gap:28px">
         <h1 class="h1 rv">{s.notFound.title}</h1>
@@ -22,7 +22,7 @@ const links = [['/en/work/', n.work], ['/en/offers/', n.offers], ['/en/contact/'
           {links.map(([u, l]) => <li><a href={u}>{l} <span aria-hidden="true">→</span></a></li>)}
         </ul>
       </div>
-      <div class="plate mat rv" style="--d:140ms" aria-hidden="true"><span>404</span></div>
+      <div class="plate rv" style="--d:140ms" aria-hidden="true"><span>404</span></div>
     </div>
   </section>
 </Base>
@@ -30,11 +30,11 @@ const links = [['/en/work/', n.work], ['/en/offers/', n.offers], ['/en/contact/'
   .nf { min-height: 78vh; display: grid; align-content: center; }
   .nf-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
   .nf .h1 { max-width: 12ch; }
-  .soft { margin: 0; color: var(--ink-2); }
-  .quick { list-style: none; margin: 8px 0 0; padding: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px 28px; border-top: var(--line) solid var(--ink); }
+  .soft { margin: 0; color: var(--fg-2); }
+  .quick { list-style: none; margin: 8px 0 0; padding: 18px 0 0; display: flex; flex-wrap: wrap; gap: 10px 28px; border-top: 1px solid var(--hair); }
   .quick a { font-weight: 700; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat; transition: background-size 300ms var(--ease); }
   .quick a:hover { background-size: 100% 2px; }
-  .plate { aspect-ratio: 4 / 5; display: grid; place-items: center; box-shadow: var(--lift-l); transform: rotate(3deg); }
-  .plate span { font-weight: 700; font-size: clamp(88px, 13vw, 200px); letter-spacing: -0.07em; line-height: 1; }
-  @media (max-width: 760px) { .nf-grid { grid-template-columns: 1fr; } .plate { aspect-ratio: 16 / 9; max-width: 420px; transform: rotate(-2deg); } }
+  .plate { aspect-ratio: 4 / 5; display: grid; place-items: center; border-radius: 28px; border: 1px solid var(--hair); background: radial-gradient(80% 60% at 50% 0%, rgba(244, 193, 196, .12), transparent 70%), var(--surface); box-shadow: var(--lift-l); }
+  .plate span { font-weight: 700; font-size: clamp(88px, 13vw, 200px); letter-spacing: -0.07em; line-height: 1; background: linear-gradient(180deg, var(--fg) 30%, rgba(245, 243, 239, .16) 95%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+  @media (max-width: 760px) { .nf-grid { grid-template-columns: 1fr; } .plate { aspect-ratio: 16 / 9; max-width: 420px; } }
 </style>

@@ -1,5 +1,5 @@
 ---
-// The Test and the three monthly plans side by side. Creative Partner is the dark card.
+// The Test and the three monthly plans side by side. Creative Partner carries a faint pink light.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
@@ -12,7 +12,7 @@ const launch = t(lang).offers.launch;
 ---
 <div class="plans">
   {plans.map((o, i) => (
-    <article class={`plan rv ${o.custom ? 'dark shine' : ''} ${o.once ? 'once' : ''}`} style={`--d:${i * 90}ms`}>
+    <article class={`plan rv ${o.custom ? 'dark' : ''} ${o.once ? 'once' : ''}`} style={`--d:${i * 90}ms`}>
       <header class="top">
         <h3 class="h3">{o.name}</h3>
         <span class={`pill ${o.once ? 'ex' : ''} ${o.custom ? 'vip' : ''}`}>{o.custom ? 'VIP' : o.once ? p.exclusive : launch}</span>
@@ -30,34 +30,33 @@ const launch = t(lang).offers.launch;
   ))}
 </div>
 <style>
-  .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
-  .plan { display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 16px; padding: clamp(22px, 2vw, 28px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 500ms var(--ease), box-shadow 500ms var(--ease), opacity 900ms var(--ease), filter 900ms var(--ease); }
-  .plan.in:hover { transform: translateY(-4px); box-shadow: var(--lift); }
-  .amount { margin: 0; }
-  /* What the plan includes in production and after delivery, as two small tags. */
-  .spec { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-  .spec span { padding: 5px 10px; border-radius: 999px; background: var(--paper); border: 1px solid rgba(0, 0, 0, .14); font-size: 13px; font-weight: 600; line-height: 1.25; }
-  .dark .spec span { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); }
-  .plan .ticks-list { gap: 8px; font-size: 15px; }
-  .reels { margin: 0 0 4px; display: flex; align-items: baseline; gap: 8px; font-size: 15px; }
-  .reels .n { font-weight: 700; font-size: clamp(40px, 3.8vw, 56px); line-height: 1; letter-spacing: -0.05em; }
-  .price { display: grid; gap: 2px; padding-block: 12px; border-block: var(--line) solid var(--ink); }
-  .price p { margin: 0; }
-  .from { font-size: 15px; font-weight: 600; }
-  .num { font-weight: 700; font-size: clamp(28px, 2.4vw, 36px); letter-spacing: -0.03em; }
-  .plan .btn { width: 100%; }
-  .dark { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: var(--lift); }
-  .dark.in:hover { box-shadow: var(--lift-l); }
-  .dark .price { border-color: rgba(255, 255, 255, .14); }
-  .dark :global(.ticks-list li::before) { background-color: var(--pink); }
-  .dark .btn { background: var(--pink); border-color: var(--pink); }
+  .plans { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); align-items: stretch; }
+  .plan { display: grid; grid-template-rows: auto auto auto 1fr auto; gap: 18px; padding: clamp(22px, 2vw, 30px); background: var(--surface); border-radius: 24px; border: 1px solid var(--hair); transition: transform 500ms var(--ease), border-color 300ms var(--ease), opacity 900ms var(--ease); }
+  .plan.in:hover { transform: translateY(-4px); border-color: var(--hair-2); }
   .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .top .h3 { font-size: clamp(20px, 1.6vw, 24px); }
+  .pill { padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(244, 193, 196, .45); color: var(--pink); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .pill.ex { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
   .pill.vip { background: var(--pink); border-color: var(--pink); color: var(--ink); }
-  .dark .amount .num { font-size: clamp(24px, 2vw, 30px); }
-  .pill { padding: 4px 10px; border-radius: 999px; border: var(--line) solid var(--ink); background: var(--pink-soft); font-size: 12px; font-weight: 700; white-space: nowrap; }
-  .pill.ex { background: var(--yellow); }
-  .unit { font-weight: 600; font-size: 15px; }
-  .reels .n.sm { font-size: clamp(32px, 3vw, 44px); white-space: nowrap; }
+  .price { display: grid; gap: 6px; padding-block: 16px; border-block: 1px solid var(--hair); }
+  .price p { margin: 0; }
+  .reels { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--fg-2); }
+  .reels .n { font-weight: 700; font-size: clamp(44px, 4vw, 64px); line-height: 1; letter-spacing: -0.055em; color: var(--fg); }
+  .reels .n.sm { font-size: clamp(34px, 3vw, 48px); white-space: nowrap; }
+  .amount { margin: 0; }
+  .num { font-weight: 700; font-size: clamp(22px, 1.9vw, 28px); letter-spacing: -0.03em; }
+  .unit { font-weight: 600; font-size: 14px; color: var(--fg-2); }
+  /* What the plan includes in production and after delivery. */
+  .spec { margin: 0; display: grid; gap: 6px; }
+  .spec span { position: relative; padding-left: 16px; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--fg-2); }
+  .spec span::before { content: ''; position: absolute; left: 0; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: var(--fg-3); }
+  .plan .ticks-list { gap: 9px; font-size: 15px; }
+  .plan .btn { width: 100%; }
+  .dark { background: radial-gradient(130% 60% at 100% 0%, rgba(244, 193, 196, .16), transparent 60%), var(--surface); border-color: rgba(244, 193, 196, .3); }
+  .dark.in:hover { border-color: rgba(244, 193, 196, .6); }
+  .dark .btn { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .dark .btn:hover { background: var(--fg); border-color: var(--fg); }
+  .once { background: radial-gradient(130% 60% at 100% 0%, rgba(243, 223, 158, .09), transparent 60%), var(--surface); }
   @media (max-width: 1180px) and (min-width: 761px) { .plans { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 760px) {
     .plans { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); gap: 12px; margin-inline: calc(-1 * var(--gutter)); padding: 4px var(--gutter) 14px; scrollbar-width: none; }
