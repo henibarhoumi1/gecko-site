@@ -1,5 +1,4 @@
 ---
-import Wa from '../../components/Wa.astro';
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import { t, type Locale } from '../../i18n/strings';
@@ -21,7 +20,7 @@ const n = c(lang).nav;
         <div class="more">
           <p class="text text-l">{f.more}</p>
           <div class="actions">
-            <a class="btn primary" href={site.whatsapp} rel="noopener"><Wa /> {f.moreCta} <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn primary" href={site.whatsapp} rel="noopener">{f.moreCta} <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn" href={href(lang, 'offers')}>{n.offers}</a>
           </div>
         </div>

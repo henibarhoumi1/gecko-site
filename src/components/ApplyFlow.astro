@@ -49,7 +49,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
 
     <div class="direct rv" style="--d:240ms">
       <p class="label">{a.direct}</p>
-      <a href={site.whatsapp} rel="noopener"><Wa /> {ct.whatsapp} {site.phone}</a>
+      <a href={site.whatsapp} rel="noopener">{ct.whatsapp} {site.phone}</a>
       <a href={`mailto:${site.email}`}>{site.email}</a>
     </div>
   </div>
@@ -75,7 +75,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
         <input type="hidden" name={q.key} data-label={q.row} />
         <div class={`chips ${q.opts.length > 6 ? 'many' : ''}`}>
           {q.opts.map(([em, label], j) => (
-            <button type="button" class="chip" data-pick={label} data-i={j} aria-pressed="false">{em.startsWith('flag:') ? <img class="flag" src={`/flags/${em.slice(5)}.svg`} alt="" width="24" height="16" /> : em && <span class="em" aria-hidden="true">{em}</span>}{label}</button>
+            <button type="button" class="chip" data-pick={label} data-i={j} aria-pressed="false">{em.startsWith('flag:') && <img class="flag" src={`/flags/${em.slice(5)}.svg`} alt="" width="24" height="16" />}{label}</button>
           ))}
         </div>
         {q.multi && <button type="button" class="btn primary next" data-next disabled>{a.next} <span class="arr" aria-hidden="true">→</span></button>}
@@ -88,7 +88,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
         <p class="rl">{a.reach}</p>
         <input type="hidden" name="reach" data-label={a.reach} value={a.reachOpts[0]} data-reach-input />
         <div class="seg" role="radiogroup" aria-label={a.reach}>
-          {a.reachOpts.map((r, j) => <button type="button" role="radio" aria-checked={String(j === 0)} data-reach={j}>{j === 0 && <Wa />}{r}</button>)}
+          {a.reachOpts.map((r, j) => <button type="button" role="radio" aria-checked={String(j === 0)} data-reach={j}>{r}</button>)}
         </div>
       </div>
       <div class="fields">
@@ -218,7 +218,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
         if (meta[k].multi) {
           const cur = ans[meta[k].key] ?? [];
           setPick(k, cur.includes(i) ? cur.filter((x) => x !== i) : [...cur, i]);
-          anim(chip, [{ transform: 'scale(.94)' }, { transform: 'translate(-2px,-2px)' }], { duration: 260, easing: 'cubic-bezier(.34,1.4,.64,1)' });
+          anim(chip, [{ transform: 'scale(.96)' }, { transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.34,1.4,.64,1)' });
           brief();
         } else { setPick(k, [i]); forward(); }
       }));
@@ -312,7 +312,7 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-  .flow { position: relative; display: grid; gap: 26px; padding: clamp(24px, 3vw, 44px); min-height: 480px; align-content: start; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
+  .flow { position: relative; display: grid; gap: 26px; padding: clamp(24px, 3vw, 44px); min-height: 480px; align-content: start; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift-l); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
   .count { margin: 0; font-weight: 700; font-size: 15px; }
   .count b { font-size: 28px; letter-spacing: -0.04em; }
@@ -332,10 +332,9 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .step[data-key='make'] .chip.picked::after { content: '✓'; margin-left: 2px; }
   .chip { display: inline-flex; align-items: center; gap: 10px; font: 700 16px/1 var(--font); padding: 15px 18px; border-radius: var(--r-sm); border: var(--line) solid var(--ink); background: var(--white); color: var(--ink); cursor: pointer; transition: background 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
-  .chip .em { font-size: 20px; line-height: 1; }
   .chip .flag { width: 24px; height: 16px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
-  .chip:hover { background: var(--pink-soft); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
-  .chip.picked { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--ink); }
+  .chip:hover { background: var(--pink-soft); }
+  .chip.picked { background: var(--pink); box-shadow: inset 0 0 0 1px var(--ink); }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .fields .wide { grid-column: 1 / -1; }
   .field textarea { resize: vertical; min-height: 92px; }
@@ -362,5 +361,5 @@ const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, 
     .flow { order: 1; }
     .brief, .direct { order: 2; }
   }
-  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .chip { font-size: 14px; line-height: 1.2; padding: 12px; text-align: left; } .chip .em { font-size: 18px; } }
+  @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .chip { font-size: 14px; line-height: 1.2; padding: 12px; text-align: left; } }
 </style>

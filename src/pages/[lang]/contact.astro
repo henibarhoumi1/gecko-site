@@ -61,7 +61,7 @@ const ways = [
   .grid-c { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .ways { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
   .ways a { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 16px; padding: 16px 18px; text-decoration: none; background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease), background 200ms var(--ease); }
-  .ways a:hover { transform: translate(-3px, -3px); box-shadow: 5px 5px 0 var(--ink); background: var(--pink-soft); }
+  .ways a:hover { transform: translateY(-3px); box-shadow: var(--lift); background: var(--pink-soft); }
   .em { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--pink-soft); border: var(--line) solid var(--ink); transition: background 200ms var(--ease), transform 300ms var(--ease); }
   .em svg { width: 22px; height: 22px; fill: none; stroke: var(--ink); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   .ways a:hover .em { background: var(--yellow); transform: rotate(-6deg); }
@@ -72,8 +72,8 @@ const ways = [
   @media (max-width: 420px) { .val { font-size: 15px; } }
   .go { font-weight: 700; transition: transform 240ms var(--ease); }
   .ways a:hover .go { transform: translateX(4px); }
-  .proj { display: grid; gap: 6px; padding: 22px 24px; text-decoration: none; background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: 5px 5px 0 var(--ink); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease); }
-  .proj:hover { transform: translate(-3px, -3px); box-shadow: 8px 8px 0 var(--ink); }
+  .proj { display: grid; gap: 6px; padding: 22px 24px; text-decoration: none; background: var(--yellow); border: var(--line) solid var(--ink); border-radius: var(--r); box-shadow: var(--lift); transition: transform 240ms var(--ease), box-shadow 240ms var(--ease); }
+  .proj:hover { transform: translateY(-3px); box-shadow: var(--lift-l); }
   .proj .pt { font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
   .proj .text { font-weight: 600; }
   @media (max-width: 860px) { .grid-c { grid-template-columns: 1fr; } }

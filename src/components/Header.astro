@@ -1,8 +1,7 @@
 ---
 // The top bar. At the top of a page it sits open and borderless; once you scroll it becomes a floating white bar,
 // hides while you read down and slides back as soon as you scroll up. "Menu" opens a full panel that drops from
-// the top: numbered pages on the left, the Test offer, contacts and language on the right.
-import Wa from './Wa.astro';
+// the top: numbered pages on the left, contacts and language on the right.
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -36,7 +35,7 @@ const langs = [
       <div class="lang-s" role="group" aria-label={n.lang}>
         {langs.map((x) => <a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined} aria-label={x.name}><img class="flag" src={`/flags/${x.l}.png`} alt="" width="18" height="12" />{x.short}</a>)}
       </div>
-      <a class="btn primary cta shine" style="--shine-d:2.4s" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
+      <a class="btn primary cta" href={href(lang, 'apply')}><span class="roll"><span data-text={n.apply}>{n.apply}</span></span></a>
       <button type="button" class="burger" aria-expanded="false" aria-controls="menu" data-burger>
         <span class="bl"><span class="b-open">{n.menu}</span><span class="b-close">{n.close}</span></span>
         <span class="bi" aria-hidden="true"><i></i><i></i></span>
@@ -58,16 +57,9 @@ const langs = [
         ))}
       </ol>
       <aside class="m-side">
-        <a class="m-test shine" href={`${href(lang, 'apply')}?plan=test`}>
-          <span class="m-k">{n.testK}</span>
-          <span class="m-tt">{n.testT}</span>
-          <span class="m-td">{n.testD}</span>
-          <span class="m-tp">{n.testP}</span>
-          <span class="m-tc">{n.testCta} <span aria-hidden="true">→</span></span>
-        </a>
         <div class="m-reach">
           <p class="m-k">{n.reach}</p>
-          <a href={site.whatsapp} rel="noopener"><Wa /> WhatsApp {site.phone}</a>
+          <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
           <a href={`mailto:${site.email}`}>{site.email}</a>
           <a href={site.instagram} rel="noopener">Instagram {site.instagramHandle}</a>
           <a class="m-hire" href={href(lang, 'join')}>{c(lang).join.nav} <span aria-hidden="true">→</span></a>
@@ -181,12 +173,6 @@ const langs = [
   .m-side { display: grid; gap: 28px; opacity: 0; transform: translateY(24px); transition: opacity 500ms var(--ease), transform 600ms var(--ease); }
   .menu.in .m-side { opacity: 1; transform: none; transition-delay: 420ms; }
   .m-k { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-  .m-test { display: grid; gap: 8px; padding: 22px; border-radius: var(--r-lg); background: var(--yellow); color: var(--ink); text-decoration: none; transition: transform 300ms var(--ease); }
-  .m-test:hover { transform: translateY(-4px) rotate(-1deg); }
-  .m-tt { font-weight: 700; font-size: 28px; letter-spacing: -0.04em; line-height: 1; }
-  .m-td { font-size: 15px; line-height: 1.4; }
-  .m-tp { font-weight: 700; font-size: 15px; }
-  .m-tc { margin-top: 6px; justify-self: start; padding: 10px 14px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; }
   .m-reach { display: grid; gap: 10px; }
   .m-reach .m-k { color: rgba(255, 255, 255, .5); }
   .m-reach a { text-decoration: none; font-size: 16px; width: fit-content; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms var(--ease); }

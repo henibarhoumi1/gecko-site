@@ -1,6 +1,6 @@
 /* Gecko brand tokens. White pages, black, pink, yellow and cutting-mat green, ink lines, one sans family.
    Green is the studio's working surface: a few big moments carry its grid texture, and it marks ticks and selected states.
-   Corners are softened and depth comes from a small ink offset, not from blur. */
+   Corners are softened, lines are hairlines and depth comes from soft, deep shadows, like a lit product shot. */
 
 :root {
   --pink: #F4C1C4;
@@ -34,12 +34,14 @@
   --small: 15px;
   --label: 13px;
 
-  --line: 1.5px;
+  --line: 1px;
   --r-sm: 10px;
   --r: 14px;
   --r-lg: 18px;
   --shadow-1: 0 1px 0 rgba(0, 0, 0, .06);
-  --shadow-2: 5px 5px 0 var(--ink);
+  --shadow-2: var(--lift);
+  --lift: 0 1px 2px rgba(0, 0, 0, .06), 0 22px 44px -24px rgba(0, 0, 0, .32);
+  --lift-l: 0 2px 6px rgba(0, 0, 0, .06), 0 40px 80px -36px rgba(0, 0, 0, .45);
   --shadow-3: 0 40px 90px -24px rgba(10, 10, 10, .5);
   --ease: cubic-bezier(.2, .7, .2, 1);
   --spring: cubic-bezier(.34, 1.4, .64, 1);
@@ -77,7 +79,7 @@ body { font-family: var(--font); background: var(--paper); color: var(--ink); -w
 .mat { border-radius: var(--r-lg); overflow: hidden; border: var(--line) solid var(--ink); }
 .on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: rgba(255, 255, 255, .75); }
 .on-mat .btn:not(.primary) { border-color: var(--ink); }
-.on-mat .btn.primary { background: var(--white); color: var(--ink); border-color: var(--ink); box-shadow: 4px 4px 0 var(--ink); }
+.on-mat .btn.primary { background: var(--white); color: var(--ink); border-color: var(--white); }
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: var(--line) solid var(--ink); border-radius: var(--r-sm); background: var(--white); color: var(--ink); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), transform 220ms var(--ease), box-shadow 220ms var(--ease); }
 .btn.primary { background: var(--ink); color: #fff; }

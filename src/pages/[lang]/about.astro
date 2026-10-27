@@ -5,7 +5,6 @@ import Compare from '../../components/Compare.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
-import { portrait } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const a = c(lang).about;
@@ -26,36 +25,7 @@ const n = c(lang).nav;
     </div>
   </section>
 
-  <section class="heni-sec">
-    <div class="wrap heni">
-      <figure class="photo rv">
-        {portrait.src ? <img src={portrait.src} alt={a.heniTitle} /> : <div class="mono">g.</div>}
-      </figure>
-      <div class="stack rv" style="--gap:18px; --d:100ms">
-        <p class="label">{a.heniLabel}</p>
-        <h2 class="h2">{a.heniTitle}</h2>
-        <p class="role">{a.heniRole}</p>
-        <p class="text text-l">{a.heniText}</p>
-      </div>
-    </div>
-  </section>
-
   <Compare lang={lang} />
-
-  <section class="on-paper section think-sec">
-    <div class="wrap">
-      <div class="head rv"><h2 class="h2">{a.thinkTitle}</h2></div>
-      <ol class="why">
-        {a.think.map((w, i) => (
-          <li class="rv" style={`--d:${i * 70}ms`}>
-            <span class={`dot ${['p', 'y', 'g', 'i'][i]}`} aria-hidden="true">{i + 1}</span>
-            <h3 class="h3">{w.t}</h3>
-            <p class="text">{w.d}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
 
   <Cta lang={lang} title={a.cta} />
 </Base>
@@ -68,24 +38,8 @@ const n = c(lang).nav;
   .fact dd { margin: 12px 0 0; display: grid; gap: 10px; }
   .fact .v { font-weight: 700; font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.04em; line-height: 1; }
   .fact .d { font-size: 17px; line-height: 1.45; max-width: 24rem; }
-  .heni-sec { padding-block: clamp(24px, 3vw, 48px) var(--section); }
-  .heni { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 7vw, 112px); align-items: center; }
-  .heni .text { max-width: 34rem; }
-  .photo { margin: 0; aspect-ratio: 4 / 5; border-radius: var(--r-lg); overflow: hidden; background: #fff; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--pink); }
-  .photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
-  .mono { height: 100%; display: grid; place-items: center; font-weight: 700; font-size: 160px; letter-spacing: -0.06em; }
-  .role { margin: -6px 0 0; font-weight: 600; }
-  .think-sec { border-top: 0; }
-  .why { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  @media (max-width: 1100px) { .why { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .why li { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 2.2vw, 32px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), opacity 600ms var(--ease); }
-  .why li.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
-  .dot { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-weight: 700; margin-bottom: 12px; }
-  .dot.p { background: var(--pink); } .dot.y { background: var(--yellow); } .dot.g { background: var(--mat); color: #fff; } .dot.i { background: var(--ink); color: #fff; }
-  .why .text { max-width: 30rem; font-size: 18px; }
   @media (max-width: 860px) {
     .facts { grid-template-columns: 1fr; }
     .fact, .fact + .fact { padding: 22px 0; border-left: 0; border-bottom: var(--line) solid var(--ink); }
-    .heni, .why { grid-template-columns: 1fr; } .photo { max-width: 420px; }
   }
 </style>

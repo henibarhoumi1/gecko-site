@@ -25,9 +25,12 @@ const path = Astro.url.pathname;
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" hreflang={other(lang)} href={swapLang(path, other(lang))} />
-        <meta property="og:title" content={fullTitle} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={new URL(path, Astro.site).href} />
+    <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
-    <meta property="og:image" content="/brand/og.png" />
+    <meta property="og:image" content={new URL('/brand/og.png', Astro.site).href} />
+    <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>document.documentElement.classList.add('pre'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>
   <body>

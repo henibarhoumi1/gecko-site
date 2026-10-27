@@ -49,7 +49,6 @@ const start = 2;
               <span class="unit">{cur} {m.once ? p.once : p.month}</span>
             </p>
           )}
-          {(m.custom || m.once) && <p class="was">{m.custom ? p.customNote : p.onceNote}</p>}
         </div>
         <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {m.once ? p.reelsOnce : p.reels}</p>
         <dl class="spec">
@@ -128,7 +127,7 @@ const start = 2;
   .tabs { display: grid; gap: 10px; }
   .tabs button { display: flex; justify-content: space-between; align-items: center; gap: 16px; width: 100%; padding: 18px 20px; text-align: left; font: inherit; color: var(--ink); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r); cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
   .tabs button:hover { background: var(--pink-soft); }
-  .tabs [aria-selected='true'] { background: var(--mat); color: #fff; transform: translate(-3px, -3px); box-shadow: 4px 4px 0 var(--ink); }
+  .tabs [aria-selected='true'] { background: var(--mat); color: #fff; }
   .nm { font-weight: 700; font-size: clamp(19px, 1.6vw, 22px); letter-spacing: -0.02em; }
   .meta { font-size: 15px; font-weight: 600; white-space: nowrap; }
   .all { font-weight: 700; text-decoration: none; width: fit-content; }
@@ -137,12 +136,11 @@ const start = 2;
   .all:hover span { transform: translateX(4px); }
 
   .stage { display: grid; }
-  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 10px 10px 0 var(--ink); }
-  .card header { display: grid; gap: 8px; padding-right: 110px; }
+  .card { position: relative; display: grid; gap: 22px; padding: clamp(26px, 3vw, 44px); background: var(--white); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift-l); }
+  .card header { display: grid; gap: 8px; padding-right: 150px; }
   .name { margin: 0; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.035em; }
   .for { margin: 0; font-size: 17px; line-height: 1.4; max-width: 28rem; }
-  .sticker { position: absolute; top: clamp(18px, 2vw, 28px); right: clamp(18px, 2vw, 28px); width: 96px; height: 96px; display: grid; place-items: center; text-align: center; padding: 12px; border-radius: 50%; background: var(--pink); border: var(--line) solid var(--ink); font-weight: 700; font-size: 14px; line-height: 1.1; transform: rotate(10deg); animation: spin-in 700ms var(--spring) both; }
-  @keyframes spin-in { from { transform: rotate(-40deg) scale(.6); opacity: 0; } }
+  .sticker { position: absolute; top: clamp(22px, 2.4vw, 36px); right: clamp(22px, 2.4vw, 36px); padding: 7px 12px; border-radius: 999px; background: var(--pink); font-weight: 600; font-size: 12px; line-height: 1; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
   .price { display: grid; gap: 6px; padding-block: 18px; border-block: var(--line) solid var(--ink); }
   .amount { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
   .num.word { font-size: clamp(48px, 5vw, 80px); }
@@ -170,7 +168,7 @@ const start = 2;
   .tabs .bes { border-style: dashed; }
   @media (max-width: 560px) { .spec, .kinds { grid-template-columns: 1fr; } .spec div + div { border-left: 0; border-top: var(--line) solid var(--ink); } }
   .card .btn { justify-self: start; }
-  .dark { background: var(--ink); color: #fff; box-shadow: 10px 10px 0 var(--pink); }
+  .dark { background: var(--ink); color: #fff; box-shadow: var(--lift-l); }
   .dark .price { border-color: rgba(255, 255, 255, .25); }
   .dark .for, .dark .was { color: rgba(255, 255, 255, .8); }
   .dark .btn { background: var(--pink); border-color: var(--pink); color: var(--ink); }
@@ -188,12 +186,12 @@ const start = 2;
     .all { order: 4; }
   }
   @media (max-width: 560px) {
-    .card { box-shadow: 6px 6px 0 var(--ink); }
-    .dark { box-shadow: 6px 6px 0 var(--pink); }
+    .card { box-shadow: var(--lift); }
+    .dark { box-shadow: var(--lift); }
     .card header { padding-right: 76px; }
-    .sticker { width: 76px; height: 76px; font-size: 11px; padding: 6px; }
+    .sticker { font-size: 11px; padding: 6px 10px; }
     .card .ticks-list { grid-template-columns: 1fr; }
     .card .btn { justify-self: stretch; }
   }
-  @media (prefers-reduced-motion: reduce) { .sticker { animation: none; } .tabs button { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .tabs button { transition: none; } }
 </style>

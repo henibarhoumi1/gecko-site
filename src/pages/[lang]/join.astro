@@ -115,7 +115,7 @@ const icon: Record<string, string> = {
             <div class="field"><label for="join-email">{j.email} <span class="opt">({j.optional})</span></label><input id="join-email" name="email" type="email" autocomplete="email" /></div>
             <div class="field wide"><label for="join-note">{j.note} <span class="opt">({j.optional})</span></label><textarea id="join-note" name="note" rows="3"></textarea></div>
           </div>
-          <button class="btn primary send shine" type="submit">{site.formKey ? j.send : <><Wa /> {j.sendWa}</>} <span class="arr" aria-hidden="true">→</span></button>
+          <button class="btn primary send" type="submit">{site.formKey ? j.send : <><Wa /> {j.sendWa}</>} <span class="arr" aria-hidden="true">→</span></button>
         </fieldset>
 
         <div class="done" data-done hidden>
@@ -239,7 +239,7 @@ const icon: Record<string, string> = {
   .lede { margin: 0; max-width: 36rem; color: rgba(255, 255, 255, .9); }
   .join-head .kick span { background: var(--pink); }
   .role-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
-  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: 3px 3px 0 var(--ink);
+  .role-cloud li { padding: 10px 16px; border-radius: 999px; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); font-weight: 700; font-size: clamp(14px, 1.2vw, 17px); box-shadow: var(--lift);
     transform: rotate(calc((var(--i) - 4) * 1.4deg)); animation: jh-bob 4s ease-in-out calc(var(--i) * -.45s) infinite; }
   .role-cloud li:nth-child(3n) { background: var(--yellow); }
   .role-cloud li:nth-child(4n) { background: var(--pink); }
@@ -263,8 +263,8 @@ const icon: Record<string, string> = {
 
   .roles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
   .role { position: relative; display: grid; gap: 6px; align-content: start; justify-items: start; padding: 16px; text-align: left; border: var(--line) solid var(--ink); border-radius: var(--r); background: var(--white); color: var(--ink); font: inherit; cursor: pointer; transition: background 200ms var(--ease), transform 260ms var(--ease), box-shadow 260ms var(--ease); }
-  .role:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
-  .role[aria-pressed='true'] { background: var(--pink); transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
+  .role:hover { transform: translateY(-2px); box-shadow: var(--lift); }
+  .role[aria-pressed='true'] { background: var(--pink); transform: translateY(-2px); box-shadow: var(--lift); }
   .ri { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; background: var(--mat-soft); border: var(--line) solid var(--ink); margin-bottom: 4px; transition: background 200ms var(--ease), transform 300ms var(--ease); }
   .role:hover .ri { transform: rotate(-6deg); }
   .role[aria-pressed='true'] .ri { background: var(--yellow); }
@@ -296,7 +296,7 @@ const icon: Record<string, string> = {
   .dt { font-weight: 700; font-size: 17px; }
   .db { font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
   .dh { margin-top: 6px; font-size: 13px; color: var(--ink-2); }
-  .drop:focus-within { box-shadow: 3px 3px 0 var(--yellow); }
+  .drop:focus-within { box-shadow: var(--lift); }
   .thumbs { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
   .thumbs:empty { display: none; }
   .thumbs :global(li) { position: relative; display: grid; gap: 6px; }

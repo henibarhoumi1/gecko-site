@@ -15,7 +15,6 @@ const k = h.compare;
     <p class="kick rv">{num && <span>{num}</span>}{h.kicks.why}</p>
     <div class="cmp-head">
       <h2 class="h2 rv">{k.title}</h2>
-      <p class="text text-l rv" style="--d:80ms">{k.sub}</p>
     </div>
     <div class="side rv" role="group" aria-label={k.title}>
       <button type="button" data-side-btn="usual" aria-pressed="false">{k.usual}</button>
@@ -53,7 +52,7 @@ const k = h.compare;
   .cmp-head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 20px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(28px, 3.5vw, 48px); }
   .cmp-head .h2 { max-width: 12ch; }
   .cmp-head .text { margin: 0; max-width: 30rem; color: rgba(255, 255, 255, .86); }
-  .cmp { display: grid; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 8px 8px 0 var(--ink); overflow: hidden; }
+  .cmp { display: grid; background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift-l); overflow: hidden; }
   .row { display: grid; grid-template-columns: minmax(150px, .45fr) minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; padding: clamp(16px, 1.6vw, 22px) clamp(18px, 2.4vw, 32px); border-top: 1px solid rgba(0, 0, 0, .14); transition: background 300ms var(--ease); }
   .row:not(.th):hover { background: var(--mat-soft); }
   .th { border-top: 0; padding-block: 14px; font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; background: var(--ink); color: #fff; }

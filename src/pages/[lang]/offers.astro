@@ -115,8 +115,8 @@ const oneOffs = [
   .plans-sec { padding-bottom: clamp(8px, 2vw, 24px); }
   .note { margin: 24px 0 0; max-width: 52rem; font-size: 15px; color: var(--ink-2); }
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
-  .part { display: grid; gap: 14px; align-content: start; padding: clamp(24px, 2.4vw, 32px); background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: 6px 6px 0 var(--ink); }
-  .part.run { background: var(--ink); color: #fff; box-shadow: 6px 6px 0 var(--yellow); }
+  .part { display: grid; gap: 14px; align-content: start; padding: clamp(24px, 2.4vw, 32px); background: var(--white); color: var(--ink); border: var(--line) solid var(--ink); border-radius: var(--r-lg); box-shadow: var(--lift); }
+  .part.run { background: var(--ink); color: #fff; box-shadow: var(--lift); }
   .tag-pill { margin: 0; justify-self: start; padding: 5px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 13px; font-weight: 700; }
   .part:first-child .tag-pill { background: var(--pink); }
   .every { margin-top: clamp(28px, 3vw, 40px); display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: start; }
@@ -127,7 +127,7 @@ const oneOffs = [
   .ones-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .ones { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 22px); }
   .one { display: grid; grid-template-rows: auto auto 1fr auto; gap: 16px; padding: clamp(24px, 2.4vw, 32px); background: var(--white); border-radius: var(--r-lg); border: var(--line) solid var(--ink); transition: transform 300ms var(--ease), box-shadow 300ms var(--ease), opacity 600ms var(--ease); }
-  .one.in:hover { transform: translate(-4px, -4px); box-shadow: var(--shadow-2); }
+  .one.in:hover { transform: translateY(-4px); box-shadow: var(--shadow-2); }
   .one .foot { padding-bottom: 14px; border-bottom: var(--line) solid var(--ink); }
   .one .foot p { margin: 0; }
   .was { font-size: 14px; color: var(--ink-2); }

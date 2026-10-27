@@ -82,6 +82,12 @@ const h = c(lang).home;
     </div>
   </section>
 
+  <Bands lang={lang} mini />
+
+  <section class="on-white section apply-sec" id="apply">
+    <div class="wrap"><ApplyFlow lang={lang} /></div>
+  </section>
+
   <section class="on-white section faq-sec" id="faq">
     <div class="wrap faq-grid">
       <div class="faq-lead rv">
@@ -91,12 +97,6 @@ const h = c(lang).home;
       </div>
       <div class="rv"><Faq items={s.faq} scroll hint={h.faqHint} /></div>
     </div>
-  </section>
-
-  <Bands lang={lang} mini />
-
-  <section class="on-white section apply-sec" id="apply">
-    <div class="wrap"><ApplyFlow lang={lang} /></div>
   </section>
 
   <ReelViewer lang={lang} />
@@ -144,10 +144,10 @@ const h = c(lang).home;
   .hero-art { position: relative; display: block; height: clamp(440px, 46vw, 660px); color: var(--ink); text-decoration: none; }
   .art-mat { position: absolute; right: -4%; bottom: 6%; width: 78%; height: 62%; border-radius: var(--r-lg); position: absolute; border: var(--line) solid var(--ink); transform: rotate(-4deg) translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
   .art-blob { position: absolute; left: 2%; top: 4%; width: 34%; aspect-ratio: 1; border-radius: 50%; background: var(--yellow); transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 18px)); transition: transform 900ms var(--ease); }
-  .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: 8px 8px 0 var(--ink); transition: transform 800ms var(--ease); }
+  .fan { position: absolute; width: 44%; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; border: var(--line) solid var(--ink); box-shadow: var(--lift-l); transition: transform 800ms var(--ease); }
   .fan img, .fan video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .f0 { left: 4%; top: 14%; transform: rotate(-9deg) translate(calc(var(--mx) * 18px), calc(var(--my) * 14px)); }
-  .f1 { left: 30%; top: 2%; z-index: 2; width: 48%; transform: rotate(2deg) translate(calc(var(--mx) * 34px), calc(var(--my) * 24px)); box-shadow: 12px 12px 0 var(--ink); }
+  .f1 { left: 30%; top: 2%; z-index: 2; width: 48%; transform: rotate(2deg) translate(calc(var(--mx) * 34px), calc(var(--my) * 24px)); box-shadow: var(--lift-l); }
   .f2 { left: 56%; top: 16%; transform: rotate(10deg) translate(calc(var(--mx) * 22px), calc(var(--my) * 16px)); }
   .hero-art:hover .f0 { transform: rotate(-15deg) translate(-26px, 10px); }
   .hero-art:hover .f1 { transform: rotate(0deg) translateY(-14px) scale(1.03); }
@@ -169,13 +169,12 @@ const h = c(lang).home;
   .ticker svg { width: 13px; height: 13px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; }
   @media (prefers-reduced-motion: reduce) { .rise, .hl::before, .pulse::after { animation: none; } }
 
-  /* Work: title on the left, note and link on the right, reels on a broken grid. */
+  /* Work: title on the left, link on the right, the four reels in one clean row. */
   .work-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 24px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(36px, 5vw, 72px); }
   .work-h { max-width: 11ch; font-size: clamp(44px, 6.4vw, 104px); letter-spacing: -0.055em; }
   .work-side { display: grid; gap: 22px; justify-items: end; }
   .work-side .text { margin: 0; max-width: 30rem; }
   .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 24px); }
-  @media (min-width: 761px) { .stagger > :nth-child(even) { margin-top: clamp(32px, 5vw, 80px); } .stagger { padding-bottom: 8px; } }
   @media (max-width: 860px) { .work-head { grid-template-columns: 1fr; } .work-side { justify-items: start; } }
   @media (max-width: 760px) {
     .reels :global(.reel) { transform: translateY(calc((1 - var(--near, 1)) * 22px)) scale(calc(.86 + .14 * var(--near, 1))); opacity: calc(.55 + .45 * var(--near, 1)); transform-origin: 50% 60%; will-change: transform; }

@@ -1,7 +1,5 @@
 // Contact details (from the team tool settings; confirm before launch).
 export const site = {
-  // Domain not confirmed yet. Change here and in astro.config.mjs once it is.
-  domain: 'https://gecko.example',
   phone: '+216 26 191 555',
   whatsapp: 'https://wa.me/21626191555',
   email: 'contact@geckostudio.com',
