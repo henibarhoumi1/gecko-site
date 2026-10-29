@@ -10,6 +10,8 @@ import Wa from '../components/Wa.astro';
 import { sections, next } from '../data/onboarding';
 import { site } from '../data/site';
 const n2 = (i: number) => String(i + 1).padStart(2, '0');
+// Each part gets its own colour panel, in turn: pink, yellow, the green mat, black.
+const tones = ['pink', 'yellow', 'mat', 'ink'];
 const count = (f: (typeof sections)[number]['fields']) => f.length;
 const total = sections.reduce((a, s) => a + count(s.fields), 0);
 const minutes = sections.reduce((a, s) => a + s.min, 0);
@@ -41,6 +43,14 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         </div>
       </div>
       <div class="meter" aria-hidden="true"><i data-meter></i></div>
+      <nav class="rail" aria-label="Parts">
+          <ol>
+            {sections.map((s, i) => (
+              <li><a href={`#${s.id}`} data-rail={s.id}><span class="no">{n2(i)}</span><span class="nm">{s.name}</span><span class="tick" aria-hidden="true"></span><i style="--p:0" aria-hidden="true"></i></a></li>
+            ))}
+            <li><a href="#send" data-rail="send"><span class="no">✓</span><span class="nm">Review and send</span></a></li>
+          </ol>
+        </nav>
     </header>
 
     <main class="ob">
@@ -68,24 +78,21 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       </section>
 
       <div class="wrap wide body">
-        <nav class="rail" aria-label="Parts">
-          <ol>
-            {sections.map((s, i) => (
-              <li><a href={`#${s.id}`} data-rail={s.id}><span class="no">{n2(i)}</span><span class="nm">{s.name}</span><span class="tick" aria-hidden="true"></span><i style="--p:0" aria-hidden="true"></i></a></li>
-            ))}
-            <li><a href="#send" data-rail="send"><span class="no">✓</span><span class="nm">Review and send</span></a></li>
-          </ol>
-        </nav>
 
         <form class="sheet focus" data-sheet novalidate autocomplete="off" data-schema={JSON.stringify(schema)}>
           {sections.map((s, i) => (
             <section class="part" id={s.id} data-part={s.id}>
-              <header class="part-head">
-                <p class="kick"><span>{n2(i)}</span>{s.name}</p>
-                <h2 class="h3 t">{s.title}</h2>
-                <p class="why">{s.why}</p>
-                <p class="meta"><span>~{s.min} min</span><span data-count={s.id}>0 / {count(s.fields)}</span></p>
+              <header class={`part-head tone-${tones[i % tones.length]} ${tones[i % tones.length] === 'mat' ? 'on-mat' : ''}`}>
+                <div class="ph-in">
+                  <span class="big" aria-hidden="true">{n2(i)}</span>
+                  <p class="kick"><span>{n2(i)}</span>{s.name}</p>
+                  <h2 class="t">{s.title}</h2>
+                  <p class="why">{s.why}</p>
+                  <p class="meta"><span>~{s.min} min</span><span data-count={s.id}>0 / {count(s.fields)}</span></p>
+                  <div class="echo" data-echo={s.id} aria-live="polite"></div>
+                </div>
               </header>
+              <div class="pbody">
               <div class="fields">
                 {s.fields.map((f) => {
                   const cls = `q ${f.half ? 'half' : ''} ${f.type === 'scale' ? 'scale-q' : ''} ${f.type === 'scale' && !f.label ? 'joined' : ''}`;
@@ -94,7 +101,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
                       <label for={`f-${f.id}`}>{f.label}</label>
                       {f.type === 'text'
                         ? <input id={`f-${f.id}`} name={f.id} type={f.input ?? 'text'} placeholder={f.ph} inputmode={f.input === 'tel' ? 'tel' : undefined} />
-                        : <textarea id={`f-${f.id}`} name={f.id} rows="3" placeholder={f.ph}></textarea>}
+                        : <textarea id={`f-${f.id}`} name={f.id} rows="1" placeholder={f.ph}></textarea>}
                       {f.hint && <p class="hint">{f.hint}</p>}
                     </div>
                   );
@@ -165,15 +172,21 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
                   ? <a class="btn primary" href={`#${sections[i + 1].id}`}>Next: {sections[i + 1].name} <span class="arr" aria-hidden="true">→</span></a>
                   : <a class="btn primary" href="#send">See your brief <span class="arr" aria-hidden="true">→</span></a>}
               </footer>
+              </div>
             </section>
           ))}
 
           <section class="part send" id="send" data-send>
-            <header class="part-head">
-              <p class="kick"><span>✓</span>Review</p>
-              <h2 class="h3 t">Your brief</h2>
-              <p class="why">This is what we will work from. Nothing is sent until you press a button below, and gaps are fine: we will cover them together.</p>
+            <header class="part-head tone-mat on-mat">
+              <div class="ph-in">
+                <span class="big" aria-hidden="true">✓</span>
+                <p class="kick"><span>12</span>Review</p>
+                <h2 class="t">Your brief</h2>
+                <p class="why">This is what we will work from. Nothing is sent until you press a button, and gaps are fine: we will cover them together.</p>
+                <p class="meta"><span data-sum>0%</span></p>
+              </div>
             </header>
+            <div class="pbody">
             <details class="todo" data-todo>
               <summary><span data-todo-label>Still to fill</span><span class="pm" aria-hidden="true"></span></summary>
               <div class="gaps" data-gaps></div>
@@ -189,6 +202,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
             <article class="doc" data-preview aria-label="Brief preview"></article>
             <div class="part-foot"><a class="back" href={`#${sections[sections.length - 1].id}`}>← {sections[sections.length - 1].name}</a><span></span></div>
             <p class="reset"><button type="button" data-reset>Clear all answers</button></p>
+            </div>
           </section>
         </form>
       </div>
@@ -318,6 +332,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         $('[data-done]')!.textContent = String(done);
         $('[data-answered]')!.textContent = String(answered);
         $('[data-meter]')!.style.transform = `scaleX(${answered / all})`;
+        $('[data-sum]')!.textContent = `${pct}% filled · ${done} of ${schema.length} parts complete`;
+        schema.forEach(echo);
         const brand = (state.brand as string) || '';
         $('[data-brand-name]')!.textContent = brand || 'your brand';
         $('[data-brand-lock]')!.textContent = brand || 'Your brand';
@@ -330,6 +346,14 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         document.title = brand ? `${brand} · Onboarding · Gecko` : 'Client onboarding · Gecko';
         gaps();
       };
+      // The colour panel of each part lists that part's answers as they come in.
+      function echo(sec: S) {
+        const el = $(`[data-echo="${sec.id}"]`); if (!el) return;
+        const rows = sec.fields.map((f) => [label(sec, f), answer(f)] as const).filter(([, a]) => a.length);
+        el.innerHTML = rows.length
+          ? `<p class="eh">So far</p>${rows.slice(0, 7).map(([l, a]) => `<p class="er"><span>${esc(l)}</span>${esc(a.join(' · ')).slice(0, 90)}${a.join(' · ').length > 90 ? '…' : ''}</p>`).join('')}${rows.length > 7 ? `<p class="er more">+ ${rows.length - 7} more</p>` : ''}`
+          : `<p class="eh-empty">Your answers show up here as you go.</p>`;
+      }
       const gaps = () => {
         const el = $('[data-gaps]')!;
         let left = 0;
@@ -488,7 +512,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       // ----- one part at a time -----
       const rails = $$<HTMLAnchorElement>('[data-rail]');
       const parts = $$('.part');
-      const sheetTop = () => $('.body')!.getBoundingClientRect().top + scrollY - 76;
+      const barH = () => $('.ob-bar')!.offsetHeight + 12;
+      const sheetTop = () => $('.body')!.getBoundingClientRect().top + scrollY - barH();
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       function show(id: string, scroll = true) {
         const el = parts.find((p) => p.id === id) ?? parts[0];
@@ -500,7 +525,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         const nav = here?.closest('.rail') as HTMLElement | null;
         if (here && nav && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: here.offsetLeft - 16, behavior: still ? 'auto' : 'smooth' });
         try { localStorage.setItem(`${KEY}-at`, current); } catch {}
-        const y = $('.body')!.getBoundingClientRect().top - 76;
+        const y = $('.body')!.getBoundingClientRect().top - barH();
         if (scroll && (y < -4 || y > innerHeight * .45)) scrollTo({ top: sheetTop(), behavior: still ? 'auto' : 'smooth' });
       }
       document.addEventListener('click', (e) => {
@@ -513,7 +538,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       });
 
       // ----- typing: boxes grow with the text, Enter moves to the next question -----
-      const grow = (t: HTMLTextAreaElement) => { t.style.height = 'auto'; t.style.height = `${Math.max(96, t.scrollHeight + 2)}px`; };
+      const grow = (t: HTMLTextAreaElement) => { t.style.height = 'auto'; t.style.height = `${Math.max(52, t.scrollHeight + 2)}px`; };
       form.addEventListener('input', (e) => { if (e.target instanceof HTMLTextAreaElement) grow(e.target); });
       form.addEventListener('keydown', (e) => {
         const t = e.target as HTMLElement;
@@ -804,6 +829,101 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
     .mini { grid-template-columns: 1fr 1fr; }
   }
 
+
+  /* ===== Studio layout: a colour panel per part, questions on the right ===== */
+  :root { --navh: 48px; }
+  .meter { display: none; }
+  .ob-bar .rail { position: static; margin: 0; padding: 0 var(--gutter); background: transparent; border: 0; overflow-x: auto; scrollbar-width: none; max-width: var(--wide); margin-inline: auto; }
+  .ob-bar .rail::-webkit-scrollbar { display: none; }
+  .ob-bar .rail ol { display: grid; grid-template-columns: repeat(12, minmax(64px, 1fr)); gap: 6px; width: auto; height: var(--navh); align-items: stretch; }
+  .ob-bar .rail li { min-width: 0; }
+  .ob-bar .rail a { position: relative; display: flex; align-items: center; gap: 6px; height: 100%; padding: 6px 2px 0; border-radius: 0; background: none !important; font-size: 13px; font-weight: 600; color: var(--fg-3); overflow: visible; white-space: nowrap; }
+  .ob-bar .rail a::before { content: ''; position: absolute; left: 0; right: 0; top: 8px; height: 4px; border-radius: 4px; background: var(--tint-2); }
+  .ob-bar .rail a i { left: 0; right: 0; top: 8px; bottom: auto; height: 4px; border-radius: 4px; opacity: 1 !important; background: var(--mat); z-index: 1; }
+  .ob-bar .rail a.full i { transform: scaleX(1); }
+  .ob-bar .rail a.here::before { background: rgba(0, 0, 0, .22); }
+  .ob-bar .rail a.here { color: var(--ink); }
+  .ob-bar .rail a:hover { color: var(--ink); }
+  .ob-bar .rail .no { font-size: 11px; opacity: .6; }
+  .ob-bar .rail .nm { overflow: hidden; text-overflow: ellipsis; }
+  .ob-bar .rail .tick { width: 0; height: 14px; flex: none; transition: width 200ms; }
+  .ob-bar .rail a.full .tick { width: 14px; background-size: 14px; }
+  .ob-bar .rail a.full { color: var(--fg); }
+
+  .body { grid-template-columns: minmax(0, 1fr) !important; padding-top: 28px; }
+  .part { display: grid; grid-template-columns: minmax(300px, 38%) minmax(0, 1fr); padding: 0; border-radius: 26px; overflow: clip; background: var(--surface); box-shadow: var(--lift); }
+  .part-head { display: block; margin: 0; padding: 0; border: 0; border-right: 1px solid var(--ink); border-radius: 0; }
+  .part-head.on-mat::before { display: none; }
+  .tone-pink { background: var(--pink); color: var(--ink); }
+  .tone-yellow { background: var(--yellow); color: var(--ink); }
+  .tone-ink { background: var(--ink); color: #fff; }
+  .tone-mat { color: #fff; }
+  .ph-in { position: sticky; top: calc(var(--bar) + var(--navh) + 20px); padding: clamp(28px, 3.4vw, 52px); display: grid; gap: 14px; align-content: start; }
+  .part-head .big { display: block; font-weight: 700; font-size: clamp(110px, 13vw, 210px); line-height: .78; letter-spacing: -0.075em; margin: 0 0 18px -0.04em; }
+  .part-head .kick { margin: 0; color: inherit; }
+  .part-head .kick::after { background: currentColor; }
+  .part-head .t { margin: 0; font-weight: 700; font-size: clamp(30px, 2.9vw, 46px); line-height: 1.02; letter-spacing: -0.04em; text-wrap: balance; }
+  .part-head .why { margin: 0; max-width: 30rem; color: inherit; opacity: .78; font-size: 17px; }
+  .part-head .meta { margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 700; }
+  .part-head .meta span, .part-head .meta span + span { padding: 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .55); color: var(--ink); }
+  .tone-ink .meta span, .tone-mat .meta span, .tone-ink .meta span + span, .tone-mat .meta span + span { background: rgba(255, 255, 255, .14); color: #fff; }
+  .echo { margin-top: 18px; padding-top: 18px; border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 25%, transparent); display: grid; gap: 10px; font-size: 14px; }
+  .echo :global(.eh) { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
+  .echo :global(.er) { margin: 0; line-height: 1.35; overflow-wrap: anywhere; animation: er-in 400ms var(--ease) both; }
+  .echo :global(.er span) { display: block; font-size: 12px; font-weight: 700; opacity: .6; margin-bottom: 2px; }
+  .echo :global(.er.more) { opacity: .6; font-weight: 600; }
+  @keyframes er-in { from { opacity: 0; transform: translateY(6px); } }
+
+  .pbody { padding: clamp(28px, 4vw, 64px) clamp(24px, 4vw, 64px) clamp(24px, 3vw, 40px); min-width: 0; }
+  .ph-in > * { grid-column: 1 !important; grid-row: auto !important; }
+  .echo :global(.eh-empty) { margin: 0; font-size: 14px; opacity: .6; }
+  .list input { border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; padding: 10px 0; background: transparent; font-size: 17px; }
+  .list input:focus { box-shadow: 0 1.5px 0 var(--mat); border-color: var(--mat); }
+  .lh span { padding-left: 0; }
+  .al { border: 0; border-bottom: 1.5px solid var(--hair-2); border-radius: 0; background: transparent; padding: 10px 0; }
+  .al:focus { box-shadow: none; border-color: var(--ink); }
+  .fields { gap: 46px 28px; counter-reset: q; }
+  .q:not(.joined) { counter-increment: q; }
+  .q > label, .q > legend, .q > .ql { font-size: clamp(19px, 1.5vw, 22px); line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .q:not(.joined) > label::before, .q:not(.joined) > legend::before, .q:not(.joined) > .ql::before { content: counter(q, decimal-leading-zero); font-size: 12px; font-weight: 700; color: var(--fg-3); letter-spacing: 0; font-variant-numeric: tabular-nums; min-width: 20px; }
+  .q.joined { margin-top: -34px; }
+  .field input, .field textarea { font-size: clamp(18px, 1.5vw, 22px); border: 0; border-bottom: 1.5px solid var(--ink); border-radius: 0; padding: 8px 0 12px; background: transparent; box-shadow: none; }
+  .field input:focus, .field textarea:focus { background: transparent; border-bottom-color: var(--mat); box-shadow: 0 1.5px 0 var(--mat); }
+  .field textarea { min-height: 52px; resize: none; line-height: 1.45; overflow: hidden; }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(0, 0, 0, .28); }
+  .hint { font-size: 14px; }
+  .chips { gap: 10px; }
+  .chip span { font-size: 16px; padding: 13px 18px; }
+  .chip:hover span { background: var(--pink-soft); border-color: var(--ink); }
+  .chip input:checked + span { transform: none; box-shadow: 0 6px 16px -8px rgba(46, 107, 78, .8); }
+  .other { border: 0; border-bottom: 1.5px dashed var(--hair-2); border-radius: 0; padding: 10px 0; font-size: 17px; background: transparent; }
+  .other:not(:placeholder-shown), .other:focus { border-bottom-style: solid; box-shadow: none; border-color: var(--ink); }
+  .scale { background: transparent; border: 0; border-bottom: 1px solid var(--hair); border-radius: 0; padding: 12px 0; }
+  .scale span { font-size: 15px; }
+  .part-foot { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--ink); }
+  .part-foot .btn.primary { padding: 18px 28px; font-size: 16px; }
+  .send .pbody { background: var(--yellow-soft); }
+  .send { background: var(--surface); }
+
+  @media (max-width: 960px) {
+    :root { --navh: 44px; }
+    .ob-bar .rail ol { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px; }
+    .ob-bar .rail a { min-width: 0; justify-content: center; }
+    .ob-bar .rail .nm, .ob-bar .rail .tick { display: none; }
+    .ob-bar .rail a.here .no { opacity: 1; font-weight: 700; }
+    .part { grid-template-columns: 1fr; border-radius: 20px; }
+    .part-head { border-right: 0; border-bottom: 1px solid var(--ink); }
+    .ph-in { position: static; padding: 26px 22px 24px; gap: 10px; }
+    .part-head .big { font-size: 96px; margin-bottom: 8px; }
+    .echo { display: none; }
+    html { scroll-padding-top: calc(var(--bar) + var(--navh) + 16px); }
+  }
+  @media (max-width: 760px) {
+    .pbody { padding: 26px 18px 22px; }
+    .fields { gap: 36px; }
+    .q.joined { margin-top: -26px; }
+    .part { padding: 0 !important; }
+  }
   /* Printing shows only the clean answer sheet built by the script. */
   @media print {
     @page { margin: 16mm 14mm; }
