@@ -550,7 +550,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         if (!armed) { reset.textContent = 'Tap again to clear everything'; reset.classList.add('armed'); armed = window.setTimeout(() => { armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed'); }, 3000); return; }
         clearTimeout(armed); armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed');
         try { localStorage.removeItem(KEY); } catch {}
-        state = {}; write(state); progress(); show(schema[0].id, false); say('Cleared.'); scrollTo({ top: 0, behavior: 'smooth' });
+        state = {}; const b = new URLSearchParams(location.search).get('client'); if (b) state.brand = b.slice(0, 80); write(state); progress(); push(); show(schema[0].id, false); say('Cleared.'); scrollTo({ top: 0, behavior: 'smooth' });
       });
 
       $('[data-today]')!.textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -611,6 +611,9 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
           room = (q.get('room') ?? '').replace(/[^\w-]/g, '').slice(0, 64);
           const fresh = room.length < 16;
           if (fresh) {
+            // A new live sheet always starts blank, whatever was typed on this device before.
+            if (!m) s = {};
+            if (client) s.brand = client.slice(0, 80);
             room = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join('');
             q.set('room', room); history.replaceState(null, '', `${location.pathname}?${q}`);
           } else {
