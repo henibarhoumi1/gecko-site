@@ -46,7 +46,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
     <main class="ob">
       <section class="cover wrap wide">
         <div class="stack intro" style="--gap:26px">
-          <p class="kick"><span>00</span>Onboarding</p>
+          <p class="lock" aria-label="Gecko and your brand"><span class="lk-g"><Logo /></span><span class="lk-x" aria-hidden="true">×</span><span class="lk-c" data-brand-lock>Your brand</span></p>
+          <p class="when"><span class="dot" aria-hidden="true"></span>Kickoff · <span data-today></span></p>
           <h1 class="h1">Let’s get to know <em data-brand-name>your brand</em>.</h1>
           <p class="text text-l soft measure">Everything we need to start pre-production, in one place. Fill it in together on the call, or on your own later. Skip anything you are not sure about.</p>
           <ul class="facts">
@@ -54,7 +55,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
             <li><b>~{minutes}</b> minutes</li>
             <li><b>Saved</b> on this device as you type</li>
           </ul>
-          <div class="actions"><a class="btn primary" href={`#${sections[0].id}`}>Start <span class="arr" aria-hidden="true">→</span></a></div>
+          <div class="actions"><a class="btn primary" href={`#${sections[0].id}`} data-start>Start <span class="arr" aria-hidden="true">→</span></a></div>
         </div>
         <aside class="dial mat" aria-live="polite">
           <p class="label">Progress</p>
@@ -76,7 +77,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
           </ol>
         </nav>
 
-        <form class="sheet" data-sheet novalidate autocomplete="off" data-schema={JSON.stringify(schema)}>
+        <form class="sheet focus" data-sheet novalidate autocomplete="off" data-schema={JSON.stringify(schema)}>
           {sections.map((s, i) => (
             <section class="part" id={s.id} data-part={s.id}>
               <header class="part-head">
@@ -158,9 +159,11 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
                 })}
               </div>
               <footer class="part-foot">
+                {i > 0 ? <a class="back" href={`#${sections[i - 1].id}`}>← {sections[i - 1].name}</a> : <span></span>}
+                <span class="pos">Part {i + 1} of {sections.length}</span>
                 {i < sections.length - 1
-                  ? <a class="btn" href={`#${sections[i + 1].id}`}>Next: {sections[i + 1].name} <span class="arr" aria-hidden="true">→</span></a>
-                  : <a class="btn" href="#send">Review and send <span class="arr" aria-hidden="true">→</span></a>}
+                  ? <a class="btn primary" href={`#${sections[i + 1].id}`}>Next: {sections[i + 1].name} <span class="arr" aria-hidden="true">→</span></a>
+                  : <a class="btn primary" href="#send">See your brief <span class="arr" aria-hidden="true">→</span></a>}
               </footer>
             </section>
           ))}
@@ -168,10 +171,13 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
           <section class="part send" id="send" data-send>
             <header class="part-head">
               <p class="kick"><span>✓</span>Review</p>
-              <h2 class="h3 t">Send it to us</h2>
-              <p class="why">Nothing is sent until you press a button below. Gaps are fine: we will cover them together.</p>
+              <h2 class="h3 t">Your brief</h2>
+              <p class="why">This is what we will work from. Nothing is sent until you press a button below, and gaps are fine: we will cover them together.</p>
             </header>
-            <div class="gaps" data-gaps></div>
+            <details class="todo" data-todo>
+              <summary><span data-todo-label>Still to fill</span><span class="pm" aria-hidden="true"></span></summary>
+              <div class="gaps" data-gaps></div>
+            </details>
             <div class="send-row">
               <button type="button" class="btn primary" data-wa={wa}><Wa /> Send on WhatsApp</button>
               <button type="button" class="btn" data-mail={site.email}>Send by email</button>
@@ -180,6 +186,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
               <button type="button" class="btn" data-share>Copy link with answers</button>
             </div>
             <p class="note" data-note aria-live="polite"></p>
+            <article class="doc" data-preview aria-label="Brief preview"></article>
+            <div class="part-foot"><a class="back" href={`#${sections[sections.length - 1].id}`}>← {sections[sections.length - 1].name}</a><span></span></div>
             <p class="reset"><button type="button" data-reset>Clear all answers</button></p>
           </section>
         </form>
@@ -216,6 +224,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       const $ = <T extends Element = HTMLElement>(q: string, r: ParentNode = document) => r.querySelector<T>(q);
       const $$ = <T extends Element = HTMLElement>(q: string, r: ParentNode = document) => [...r.querySelectorAll<T>(q)];
       let state: Record<string, Val> = {};
+      let current = '';
       // Sliders count as answered only once they are moved.
       let touched: Record<string, true> = {};
 
@@ -288,6 +297,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         if (f.type === 'pick' || f.type === 'picks') return !!(s[f.id] || s[`${f.id}.other`]);
         return !!s[f.id];
       };
+      const wasFull: Record<string, boolean> = {};
+      let ready = false;
       const progress = () => {
         let answered = 0, done = 0, all = 0;
         schema.forEach((sec) => {
@@ -309,17 +320,30 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         $('[data-meter]')!.style.transform = `scaleX(${answered / all})`;
         const brand = (state.brand as string) || '';
         $('[data-brand-name]')!.textContent = brand || 'your brand';
+        $('[data-brand-lock]')!.textContent = brand || 'Your brand';
+        // A part that just got its last answer: the tick pops and a note says how far along we are.
+        schema.forEach((sec) => {
+          const r = $(`[data-rail="${sec.id}"]`)!; const full = r.classList.contains('full');
+          if (ready && full && !wasFull[sec.id]) { r.classList.remove('pop'); void r.offsetWidth; r.classList.add('pop'); say(`${sec.name} done · ${done} of ${schema.length} parts`); }
+          wasFull[sec.id] = full;
+        });
         document.title = brand ? `${brand} · Onboarding · Gecko` : 'Client onboarding · Gecko';
         gaps();
       };
       const gaps = () => {
         const el = $('[data-gaps]')!;
+        let left = 0;
         const rows = schema.map((sec, i) => {
           const miss = sec.fields.filter((f) => !has(f) && f.label);
           const a = sec.fields.filter((f) => has(f)).length;
+          left += miss.length;
+          if (!miss.length) return '';
           return `<a href="#${sec.id}" class="${miss.length ? '' : 'full'}"><span class="no">${String(i + 1).padStart(2, '0')}</span><b>${sec.name}</b><span class="st">${miss.length ? `${miss.length} to fill: ${miss.slice(0, 3).map((f) => esc(f.label)).join(', ')}${miss.length > 3 ? '…' : ''}` : 'Complete'}</span><span class="n">${a}/${sec.fields.length}</span></a>`;
         });
         el.innerHTML = rows.join('');
+        const todo = $('[data-todo]')!; todo.hidden = !left;
+        $('[data-todo-label]')!.textContent = `${left} question${left === 1 ? '' : 's'} still open`;
+        if (current === 'send') $('[data-preview]')!.innerHTML = briefHTML();
       };
       const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
@@ -394,10 +418,10 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
 
       // ----- the printed sheet -----
       const printout = $('[data-printout]')!;
-      const buildPrint = () => {
+      function briefHTML() {
         const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
         const logo = $('.ob-bar .mark')!.innerHTML;
-        printout.innerHTML = `<header><span class="pl">${logo}</span><div><p class="pk">Client onboarding</p><h1>${esc((state.brand as string) || 'Brand')}</h1><p class="pd">${date}</p></div></header>` +
+        return `<header><span class="pl">${logo}</span><div><p class="pk">Client onboarding · Gecko × ${esc((state.brand as string) || 'Brand')}</p><h1>${esc((state.brand as string) || 'Brand')}</h1><p class="pd">${date}</p></div></header>` +
           schema.map((sec, i) => {
             const rows = sec.fields.map((f) => {
               const a = answer(f);
@@ -405,7 +429,8 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
             }).join('');
             return `<section><h2><span>${String(i + 1).padStart(2, '0')}</span>${esc(sec.title)}</h2><dl>${rows}</dl></section>`;
           }).join('') + `<footer>Gecko · ${esc(document.querySelector<HTMLElement>('[data-mail]')!.dataset.mail!)}</footer>`;
-      };
+      }
+      const buildPrint = () => { state = read(); printout.innerHTML = briefHTML(); };
       addEventListener('beforeprint', buildPrint);
       $$('[data-print]').forEach((b) => b.addEventListener('click', () => { buildPrint(); print(); }));
 
@@ -455,7 +480,47 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         if (!armed) { reset.textContent = 'Tap again to clear everything'; reset.classList.add('armed'); armed = window.setTimeout(() => { armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed'); }, 3000); return; }
         clearTimeout(armed); armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed');
         try { localStorage.removeItem(KEY); } catch {}
-        state = {}; write(state); progress(); say('Cleared.'); scrollTo({ top: 0, behavior: 'smooth' });
+        state = {}; write(state); progress(); show(schema[0].id, false); say('Cleared.'); scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      $('[data-today]')!.textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      // ----- one part at a time -----
+      const rails = $$<HTMLAnchorElement>('[data-rail]');
+      const parts = $$('.part');
+      const sheetTop = () => $('.body')!.getBoundingClientRect().top + scrollY - 76;
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function show(id: string, scroll = true) {
+        const el = parts.find((p) => p.id === id) ?? parts[0];
+        current = el.id;
+        parts.forEach((p) => p.classList.toggle('on', p === el));
+        rails.forEach((r) => r.classList.toggle('here', r.dataset.rail === el.id));
+        if (current === 'send') { state = read(); $('[data-preview]')!.innerHTML = briefHTML(); }
+        const here = rails.find((r) => r.dataset.rail === el.id);
+        const nav = here?.closest('.rail') as HTMLElement | null;
+        if (here && nav && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: here.offsetLeft - 16, behavior: still ? 'auto' : 'smooth' });
+        try { localStorage.setItem(`${KEY}-at`, current); } catch {}
+        const y = $('.body')!.getBoundingClientRect().top - 76;
+        if (scroll && (y < -4 || y > innerHeight * .45)) scrollTo({ top: sheetTop(), behavior: still ? 'auto' : 'smooth' });
+      }
+      document.addEventListener('click', (e) => {
+        const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]'); if (!a) return;
+        const id = a.getAttribute('href')!.slice(1);
+        if (!parts.some((p) => p.id === id)) return;
+        e.preventDefault();
+        show(id);
+        if (a.hasAttribute('data-start')) scrollTo({ top: sheetTop(), behavior: still ? 'auto' : 'smooth' });
+      });
+
+      // ----- typing: boxes grow with the text, Enter moves to the next question -----
+      const grow = (t: HTMLTextAreaElement) => { t.style.height = 'auto'; t.style.height = `${Math.max(96, t.scrollHeight + 2)}px`; };
+      form.addEventListener('input', (e) => { if (e.target instanceof HTMLTextAreaElement) grow(e.target); });
+      form.addEventListener('keydown', (e) => {
+        const t = e.target as HTMLElement;
+        if (e.key !== 'Enter' || t.tagName !== 'INPUT' || (t as HTMLInputElement).type === 'checkbox' || (t as HTMLInputElement).type === 'radio') return;
+        const part = t.closest('.part')!;
+        const all = $$<HTMLElement>('input:not(.sr):not([type=color]):not([type=range]), textarea', part).filter((x) => x.offsetParent);
+        all[all.indexOf(t) + 1]?.focus();
       });
 
       // ----- start: link answers first, then this device, then ?client= -----
@@ -469,33 +534,13 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         s ??= {};
         const client = new URLSearchParams(location.search).get('client');
         if (client && !s.brand) s.brand = client.slice(0, 80);
-        state = s; write(s); progress();
+        state = s; write(s); progress(); ready = true;
+        $$<HTMLTextAreaElement>('textarea', form).forEach(grow);
+        let at = ''; try { at = localStorage.getItem(`${KEY}-at`) ?? ''; } catch {}
+        show(at || schema[0].id, false);
         if (m) store(state);
       })();
 
-      // ----- where we are -----
-      const rails = $$<HTMLAnchorElement>('[data-rail]');
-      const parts = $$('.part');
-      let cur = '', spying = false;
-      const spy = () => {
-        spying = false;
-        const line = innerHeight * .35;
-        const at = parts.filter((p) => p.getBoundingClientRect().top <= line).pop();
-        const id = at?.id ?? '';
-        if (id === cur) return;
-        cur = id;
-        rails.forEach((r) => r.classList.toggle('here', r.dataset.rail === id));
-        const here = rails.find((r) => r.dataset.rail === id);
-        const nav = here?.closest('.rail') as HTMLElement | null;
-        if (here && nav && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: here.offsetLeft - 16, behavior: 'smooth' });
-      };
-      addEventListener('scroll', () => { if (!spying) { spying = true; requestAnimationFrame(spy); } }, { passive: true });
-      spy();
-      $$<HTMLAnchorElement>('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
-        const el = document.getElementById(a.getAttribute('href')!.slice(1)); if (!el) return;
-        e.preventDefault(); el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-        history.replaceState(null, '', location.pathname + location.search);
-      }));
     </script>
   </body>
 </html>
@@ -648,9 +693,9 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
   .gaps :global(.st) { color: var(--fg-2); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .gaps :global(.n) { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .gaps :global(a.full .st) { color: var(--mat); font-weight: 600; }
-  .send-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .send-row { display: flex; flex-wrap: wrap; gap: 10px; }
   .send-row .btn :global(svg) { width: 18px; height: 18px; }
-  .note { min-height: 1.5em; margin: 14px 0 0; font-size: 14px; color: var(--fg-2); }
+  .note { min-height: 1.5em; margin: 10px 0 14px; font-size: 14px; color: var(--fg-2); }
   .reset { margin: 18px 0 0; }
   .reset button { border: 0; background: none; padding: 0; font: 600 13px/1 var(--font); color: var(--fg-3); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   .reset button.armed { color: #B3261E; }
@@ -667,6 +712,54 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
   .ob-foot a { color: #fff; }
   .ob-foot .mark { color: #fff; }
 
+
+  /* Cover lockup: Gecko × the client */
+  .lock { display: flex; align-items: center; gap: 16px; margin: 0; font-weight: 700; font-size: clamp(20px, 2vw, 28px); letter-spacing: -0.03em; }
+  .lk-g { width: clamp(64px, 6vw, 84px); color: var(--ink); display: block; }
+  .lk-g :global(svg) { width: 100%; height: auto; }
+  .lk-x { font-weight: 400; color: var(--fg-3); font-size: .9em; }
+  .lk-c { padding: 6px 14px; border: 1px solid var(--ink); border-radius: 999px; background: var(--yellow); line-height: 1.1; }
+  .when { margin: -6px 0 0; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--fg-2); }
+  .when .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mat); box-shadow: 0 0 0 4px var(--mat-soft); }
+
+  /* One part at a time */
+  .sheet.focus .part:not(.on) { display: none; }
+  .part.on { animation: part-in 520ms var(--ease) both; }
+  @keyframes part-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  .part-foot { align-items: center; justify-content: space-between !important; gap: 16px; }
+  .part-foot .pos { font-size: 13px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+  .back { font-weight: 600; font-size: 15px; text-decoration: none; color: var(--fg-2); padding: 10px 4px; }
+  .back:hover { color: var(--fg); }
+  .rail a.pop .tick { animation: pop 600ms var(--spring); }
+  @keyframes pop { 0% { transform: scale(.2); } 60% { transform: scale(1.35); } 100% { transform: scale(1); } }
+
+  /* The brief, live */
+  .todo { margin: 0 0 20px; border: 1px solid var(--ink); border-radius: var(--r); background: var(--surface); }
+  .todo summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; font-weight: 700; font-size: 15px; }
+  .todo summary::-webkit-details-marker { display: none; }
+  .todo .pm { width: 24px; height: 24px; border-radius: 50%; background: var(--yellow); position: relative; transition: transform 300ms var(--ease); }
+  .todo .pm::before, .todo .pm::after { content: ''; position: absolute; left: 7px; right: 7px; top: 50%; height: 1.5px; margin-top: -.75px; background: currentColor; }
+  .todo .pm::after { transform: rotate(90deg); }
+  .todo[open] .pm { transform: rotate(45deg); }
+  .todo .gaps { border: 0; border-top: 1px solid var(--hair); border-radius: 0 0 var(--r) var(--r); }
+  .doc { background: #fff; border: 1px solid var(--ink); border-radius: 6px; padding: clamp(24px, 4vw, 56px); box-shadow: var(--lift-l); max-height: 70vh; overflow: auto; overscroll-behavior: contain; font-size: 15px; line-height: 1.45; }
+  .doc :global(header) { display: flex; align-items: center; gap: 18px; padding-bottom: 18px; border-bottom: 2px solid #000; margin-bottom: 22px; }
+  .doc :global(.pl) { width: 72px; display: block; flex: none; }
+  .doc :global(.pl svg) { width: 100%; height: auto; }
+  .doc :global(.pk) { margin: 0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--fg-2); }
+  .doc :global(h1) { margin: 4px 0; font-size: clamp(28px, 3.4vw, 44px); letter-spacing: -0.04em; line-height: 1; }
+  .doc :global(.pd) { margin: 0; font-size: 13px; color: var(--fg-2); }
+  .doc :global(section) { margin-bottom: 22px; }
+  .doc :global(h2) { font-size: 18px; letter-spacing: -0.02em; margin: 0 0 4px; padding: 8px 0; border-bottom: 1px solid #000; display: flex; gap: 10px; align-items: baseline; }
+  .doc :global(h2 span) { font-size: 12px; color: var(--fg-3); }
+  .doc :global(dl) { margin: 0; }
+  .doc :global(.pr) { display: grid; grid-template-columns: minmax(140px, 34%) 1fr; gap: 16px; padding: 8px 0; border-bottom: 1px solid var(--hair); }
+  .doc :global(dt) { font-weight: 700; }
+  .doc :global(dd) { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .doc :global(dd ul) { margin: 0; padding-left: 16px; white-space: normal; }
+  .doc :global(.blank) { color: var(--fg-3); }
+  .doc :global(footer) { margin-top: 18px; font-size: 12px; color: var(--fg-3); }
+  @media (max-width: 760px) { .doc :global(.pr) { grid-template-columns: 1fr; gap: 2px; } .part-foot .pos { display: none; } }
   .toast { position: fixed; left: 50%; bottom: 24px; z-index: 50; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; max-width: min(92vw, 520px); padding: 14px 20px; border-radius: 14px; background: var(--ink); color: #fff; font-size: 15px; box-shadow: var(--lift-l); transition: opacity 240ms var(--ease), transform 300ms var(--spring); }
   .toast.on { opacity: 1; transform: translate(-50%, 0); }
   .print { display: none; }
