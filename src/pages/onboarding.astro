@@ -379,7 +379,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         if (f.type === 'pick' || f.type === 'picks') { const v = s[f.id]; const o = s[`${f.id}.other`]; return [[...(Array.isArray(v) ? v : v ? [v as string] : []), ...(o ? [o as string] : [])].join(', ')].filter(Boolean); }
         return s[f.id] ? [s[f.id] as string] : [];
       };
-      const label = (sec: S, f: F) => f.label || (f.type === 'scale' ? 'Tone' : '');
+      const label = (sec: S, f: F) => (f.type === 'scale' ? `Tone: ${f.left} or ${f.right}` : f.label);
       const asText = () => {
         const lines = [`GECKO · CLIENT ONBOARDING`, `${(state.brand as string) || 'Brand'} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`, ''];
         schema.forEach((sec, i) => {
@@ -475,14 +475,22 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
 
       // ----- where we are -----
       const rails = $$<HTMLAnchorElement>('[data-rail]');
-      const spy = new IntersectionObserver((es) => es.forEach((e) => {
-        if (!e.isIntersecting) return;
-        rails.forEach((r) => r.classList.toggle('here', r.dataset.rail === e.target.id));
-        const here = rails.find((r) => r.dataset.rail === e.target.id);
+      const parts = $$('.part');
+      let cur = '', spying = false;
+      const spy = () => {
+        spying = false;
+        const line = innerHeight * .35;
+        const at = parts.filter((p) => p.getBoundingClientRect().top <= line).pop();
+        const id = at?.id ?? '';
+        if (id === cur) return;
+        cur = id;
+        rails.forEach((r) => r.classList.toggle('here', r.dataset.rail === id));
+        const here = rails.find((r) => r.dataset.rail === id);
         const nav = here?.closest('.rail') as HTMLElement | null;
         if (here && nav && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: here.offsetLeft - 16, behavior: 'smooth' });
-      }), { rootMargin: '-40% 0px -55% 0px' });
-      $$('.part').forEach((p) => spy.observe(p));
+      };
+      addEventListener('scroll', () => { if (!spying) { spying = true; requestAnimationFrame(spy); } }, { passive: true });
+      spy();
       $$<HTMLAnchorElement>('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
         const el = document.getElementById(a.getAttribute('href')!.slice(1)); if (!el) return;
         e.preventDefault(); el.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
@@ -524,7 +532,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
   .pct span { font-size: 40px; margin-left: 4px; opacity: .8; }
   .dial .sub { margin: 10px 0 20px; font-size: 14px; color: rgba(255, 255, 255, .8); }
   .dial .sub b { color: #fff; }
-  .mini { list-style: none; margin: 0; padding: 16px 0 0; border-top: 1px solid rgba(255, 255, 255, .22); display: grid; grid-template-columns: 1fr 1fr; gap: 7px 16px; font-size: 13px; }
+  .mini { list-style: none; margin: 0; padding: 16px 0 0; border-top: 1px solid rgba(255, 255, 255, .22); display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: repeat(6, auto); grid-auto-flow: column; gap: 7px 16px; font-size: 13px; }
   .mini li { display: flex; gap: 8px; align-items: center; color: rgba(255, 255, 255, .72); }
   .mini li span { font-variant-numeric: tabular-nums; opacity: .6; width: 18px; }
   .mini li.some { color: #fff; }
@@ -597,6 +605,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
   .scale input::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; border: 2px solid var(--fg-3); }
   .scale.set input::-webkit-slider-thumb { border-color: var(--ink); background: var(--ink); }
   .scale.set input::-moz-range-thumb { border-color: var(--ink); background: var(--ink); }
+  .scale input:focus-visible { outline-offset: 4px; border-radius: 8px; }
   .scale input:active::-webkit-slider-thumb { transform: scale(1.15); }
 
   /* Lists */
