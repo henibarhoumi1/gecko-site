@@ -36,7 +36,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       <div class="wrap wide row">
         <a href="/" class="mark" aria-label="Gecko"><Logo /></a>
         <span class="crumb">Client onboarding</span>
-        <p class="saved" data-saved aria-live="polite"><i aria-hidden="true"></i><span>Saves as you type</span></p>
+        <p class="saved" data-saved aria-live="polite"><i aria-hidden="true"></i><span>Connecting…</span></p>
         <div class="tools">
           <button type="button" class="btn ghost sm" data-share>Copy link</button>
           <button type="button" class="btn primary sm" data-print>PDF</button>
@@ -59,11 +59,11 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
           <p class="lock" aria-label="Gecko and your brand"><span class="lk-g"><Logo /></span><span class="lk-x" aria-hidden="true">×</span><span class="lk-c" data-brand-lock>Your brand</span></p>
           <p class="when"><span class="dot" aria-hidden="true"></span>Kickoff · <span data-today></span></p>
           <h1 class="h1">Let’s get to know <em data-brand-name>your brand</em>.</h1>
-          <p class="text text-l soft measure">Everything we need to start pre-production, in one place. Fill it in together on the call, or on your own later. Skip anything you are not sure about.</p>
+          <p class="text text-l soft measure">Everything we need to start pre-production, in one place. Skip anything you are not sure about. When you are done, press Send to Gecko.</p>
           <ul class="facts">
             <li><b>{sections.length}</b> parts</li>
             <li><b>~{minutes}</b> minutes</li>
-            <li><b>Saved</b> on this device as you type</li>
+            <li><b>Live</b> · we see your answers as you type</li>
           </ul>
           <div class="actions"><a class="btn primary" href={`#${sections[0].id}`} data-start>Start <span class="arr" aria-hidden="true">→</span></a></div>
         </div>
@@ -178,7 +178,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
               <div class="ph-in">
                 <span class="big" aria-hidden="true">✓</span>
                 <h2 class="t">Your brief</h2>
-                <p class="why">This is what we will work from. Nothing is sent until you press a button, and gaps are fine: we will cover them together.</p>
+                <p class="why">Press Send to Gecko and we get everything below. Gaps are fine: we will cover them together.</p>
                 <p class="meta"><span data-sum>0%</span></p>
               </div>
             </header>
@@ -188,11 +188,9 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
               <div class="gaps" data-gaps></div>
             </details>
             <div class="send-row">
-              <button type="button" class="btn primary" data-wa={wa}><Wa /> Send on WhatsApp</button>
+              <button type="button" class="btn primary" data-wa={wa}><Wa /> Send to Gecko</button>
               <button type="button" class="btn" data-mail={site.email}>Send by email</button>
               <button type="button" class="btn" data-print>Download PDF</button>
-              <button type="button" class="btn" data-copy>Copy as text</button>
-              <button type="button" class="btn" data-share>Copy link with answers</button>
             </div>
             <p class="note" data-note aria-live="polite"></p>
             <article class="doc" data-preview aria-label="Brief preview"></article>
@@ -228,7 +226,6 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       type F = { id: string; label: string; type: string; left?: string; right?: string; cols?: Col[]; items?: string[] };
       type S = { id: string; name: string; title: string; fields: F[] };
       type Val = string | string[] | Record<string, string>[];
-      const KEY = 'gecko-onboarding-v1';
       const form = document.querySelector<HTMLFormElement>('[data-sheet]')!;
       const schema: S[] = JSON.parse(form.dataset.schema!);
       const $ = <T extends Element = HTMLElement>(q: string, r: ParentNode = document) => r.querySelector<T>(q);
@@ -372,17 +369,11 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       // ----- saving -----
       const saved = $('[data-saved]')!;
       let timer = 0;
-      const store = (s: Record<string, Val>) => { try { localStorage.setItem(KEY, JSON.stringify({ s, at: Date.now() })); return true; } catch { return false; } };
       const save = () => {
         state = read(); progress();
         clearTimeout(timer);
         saved.classList.add('busy');
-        timer = window.setTimeout(() => {
-          const ok = store(state);
-          saved.classList.remove('busy');
-          if (!room) saved.querySelector('span')!.textContent = ok ? `Saved ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'Not saving here: use Copy link';
-          push();
-        }, 350);
+        timer = window.setTimeout(() => { saved.classList.remove('busy'); push(); }, 350);
       };
 
       // ----- live: everyone on the same link fills the same sheet -----
@@ -400,14 +391,14 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
       const status = (on: boolean) => {
         live = on; saved.classList.toggle('live', on); saved.classList.toggle('off', !on);
-        saved.querySelector('span')!.textContent = on ? 'Live · everyone on this link sees changes' : 'Offline · saving on this device';
+        saved.querySelector('span')!.textContent = on ? 'Live' : 'Reconnecting…';
       };
       async function push() {
         if (!room) return;
         if (pushing) { again = true; return; }
         const patch: Record<string, Val | null> = {};
         for (const k of new Set([...Object.keys(state), ...Object.keys(synced)])) if (!same(state[k], synced[k])) patch[k] = state[k] ?? null;
-        if (!Object.keys(patch).length) return;
+        if (!Object.keys(patch).length && live) return;
         pushing = true;
         try { await rpc('save_onboarding_sheet', { p_id: room, p_patch: patch }); synced = JSON.parse(JSON.stringify(state)); status(true); }
         catch { status(false); }
@@ -416,6 +407,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       }
       async function pull() {
         if (!room || pushing || document.hidden) return;
+        if (!live) { await push(); if (!live) return; }
         try {
           const remote = ((await rpc('get_onboarding_sheet', { p_id: room })) ?? {}) as Record<string, Val>;
           status(true);
@@ -428,7 +420,7 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
           }
           synced = remote;
           if (same(next, state)) return;
-          state = next; write(state, true); progress(); store(state);
+          state = next; write(state, true); progress();
         } catch { status(false); }
       }
       form.addEventListener('input', save);
@@ -474,17 +466,6 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         return s[f.id] ? [s[f.id] as string] : [];
       };
       const label = (sec: S, f: F) => (f.type === 'scale' ? `Tone: ${f.left} or ${f.right}` : f.label);
-      const asText = () => {
-        const lines = [`GECKO · CLIENT ONBOARDING`, `${(state.brand as string) || 'Brand'} · ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}`, ''];
-        schema.forEach((sec, i) => {
-          const rows = sec.fields.map((f) => [label(sec, f), answer(f)] as const).filter(([, a]) => a.length);
-          if (!rows.length) return;
-          lines.push(`${String(i + 1).padStart(2, '0')} ${sec.name.toUpperCase()}`);
-          rows.forEach(([l, a]) => { if (a.length === 1 && !a[0].includes('\n')) lines.push(`${l}: ${a[0]}`); else { lines.push(`${l}:`); a.forEach((x) => lines.push(`  - ${x}`)); } });
-          lines.push('');
-        });
-        return lines.join('\n').trim();
-      };
 
       // ----- the printed sheet -----
       const printout = $('[data-printout]')!;
@@ -504,52 +485,31 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
       addEventListener('beforeprint', buildPrint);
       $$('[data-print]').forEach((b) => b.addEventListener('click', () => { buildPrint(); print(); }));
 
-      // ----- a link that carries the answers (compressed into the address, never sent to a server) -----
-      const b64 = (u: Uint8Array) => btoa(String.fromCharCode(...u)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-      const unb64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
-      const pack = async (o: unknown) => {
-        const raw = new TextEncoder().encode(JSON.stringify(o));
-        if (!('CompressionStream' in window)) return `j${b64(raw)}`;
-        const z = new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
-        return `z${b64(z)}`;
-      };
-      const unpack = async (s: string) => {
-        const bytes = unb64(s.slice(1));
-        if (s[0] === 'j') return JSON.parse(new TextDecoder().decode(bytes));
-        return JSON.parse(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).text());
-      };
-
       // ----- buttons -----
       const toast = $('[data-toast]')!; let tt = 0;
       const say = (m: string) => { toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = window.setTimeout(() => toast.classList.remove('on'), 2600); };
       const copy = async (txt: string) => { try { await navigator.clipboard.writeText(txt); return true; } catch { return false; } };
+      const link = () => location.href.split('#')[0];
+      const brandName = () => ((state.brand as string) || '').trim() || 'New client';
       $$('[data-share]').forEach((b) => b.addEventListener('click', async () => {
-        state = read();
-        const url = room ? location.href : `${location.origin}${location.pathname}#a=${await pack(state)}`;
-        say((await copy(url)) ? (room ? 'Live link copied. Whoever opens it fills this same sheet with you.' : 'Link copied. Whoever opens it sees these answers and can carry on.') : 'Copy failed. Try again from the address bar.');
-        if (!navigator.clipboard) history.replaceState(null, '', url);
+        say((await copy(link())) ? 'Link copied. Whoever opens it fills this same sheet, live.' : 'Copy failed. Copy it from the address bar.');
       }));
-      $('[data-copy]')!.addEventListener('click', async () => { state = read(); say((await copy(asText())) ? 'Answers copied as text.' : 'Copy failed.'); });
       const note = $('[data-note]')!;
-      $('[data-wa]')!.addEventListener('click', async () => {
-        state = read();
-        const url = `${location.origin}${location.pathname}#a=${await pack(state)}`;
-        const txt = `${asText()}\n\nOpen the full sheet: ${url}`;
-        open(`https://wa.me/${$('[data-wa]')!.dataset.wa}?text=${encodeURIComponent(txt.length > 6000 ? `${asText().slice(0, 4000)}…\n\nFull answers: ${url}` : txt)}`, '_blank', 'noopener');
-        note.textContent = 'WhatsApp opened with your answers. Press send there.';
+      $('[data-wa]')!.addEventListener('click', () => {
+        state = read(); push();
+        const txt = `Hi Gecko, ${brandName()} onboarding is ready: ${link()}`;
+        open(`https://wa.me/${$('[data-wa]')!.dataset.wa}?text=${encodeURIComponent(txt)}`, '_blank', 'noopener');
+        note.textContent = 'WhatsApp opened. Press send there and we have everything.';
       });
-      $('[data-mail]')!.addEventListener('click', async () => {
-        state = read();
-        const url = `${location.origin}${location.pathname}#a=${await pack(state)}`;
-        const brand = (state.brand as string) || 'New client';
-        location.href = `mailto:${$('[data-mail]')!.dataset.mail}?subject=${encodeURIComponent(`Onboarding · ${brand}`)}&body=${encodeURIComponent(`${asText()}\n\nFull answers: ${url}`)}`;
-        note.textContent = 'Your email app opened with the answers. Press send there.';
+      $('[data-mail]')!.addEventListener('click', () => {
+        state = read(); push();
+        location.href = `mailto:${$('[data-mail]')!.dataset.mail}?subject=${encodeURIComponent(`Onboarding · ${brandName()}`)}&body=${encodeURIComponent(`Hi Gecko, our onboarding is ready: ${link()}`)}`;
+        note.textContent = 'Your email app opened. Press send there and we have everything.';
       });
       const reset = $<HTMLButtonElement>('[data-reset]')!; let armed = 0;
       reset.addEventListener('click', () => {
         if (!armed) { reset.textContent = 'Tap again to clear everything'; reset.classList.add('armed'); armed = window.setTimeout(() => { armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed'); }, 3000); return; }
         clearTimeout(armed); armed = 0; reset.textContent = 'Clear all answers'; reset.classList.remove('armed');
-        try { localStorage.removeItem(KEY); } catch {}
         state = {}; const b = new URLSearchParams(location.search).get('client'); if (b) state.brand = b.slice(0, 80); write(state); progress(); push(); show(schema[0].id, false); say('Cleared.'); scrollTo({ top: 0, behavior: 'smooth' });
       });
 
@@ -570,7 +530,6 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         const here = rails.find((r) => r.dataset.rail === el.id);
         const nav = here?.closest('.rail') as HTMLElement | null;
         if (here && nav && nav.scrollWidth > nav.clientWidth) nav.scrollTo({ left: here.offsetLeft - 16, behavior: still ? 'auto' : 'smooth' });
-        try { localStorage.setItem(`${KEY}-at`, current); } catch {}
         const y = $('.body')!.getBoundingClientRect().top - barH();
         if (scroll && Math.abs(y) > 4) scrollTo({ top: sheetTop(), behavior: still ? 'auto' : 'smooth' });
       }
@@ -594,39 +553,24 @@ const schema = sections.map((s) => ({ id: s.id, name: s.name, title: s.title, fi
         all[all.indexOf(t) + 1]?.focus();
       });
 
-      // ----- start: link answers first, then this device, then ?client= -----
+      // ----- start: the link's live sheet, or a new blank one for ?client= -----
       (async () => {
-        let s: Record<string, Val> | null = null;
-        const m = location.hash.match(/^#a=([jz][\w-]+)/);
-        if (m) {
-          try { s = await unpack(m[1]); history.replaceState(null, '', location.pathname + location.search); say('Answers loaded from the link.'); } catch { say('That link could not be read.'); }
-        }
-        if (!s) { try { s = JSON.parse(localStorage.getItem(KEY) ?? 'null')?.s ?? null; } catch {} }
-        s ??= {};
+        let s: Record<string, Val> = {};
         const q = new URLSearchParams(location.search);
         const client = q.get('client');
-        if (client && !s.brand) s.brand = client.slice(0, 80);
-        // Live room: from the link, or a new one. The address bar then holds the link to share.
-        if (syncUrl && syncKey) {
-          room = (q.get('room') ?? '').replace(/[^\w-]/g, '').slice(0, 64);
-          const fresh = room.length < 16;
-          if (fresh) {
-            // A new live sheet always starts blank, whatever was typed on this device before.
-            if (!m) s = {};
-            if (client) s.brand = client.slice(0, 80);
-            room = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join('');
-            q.set('room', room); history.replaceState(null, '', `${location.pathname}?${q}`);
-          } else {
-            // Joining a room: its answers replace this device's copy.
-            try { const remote = await rpc('get_onboarding_sheet', { p_id: room }); if (remote && Object.keys(remote).length) { s = remote; synced = JSON.parse(JSON.stringify(remote)); } status(true); } catch { status(false); }
-          }
+        room = (q.get('room') ?? '').replace(/[^\w-]/g, '').slice(0, 64);
+        if (room.length < 16) {
+          // A new sheet: the address bar now holds the link to send to the client.
+          room = Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join('');
+          q.set('room', room); history.replaceState(null, '', `${location.pathname}?${q}`);
+        } else {
+          try { const remote = await rpc('get_onboarding_sheet', { p_id: room }); if (remote && Object.keys(remote).length) { s = remote; synced = JSON.parse(JSON.stringify(remote)); } status(true); } catch { status(false); }
         }
+        if (client && !s.brand) s.brand = client.slice(0, 80);
         state = s; write(s); progress(); ready = true;
-        if (room) { push(); setInterval(pull, 1500); document.addEventListener('visibilitychange', pull); }
+        push(); setInterval(pull, 1500); document.addEventListener('visibilitychange', pull);
         $$<HTMLTextAreaElement>('textarea', form).forEach(grow);
-        let at = ''; try { at = localStorage.getItem(`${KEY}-at`) ?? ''; } catch {}
-        show(at || schema[0].id, false);
-        if (m) store(state);
+        show(schema[0].id, false);
       })();
 
     </script>
