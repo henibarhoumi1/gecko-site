@@ -11,4 +11,10 @@ export const site = {
   ],
   // Web3Forms access key for the forms. Empty = forms open WhatsApp with the answers filled in.
   formKey: '',
+  // Live onboarding sheets (/onboarding/): the Gecko Supabase project. The anon key is public by design; the
+  // database only exposes two functions to it (gecko/website/onboarding-live-sync.sql).
+  sync: {
+    url: 'https://qvvurndjthpujonhthjv.supabase.co',
+    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dnVybmRqdGhwdWpvbmh0aGp2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNzY1NjMsImV4cCI6MjEwODg1MjU2M30.Fix9z4ogXB2M7NrlMBlrYO3SgC_7rUsBzt4Wepyjfps',
+  },
 };
