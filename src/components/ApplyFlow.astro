@@ -70,7 +70,7 @@ const recs: Record<string, string> = {
     <input type="hidden" name="subject" value="New brief from the Gecko website" />
     <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
     <input type="hidden" name="plan" data-label={a.plan} data-plan-input />
-    <p class="plan-pill" data-plan-pill hidden><span>{a.plan}: <b data-plan-name></b></span><button type="button" data-plan-clear aria-label={a.clear}>×</button></p>
+    <p class="plan-pill" data-plan-pill hidden><span>{a.plan}{lang === 'fr' ? '\u00a0: ' : ': '}<b data-plan-name></b></span><button type="button" data-plan-clear aria-label={a.clear}>×</button></p>
     <div class="top">
       <p class="count" aria-live="polite"><span class="sr">{a.step} </span><b data-count>1</b> / <span data-total></span></p>
       <p class="cheer" data-cheer aria-hidden="true"></p>

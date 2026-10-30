@@ -21,7 +21,7 @@ const k = h.compare;
     </div>
     <div class="cmp" role="table" aria-label={k.title}>
       <div class="row th rv" role="row">
-        <span role="columnheader"></span>
+        <span role="columnheader"><span class="sr">{lang === 'fr' ? 'Sujet' : 'Topic'}</span></span>
         <span role="columnheader" class="usual-h">{k.usual}</span>
         <span role="columnheader" class="gecko-h">{k.gecko}</span>
       </div>
@@ -55,7 +55,7 @@ const k = h.compare;
   .row { display: grid; grid-template-columns: minmax(150px, .45fr) minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; padding: clamp(16px, 1.6vw, 22px) clamp(18px, 2.4vw, 32px); border-top: 1px solid var(--hair); transition: background 300ms var(--ease); }
   .row:not(.th):hover { background: var(--tint); }
   .th { border-top: 0; padding-block: 14px; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; background: var(--tint); color: var(--fg-2); }
-  .usual-h { opacity: .6; }
+  .usual-h { color: var(--fg-2); }
   .gecko-h { justify-self: start; padding: 4px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); letter-spacing: .04em; }
   .topic { display: flex; gap: 12px; align-items: baseline; font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); letter-spacing: -0.02em; }
   .topic i { font-style: normal; font-size: 12px; color: var(--fg-3); letter-spacing: 0; }

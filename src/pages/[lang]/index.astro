@@ -20,7 +20,7 @@ const sc = h.why.script;
 // The two reels lying on the hero desk, with their place in the reel list so a click opens the right one.
 const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
 ---
-<Base lang={lang} footerCta={false}>
+<Base lang={lang} footerCta={false} page="home">
   <section class="hero" data-hero>
     <div class="wrap wide h-grid">
       <div class="h-copy">
@@ -50,7 +50,7 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
           </div>
         </div>
         {prints.map(({ a, i }, k) => (
-          <button type="button" class={`obj print o-print${k + 1}`} data-obj data-print={i} aria-label={`${h.watch}: ${a.angle[lang]}`}>
+          <button type="button" class={`obj print o-print${k + 1}`} data-obj data-print={i} aria-label={`${h.watch}${lang === 'fr' ? '\u00a0: ' : ': '}${a.angle[lang]}`}>
             <span class="face">
               {k === 0 && <span class="tape" aria-hidden="true"></span>}
               <span class="media"><img src={a.poster} alt="" width="720" height="1280" draggable="false" decoding="async" fetchpriority={k === 0 ? 'high' : 'auto'} /><span class="play" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span></span>
@@ -97,9 +97,8 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
     <div class="wrap faq-grid">
       <div class="faq-lead rv">
         <h2 class="h1 faq-h">{h.faqTitle}</h2>
-        <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
       </div>
-      <div class="rv"><Faq items={s.faq} scroll hint={h.faqHint} /></div>
+      <div class="rv"><Faq items={s.faq} limit={6} more={{ href: href(lang, 'faq'), label: h.faqAll }} /></div>
     </div>
   </section>
 

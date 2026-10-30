@@ -1,8 +1,10 @@
 ---
 // Questions as a list of rounded rows. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
 // fades out at the bottom while there is more, and shows `hint` until the visitor reaches the end.
-interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string }
-const { items, scroll = false, hint } = Astro.props;
+// With `limit` only the first questions show, as a plain list, and `more` adds a link to all of them underneath.
+interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string; limit?: number; more?: { href: string; label: string } }
+const { items: all, scroll = false, hint, limit, more } = Astro.props;
+const items = limit ? all.slice(0, limit) : all;
 ---
 <div class={scroll ? 'faq-box' : undefined} data-faq-box={scroll ? '' : undefined}>
   <div class={`faq ${scroll ? 'scroll' : ''}`} tabindex={scroll ? 0 : undefined} role={scroll ? 'region' : undefined} aria-label={scroll ? 'FAQ' : undefined}>
@@ -14,6 +16,7 @@ const { items, scroll = false, hint } = Astro.props;
     ))}
   </div>
   {scroll && hint && <p class="hint" aria-hidden="true"><span>↓</span> {hint}</p>}
+  {more && <a class="btn faq-more" href={more.href}>{more.label} <span class="arr" aria-hidden="true">→</span></a>}
 </div>
 {scroll && (
   <script>
@@ -37,6 +40,7 @@ const { items, scroll = false, hint } = Astro.props;
   .faq.scroll::-webkit-scrollbar { width: 6px; }
   .faq.scroll::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 6px; }
   .end .faq.scroll { -webkit-mask-image: none; mask-image: none; }
+  .faq-more { margin-top: 18px; }
   .hint { margin: 10px 0 0; font-size: 15px; font-weight: 600; transition: opacity 240ms var(--ease); }
   .hint span { display: inline-block; animation: nudge 1.6s var(--ease) infinite; }
   .end .hint { opacity: 0; }

@@ -1,13 +1,13 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
-import { t, type Locale } from '../../i18n/strings';
+import { type Locale } from '../../i18n/strings';
+import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
-const s = t(lang);
 ---
-<Base lang={lang} footerCta={false} title={s.nav.apply}>
+<Base lang={lang} footerCta={false} title={c(lang).nav.apply} page="apply">
   <section class="page-head lit">
     <div class="wrap"><ApplyFlow lang={lang} heading="h1" /></div>
   </section>

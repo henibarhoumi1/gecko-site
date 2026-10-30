@@ -26,6 +26,7 @@ a { color: inherit; }
 .page-head { padding-top: calc(var(--header) + clamp(48px, 7vw, 104px)); padding-bottom: clamp(40px, 5vw, 72px); }
 .page-head .h1 { max-width: 16ch; }
 .page-head .lede { max-width: 38rem; color: var(--fg-2); }
+.lede, .text-l { text-wrap: pretty; }
 .center { text-align: center; justify-items: center; margin-inline: auto; }
 .center .h1, .center .h2 { margin-inline: auto; }
 
