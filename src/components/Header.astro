@@ -82,13 +82,14 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
   // Solid once you leave the top; hidden while reading down, back on the way up. A few pixels of slack stop flicker.
-  // Over a dark hero the bar turns light on dark until the hero has gone by.
-  const dark = document.querySelector<HTMLElement>('[data-hero-dark]');
+  // Over a black band (marked data-dark) the bar turns light on dark. A band can switch itself off with data-dark="0".
+  const darks = [...document.querySelectorAll<HTMLElement>('[data-dark]')];
+  const under = (el: HTMLElement) => { if (el.dataset.dark === '0') return false; const r = el.getBoundingClientRect(); return r.top < 40 && r.bottom > 40; };
   let last = scrollY, ticking = false;
   const update = () => {
     const y = scrollY, d = y - last;
     header.classList.toggle('solid', y > 24);
-    if (dark) header.classList.toggle('over', dark.getBoundingClientRect().bottom > 72);
+    if (darks.length) header.classList.toggle('over', darks.some(under));
     if (y < 160 || header.classList.contains('open')) header.classList.remove('away');
     else if (d > 6) header.classList.add('away');
     else if (d < -6) header.classList.remove('away');
