@@ -1,7 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Workspace from '../../components/Workspace.astro';
-import Cta from '../../components/Cta.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -9,7 +7,7 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const p = c(lang).process;
 ---
-<Base lang={lang} footerCta={false} title={p.title} page="process">
+<Base lang={lang} title={p.title} page="process">
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:22px">
       <h1 class="h1 rv">{p.title}</h1>
@@ -18,47 +16,31 @@ const p = c(lang).process;
   </section>
 
   <section class="road-sec">
-    <div class="wrap journey">
-      <div class="legend rv">
-        <p class="key"><span class="chip ok">{p.tags.ok}</span> {p.legend.ok}</p>
-        <p class="key"><span class="chip pay">{p.tags.pay}</span> {p.legend.pay}</p>
-        <p class="text monthly">{p.monthly}</p>
-      </div>
-      <div class="road" data-road>
-        <span class="rail" aria-hidden="true"><i data-fill></i></span>
-        <ol class="steps">
-          {p.steps.map((st, i) => (
-            <li class="step rv">
-              <span class="dot" aria-hidden="true">{i + 1}</span>
-              <div class="card">
-                <div class="top">
-                  <h2 class="h3 t">{st.t}</h2>
-                  {st.tag && <span class={`chip ${st.tag}`}>{p.tags[st.tag as 'ok' | 'pay']}</span>}
-                </div>
-                <p class="text">{st.d}</p>
-                <p class="yours"><span>{p.yours}</span> {st.you}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </div>
+    <div class="wrap wide">
+      <ol class="steps" data-road>
+        {p.steps.map((st, i) => (
+          <li class="step rv">
+            <span class="num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <h2 class="t">{st.t}{st.pay && <span class="pay">{p.pay}</span>}</h2>
+            <div class="body">
+              <p class="text">{st.d}</p>
+              <p class="yours"><span class="k">{p.yours}</span>{st.you}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+      <p class="monthly rv">{p.monthly}</p>
     </div>
   </section>
-
-  <Workspace lang={lang} cta={false} />
-
-  <Cta lang={lang} title={p.cta} />
 </Base>
 
 <script>
-  // The rail fills as you scroll down the steps; each step's dot lights up when passed.
+  // Each step's big number fills in once the step has scrolled past the middle of the screen.
   document.querySelectorAll<HTMLElement>('[data-road]').forEach((road) => {
-    const fill = road.querySelector<HTMLElement>('[data-fill]')!;
     const steps = [...road.querySelectorAll<HTMLElement>('.step')];
     let ticking = false;
     const tick = () => {
-      const r = road.getBoundingClientRect(); const mid = innerHeight * 0.55;
-      fill.style.transform = `scaleY(${Math.min(1, Math.max(0, (mid - r.top) / r.height))})`;
+      const mid = innerHeight * 0.62;
       steps.forEach((s) => s.classList.toggle('passed', s.getBoundingClientRect().top < mid));
       ticking = false;
     };
@@ -68,34 +50,30 @@ const p = c(lang).process;
 </script>
 
 <style>
-  .lede { max-width: 44rem; }
-  .road-sec { padding-block: clamp(48px, 6vw, 88px) var(--section); }
-  .journey { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .legend { position: sticky; top: 120px; display: grid; gap: 12px; justify-items: start; }
-  .key { margin: 0; display: grid; gap: 8px; justify-items: start; font-size: 16px; line-height: 1.45; color: var(--fg-2); }
-  .key + .key { margin-top: 10px; }
-  .monthly { margin: 12px 0 0; max-width: 24rem; padding-top: 18px; border-top: 1px solid var(--hair); color: var(--fg-2); font-size: 16px; }
-  .road { position: relative; }
-  .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .rail { position: absolute; left: 19px; top: 22px; bottom: 22px; width: 2px; border-radius: 2px; background: var(--hair); }
-  .rail i { position: absolute; inset: 0; background: var(--fg); transform-origin: top; transform: scaleY(0); border-radius: 2px; }
-  .step { position: relative; padding-left: 64px; }
-  .dot { position: absolute; left: 0; top: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 15px; background: var(--bg); color: var(--fg-2); border: 1px solid var(--hair-2); transition: background 300ms var(--ease), color 300ms var(--ease), border-color 300ms var(--ease); }
-  .passed .dot { background: var(--fg); border-color: var(--fg); color: var(--bg); }
-  .card { display: grid; gap: 8px; padding: clamp(16px, 1.7vw, 22px) clamp(18px, 2vw, 26px); background: var(--surface); border-radius: 20px; border: 1px solid var(--edge); }
-  .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .t { font-size: clamp(19px, 1.6vw, 23px); letter-spacing: -0.025em; }
-  .chip { display: inline-block; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--ink); }
-  .chip.ok { background: var(--yellow); }
-  .chip.pay { background: var(--pink); }
-  .card .text { margin: 0; color: var(--fg-2); }
-  .yours { margin: 4px 0 0; padding: 9px 12px; border-radius: 12px; background: var(--yellow-soft); font-size: 15px; }
-  .yours span { font-weight: 700; margin-right: 6px; }
-  @media (max-width: 900px) {
-    .journey { grid-template-columns: 1fr; }
-    .legend { position: static; display: flex; flex-wrap: wrap; align-items: center; }
-    .monthly { flex-basis: 100%; }
+  .lede { max-width: 40rem; }
+  .road-sec { padding-block: clamp(40px, 5vw, 72px) var(--section); }
+  .steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair-2); }
+  .step { display: grid; grid-template-columns: minmax(0, .45fr) minmax(0, 1fr) minmax(0, 1.3fr); grid-template-areas: 'num t body'; gap: clamp(16px, 3vw, 56px); align-items: start;
+    padding-block: clamp(28px, 3.4vw, 52px); border-bottom: 1px solid var(--hair); }
+  /* The big numbers are drawn in outline and fill in black once the step has scrolled past the middle of the screen. */
+  .num { grid-area: num; font-weight: 700; font-size: clamp(56px, 6.4vw, 112px); line-height: .8; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; color: transparent; -webkit-text-stroke: 1.5px var(--fg); transition: color 600ms var(--ease); }
+  .passed .num { color: var(--fg); }
+  .t { grid-area: t; margin: 0; font-weight: 700; font-size: clamp(26px, 2.6vw, 42px); line-height: 1.05; letter-spacing: -0.04em; text-wrap: balance; }
+  /* The two steps where you pay carry a small word on the pink marker. */
+  .pay { display: inline-block; margin-left: 12px; padding: 0 .2em; vertical-align: .4em; font-size: 14px; line-height: 1.3; letter-spacing: 0;
+    background: linear-gradient(var(--pink), var(--pink)) 0 80% / 100% 55% no-repeat; }
+  .body { grid-area: body; display: grid; gap: 16px; }
+  .body .text { margin: 0; max-width: 36rem; color: var(--fg-2); }
+  .yours { margin: 0; font-size: 16px; line-height: 1.45; font-weight: 600; }
+  .yours .k { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .monthly { margin: clamp(28px, 3vw, 40px) 0 0; max-width: 40rem; font-size: 16px; color: var(--fg-2); }
+  @media (max-width: 1000px) and (min-width: 761px) {
+    .step { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); grid-template-areas: 'num body' 't body'; row-gap: 20px; }
   }
-  @media (max-width: 560px) { .step { padding-left: 52px; } .rail { left: 15px; } .dot { width: 32px; height: 32px; font-size: 13px; } }
-  @media (prefers-reduced-motion: reduce) { .pulse { animation: none; } }
+  @media (max-width: 760px) {
+    .step { grid-template-columns: auto minmax(0, 1fr); grid-template-areas: 'num t' 'body body'; gap: 16px 18px; align-items: end; padding-block: 28px; }
+    .num { font-size: 56px; -webkit-text-stroke-width: 1px; }
+    .t { font-size: clamp(24px, 7vw, 30px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .num { color: var(--fg); transition: none; } }
 </style>

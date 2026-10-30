@@ -1,81 +1,39 @@
 ---
-// Why brands switch: the usual way next to the Gecko way, one row per place where ads usually go wrong.
-// Sits on the green cutting mat. Wide screens read it as a table; phones get one card per row and a
-// switch between the two sides, so the section stays half as long.
+// Why brands switch: for each place where ads usually go wrong, the usual way crossed out in pink and the Gecko way
+// in bold underneath. Two columns on wide screens, one on phones.
 import { c } from '../i18n/copy';
-import { href } from '../i18n/paths';
 import type { Locale } from '../i18n/strings';
-interface Props { lang: Locale; cta?: boolean }
-const { lang, cta = true } = Astro.props;
-const h = c(lang).home;
-const k = h.compare;
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const k = c(lang).home.compare;
 ---
-<section class="section cmp-sec" data-cmp data-side="gecko">
-  <div class="wrap">
-    <div class="cmp-head">
-      <h2 class="h2 rv">{k.title}</h2>
-    </div>
-    <div class="side rv" role="group" aria-label={k.title}>
-      <button type="button" data-side-btn="usual" aria-pressed="false">{k.usual}</button>
-      <button type="button" data-side-btn="gecko" aria-pressed="true">{k.gecko}</button>
-    </div>
-    <div class="cmp" role="table" aria-label={k.title}>
-      <div class="row th rv" role="row">
-        <span role="columnheader"><span class="sr">{lang === 'fr' ? 'Sujet' : 'Topic'}</span></span>
-        <span role="columnheader" class="usual-h">{k.usual}</span>
-        <span role="columnheader" class="gecko-h">{k.gecko}</span>
-      </div>
+<section class="section cmp-sec">
+  <div class="wrap wide">
+    <h2 class="h2 cmp-title rv">{k.title}</h2>
+    <ol class="cmp">
       {k.rows.map(([topic, usual, gecko], i) => (
-        <div class="row rv" role="row" style={`--d:${i * 60}ms`}>
-          <span role="rowheader" class="topic"><i>{String(i + 1).padStart(2, '0')}</i>{topic}</span>
-          <p role="cell" class="usual"><span class="mk no" aria-hidden="true"></span>{usual}</p>
-          <p role="cell" class="gecko"><span class="mk yes" aria-hidden="true"></span>{gecko}</p>
-        </div>
+        <li class="row rv" style={`--d:${(i % 2) * 90}ms`}>
+          <p class="topic"><span class="i">{String(i + 1).padStart(2, '0')}</span>{topic}</p>
+          <p class="usual"><span class="sr">{k.usual}: </span><s>{usual}</s></p>
+          <p class="gecko"><span class="sr">{k.gecko}: </span>{gecko}</p>
+        </li>
       ))}
-    </div>
-    {cta && <a class="btn primary cmp-cta rv" href={href(lang, 'apply')}>{h.compareCta} <span class="arr" aria-hidden="true">→</span></a>}
+    </ol>
   </div>
 </section>
 
-<script>
-  document.querySelectorAll<HTMLElement>('[data-cmp]').forEach((sec) => {
-    const btns = sec.querySelectorAll<HTMLButtonElement>('[data-side-btn]');
-    btns.forEach((b) => b.addEventListener('click', () => {
-      sec.dataset.side = b.dataset.sideBtn;
-      btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    }));
-  });
-</script>
-
 <style>
-  .cmp-head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 20px clamp(32px, 6vw, 96px); align-items: end; margin-bottom: clamp(28px, 3.5vw, 48px); }
-  .cmp-head .h2 { max-width: 12ch; }
-  .cmp-head .text { margin: 0; max-width: 30rem; color: var(--fg-2); }
-  .cmp { display: grid; background: var(--surface); color: var(--fg); border: 1px solid var(--edge); border-radius: 24px; overflow: hidden; }
-  .row { display: grid; grid-template-columns: minmax(150px, .45fr) minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 3vw, 40px); align-items: start; padding: clamp(16px, 1.6vw, 22px) clamp(18px, 2.4vw, 32px); border-top: 1px solid var(--hair); transition: background 300ms var(--ease); }
-  .row:not(.th):hover { background: var(--tint); }
-  .th { border-top: 0; padding-block: 14px; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; background: var(--tint); color: var(--fg-2); }
-  .usual-h { color: var(--fg-2); }
-  .gecko-h { justify-self: start; padding: 4px 12px; border-radius: 999px; background: var(--yellow); color: var(--ink); letter-spacing: .04em; }
-  .topic { display: flex; gap: 12px; align-items: baseline; font-weight: 700; font-size: clamp(17px, 1.4vw, 20px); letter-spacing: -0.02em; }
-  .topic i { font-style: normal; font-size: 12px; color: var(--fg-3); letter-spacing: 0; }
-  .usual, .gecko { position: relative; margin: 0; padding-left: 34px; font-size: clamp(15px, 1.15vw, 17px); line-height: 1.5; }
-  .usual { color: var(--fg-2); }
-  .gecko { font-weight: 600; }
-  .mk { position: absolute; left: 0; top: .15em; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--hair-2); background-position: center; background-repeat: no-repeat; background-size: 14px; }
-  .mk.no { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6.5 6.5l7 7M13.5 6.5l-7 7' stroke='%23000000' stroke-opacity='.45' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E"); }
-  .mk.yes { background-color: var(--mat); border-color: var(--mat); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5.5 10.4l3 3L14.5 7' fill='none' stroke='%23FFFFFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-  .side { display: none; }
-  .cmp-cta { margin-top: clamp(28px, 3vw, 40px); }
-  @media (max-width: 860px) {
-    .cmp-head { grid-template-columns: 1fr; }
-    .side { display: inline-flex; gap: 4px; padding: 4px; margin-bottom: 16px; background: var(--tint-2); border-radius: 999px; }
-    .side button { font: 700 14px/1 var(--font); padding: 11px 16px; border: 0; border-radius: 999px; background: transparent; color: var(--fg); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-    .side button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-    .th { display: none; }
-    .row { grid-template-columns: 1fr; gap: 8px; padding: 16px 18px; }
-    .row:first-of-type + .row { border-top: 0; }
-    .row:not(.th):hover { background: none; }
-    [data-side="gecko"] .usual, [data-side="usual"] .gecko { display: none; }
-  }
+  .cmp-sec { border-top: 1px solid var(--hair); }
+  .cmp-title { max-width: 12ch; margin-bottom: clamp(32px, 4vw, 64px); }
+  .cmp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(32px, 5vw, 96px); border-top: 1px solid var(--hair-2); }
+  .row { display: grid; gap: 14px; align-content: start; padding-block: clamp(24px, 2.8vw, 40px); border-bottom: 1px solid var(--hair); }
+  .topic { margin: 0; display: flex; gap: 12px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .topic .i { font-variant-numeric: tabular-nums; }
+  .usual { margin: 0; max-width: 34rem; font-size: 16px; line-height: 1.5; color: var(--fg-3); }
+  /* The usual way gets struck through in pink as the row comes into view. */
+  .usual s { text-decoration: none; background: linear-gradient(var(--pink), var(--pink)) 0 60% / 0 .16em no-repeat; transition: background-size 900ms var(--ease) 300ms; }
+  .row.in .usual s { background-size: 100% .16em; }
+  .gecko { margin: 0; max-width: 28ch; font-weight: 700; font-size: clamp(21px, 1.9vw, 30px); line-height: 1.2; letter-spacing: -0.025em; text-wrap: pretty; }
+  @media (max-width: 860px) { .cmp { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .usual s { background-size: 100% .16em; } }
 </style>

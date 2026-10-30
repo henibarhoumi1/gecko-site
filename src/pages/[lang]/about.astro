@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Cta from '../../components/Cta.astro';
 import Compare from '../../components/Compare.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -10,7 +9,7 @@ const lang = Astro.params.lang as Locale;
 const a = c(lang).about;
 const n = c(lang).nav;
 ---
-<Base lang={lang} footerCta={false} title={n.about} page="about">
+<Base lang={lang} title={n.about} page="about">
   <section class="page-head lit">
     <div class="wrap wide">
       <h1 class="h1 rv">{a.title}</h1>
@@ -26,8 +25,6 @@ const n = c(lang).nav;
   </section>
 
   <Compare lang={lang} />
-
-  <Cta lang={lang} title={a.cta} />
 </Base>
 
 <style>

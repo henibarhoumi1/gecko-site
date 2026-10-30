@@ -73,7 +73,7 @@ const h = c(lang).home;
       <div class="faq-lead rv">
         <h2 class="h2">{k.faqTitle}</h2>
       </div>
-      <div class="stack rv" style="--gap:10px">
+      <div class="stack faq-col rv" style="--gap:0px">
         <div class="faq lead-faq">
           <details>
             <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
@@ -96,10 +96,8 @@ const h = c(lang).home;
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
   .part { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid var(--hair-2); }
   .part .text { margin: 0; color: var(--fg-2); }
-  .tag-pill { margin: 0 0 4px; justify-self: start; padding: 5px 11px; border-radius: 999px; background: var(--tint-2); color: var(--fg-2); font-size: 12px; font-weight: 700; letter-spacing: .02em; }
-  .part:nth-child(1) .tag-pill { background: var(--pink); color: var(--ink); }
-  .part:nth-child(2) .tag-pill { background: var(--yellow); color: var(--ink); }
-  .every { margin-top: clamp(36px, 4vw, 56px); padding: 20px 24px; display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: center; border-radius: 18px; background: var(--surface); border: 1px solid var(--edge); }
+  .tag-pill { margin: 0; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .every { margin-top: clamp(40px, 4.4vw, 64px); padding-top: 22px; display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: baseline; border-top: 1px solid var(--hair); }
   .every .ticks-list { display: flex; flex-wrap: wrap; gap: 12px 32px; }
   .every .ticks-list li { white-space: nowrap; font-size: 15px; }
   .every .label { margin: 0; }
@@ -115,8 +113,8 @@ const h = c(lang).home;
   .kinds .h3 { margin-bottom: 6px; }
   .kinds .text { margin: 0; color: var(--fg-2); }
 
-  .lead-faq { padding-left: 2px; }
-  .terms { margin: 0; padding: 0 64px 22px 40px; display: grid; gap: 10px; color: var(--fg-2); }
+  .faq-col > :global(div > .faq) { border-top: 0; }
+  .terms { margin: 0; padding: 0 48px 24px 20px; display: grid; gap: 10px; color: var(--fg-2); }
   .faq-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .faq-lead { display: grid; gap: 28px; justify-items: start; }
   @media (max-width: 960px) { .split { grid-template-columns: 1fr; } .beyond { grid-template-columns: 1fr; } }

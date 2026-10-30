@@ -1,5 +1,5 @@
 ---
-// Questions as a list of rounded rows. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
+// Questions on thin lines. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
 // fades out at the bottom while there is more, and shows `hint` until the visitor reaches the end.
 // With `limit` only the first questions show, as a plain list, and `more` adds a link to all of them underneath.
 interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string; limit?: number; more?: { href: string; label: string } }

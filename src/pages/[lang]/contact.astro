@@ -33,7 +33,7 @@ const ways = [
 
   <section class="section">
     <div class="wrap grid-c">
-      <div class="stack" style="--gap:22px">
+      <div class="stack reach" style="--gap:22px">
         <h2 class="h3 rv">{k.ways}</h2>
         <ul class="ways">
           {ways.map((w, i) => (
@@ -59,23 +59,20 @@ const ways = [
 <style>
   .page-head .h1 { max-width: 17ch; }
   .grid-c { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .ways { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .ways a { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 16px; padding: 14px 18px 14px 14px; text-decoration: none; background: var(--surface); border: 1px solid var(--edge); border-radius: 18px; transition: transform 240ms var(--ease), border-color 240ms var(--ease), background 200ms var(--ease); }
-  .ways a:hover { transform: translateY(-2px); border-color: var(--hair-2); background: var(--surface-2); }
-  .em { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--tint-2); transition: background 200ms var(--ease), transform 300ms var(--ease); }
+  .reach { padding-top: clamp(20px, 2vw, 28px); border-top: 1px solid var(--hair-2); }
+  .ways { list-style: none; margin: 0; padding: 0; display: grid; }
+  .ways a { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 16px; padding: clamp(16px, 1.5vw, 20px) 0; text-decoration: none; border-bottom: 1px solid var(--hair); }
+  .em { width: 28px; height: 28px; display: grid; place-items: center; }
   .em svg { width: 22px; height: 22px; fill: none; stroke: var(--fg); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  .ways a:hover .em { background: var(--pink-soft); transform: rotate(-6deg); }
-  .em.is-wa { background: rgba(37, 211, 102, .14); }
-  .em :global(.wa) { width: 28px; height: 28px; }
+  .em :global(.wa) { width: 26px; height: 26px; }
   .who { display: grid; gap: 2px; min-width: 0; }
-  .val { font-weight: 700; font-size: 17px; overflow-wrap: anywhere; }
-  @media (max-width: 420px) { .val { font-size: 15px; } }
+  .val { font-weight: 700; font-size: clamp(17px, 1.4vw, 21px); letter-spacing: -0.015em; overflow-wrap: anywhere; }
+  @media (max-width: 420px) { .val { font-size: 16px; } }
   .go { font-weight: 700; color: var(--fg-3); transition: transform 240ms var(--ease), color 240ms var(--ease); }
-  .ways a:hover .go { color: var(--fg); }
-  .ways a:hover .go { transform: translateX(4px); }
-  .proj { display: grid; gap: 6px; padding: 22px 24px; text-decoration: none; background: var(--yellow); color: var(--ink); border-radius: 18px; transition: transform 240ms var(--ease), background 240ms var(--ease); }
-  .proj:hover { transform: translateY(-2px); background: var(--pink); }
-  .proj .pt { font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
-  .proj .text { font-weight: 600; }
+  .ways a:hover .go { color: var(--fg); transform: translateX(4px); }
+  .proj { display: grid; gap: 8px; padding-top: 22px; text-decoration: none; color: var(--fg); border-top: 1px solid var(--hair-2); }
+  .proj .pt { font-weight: 700; font-size: clamp(24px, 2.2vw, 34px); line-height: 1.1; letter-spacing: -0.035em; }
+  .proj .text { font-weight: 600; color: var(--fg-2); transition: color 200ms var(--ease); }
+  .proj:hover .text { color: var(--fg); }
   @media (max-width: 860px) { .grid-c { grid-template-columns: 1fr; } }
 </style>
