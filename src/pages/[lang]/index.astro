@@ -17,7 +17,6 @@ const s = t(lang);
 const k = c(lang);
 const h = k.home;
 const hx = h.hero;
-const w = k.work;
 // The headline's full stop is drawn as a dot: it is where the landing opens onto the work.
 // Wide screens set it in three lines; phones and upright tablets word by word (titleM), each as big as the screen allows.
 const cut = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
@@ -30,7 +29,7 @@ const clips = ads.map((a, i) => {
 const pad = (n: number) => String(n).padStart(2, '0');
 const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 10l-4 4" />';
 ---
-<Base lang={lang} footerCta={false} page="home">
+<Base lang={lang} page="home">
   <div class="intro" data-intro>
     <script is:inline>document.currentScript.parentElement.classList.toggle('iris', !matchMedia('(prefers-reduced-motion: reduce)').matches);</script>
     <div class="stage">
@@ -50,7 +49,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
               <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
               <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
             </div>
-            <p class="h-from">{hx.from}</p>
           </div>
         </div>
         <div class="ticker" aria-hidden="true">
@@ -94,11 +92,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 
   <section class="work-more on-black" data-dark="1">
     <div class="wrap wide wm">
-      <p class="wm-intro rv">{w.intro}</p>
-      <div class="wm-side rv" style="--d:120ms">
-        <p class="wm-team"><span class="wm-k">{w.team}</span>{w.people.join(', ')}</p>
-        <a class="btn wm-btn" href={href(lang, 'work')}>{hx.cta} <span class="arr" aria-hidden="true">→</span></a>
-      </div>
+      <a class="wm-link rv" href={href(lang, 'work')}>{hx.cta} <span aria-hidden="true">→</span></a>
     </div>
   </section>
 
@@ -339,7 +333,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .big-btn { padding: 17px 26px; font-size: 16px; }
   .hero .btn.primary:hover { background: var(--pink); border-color: var(--pink); color: var(--ink); }
   .hero .btn:not(.primary):hover { background: var(--tint-2); }
-  .h-from { margin: 14px 0 0; font-size: 13px; letter-spacing: -0.005em; color: var(--fg-3); }
 
   /* The formats we make, running along the foot of the landing. */
   .ticker { flex: none; overflow: hidden; padding-block: 17px; background: var(--ink); color: #fff; }
@@ -395,14 +388,13 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .cursor svg { width: 12px; height: 12px; fill: currentColor; }
   .cursor.on { opacity: 1; scale: 1; }
 
-  /* Under the reels: what the case study was and who made it. */
-  .work-more { position: relative; padding: clamp(10px, 2vh, 24px) 0 clamp(64px, 10vh, 120px); }
-  .wm { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 96px); align-items: end; padding-top: clamp(26px, 3.6vh, 44px); border-top: 1px solid rgba(255, 255, 255, .16); }
-  .wm-intro { margin: 0; max-width: 32ch; font-size: clamp(22px, 2.1vw, 34px); line-height: 1.2; letter-spacing: -0.025em; font-weight: 600; text-wrap: pretty; }
-  .wm-side { display: grid; justify-items: start; gap: 20px; }
-  .wm-team { margin: 0; font-size: 15px; line-height: 1.55; color: rgba(255, 255, 255, .72); }
-  .wm-k { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 700; color: #fff; }
-  .wm-btn:hover { background: #fff; border-color: #fff; color: var(--ink); }
+  /* Under the reels: one line to the full case study. */
+  .work-more { position: relative; padding: clamp(10px, 2vh, 24px) 0 clamp(56px, 9vh, 112px); }
+  .wm { padding-top: clamp(22px, 3vh, 36px); border-top: 1px solid rgba(255, 255, 255, .16); }
+  .wm-link { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(28px, 3.6vw, 56px); line-height: 1; letter-spacing: -0.045em; color: #fff; text-decoration: none; }
+  .wm-link span { color: var(--pink); transition: transform 360ms var(--ease); }
+  .wm-link:hover span { transform: translateX(12px); }
+  .wm-link:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
 
   @media (max-width: 1100px) and (min-width: 761px) {
     .h-in { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
@@ -425,13 +417,12 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     .ln.m { display: block; }
     .h-kick { font-size: 13px; }
     .h-lede { font-size: 15px; }
-    .h-from { display: none; }
     .ticker { padding-block: 14px; }
     .ticker li { font-size: 15px; gap: 24px; padding-right: 24px; }
     .stop-hit { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
-    .wm { grid-template-columns: 1fr; gap: 24px; }
   }
-  @media (max-width: 640px) {
+  /* Upright screens: the title takes the full width, so the case study line and the pause button sit above it. */
+  @media (max-width: 960px) and (orientation: portrait), (max-width: 640px) {
     .w-head { flex-direction: column-reverse; align-items: stretch; gap: 12px; min-height: 0; }
     .w-meta { justify-content: space-between; padding-bottom: 0; }
   }
