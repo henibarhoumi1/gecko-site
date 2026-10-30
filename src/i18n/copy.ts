@@ -5,6 +5,8 @@ const en = {
   nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'The Glucélia case study', process: 'How a project runs, and your workspace', offers: 'Plans from 999 TND', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
   home: {
     title: ['Ads made', 'to be watched', 'twice.'],
+    // On phones the headline breaks word by word so each word can be as big as the screen allows.
+    titleM: ['Ads', 'made', 'to be', 'watched', 'twice.'],
     compare: { title: 'Why brands switch to Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut, so nothing gets lost between hand-offs.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys: the problem, the want, the proof.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more openings per reel on monthly plans, so the results show which one stops people.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film. No surprises on set or in the edit.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We review the results you share and write the next round from what they show.']] },
     kicker: 'Creative and production studio, Tunis',
     badge: 'Case study · Glucélia · 2026 · ',
@@ -13,7 +15,7 @@ const en = {
     kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     // The two crossing bands before pricing.
     bands: { big: ['Plans from 999 TND', 'Launch prices until 31 December 2026', 'For our first 5 clients'], small: ['Ads made to be watched twice', 'Scripts approved before the shoot', 'First draft 7 days after the shoot'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
-    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', credit: 'On screen: Glucélia, four reels made at CreativesLab in 2026.', cta: 'See the case study', from: 'Plans from 999 TND. Launch prices for our first 5 clients.' },
+    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'See the case study', from: 'Plans from 999 TND. Launch prices for our first 5 clients.' },
     sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -248,6 +250,7 @@ const fr: Copy = {
   nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'L’étude de cas Glucélia', process: 'Le déroulé d’un projet, et votre espace client', offers: 'Des plans dès 999 TND', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
   home: {
     title: ['Des pubs faites', 'pour être', 'revues.'],
+    titleM: ['Des', 'pubs', 'faites', 'pour', 'être', 'revues.'],
     compare: { title: 'Pourquoi les marques passent chez Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final, sans rien perdre en route.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients : le problème, l’envie, la preuve.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux ouvertures par reel sur les plans mensuels, pour voir laquelle arrête le scroll.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage. Aucune surprise sur le plateau ni au montage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On étudie les résultats que vous partagez et on écrit la suite à partir de ce qu’ils montrent.']] },
     kicker: 'Studio de création et de production, Tunis',
     badge: 'Étude de cas · Glucélia · 2026 · ',
@@ -255,7 +258,7 @@ const fr: Copy = {
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Offres dès 999 TND', 'Prix de lancement jusqu’au 31 décembre 2026', 'Pour nos 5 premiers clients'], small: ['Des pubs faites pour être revues', 'Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
-    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', credit: 'À l’écran\u00a0: Glucélia, quatre reels réalisés chez CreativesLab en 2026.', cta: 'Voir l’étude de cas', from: 'Offres dès 999 TND. Prix de lancement pour nos 5 premiers clients.' },
+    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Voir l’étude de cas', from: 'Offres dès 999 TND. Prix de lancement pour nos 5 premiers clients.' },
     sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
