@@ -28,3 +28,4 @@ npm run build    # static files in dist/
 3. Add real ads, results, logos and photos to `src/data/work.ts` and set `PUBLIC_LIVE=1` on the host. Live builds drop every `sample` entry, and a section with nothing real left in it is hidden.
 4. Add Heni's photo on the About page.
 5. Deploy on Vercel (framework: Astro, output `dist`).
+
