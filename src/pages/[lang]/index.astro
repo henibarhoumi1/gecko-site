@@ -6,6 +6,7 @@ import PlanPicker from '../../components/PlanPicker.astro';
 import Workspace from '../../components/Workspace.astro';
 import Bands from '../../components/Bands.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
+import Choices from '../../components/Choices.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
@@ -20,13 +21,16 @@ const hx = h.hero;
 // The headline's full stop is drawn as a dot: it is where the landing opens onto the work.
 // Wide screens set it in three lines; phones and upright tablets word by word (titleM), each as big as the screen allows.
 const cut = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
-const sets = [{ k: 'd', lines: cut(h.title) }, { k: 'm', lines: cut(h.titleM) }];
+const sets = [{ k: 'd', lines: cut(h.title), marks: 1 }, { k: 'm', lines: cut(h.titleM), marks: h.marksM }];
 // The work stage plays a short silent cut of each case study reel; a click opens the full reel with sound.
 const clips = ads.map((a, i) => {
   const slug = a.src!.replace(/^.*glucelia-|\.mp4$/g, '');
   return { i, src: `/work/clip-${slug}.mp4`, poster: a.poster!, cap: a.angle[lang] };
 });
 const pad = (n: number) => String(n).padStart(2, '0');
+// Right under the prices, the questions a first-time client is really asking: can we try you, what if an ad doesn't
+// perform, how long are we tied in, how we pay, how fast, and do I have to be on camera.
+const faqs = [1, 10, 3, 5, 4, 14].map((i) => s.faq[i]);
 const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 10l-4 4" />';
 ---
 <Base lang={lang} page="home">
@@ -38,8 +42,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
           <p class="h-kick up" style="--d:260ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
           <div class="h-tbox">
             <h1 class="h-title" id="h-title" aria-label={h.title.join(' ')} style={`--lm:${h.titleM.length}`}>
-              {sets.map(({ k: set, lines }) => lines.map((line, i) => (
-                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${340 + i * (set === 'd' ? 120 : 80)}ms`}>{i === lines.length - 1 ? <><span class="mark">{line}</span><span class="stop" data-stop></span></> : line}</span></span>
+              {sets.map(({ k: set, lines, marks }) => lines.map((line, i) => (
+                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${340 + i * (set === 'd' ? 120 : 80)}ms`}>{i >= lines.length - marks ? <><span class="mark">{line}</span>{i === lines.length - 1 && <span class="stop" data-stop></span>}</> : line}</span></span>
               )))}
             </h1>
           </div>
@@ -90,10 +94,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     <div class="pin" data-pin aria-hidden="true"></div>
   </div>
 
-  <section class="work-more on-black" data-dark="1">
-    <div class="wrap wide wm">
-      <a class="wm-link rv" href={href(lang, 'work')}>{hx.cta} <span aria-hidden="true">→</span></a>
-    </div>
+  <section class="section think-sec" id="thinking">
+    <div class="wrap"><Choices lang={lang} title={h.thinking} link={{ href: href(lang, 'work'), label: hx.cta }} /></div>
   </section>
 
   <Workspace lang={lang} />
@@ -115,7 +117,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       <div class="faq-lead rv">
         <h2 class="h1 faq-h">{h.faqTitle}</h2>
       </div>
-      <div class="rv"><Faq items={s.faq} limit={6} more={{ href: href(lang, 'faq'), label: h.faqAll }} /></div>
+      <div class="rv"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: h.faqAll }} /></div>
     </div>
   </section>
 
@@ -136,6 +138,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const stops = [...hero.querySelectorAll<HTMLElement>('[data-stop]')];
     let stop = stops[0];
     const hit = hero.querySelector<HTMLButtonElement>('[data-stop-hit]')!;
+    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick, .h-lede, .h-cta')];
     const head = work.querySelector<HTMLElement>('[data-w-head]')!;
     const title = head.querySelector<HTMLElement>('h2')!;
     const deck = work.querySelector<HTMLElement>('[data-deck]')!;
@@ -224,8 +227,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         const far = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + 4;
         const r = p ? r0 + (far - r0) * p * p : 0;
         work.style.clipPath = p >= 1 ? 'none' : `circle(${r.toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
-        // The landing leans in towards the dot while it opens.
+        // The landing leans in towards the dot while it opens, and the small print and the buttons step back first,
+        // so only the headline and the opening dot are left.
         hero.style.transform = p ? `scale(${(1 + p * p * .6).toFixed(4)})` : '';
+        const back = p ? (1 - ease(span(0, .2, p))).toFixed(3) : '';
+        small.forEach((el) => { el.style.opacity = back; });
         intro.classList.toggle('moving', p > 0);
         const q = ease(span(.45, .9, p));
         head.style.opacity = q < 1 ? q.toFixed(3) : '';
@@ -387,14 +393,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     background: var(--pink); color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; pointer-events: none; opacity: 0; scale: .6; transition: opacity 220ms var(--ease), scale 300ms var(--ease); }
   .cursor svg { width: 12px; height: 12px; fill: currentColor; }
   .cursor.on { opacity: 1; scale: 1; }
-
-  /* Under the reels: one line to the full case study. */
-  .work-more { position: relative; padding: clamp(10px, 2vh, 24px) 0 clamp(56px, 9vh, 112px); }
-  .wm { padding-top: clamp(22px, 3vh, 36px); border-top: 1px solid rgba(255, 255, 255, .16); }
-  .wm-link { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(28px, 3.6vw, 56px); line-height: 1; letter-spacing: -0.045em; color: #fff; text-decoration: none; }
-  .wm-link span { color: var(--pink); transition: transform 360ms var(--ease); }
-  .wm-link:hover span { transform: translateX(12px); }
-  .wm-link:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
 
   @media (max-width: 1100px) and (min-width: 761px) {
     .h-in { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
