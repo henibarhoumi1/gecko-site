@@ -15,87 +15,60 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
-const mo = h.monitor;
-const w = c(lang).work;
-// The hero monitor plays a short silent cut of each case study reel; a click opens the full reel with sound.
+const hx = h.hero;
+// The hero plays a short silent cut of each case study reel; a click opens the full reel with sound.
 const clips = ads.map((a, i) => {
   const slug = a.src!.replace(/^.*glucelia-|\.mp4$/g, '');
   return { i, src: `/work/clip-${slug}.mp4`, poster: a.poster!, brand: a.brand, cap: a.angle[lang] };
 });
+const pad = (n: number) => String(n).padStart(2, '0');
+const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 10l-4 4" />';
 ---
-<Base lang={lang} footerCta={false} page="home">
-  <section class="hero" data-hero>
-    <div class="pin" data-pin>
-      <div class="dark" aria-hidden="true"></div>
+<Base lang={lang} footerCta={false} page="home" theme="#000000">
+  <section class="hero on-black" data-hero data-hero-dark>
+    <div class="wall" data-wall>
+      {clips.map((cl) => (
+        <button type="button" class={`panel${cl.i === 0 ? ' on' : ''}`} style={`--i:${cl.i}`} data-cut={cl.i} aria-label={`${hx.sound}: ${cl.cap}`}>
+          <img src={cl.poster} alt="" width="540" height="960" decoding="async" fetchpriority={cl.i === 0 ? 'high' : 'auto'} />
+          <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={cl.src}></video>
+          <span class="p-cap" aria-hidden="true">
+            <svg class="p-mute" viewBox="0 0 24 24" set:html={mute} />
+            <b>{pad(cl.i + 1)}<i>/{pad(clips.length)}</i></b>
+            <span>{cl.cap}</span>
+          </span>
+        </button>
+      ))}
+    </div>
+    <div class="bars" aria-hidden="true">{clips.map(() => <i><b></b></i>)}</div>
+    <span class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg>{hx.sound}</span>
+
+    <div class="h-body">
       <div class="wrap wide h-grid">
-        <div class="h-copy">
-          <p class="h-kick up" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
+        <div class="h-main">
+          <p class="h-kick up" style="--d:420ms"><span class="dot" aria-hidden="true"></span>{h.kicker}</p>
           <h1 class="h-title" aria-label={h.title.join(' ')}>
             {h.title.map((line, i) => (
-              <span class="ln" aria-hidden="true">
-                {i < h.title.length - 1 ? (
-                  <span class="rise" style={`--d:${100 + i * 110}ms`}>{line}</span>
-                ) : (
-                  <span class="rise fill" style={`--d:${100 + i * 110}ms`}>
-                    <span class="fill-v"><video data-fill src="/work/hero-twice.mp4" poster="/work/hero-twice.jpg" muted loop playsinline preload="none" tabindex="-1"></video></span>
-                    <span class="fill-t">{line}</span>
-                    <span class="fill-o">{line}</span>
-                    <span class="replay" data-replay><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.6h-4.6" /></svg></span>
-                  </span>
-                )}
-              </span>
+              <span class="ln" aria-hidden="true"><span class="rise" style={`--d:${520 + i * 110}ms`}>{line}</span></span>
             ))}
           </h1>
-          <p class="text text-l h-lede up" style="--d:440ms">{h.sub}</p>
-          <div class="actions up" style="--d:520ms">
+        </div>
+        <div class="h-side up" style="--d:900ms">
+          <p class="h-lede">{h.sub}</p>
+          <div class="actions">
             <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
           </div>
-        </div>
-
-        <div class="slot" data-slot>
-          <div class="monitor" data-monitor role="group" aria-label={mo.label} data-clips={JSON.stringify(clips)}>
-            <div class="m-frame">
-              <div class="m-screen" data-screen>
-                <img class="poster" src={clips[0].poster} alt="" width="540" height="960" fetchpriority="high" decoding="async" />
-                <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
-                <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
-                <span class="shade" aria-hidden="true"></span>
-                <span class="cur" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span>
-                <div class="bars" aria-hidden="true">{clips.map(() => <i><b></b></i>)}</div>
-                <div class="m-top">
-                  <p class="m-cap" aria-live="off"><small>{clips[0].brand} · <span data-count>01/{String(clips.length).padStart(2, '0')}</span></small><span data-cap>{clips[0].cap}</span></p>
-                  <button type="button" class="ctl" data-toggle aria-pressed="false" aria-label={mo.pause} data-pause={mo.pause} data-play={mo.play}>
-                    <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
-                    <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
-                  </button>
-                </div>
-                <button type="button" class="snd" data-sound>
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="w1" d="M15.5 9a4 4 0 0 1 0 6" /><path class="w2" d="M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
-                  <span>{mo.sound}</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          <p class="h-from">{hx.from}</p>
         </div>
       </div>
-      <div class="credits on-black" data-credits>
-        <div class="cr-l">
-          <p class="cr-k">{mo.kick}</p>
-          <h2 class="cr-h">{w.client}</h2>
-          <p class="cr-line">{mo.line}</p>
-          <a class="btn primary cr-cta" href={href(lang, 'work')}>{mo.cta} <span class="arr" aria-hidden="true">→</span></a>
-        </div>
-        <div class="cr-r">
-          <p class="cr-k" id="picks-h">{mo.list}</p>
-          <ol class="picks" aria-labelledby="picks-h">
-            {clips.map((cl, i) => (
-              <li><button type="button" data-pick={i} aria-current={i === 0 ? 'true' : undefined}><span class="pn">{String(i + 1).padStart(2, '0')}</span><span class="pt">{cl.cap}</span><i aria-hidden="true"><b></b></i></button></li>
-            ))}
-          </ol>
-        </div>
+      <div class="wrap wide h-foot up" style="--d:1050ms">
+        <p class="h-credit">{hx.credit} <a class="link" href={href(lang, 'work')}>{hx.cta} <span aria-hidden="true">→</span></a></p>
       </div>
     </div>
+    <button type="button" class="h-ctl" data-toggle aria-pressed="false" aria-label={hx.pause} data-pause={hx.pause} data-play={hx.play}>
+      <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
+      <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
+    </button>
   </section>
 
   <div class="ticker" aria-hidden="true">
@@ -132,80 +105,59 @@ const clips = ads.map((a, i) => {
 
 <script>
   import '../../scripts/marquee';
-  // The hero reel: short silent cuts of the case study reels play one after the other, with a progress bar per reel.
-  // Two video elements take turns, so the next reel is loaded before it's needed and the cut is clean. Nothing plays
-  // until the page has loaded, while the reel is off screen, while a dialog or the menu is open, with reduced motion
-  // or with data saver on. "Watch with sound" opens the full reel.
-  // Lights down: as the page scrolls, the reel moves to the middle and grows to the full height of the screen while a
-  // black circle opens behind it and the headline steps back. On black, the case study and its four reels come up on
-  // either side: the hero is the home page's Work section.
-  // On a wide screen the hero holds still (sticky) while this plays; on a phone it happens as the reel scrolls up.
+  // The hero is a wall of the case study reels. On a wide screen the four short silent cuts play side by side; on a
+  // phone or tablet the screen is one reel at a time, story style, with a bar per reel. Nothing plays until the page has
+  // loaded, while the hero is off screen, while a dialog or the menu is open, with reduced motion or with data saver on.
+  // A click on a reel opens it full screen with sound. As the page scrolls, the wall drifts and the copy lifts away.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  const mon = document.querySelector<HTMLElement>('[data-monitor]');
-  if (hero && mon) {
-    type Clip = { i: number; src: string; poster: string; brand: string; cap: string };
-    const clips: Clip[] = JSON.parse(mon.dataset.clips!);
-    const vids = [...mon.querySelectorAll<HTMLVideoElement>('[data-v]')];
-    const bars = [...mon.querySelectorAll<HTMLElement>('.bars b')];
-    const cap = mon.querySelector<HTMLElement>('[data-cap]')!;
-    const count = mon.querySelector<HTMLElement>('[data-count]')!;
-    const toggle = mon.querySelector<HTMLButtonElement>('[data-toggle]')!;
-    const sound = mon.querySelector<HTMLButtonElement>('[data-sound]')!;
-    const screen = mon.querySelector<HTMLElement>('[data-screen]')!;
-    const fill = hero.querySelector<HTMLVideoElement>('[data-fill]');
-    const replay = hero.querySelector<HTMLElement>('[data-replay]');
-    const credits = hero.querySelector<HTMLElement>('[data-credits]')!;
-    const picks = [...credits.querySelectorAll<HTMLButtonElement>('[data-pick]')];
-    const pbars = picks.map((b) => b.querySelector<HTMLElement>('b')!);
+  if (hero) {
+    const wall = hero.querySelector<HTMLElement>('[data-wall]')!;
+    const panels = [...hero.querySelectorAll<HTMLButtonElement>('[data-cut]')];
+    const vids = panels.map((p) => p.querySelector('video')!);
+    const bars = [...hero.querySelectorAll<HTMLElement>('.bars b')];
+    const toggle = hero.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const wide = matchMedia('(min-width: 961px)');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const save = !!(navigator as any).connection?.saveData;
-    const pad = (n: number) => String(n).padStart(2, '0');
-    let k = 0, cur = 0, wanted = !still && !save, ready = false, seen = false, blocked = false, raf = 0;
+    let k = 0, wanted = !still && !save, ready = false, seen = true, blocked = false, raf = 0;
 
-    const load = (v: HTMLVideoElement, n: number) => {
-      if (v.dataset.clip === String(n)) return;
-      v.dataset.clip = String(n); v.preload = 'auto'; v.poster = clips[n].poster; v.src = clips[n].src; v.load();
-    };
-    const label = () => {
-      cap.textContent = clips[k].cap; count.textContent = `${pad(k + 1)}/${pad(clips.length)}`;
+    const load = (v: HTMLVideoElement) => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
+    const show = () => {
+      panels.forEach((p, j) => p.classList.toggle('on', j === k));
       bars.forEach((b, j) => (b.style.transform = `scaleX(${j < k ? 1 : 0})`));
-      picks.forEach((b, j) => (j === k ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current')));
-      pbars.forEach((b) => (b.style.transform = 'scaleX(0)'));
     };
     const frame = () => {
-      const v = vids[cur];
-      bars[k].style.transform = pbars[k].style.transform = `scaleX(${v.duration ? Math.min(1, v.currentTime / v.duration) : 0})`;
+      const v = vids[k];
+      bars[k].style.transform = `scaleX(${v.duration ? Math.min(1, v.currentTime / v.duration) : 0})`;
       raf = requestAnimationFrame(frame);
     };
-    const stop = () => { vids.forEach((v) => v.pause()); fill?.pause(); cancelAnimationFrame(raf); raf = 0; hero.classList.remove('playing'); };
+    const stop = () => { vids.forEach((v) => v.pause()); cancelAnimationFrame(raf); raf = 0; };
     const go = () => {
       if (!ready || !seen || blocked || document.hidden || !wanted) return stop();
-      const v = vids[cur];
-      load(v, k);
+      if (wide.matches) {
+        cancelAnimationFrame(raf); raf = 0;
+        vids.forEach((v) => { v.loop = true; load(v); v.play().catch(() => {}); });
+        return;
+      }
+      vids.forEach((v, j) => { v.loop = false; if (j !== k) v.pause(); });
+      const v = vids[k];
+      load(v);
       v.play().then(() => {
-        hero.classList.add('live', 'playing');
         if (!raf) raf = requestAnimationFrame(frame);
-        load(vids[1 - cur], (k + 1) % clips.length);
+        load(vids[(k + 1) % vids.length]);
       }).catch(() => {});
-      if (fill) { fill.preload = 'auto'; fill.play().catch(() => {}); }
     };
-    vids.forEach((v, j) => v.addEventListener('ended', () => {
-      if (j !== cur) return;
-      k = (k + 1) % clips.length; cur = 1 - cur;
-      const next = vids[cur];
-      load(next, k); next.currentTime = 0;
-      next.classList.add('on'); v.classList.remove('on');
-      label(); go();
-    }));
-    vids[0].classList.add('on');
-    // The replay mark next to "twice." turns once each time the clip inside the word starts over.
-    if (fill && replay) {
-      let last = 0;
-      fill.addEventListener('timeupdate', () => {
-        if (fill.currentTime < last) { replay.classList.remove('spin'); void replay.offsetWidth; replay.classList.add('spin'); }
-        last = fill.currentTime;
+    vids.forEach((v, j) => {
+      v.addEventListener('playing', () => panels[j].classList.add('live'));
+      // On a phone each reel plays once, then the next one takes the screen.
+      v.addEventListener('ended', () => {
+        if (wide.matches || j !== k) return;
+        k = (k + 1) % vids.length;
+        vids[k].currentTime = 0;
+        show(); go();
       });
-    }
+    });
+    wide.addEventListener('change', () => { show(); go(); });
     toggle.addEventListener('click', () => {
       wanted = !wanted;
       toggle.setAttribute('aria-pressed', String(!wanted));
@@ -213,238 +165,159 @@ const clips = ads.map((a, i) => {
       hero.classList.toggle('held', !wanted);
       go();
     });
-    // From the screen the player grows out of the picture; from the list it simply fades in.
-    const open = (n = k, from: HTMLElement = sound, grow: HTMLElement | null = screen) => document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: clips[n].i, from, grow } }));
-    sound.addEventListener('click', () => open());
-    screen.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('button')) open(); });
-    // The list of reels beside the big screen: a click cuts to that reel. On a phone, or without the lights-down scene,
-    // the list sits under the reel rather than beside it, so a click opens the reel full screen instead.
-    picks.forEach((b, n) => b.addEventListener('click', () => {
-      if (!hero.classList.contains('cine')) return open(n, b, null);
-      if (n === k) return;
-      const old = vids[cur], next = vids[1 - cur];
-      old.pause();
-      k = n; cur = 1 - cur;
-      load(next, k); next.currentTime = 0;
-      next.classList.add('on'); old.classList.remove('on');
-      label(); go();
+    if (!wanted) { hero.classList.add('held'); toggle.setAttribute('aria-pressed', 'true'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
+    // The player grows out of a 9:16 frame in the middle of the reel that was clicked.
+    panels.forEach((p, j) => p.addEventListener('click', () => {
+      const r = p.getBoundingClientRect();
+      const w = Math.min(r.width, r.height * 9 / 16), hh = w * 16 / 9;
+      const rect = new DOMRect(r.left + (r.width - w) / 2, r.top + (r.height - hh) / 2, w, hh);
+      document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: j, from: p, grow: rect } }));
     }));
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.25 }).observe(mon);
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.1 }).observe(hero);
     new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); go(); })
       .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     document.addEventListener('visibilitychange', go);
     const start = () => { ready = true; go(); };
-    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 400));
+    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1200 }) : setTimeout(start, 300));
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
-    if (!wanted) { hero.classList.add('held'); toggle.setAttribute('aria-pressed', 'true'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
 
-    // With a mouse, a play badge follows the pointer over the picture.
+    // With a mouse, a "Watch with sound" badge trails the pointer across the reels.
     if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      screen.addEventListener('pointermove', (e) => {
-        const r = screen.getBoundingClientRect();
-        screen.style.setProperty('--cx', `${(e.clientX - r.left) / r.width * 100}%`); screen.style.setProperty('--cy', `${(e.clientY - r.top) / r.height * 100}%`);
-        screen.classList.toggle('hover', !(e.target as HTMLElement).closest('button'));
+      const cur = hero.querySelector<HTMLElement>('[data-cursor]')!;
+      let x = 0, y = 0, tx = 0, ty = 0, glide = 0;
+      const step = () => {
+        x += (tx - x) * .22; y += (ty - y) * .22;
+        cur.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+        glide = Math.abs(tx - x) + Math.abs(ty - y) > .4 ? requestAnimationFrame(step) : 0;
+      };
+      wall.addEventListener('pointermove', (e) => {
+        const r = hero.getBoundingClientRect();
+        tx = e.clientX - r.left; ty = e.clientY - r.top;
+        if (!cur.classList.contains('on')) { x = tx; y = ty; cur.classList.add('on'); }
+        if (!glide) glide = requestAnimationFrame(step);
       });
-      screen.addEventListener('pointerleave', () => screen.classList.remove('hover'));
+      wall.addEventListener('pointerleave', () => cur.classList.remove('on'));
     }
 
-    // Lights down.
+    // Scrolling away: the wall drifts down at a third of the speed and leans in, so the copy slides up over it.
     if (!still) {
-      const wide = matchMedia('(min-width: 961px)');
-      const slot = hero.querySelector<HTMLElement>('[data-slot]')!;
-      const clamp = (x: number) => Math.min(1, Math.max(0, x));
-      const ease = (x: number) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-      const band = (x: number, a: number, b: number) => clamp((x - a) / (b - a));
-      const pin = hero.querySelector<HTMLElement>('[data-pin]')!;
-      const dark = hero.querySelector<HTMLElement>('.dark')!;
-      let box = { x: 0, y: 0, w: 1, h: 1 }, queued = false;
-      hero.classList.add('anim');
-      const measure = () => {
-        hero.classList.toggle('cine', wide.matches);
-        // The slot is never transformed and the reel sits in its middle, so it gives the reel's resting place.
-        const r = slot.getBoundingClientRect(), pr = pin.getBoundingClientRect();
-        box = { x: r.left + r.width / 2 - pr.left, y: r.top + r.height / 2 - pr.top, w: mon.offsetWidth, h: mon.offsetHeight };
-        paint();
-      };
-      const paint = () => {
+      let queued = false;
+      const drift = () => {
         queued = false;
-        const vh = innerHeight, r = hero.getBoundingClientRect();
-        let p: number;
-        if (wide.matches) p = clamp(-r.top / Math.max(1, r.height - vh));
-        else { const s = slot.getBoundingClientRect(); p = scrollY <= 0 ? 0 : clamp((vh * .8 - s.top) / (vh * .6)); }
-        const e = ease(band(p, 0, wide.matches ? .62 : 1));
-        hero.style.setProperty('--p', p.toFixed(4));
-        // The circle opens from the reel's middle, wherever the reel is at this point of the scroll.
-        const m = mon.getBoundingClientRect(), pr = pin.getBoundingClientRect();
-        const cx = m.left + m.width / 2 - pr.left, cy = m.top + m.height / 2 - pr.top;
-        const far = Math.hypot(Math.max(cx, pr.width - cx), Math.max(cy, pr.height - cy));
-        const d = ease(band(p, wide.matches ? .04 : .1, wide.matches ? .56 : .85));
-        dark.style.clipPath = `circle(${(d * far).toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
-        const fade = wide.matches ? band(p, .06, .42) : band(p, .15, .6);
-        hero.style.setProperty('--fade', fade.toFixed(3));
-        const cr = band(p, .62, .9);
-        hero.style.setProperty('--cred', cr.toFixed(3));
-        hero.classList.toggle('cut', cr > .5);
-        hero.classList.toggle('gone', fade >= .99);
-        if (wide.matches) {
-          // From where the reel stands beside the headline to the middle of the screen, as tall as the screen allows.
-          const target = Math.min(vh - 112, innerWidth * .9 * 16 / 9);
-          const s = 1 + (target / box.h - 1) * e;
-          const dx = (innerWidth / 2 - box.x) * e, dy = (vh / 2 + 6 - box.y) * e;
-          mon.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${s.toFixed(4)}) rotate(${(3 * (1 - e)).toFixed(2)}deg)`;
-        } else {
-          mon.style.transform = `scale(${(.9 + .1 * e).toFixed(4)})`;
-        }
+        const r = hero.getBoundingClientRect();
+        if (r.bottom < 0) return;
+        const p = Math.min(1, Math.max(0, -r.top / r.height));
+        wall.style.transform = p ? `translate3d(0, ${(p * r.height * .34).toFixed(1)}px, 0) scale(${(1 + p * .06).toFixed(4)})` : '';
       };
-      const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
-      // Tabbing into the list before the lights are down jumps the scroll to where it shows.
-      credits.addEventListener('focusin', () => {
-        if (!wide.matches || hero.classList.contains('cut')) return;
-        const y = scrollY + hero.getBoundingClientRect().top + .9 * (hero.offsetHeight - innerHeight);
-        const l = (window as any).lenis; l ? l.scrollTo(y, { immediate: true, force: true }) : scrollTo(0, y);
-        paint();
-      });
-      addEventListener('scroll', ask, { passive: true });
-      addEventListener('resize', () => requestAnimationFrame(measure));
-      wide.addEventListener('change', measure);
-      measure();
-      addEventListener('load', measure, { once: true });
+      addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(drift); } }, { passive: true });
+      drift();
     }
   }
 </script>
 
 <style>
-  /* Hero: the headline big on white, the last word filled with moving footage, and beside it a reel playing on a phone
-     in front of a pink disc. As the page scrolls, the lights go down: the reel takes the middle of the screen. */
-  .hero { position: relative; --p: 0; --dark: 0; --fade: 0; --cred: 0; }
-  .hero.cine { height: 230svh; }
-  .pin { position: relative; isolation: isolate; }
-  .cine .pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
-  /* The lights going down: a black circle opening from behind the reel until it covers the screen. */
-  .dark { position: absolute; inset: 0; z-index: 1; background: #000; clip-path: circle(0 at 75% 50%); pointer-events: none; }
-  .h-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); gap: clamp(28px, 4vw, 72px); align-items: center;
-    min-height: calc(100svh - 58px); padding-top: calc(var(--header) + clamp(16px, 3vh, 40px)); padding-bottom: clamp(36px, 6vh, 72px); }
-  .cine .h-grid { min-height: 100svh; }
-  .h-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; container-type: inline-size; min-width: 0;
-    opacity: calc(1 - var(--fade)); transform: translateY(calc(var(--fade) * -48px)); }
-  .gone .h-copy { visibility: hidden; }
-  .h-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
-  .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--mat); }
-  .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--mat); opacity: 0; animation: ping 2.4s var(--ease) infinite; }
-  @keyframes ping { 0% { transform: scale(.5); opacity: .6; } 100% { transform: scale(1.3); opacity: 0; } }
+  /* The hero: four reels side by side, edge to edge on black, the headline over them. Each reel carries its number and
+     title at the top; a soft shade at the top keeps the menu bar readable and a deep one at the bottom holds the copy. */
+  .hero { position: relative; height: 100svh; min-height: 600px; max-height: 1400px; overflow: hidden; isolation: isolate; }
+  :global(html:has([data-hero-dark])) { background: #000; }
+  .wall { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; transform-origin: 50% 0; }
+  .panel { position: relative; display: block; overflow: hidden; margin: 0; padding: 0; border: 0; border-radius: 0; background: #0D0D0D; color: #fff; cursor: pointer;
+    animation: wipe 1300ms cubic-bezier(.76, 0, .24, 1) both; animation-delay: calc(60ms + var(--i) * 120ms); }
+  @keyframes wipe { from { clip-path: inset(100% 0 0 0); } }
+  .panel img, .panel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .panel img { animation: settle 2200ms cubic-bezier(.16, 1, .3, 1) both; animation-delay: calc(60ms + var(--i) * 120ms); }
+  @keyframes settle { from { transform: scale(1.18); } }
+  .panel video { opacity: 0; transition: opacity 600ms var(--ease); }
+  .panel.live video { opacity: 1; }
+  /* The shades are painted inside each reel so the titles can sit above them. */
+  .panel::before { content: ''; position: absolute; inset: -2px; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(0, 0, 0, .62) 0, rgba(0, 0, 0, 0) 24%), linear-gradient(0deg, rgba(0, 0, 0, .97) 0, rgba(0, 0, 0, .9) 30%, rgba(0, 0, 0, .55) 46%, rgba(0, 0, 0, .14) 60%, rgba(0, 0, 0, 0) 70%); }
+  .panel::after { content: ''; position: absolute; inset: -2px; z-index: 1; pointer-events: none; background: #000; opacity: .22; transition: opacity 500ms var(--ease); }
+  @media (hover: hover) {
+    .wall:hover .panel::after { opacity: .6; }
+    .wall .panel:hover::after { opacity: 0; }
+  }
+  .panel:focus-visible { outline: none; }
+  .wall .panel:focus-visible::after { opacity: 1; background: transparent; box-shadow: inset 0 0 0 5px var(--pink); }
+  .p-cap { position: absolute; z-index: 2; left: clamp(16px, 1.6vw, 26px); right: 16px; top: calc(var(--header) + clamp(14px, 2.4vh, 26px)); display: flex; align-items: baseline; gap: 10px;
+    font-weight: 600; font-size: 14px; line-height: 1.25; letter-spacing: -0.01em; text-align: left; color: rgba(255, 255, 255, .9); transition: color 300ms var(--ease); }
+  .p-cap b { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .6); }
+  .p-cap i { font-style: normal; display: none; }
+  .p-mute { display: none; flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; align-self: center; }
+  .p-mute path:first-child { fill: currentColor; }
 
-  .h-title { margin: 0; font-weight: 700; font-size: min(clamp(52px, 8.6vw, 156px), 15.4cqi); line-height: .9; letter-spacing: -0.06em; }
-  :global(html[lang='fr']) .h-title { font-size: min(clamp(50px, 8.6vw, 156px), 14.6cqi); }
-  .ln { display: block; overflow: hidden; padding: .02em .1em .14em 0; margin-bottom: -.08em; width: fit-content; white-space: nowrap; }
-  .ln > span { display: inline-block; }
-  .rise { animation: rise 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
-  @keyframes rise { from { transform: translateY(105%); } }
-  .up { animation: fade-up 900ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
+  /* The badge that trails the pointer. */
+  .cursor { position: absolute; z-index: 4; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 0 18px; padding: 11px 16px 11px 13px; border-radius: 999px; white-space: nowrap;
+    background: var(--pink); color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; pointer-events: none; opacity: 0; scale: .6; transition: opacity 220ms var(--ease), scale 300ms var(--ease); }
+  .cursor svg { width: 12px; height: 12px; fill: currentColor; }
+  .cursor.on { opacity: 1; scale: 1; }
+
+  /* The copy, over the bottom of the reels. Only the copy itself takes the pointer, so the reels stay clickable around it. */
+  .h-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; pointer-events: none; }
+  .h-main, .h-side, .h-credit { pointer-events: auto; }
+  .h-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 400px); gap: clamp(32px, 5vw, 96px); align-items: end; padding-bottom: clamp(26px, 4.4vh, 48px); }
+  .h-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0 0 clamp(16px, 2.6vh, 28px); font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: rgba(255, 255, 255, .82); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 4px rgba(244, 193, 196, .18); }
+  .h-title { margin: 0; font-weight: 700; font-size: min(8.4vw, 14svh); line-height: .88; letter-spacing: -0.058em; }
+  .ln { display: block; overflow: hidden; padding: .02em .08em .1em 0; margin-bottom: -.1em; width: fit-content; white-space: nowrap; }
+  .ln:last-child { color: var(--pink); }
+  .rise { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
+  @keyframes rise { from { transform: translateY(108%); } }
+  .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(18px); } }
-
-  /* The last word: white paper with the letters cut out, footage running behind it (screen blending turns black into
-     whatever is underneath), and an ink outline so the letters always read. */
-  .fill { position: relative; isolation: isolate; padding-right: .5em; }
-  .fill-v { position: absolute; z-index: 0; left: 0; right: .5em; top: .1em; bottom: .02em; overflow: hidden; background: var(--ink); }
-  .fill-v video { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.4) contrast(1.15) brightness(.7); }
-  .fill-t { position: relative; z-index: 1; display: inline-block; background: #fff; color: #000; mix-blend-mode: screen; }
-  .fill-o { position: absolute; z-index: 2; left: 0; top: 0; color: transparent; -webkit-text-stroke: max(1px, .01em) var(--ink); pointer-events: none; }
-  .replay { position: absolute; z-index: 2; right: .02em; top: .2em; width: .36em; aspect-ratio: 1; border-radius: 50%; background: var(--pink); border: max(1px, .012em) solid var(--ink); display: grid; place-items: center;
-    animation: pop 700ms 1100ms cubic-bezier(.3, 1.6, .5, 1) both; }
-  .replay svg { width: 58%; height: 58%; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-  .replay.spin svg { animation: spin 900ms cubic-bezier(.65, 0, .35, 1); }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes pop { from { opacity: 0; transform: scale(.3) rotate(-90deg); } }
-  .h-lede { margin: 0; max-width: 34rem; color: var(--fg-2); }
+  .h-lede { margin: 0; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; letter-spacing: -0.01em; color: rgba(255, 255, 255, .8); text-wrap: pretty; }
+  .h-side .actions { margin-top: clamp(20px, 3vh, 28px); }
   .big-btn { padding: 17px 26px; font-size: 16px; }
+  .hero .btn.primary { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .hero .btn.primary:hover { background: #fff; border-color: #fff; color: var(--ink); }
+  .h-from { margin: 16px 0 0; font-size: 13px; letter-spacing: -0.005em; color: rgba(255, 255, 255, .56); }
+  .h-foot { display: flex; align-items: center; min-height: 54px; border-top: 1px solid rgba(255, 255, 255, .16); }
+  .h-credit { margin: 0; padding-right: 64px; font-size: 13px; color: rgba(255, 255, 255, .56); }
+  .h-credit .link { margin-left: 6px; color: #fff; font-size: 13px; }
 
-  /* Where the reel stands: a pink disc behind it, which fades as the lights go down. */
-  .slot { position: relative; display: grid; place-items: center; height: clamp(520px, 74svh, 740px); }
-  .slot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 92%; max-width: 72svh; aspect-ratio: 1; border-radius: 50%; background: var(--pink); translate: -46% -50%;
-    opacity: calc(1 - var(--fade)); scale: calc(1 - var(--fade) * .25); animation: disc 1200ms 150ms cubic-bezier(.16, 1, .3, 1) both; }
-  @keyframes disc { from { scale: .6; opacity: 0; } }
+  /* Pause and play: bottom right on a wide screen, top right over the reel on a phone. */
+  .h-ctl { position: absolute; z-index: 4; right: max(var(--gutter), calc((100% - var(--wide)) / 2 + var(--gutter))); bottom: 10px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0;
+    border: 1px solid rgba(255, 255, 255, .28); border-radius: 50%; background: rgba(0, 0, 0, .25); color: #fff; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease); }
+  .h-ctl:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .5); }
+  .h-ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .h-ctl svg { width: 12px; height: 12px; fill: currentColor; }
+  .h-ctl .i-play, .held .h-ctl .i-pause { display: none; }
+  .held .h-ctl .i-play { display: block; margin-left: 2px; }
+  .bars { display: none; }
 
-  /* The phone: a black frame, the reel inside, story bars and the caption on top, "Watch with sound" at the bottom. */
-  .monitor { position: relative; z-index: 2; height: 100%; aspect-ratio: 9 / 16; transform: rotate(3deg); transform-origin: 50% 50%;
-    animation: stand 1300ms 320ms cubic-bezier(.16, 1, .3, 1) both; }
-  @keyframes stand { from { opacity: 0; translate: 0 12svh; scale: .92; } 40% { opacity: 1; } }
-  .m-frame { position: relative; height: 100%; padding: 9px; border-radius: 34px; background: #0B0B0B; border: 1px solid #2A2A2A;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 30px 60px -24px rgba(0, 0, 0, .5), 0 70px 120px -50px rgba(0, 0, 0, .45); }
-  .m-screen { position: relative; height: 100%; overflow: hidden; border-radius: 26px; background: #1a1a1a; cursor: pointer; isolation: isolate; }
-  .poster, .v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .v { opacity: 0; transition: opacity 280ms var(--ease); }
-  .live .v.on { opacity: 1; }
-  .cur { position: absolute; z-index: 3; left: var(--cx, 50%); top: var(--cy, 50%); width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; display: grid; place-items: center; background: var(--pink); color: var(--ink);
-    pointer-events: none; opacity: 0; scale: .4; transition: opacity 220ms var(--ease), scale 260ms var(--ease); }
-  .cur svg { width: 20px; height: 20px; margin-left: 3px; fill: currentColor; }
-  .m-screen.hover .cur { opacity: 1; scale: 1; }
-  .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, .5), transparent 24%, transparent 72%, rgba(0, 0, 0, .38)); }
-  .bars { position: absolute; z-index: 2; left: 14px; right: 14px; top: 12px; display: flex; gap: 4px; }
-  .bars i { flex: 1; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, .32); }
-  .bars b { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
-  .m-top { position: absolute; z-index: 2; left: 14px; right: 10px; top: 24px; display: flex; justify-content: space-between; align-items: start; gap: 10px; color: #fff; }
-  .m-cap { display: grid; gap: 3px; margin: 0; opacity: calc(1 - var(--cred)); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; line-height: 1.15; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
-  .m-cap small { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .8; font-variant-numeric: tabular-nums; }
-  .ctl { flex: none; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .18); color: #fff; cursor: pointer;
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: background 200ms var(--ease); }
-  .ctl:hover { background: rgba(255, 255, 255, .32); }
-  .ctl svg { width: 14px; height: 14px; fill: currentColor; }
-  .ctl .i-play, .held .ctl .i-pause { display: none; }
-  .held .ctl .i-play { display: block; margin-left: 2px; }
-  .snd { position: absolute; z-index: 2; left: 50%; bottom: 16px; translate: -50% 0; display: inline-flex; align-items: center; gap: 8px; width: max-content; padding: 11px 16px 11px 13px; border: 0; border-radius: 999px; white-space: nowrap;
-    background: #fff; color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; cursor: pointer; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5);
-    transition: background 200ms var(--ease), translate 300ms var(--ease); }
-  .snd:hover { background: var(--pink); translate: -50% -2px; }
-  .snd svg { flex: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .snd svg path:first-child { fill: currentColor; }
-  .playing .snd .w1 { animation: wv 1.4s ease-in-out infinite; }
-  .playing .snd .w2 { animation: wv 1.4s .2s ease-in-out infinite; }
-  @keyframes wv { 50% { opacity: .25; } }
-  .snd:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px #fff; }
-  .ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-
-  /* Work, on black once the lights are down: the case study on one side of the reel, its four reels on the other.
-     Without the animation it is a plain black band under the hero. */
-  .credits { position: relative; z-index: 3; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px clamp(32px, 6vw, 96px); align-items: center;
-    padding: clamp(64px, 8vw, 112px) max(var(--gutter), calc((100% - var(--wide)) / 2 + var(--gutter))); }
-  .anim .credits { background: transparent; opacity: var(--cred); pointer-events: none; }
-  .anim.cut .credits > * { pointer-events: auto; }
-  .cine .credits { position: absolute; inset: 0; padding-block: 0; column-gap: 0; grid-template-columns: minmax(0, 1fr) calc((100svh - 112px) * 9 / 16 + 96px) minmax(0, 1fr); }
-  .cine .cr-r { grid-column: 3; justify-self: end; width: min(100%, 320px); }
-  .cr-l { display: grid; justify-items: start; align-content: center; container-type: inline-size; min-width: 0; }
-  .cr-k { margin: 0 0 14px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--fg-3); }
-  .cr-h { margin: 0; font-weight: 700; font-size: min(clamp(52px, 5.6vw, 96px), 24cqi); line-height: .9; letter-spacing: -0.06em; }
-  .cr-line { margin: 18px 0 0; max-width: 22ch; font-weight: 600; font-size: clamp(18px, 1.4vw, 21px); line-height: 1.3; letter-spacing: -0.015em; color: var(--fg-2); text-wrap: balance; }
-  .cr-cta { margin-top: clamp(26px, 3vw, 36px); white-space: nowrap; }
-  .anim .cr-l > *, .anim .cr-r { transform: translateY(calc((1 - var(--cred)) * 22px)); }
-
-  /* The four reels: the one playing is white, with its progress running under it. A click plays it in the middle. */
-  .picks { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--hair); }
-  .picks li { border-bottom: 1px solid var(--hair); }
-  .picks button { position: relative; display: flex; align-items: baseline; gap: 16px; width: 100%; padding: 17px 0 18px; border: 0; background: none; color: var(--fg-3); text-align: left;
-    font: 700 clamp(17px, 1.3vw, 20px)/1.2 var(--font); letter-spacing: -0.015em; cursor: pointer; transition: color 200ms var(--ease); }
-  .picks button:hover, .picks button[aria-current] { color: var(--fg); }
-  .picks button:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 4px; }
-  .pn { flex: none; font-size: 12px; letter-spacing: .08em; font-variant-numeric: tabular-nums; opacity: .7; }
-  .picks i { position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; overflow: hidden; }
-  .picks b { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
-
-  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); } }
-  /* One column: the reel sits under the copy, and the lights go down as it scrolls up the screen. */
+  @media (max-width: 1200px) and (min-width: 961px) {
+    .h-grid { grid-template-columns: minmax(0, 1fr) minmax(300px, 350px); }
+    .big-btn { padding: 15px 20px; font-size: 15px; }
+  }
+  /* Phones and tablets: one reel fills the screen, story style. */
   @media (max-width: 960px) {
-    .pin { overflow-x: clip; }
-    .h-grid { grid-template-columns: 1fr; min-height: 0; gap: clamp(36px, 6vw, 56px); padding-bottom: 28px; }
-    .slot { height: auto; padding-block: 12px; }
-    .slot::before { width: min(116vw, 640px); max-width: none; }
-    .monitor { height: auto; width: min(330px, 78vw); transform: none; }
-    .credits { grid-template-columns: 1fr; gap: 44px; }
-    .anim .credits { padding-top: 32px; }
+    .wall { display: block; }
+    .panel { position: absolute; inset: 0; width: 100%; visibility: hidden; opacity: 0; animation: none; transition: opacity 500ms var(--ease), visibility 0s 500ms; }
+    .panel.on { visibility: visible; opacity: 1; transition: opacity 500ms var(--ease); }
+    .wall { animation: wipe 1200ms cubic-bezier(.76, 0, .24, 1) both; }
+    .panel::before { background: linear-gradient(180deg, rgba(0, 0, 0, .6) 0, rgba(0, 0, 0, 0) 26%), linear-gradient(0deg, rgba(0, 0, 0, .97) 0, rgba(0, 0, 0, .9) 34%, rgba(0, 0, 0, .5) 50%, rgba(0, 0, 0, .12) 62%, rgba(0, 0, 0, 0) 70%); }
+    .panel::after { opacity: .08; }
+    .p-cap { left: var(--gutter); right: 70px; top: calc(var(--header) + 26px); align-items: center; gap: 8px; font-size: 14px; }
+    .p-cap i, .p-mute { display: inline; }
+    .p-mute { display: block; }
+    .bars { position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); top: calc(var(--header) + 12px); display: flex; gap: 4px; pointer-events: none; }
+    .bars i { flex: 1; height: 2px; border-radius: 2px; overflow: hidden; background: rgba(255, 255, 255, .3); }
+    .bars b { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
+    .h-ctl { top: calc(var(--header) + 21px); bottom: auto; right: var(--gutter); width: 32px; height: 32px; }
+    .h-grid { grid-template-columns: 1fr; gap: 18px; padding-bottom: max(22px, env(safe-area-inset-bottom)); }
+    .h-title { font-size: min(13.4vw, 9.2svh, 112px); }
+    .h-kick { margin-bottom: 14px; font-size: 13px; }
+    .h-side { max-width: 34rem; }
+    .h-lede { font-size: clamp(15px, 2.2vw, 18px); line-height: 1.45; }
+    .h-side .actions { margin-top: 18px; }
+    .h-from, .h-foot { display: none; }
   }
   @media (max-width: 560px) {
-    .big-btn { padding: 15px 20px; font-size: 15px; } .h-copy .actions { width: 100%; } .h-copy .actions .btn { flex: 1 1 auto; }
+    .big-btn { padding: 15px 20px; font-size: 15px; } .h-side .actions { width: 100%; } .h-side .actions .btn { flex: 1 1 auto; }
   }
+  @media (max-width: 960px) and (max-height: 700px) { .h-lede { display: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .rise, .up, .pulse::after, .replay, .slot::before, .monitor { animation: none; }
+    .panel, .panel img, .wall, .rise, .up { animation: none; }
   }
 
   /* The formats we make, running in a band under the hero. */

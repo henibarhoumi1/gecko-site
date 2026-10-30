@@ -51,8 +51,9 @@ const icon = {
       player.animate([{ opacity: .4, transform: 'scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
       video.play().catch(() => { setMute(true); video.play().catch(() => {}); });
     };
-    // el gets the focus back on close; grow is what the player grows out of (the card's picture by default, none if null).
-    const open = (i: number, el: HTMLElement | null = cards[i] ?? null, grow?: HTMLElement | null) => {
+    // el gets the focus back on close; grow is what the player grows out of: an element or a box on screen (the card's
+    // picture by default, nothing if null).
+    const open = (i: number, el: HTMLElement | null = cards[i] ?? null, grow?: HTMLElement | DOMRect | null) => {
       opener = el;
       document.dispatchEvent(new Event('reel:open'));
       viewer.hidden = false;
@@ -62,7 +63,7 @@ const icon = {
         viewer.classList.add('in');
         const media = grow === undefined ? opener?.querySelector<HTMLElement>('.media') ?? opener : grow;
         if (still || !media) return;
-        const from = media.getBoundingClientRect();
+        const from = media instanceof DOMRect ? media : media.getBoundingClientRect();
         const to = player.getBoundingClientRect();
         player.animate([
           { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`, borderRadius: '22px' },
@@ -81,8 +82,8 @@ const icon = {
     };
 
     cards.forEach((card, i) => card.addEventListener('click', () => open(i)));
-    // The hero reel and its list open here too, growing out of the button that was pressed.
-    document.addEventListener('reel:play', (e) => { const { i, from, grow } = (e as CustomEvent<{ i: number; from: HTMLElement; grow?: HTMLElement | null }>).detail; open(i, from, grow); });
+    // The hero reels open here too, growing out of the reel that was clicked.
+    document.addEventListener('reel:play', (e) => { const { i, from, grow } = (e as CustomEvent<{ i: number; from: HTMLElement; grow?: HTMLElement | DOMRect | null }>).detail; open(i, from, grow); });
     viewer.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
     viewer.querySelector('[data-prev]')!.addEventListener('click', () => load(current - 1));
     viewer.querySelector('[data-next]')!.addEventListener('click', () => load(current + 1));

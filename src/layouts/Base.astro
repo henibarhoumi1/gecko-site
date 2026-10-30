@@ -6,8 +6,8 @@ import Footer from '../components/Footer.astro';
 import { t, type Locale } from '../i18n/strings';
 import { swapLang } from '../i18n/paths';
 import { m, type Page } from '../i18n/meta';
-interface Props { lang: Locale; title?: string; page?: Page; description?: string; noindex?: boolean; footerCta?: boolean }
-const { lang, title, page, description, noindex, footerCta = true } = Astro.props;
+interface Props { lang: Locale; title?: string; page?: Page; description?: string; noindex?: boolean; footerCta?: boolean; theme?: string }
+const { lang, title, page, description, noindex, footerCta = true, theme = '#FFFFFF' } = Astro.props;
 const s = t(lang);
 const fullTitle = title ? `${title.replace(/\.$/, '')} · Gecko` : `Gecko · ${m(lang).home}`;
 const desc = description ?? (page ? m(lang).desc[page] : s.meta.description);
@@ -23,7 +23,7 @@ const localised = /^\/(en|fr)(\/|$)/.test(path);
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{fullTitle}</title>
     <meta name="description" content={desc} />
-    <meta name="theme-color" content="#FFFFFF" />
+    <meta name="theme-color" content={theme} />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
