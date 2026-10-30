@@ -2,12 +2,14 @@
 import type { Locale } from './strings';
 
 const en = {
-  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'The Glucélia case study', process: 'How a project runs, step by step', offers: 'Plans from 999 TND', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
+  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'The Glucélia case study', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
   home: {
     title: ['Ads made', 'to be watched', 'twice.'],
     // On phones the headline breaks word by word so each word can be as big as the screen allows.
     titleM: ['Ads', 'made', 'to be', 'watched', 'twice.'],
-    compare: { title: 'Why brands switch to Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more hooks per reel on monthly plans, so your results pick the winner.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We read the results you share and write the next round from them.']] },
+    // How many lines at the end carry the pink marker on phones: two when the last idea is two words.
+    marksM: 1,
+    compare: { title: 'What changes with Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more hooks per reel on monthly plans, so your results pick the winner.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We read the results you share and write the next round from them.']] },
     kicker: 'Creative and production studio, Tunis',
     badge: 'Case study · Glucélia · 2026 · ',
     play: 'Play', watch: 'Watch',
@@ -16,7 +18,7 @@ const en = {
     // The two crossing bands before the brief. Words only: prices live in the plans.
     bands: { big: ['Ads made to be watched twice', 'Made in Tunis', 'One team, from brief to final cut'], small: ['Scripts approved before the shoot', 'First draft 7 days after the shoot', 'Final files in 9:16 and 4:5'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
     hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'See the case study' },
-    sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
+    sub: 'Every replay is another look at your product. We write, shoot and edit short video ads for brands that sell online.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
     why: {
@@ -33,6 +35,7 @@ const en = {
       flow: { steps: ['Brief', 'Script', 'Shoot', 'Edit', 'Ads'], days: '7 days' },
       review: { title: 'Results review', rows: [['Hook B', 'Keep'], ['Hook A', 'Drop'], ['Next round', 'More like B']] },
     },
+    thinking: 'The thinking behind them.',
     plansTitle: 'Pick your plan.',
     plansSub: 'Try us with the Test, or pick a monthly plan for fresh ads every month.',
     plansCta: 'All offers and bespoke projects',
@@ -46,13 +49,16 @@ const en = {
     scope: 'Creative production. You run your ads and pay the ad spend. We review the results you share and shape the next round from them.',
     scopePartner: 'Creative production with market analysis and a weekly review. You run your ads and pay the ad spend, on every plan.',
     spec: { shoot: 'Production', review: 'After delivery', out: 'Not included: ad spend, studio, talent and props.' },
+    // Next to the price on the home page: what costs extra, then why it's safe to say yes.
+    costs: 'You run the ads and pay the ad spend. Studio, talent and props are extra, and you approve each one before it’s booked.',
+    safe: { once: 'You approve the script before we shoot, and pay the second half after you’ve approved the ads.', monthly: 'You approve every script before we shoot, and each piece gets a round of changes.' },
     bespokeName: 'Bespoke project', bespokeMeta: 'Quoted from your brief', bespokeFor: 'For launches, films and campaigns that need more than a monthly plan.', bespokePrice: 'On quote', bespokeNote: 'Scoped and quoted from your brief. Studio, talent and props are on you: you approve each cost, we pay it upfront and invoice it with the remaining 50%.',
     custom: 'Custom price', customShort: 'custom', customNote: 'Priced to your volume, from 20 to 100 reels a month.', upTo: 'to',
     fit: 'Best fit for your brief', forYou: 'For you',
   },
   apply: {
     title: 'Tell us what you’re making.',
-    sub: 'The questions adapt as you answer, then WhatsApp opens with your brief ready to send.',
+    sub: 'A few quick questions. You’ll see which plan fits, and your brief will be ready to send on WhatsApp.',
     direct: 'Rather talk now?',
     // Each question: key, question, row label for the brief, options as [emoji, label] (flag:xx shows the flag image from /flags). `when` shows it only after certain answers (by option number).
     qs: [
@@ -236,19 +242,20 @@ const en = {
 type Copy = typeof en;
 
 const fr: Copy = {
-  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'L’étude de cas Glucélia', process: 'Le déroulé d’un projet, étape par étape', offers: 'Des plans dès 999 TND', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
+  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'L’étude de cas Glucélia', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
   home: {
-    title: ['Des pubs faites', 'pour être', 'revues.'],
-    titleM: ['Des', 'pubs', 'faites', 'pour', 'être', 'revues.'],
-    compare: { title: 'Pourquoi les marques passent chez Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux accroches par reel sur les plans mensuels, pour que vos résultats désignent la meilleure.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On lit les résultats que vous partagez et on écrit la suite à partir d’eux.']] },
+    title: ['Des pubs', 'à regarder', 'deux fois.'],
+    titleM: ['Des', 'pubs', 'à', 'regarder', 'deux', 'fois.'],
+    marksM: 2,
+    compare: { title: 'Ce qui change avec Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux accroches par reel sur les plans mensuels, pour que vos résultats désignent la meilleure.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On lit les résultats que vous partagez et on écrit la suite à partir d’eux.']] },
     kicker: 'Studio de création et de production, Tunis',
     badge: 'Étude de cas · Glucélia · 2026 · ',
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
-    bands: { big: ['Des pubs faites pour être revues', 'Fait à Tunis', 'Une seule équipe, du brief au montage final'], small: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers finaux en 9:16 et 4:5'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
+    bands: { big: ['Des pubs à regarder deux fois', 'Fait à Tunis', 'Une seule équipe, du brief au montage final'], small: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers finaux en 9:16 et 4:5'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
     hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Voir l’étude de cas' },
-    sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
+    sub: 'Une pub regardée deux fois, c’est votre produit vu deux fois. On écrit, tourne et monte des pubs vidéo courtes pour les marques qui vendent en ligne.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
     why: {
@@ -265,6 +272,7 @@ const fr: Copy = {
       flow: { steps: ['Brief', 'Script', 'Tournage', 'Montage', 'Pubs'], days: '7\u00a0jours' },
       review: { title: 'Revue des résultats', rows: [['Accroche B', 'On garde'], ['Accroche A', 'On arrête'], ['Prochaine série', 'Plus comme B']] },
     },
+    thinking: 'La réflexion derrière ces reels.',
     plansTitle: 'Choisissez votre plan.',
     plansSub: 'Essayez-nous avec le Test, ou choisissez un plan mensuel pour de nouvelles pubs chaque mois.',
     plansCta: 'Toutes les offres et projets sur mesure',
@@ -278,13 +286,15 @@ const fr: Copy = {
     scope: 'Production créative. Vous lancez vos pubs et payez le budget pub. On étudie les résultats que vous partagez et on construit la suite à partir d’eux.',
     scopePartner: 'Production créative avec analyse de marché et revue hebdomadaire. Vous lancez vos pubs et payez le budget pub, sur chaque plan.',
     spec: { shoot: 'Production', review: 'Après la livraison', out: 'Non inclus\u00a0: budget pub, studio, talents et accessoires.' },
+    costs: 'Vous lancez les pubs et payez le budget pub. Studio, talents et accessoires sont en plus, et vous validez chacun avant réservation.',
+    safe: { once: 'Vous validez le script avant le tournage, et payez la seconde moitié après avoir validé les pubs.', monthly: 'Vous validez chaque script avant le tournage, et chaque pièce a droit à une série de retouches.' },
     bespokeName: 'Projet sur mesure', bespokeMeta: 'Sur devis', bespokeFor: 'Pour les lancements, films et campagnes qui demandent plus qu’un plan mensuel.', bespokePrice: 'Sur devis', bespokeNote: 'Cadré et chiffré selon votre brief. Studio, talents et accessoires sont à votre charge : vous validez chaque coût, on l’avance et on le facture avec les 50 % restants.',
     custom: 'Prix sur mesure', customShort: 'sur mesure', customNote: 'Selon votre volume, de 20 à 100 reels par mois.', upTo: 'à',
     fit: 'Le plus adapté à votre brief', forYou: 'Pour vous',
   },
   apply: {
     title: 'Dites-nous ce que vous préparez.',
-    sub: 'Les questions s’adaptent à vos réponses, puis WhatsApp s’ouvre avec votre brief prêt à envoyer.',
+    sub: 'Quelques questions rapides. Vous verrez quel plan vous correspond, et votre brief sera prêt à envoyer sur WhatsApp.',
     direct: 'Vous préférez parler tout de suite ?',
     qs: [
       { key: 'type', q: 'D’abord, qui êtes-vous ?', row: 'Vous', opts: [['🛍️', 'Une marque qui vend en ligne'], ['🏪', 'Une boutique, un café ou un commerce local'], ['🙋', 'Une marque personnelle ou un créateur'], ['🏢', 'Une entreprise ou une startup'], ['🎤', 'Un événement, un artiste ou un projet culturel'], ['✨', 'Autre chose']] },

@@ -35,7 +35,7 @@ export const monthly: Offer[] = [
   },
   {
     key: 'partner', name: 'Creative Partner', reels: 20, max: 100,
-    for: { en: 'For brands that need ads at volume, with the full VIP treatment.', fr: 'Pour les marques qui ont besoin de pubs en volume, avec le traitement VIP complet.' }, more: true, custom: true, launch: 0, monthly: true,
+    for: { en: 'For brands that need ads at volume, with the team on call.', fr: 'Pour les marques qui ont besoin de pubs en volume, avec l’équipe à disposition.' }, more: true, custom: true, launch: 0, monthly: true,
     items: {
       en: ['3 hooks per reel', 'Statics, carousels and recut ads', 'Market analysis for your category', 'KPIs we set and track together', 'Priority shoot dates', 'A direct line to the team, 7 days a week'],
       fr: ['3 accroches par reel', 'Visuels fixes, carrousels et pubs remontées', 'Analyse de marché de votre secteur', 'Des KPIs fixés et suivis ensemble', 'Dates de tournage prioritaires', 'Une ligne directe avec l’équipe, 7 jours sur 7'],
@@ -61,7 +61,7 @@ export const audit = {
   },
 };
 
-// Everything the pricing sections show, in order: the Test first, then the monthly plans.
-export const plans: Offer[] = [test, ...monthly];
+// Everything the pricing sections show, in order: the monthly plans first, then the Test as the way in.
+export const plans: Offer[] = [...monthly, test];
 
 export const fmt = (n: number, lang: 'en' | 'fr') => n.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR').replace(/\s/g, ' ');
