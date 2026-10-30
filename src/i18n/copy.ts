@@ -15,7 +15,7 @@ const en = {
     bands: { big: ['Plans from 999 TND', 'Launch prices until 31 December 2026', 'For our first 5 clients'], small: ['Ads made to be watched twice', 'Scripts approved before the shoot', 'First draft 7 days after the shoot'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
     // The round sticker on the hero mat, and the line printed on the mat (mouse first, then touch).
     stick: ['Plans from', '999 TND'],
-    desk: ['Drag things around. Click a reel to watch it.', 'Tap a reel to watch it.'],
+    monitor: { label: 'Reels from the Glucélia case study', reel: 'Reel', sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', hook: 'Hook', show: 'Show reel' },
     sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -260,7 +260,7 @@ const fr: Copy = {
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Offres dès 999 TND', 'Prix de lancement jusqu’au 31 décembre 2026', 'Pour nos 5 premiers clients'], small: ['Des pubs faites pour être revues', 'Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
     stick: ['Offres dès', '999 TND'],
-    desk: ['Déplacez les éléments. Cliquez sur un reel pour le voir.', 'Touchez un reel pour le voir.'],
+    monitor: { label: 'Reels de l’étude de cas Glucélia', reel: 'Reel', sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', hook: 'Accroche', show: 'Afficher le reel' },
     sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
