@@ -46,7 +46,7 @@ const recs: Record<string, string> = {
     <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{a.title}</H>
     <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
 
-    <aside class="brief rv" style="--d:180ms" data-brief aria-live="polite">
+    <div class="brief rv" style="--d:180ms" data-brief aria-live="polite">
       <p class="label">{a.brief}</p>
       <p class="empty" data-brief-empty>{a.briefEmpty}</p>
       <ul data-rows></ul>
@@ -54,7 +54,7 @@ const recs: Record<string, string> = {
         <p class="label">{a.start}</p>
         <p class="pick" data-sugg-text></p>
       </div>
-    </aside>
+    </div>
 
     <div class="direct rv" style="--d:240ms">
       <p class="label">{a.direct}</p>

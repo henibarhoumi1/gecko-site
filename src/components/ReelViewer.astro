@@ -1,7 +1,9 @@
 ---
-// Full-screen reel viewer for every [data-reel] card on the page. The card grows into the player, the page blurs and darkens.
+// Full-screen reel viewer for the case study reels. A [data-reel] card on the page opens it with a click and grows into the
+// player; anything else can open it with a reel:play event. The page blurs and darkens behind it.
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
+import { ads } from '../data/work';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const w = c(lang).work;
@@ -12,7 +14,7 @@ const icon = {
   sound: '<svg class="i-on" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9a4 4 0 010 6M18 6.5a7.5 7.5 0 010 11"/></svg><svg class="i-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M16 10l4 4M20 10l-4 4"/></svg>',
 };
 ---
-<div class="viewer" data-viewer hidden role="dialog" aria-modal="true" aria-label={w.title}>
+<div class="viewer" data-viewer hidden role="dialog" aria-modal="true" aria-label={w.title} data-reels={JSON.stringify(ads.map((a) => ({ src: a.src, poster: a.poster })))}>
   <div class="veil" data-close></div>
   <button type="button" class="ctl close" data-close aria-label={w.close} set:html={icon.close} />
   <div class="stage">
@@ -32,7 +34,8 @@ const icon = {
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const cards = [...document.querySelectorAll<HTMLElement>('[data-reel]')];
   const viewer = document.querySelector<HTMLElement>('[data-viewer]');
-  if (viewer && cards.length) {
+  const reels: { src: string; poster: string }[] = viewer ? JSON.parse(viewer.dataset.reels || '[]') : [];
+  if (viewer && reels.length) {
     const player = viewer.querySelector<HTMLElement>('[data-player]')!;
     const video = viewer.querySelector<HTMLVideoElement>('[data-video]')!;
     const count = viewer.querySelector<HTMLElement>('[data-count]')!;
@@ -42,14 +45,14 @@ const icon = {
 
     const setMute = (m: boolean) => { video.muted = m; muteBtn.setAttribute('aria-pressed', String(m)); viewer.classList.toggle('muted', m); };
     const load = (i: number) => {
-      current = (i + cards.length) % cards.length;
-      const card = cards[current];
-      video.src = card.dataset.src!; video.poster = card.dataset.poster!;
-      count.textContent = `${current + 1} / ${cards.length}`;
+      current = (i + reels.length) % reels.length;
+      video.src = reels[current].src; video.poster = reels[current].poster;
+      count.textContent = `${current + 1} / ${reels.length}`;
       player.animate([{ opacity: .4, transform: 'scale(.98)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
       video.play().catch(() => { setMute(true); video.play().catch(() => {}); });
     };
-    const open = (i: number, el: HTMLElement = cards[i]) => {
+    // el gets the focus back on close; grow is what the player grows out of (the card's picture by default, none if null).
+    const open = (i: number, el: HTMLElement | null = cards[i] ?? null, grow?: HTMLElement | null) => {
       opener = el;
       document.dispatchEvent(new Event('reel:open'));
       viewer.hidden = false;
@@ -57,8 +60,9 @@ const icon = {
       setMute(false); load(i);
       requestAnimationFrame(() => {
         viewer.classList.add('in');
-        if (still) return;
-        const from = opener!.querySelector('.media')!.getBoundingClientRect();
+        const media = grow === undefined ? opener?.querySelector<HTMLElement>('.media') ?? opener : grow;
+        if (still || !media) return;
+        const from = media.getBoundingClientRect();
         const to = player.getBoundingClientRect();
         player.animate([
           { transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`, borderRadius: '22px' },
@@ -77,8 +81,8 @@ const icon = {
     };
 
     cards.forEach((card, i) => card.addEventListener('click', () => open(i)));
-    // The reels printed on the hero desk open here too, growing out of the print.
-    document.addEventListener('reel:play', (e) => { const { i, from } = (e as CustomEvent<{ i: number; from: HTMLElement }>).detail; open(i, from); });
+    // The hero reel and its list open here too, growing out of the button that was pressed.
+    document.addEventListener('reel:play', (e) => { const { i, from, grow } = (e as CustomEvent<{ i: number; from: HTMLElement; grow?: HTMLElement | null }>).detail; open(i, from, grow); });
     viewer.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
     viewer.querySelector('[data-prev]')!.addEventListener('click', () => load(current - 1));
     viewer.querySelector('[data-next]')!.addEventListener('click', () => load(current + 1));

@@ -35,12 +35,12 @@ const icons = [
       <div class="app" data-ws data-live={JSON.stringify(m.live)} data-now={m.now}>
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>gecko / {m.project}</span></div>
         <div class="body">
-          <aside class="side" role="tablist" aria-label={k.title}>
+          <div class="side" role="tablist" aria-label={k.title}>
             <span class="mono" aria-hidden="true">g.</span>
             {m.tabs.map((t, i) => (
               <button type="button" role="tab" aria-selected={i === 0 ? 'true' : 'false'} data-ws-tab={i}><span class="ic" set:html={icons[i]} aria-hidden="true" /><span class="tl">{t}</span>{i === 1 && <em>2</em>}</button>
             ))}
-          </aside>
+          </div>
           <div class="main">
             <div class="top">
               <div><p class="pn">{m.project}</p><p class="pm">{m.meta}</p></div>
