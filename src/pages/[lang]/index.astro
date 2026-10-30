@@ -16,18 +16,35 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const h = c(lang).home;
-const sc = h.why.script;
-// The two reels lying on the hero desk, with their place in the reel list so a click opens the right one.
-const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
+const mo = h.monitor;
+// The hero monitor plays a short silent cut of each case study reel; a click opens the full reel with sound.
+const clips = ads.map((a, i) => {
+  const slug = a.src!.replace(/^.*glucelia-|\.mp4$/g, '');
+  return { i, src: `/work/clip-${slug}.mp4`, poster: a.poster!, strip: `/work/strip-${slug}.jpg`, brand: a.brand, cap: a.angle[lang] };
+});
+// The edit timeline under it: a fixed waveform and subtitle blocks, drawn the same for every reel.
+const wave = Array.from({ length: 56 }, (_, k) => (0.28 + 0.72 * Math.abs(Math.sin(k * 1.7) * Math.cos(k * 0.43))).toFixed(2));
+const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
 ---
-<Base lang={lang} footerCta={false}>
+<Base lang={lang} footerCta={false} page="home">
   <section class="hero" data-hero>
     <div class="wrap wide h-grid">
       <div class="h-copy">
         <p class="h-kick up" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
         <h1 class="h-title" aria-label={h.title.join(' ')}>
           {h.title.map((line, i) => (
-            <span class="ln" aria-hidden="true"><span class={`rise ${i === h.title.length - 1 ? 'hl' : ''}`} style={`--d:${100 + i * 110}ms`}>{line}</span></span>
+            <span class="ln" aria-hidden="true">
+              {i < h.title.length - 1 ? (
+                <span class="rise" style={`--d:${100 + i * 110}ms`}>{line}</span>
+              ) : (
+                <span class="rise fill" style={`--d:${100 + i * 110}ms`}>
+                  <span class="fill-v"><video data-fill src="/work/hero-twice.mp4" poster="/work/hero-twice.jpg" muted loop playsinline preload="none" tabindex="-1"></video></span>
+                  <span class="fill-t">{line}</span>
+                  <span class="fill-o">{line}</span>
+                  <span class="replay" data-replay><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.6h-4.6" /></svg></span>
+                </span>
+              )}
+            </span>
           ))}
         </h1>
         <p class="text text-l h-lede up" style="--d:440ms">{h.sub}</p>
@@ -37,30 +54,47 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
         </div>
       </div>
 
-      <div class="desk" data-desk>
-        <div class="desk-mat mat" aria-hidden="true">
-          <span class="ruler">{Array.from({ length: 14 }, (_, k) => <i>{k + 1}</i>)}</span>
-          <p class="desk-hint"><span class="fine">{h.desk[0]}</span><span class="touch">{h.desk[1]}</span></p>
-        </div>
-        <div class="obj o-paper" data-obj aria-hidden="true">
-          <div class="face paper">
-            <p class="p-top">{sc.title}</p>
-            <ol class="p-list">{sc.scenes.map((x, i) => <li><b>{i + 1}</b>{x}</li>)}</ol>
-            <span class="stamp">{sc.stamp} ✓</span>
+      <div class="stage" data-stage>
+        <div class="stage-mat mat" aria-hidden="true"><span class="ruler">{Array.from({ length: 14 }, (_, k) => <i>{k + 1}</i>)}</span></div>
+        <div class="monitor" data-monitor role="group" aria-label={mo.label} data-clips={JSON.stringify(clips)}>
+          <div class="m-frame">
+            <div class="m-screen" data-screen>
+              <img class="poster" src={clips[0].poster} alt="" width="540" height="960" fetchpriority="high" decoding="async" />
+              <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+              <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+              <span class="shade" aria-hidden="true"></span>
+              <span class="cur" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span>
+              <div class="bars" aria-hidden="true">{clips.map(() => <i><b></b></i>)}</div>
+              <div class="m-top">
+                <p class="m-cap" aria-live="off"><small>{clips[0].brand} · <span data-count>01/{String(clips.length).padStart(2, '0')}</span></small><span data-cap>{clips[0].cap}</span></p>
+                <button type="button" class="ctl" data-toggle aria-pressed="false" aria-label={mo.pause} data-pause={mo.pause} data-play={mo.play}>
+                  <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
+                  <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
+                </button>
+              </div>
+              <button type="button" class="snd" data-sound>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="w1" d="M15.5 9a4 4 0 0 1 0 6" /><path class="w2" d="M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
+                <span>{mo.sound}</span>
+              </button>
+            </div>
           </div>
         </div>
-        {prints.map(({ a, i }, k) => (
-          <button type="button" class={`obj print o-print${k + 1}`} data-obj data-print={i} aria-label={`${h.watch}: ${a.angle[lang]}`}>
-            <span class="face">
-              {k === 0 && <span class="tape" aria-hidden="true"></span>}
-              <span class="media"><img src={a.poster} alt="" width="720" height="1280" draggable="false" decoding="async" fetchpriority={k === 0 ? 'high' : 'auto'} /><span class="play" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span></span>
-              <span class="cap"><small>{a.brand}</small>{a.angle[lang]}</span>
-            </span>
-          </button>
-        ))}
-        <div class="obj o-stick" data-obj aria-hidden="true">
-          <span class="face stick"><small>{h.stick[0]}</small><b>{h.stick[1]}</b></span>
+        <div class="tl" aria-hidden="true">
+          <div class="tl-in">
+            <p class="tl-head"><span class="rec"></span><b data-tl-name>{mo.reel} 01 · {clips[0].cap}</b><span class="tc" data-tc>00:00:00</span></p>
+            <div class="tl-body">
+              <div class="tl-labels"><span>V1</span><span>A1</span><span>CC</span></div>
+              <div class="tl-tracks">
+                <span class="hook"><em>{mo.hook}</em></span>
+                <span class="trk film" data-film style={`background-image:url(${clips[0].strip})`}></span>
+                <span class="trk wave">{[0, 1].map((on) => <span class={`w ${on ? 'on' : ''}`}>{wave.map((v) => <i style={`--h:${v}`}></i>)}</span>)}</span>
+                <span class="trk subs">{subs.map(([a, b]) => <i style={`left:${a}%;width:${b - a}%`}></i>)}</span>
+                <span class="head"></span>
+              </div>
+            </div>
+          </div>
         </div>
+        <div class="stick" aria-hidden="true"><span class="stick-in"><small>{h.stick[0]}</small><b>{h.stick[1]}</b></span></div>
       </div>
     </div>
   </section>
@@ -97,9 +131,8 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
     <div class="wrap faq-grid">
       <div class="faq-lead rv">
         <h2 class="h1 faq-h">{h.faqTitle}</h2>
-        <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
       </div>
-      <div class="rv"><Faq items={s.faq} scroll hint={h.faqHint} /></div>
+      <div class="rv"><Faq items={s.faq} limit={6} more={{ href: href(lang, 'faq'), label: h.faqAll }} /></div>
     </div>
   </section>
 
@@ -108,61 +141,125 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
 
 <script>
   import '../../scripts/marquee';
-  // The desk on the hero. With a mouse or pen, anything on the mat can be picked up and put down somewhere else;
-  // a click on a reel (or a tap, or Enter) opens it in the viewer. The pointer also shifts each object a little, by its own depth.
+  // The hero monitor: short silent cuts of the case study reels play one after the other, with a progress bar per reel
+  // and an edit timeline whose playhead follows the picture. Two video elements take turns, so the next reel is loaded
+  // before it's needed and the cut is clean. Nothing plays until the page has loaded, while the hero is off screen,
+  // while a dialog or the menu is open, with reduced motion, or with data saver on. "Watch with sound" opens the full reel.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
-  const desk = document.querySelector<HTMLElement>('[data-desk]');
-  if (hero && desk) {
+  const mon = document.querySelector<HTMLElement>('[data-monitor]');
+  if (hero && mon) {
+    type Clip = { i: number; src: string; poster: string; strip: string; brand: string; cap: string };
+    const clips: Clip[] = JSON.parse(mon.dataset.clips!);
+    const vids = [...mon.querySelectorAll<HTMLVideoElement>('[data-v]')];
+    const bars = [...mon.querySelectorAll<HTMLElement>('.bars b')];
+    const cap = mon.querySelector<HTMLElement>('[data-cap]')!;
+    const count = mon.querySelector<HTMLElement>('[data-count]')!;
+    const toggle = mon.querySelector<HTMLButtonElement>('[data-toggle]')!;
+    const sound = mon.querySelector<HTMLButtonElement>('[data-sound]')!;
+    const name = hero.querySelector<HTMLElement>('[data-tl-name]')!;
+    const tc = hero.querySelector<HTMLElement>('[data-tc]')!;
+    const film = hero.querySelector<HTMLElement>('[data-film]')!;
+    const fill = hero.querySelector<HTMLVideoElement>('[data-fill]');
+    const replay = hero.querySelector<HTMLElement>('[data-replay]');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let top = 10, moved = false;
-    desk.querySelectorAll<HTMLElement>('[data-obj]').forEach((obj) => {
-      let sx = 0, sy = 0, bx = 0, by = 0, cx = 0, cy = 0, w = 1, h = 1;
-      obj.addEventListener('pointerdown', (e) => {
-        if (e.pointerType === 'touch' || e.button !== 0) return;
-        e.preventDefault();
-        obj.setPointerCapture(e.pointerId);
-        const d = desk.getBoundingClientRect(), r = obj.getBoundingClientRect();
-        moved = false; sx = e.clientX; sy = e.clientY; w = d.width; h = d.height;
-        cx = r.left + r.width / 2 - d.left; cy = r.top + r.height / 2 - d.top;
-        bx = parseFloat(obj.style.getPropertyValue('--dx')) || 0; by = parseFloat(obj.style.getPropertyValue('--dy')) || 0;
-        obj.style.zIndex = String(++top);
-        obj.classList.add('held');
-      });
-      obj.addEventListener('pointermove', (e) => {
-        if (!obj.hasPointerCapture(e.pointerId)) return;
-        let mx = e.clientX - sx, my = e.clientY - sy;
-        if (!moved && Math.hypot(mx, my) < 5) return;
-        moved = true;
-        // The middle of the object stays on the desk.
-        mx = Math.max(16 - cx, Math.min(w - 16 - cx, mx)); my = Math.max(16 - cy, Math.min(h - 16 - cy, my));
-        obj.style.setProperty('--dx', (bx + (mx / w) * 100).toFixed(2));
-        obj.style.setProperty('--dy', (by + (my / h) * 100).toFixed(2));
-      });
-      const drop = () => { obj.classList.remove('held'); if (moved) desk.classList.add('moved'); };
-      obj.addEventListener('pointerup', drop);
-      obj.addEventListener('lostpointercapture', drop);
-    });
-    desk.querySelectorAll<HTMLElement>('[data-print]').forEach((print) => print.addEventListener('click', (e) => {
-      if (e.detail > 0 && moved) return;
-      document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: Number(print.dataset.print), from: print } }));
+    const save = !!(navigator as any).connection?.saveData;
+    const reel = name.textContent!.split(' ')[0];
+    const pad = (n: number) => String(n).padStart(2, '0');
+    let k = 0, cur = 0, wanted = !still && !save, ready = false, seen = false, blocked = false, raf = 0;
+
+    const load = (v: HTMLVideoElement, n: number) => {
+      if (v.dataset.n === String(n)) return;
+      v.dataset.n = String(n); v.preload = 'auto'; v.src = clips[n].src; v.load();
+    };
+    const label = () => {
+      const c = clips[k];
+      cap.textContent = c.cap; count.textContent = `${pad(k + 1)}/${pad(clips.length)}`;
+      name.textContent = `${reel} ${pad(k + 1)} · ${c.cap}`;
+      film.style.backgroundImage = `url(${c.strip})`;
+      bars.forEach((b, j) => (b.style.transform = `scaleX(${j < k ? 1 : 0})`));
+    };
+    const frame = () => {
+      const v = vids[cur];
+      const t = v.currentTime, p = v.duration ? Math.min(1, t / v.duration) : 0;
+      hero.style.setProperty('--p', p.toFixed(4));
+      bars[k].style.transform = `scaleX(${p})`;
+      tc.textContent = `00:${pad(Math.floor(t))}:${pad(Math.floor((t % 1) * 25))}`;
+      hero.classList.toggle('at-hook', t < 2);
+      raf = requestAnimationFrame(frame);
+    };
+    const stop = () => { vids.forEach((v) => v.pause()); fill?.pause(); cancelAnimationFrame(raf); raf = 0; hero.classList.remove('playing'); };
+    const go = () => {
+      if (!ready || !seen || blocked || document.hidden || !wanted) return stop();
+      const v = vids[cur];
+      load(v, k);
+      v.play().then(() => {
+        hero.classList.add('live', 'playing');
+        if (!raf) raf = requestAnimationFrame(frame);
+        load(vids[1 - cur], (k + 1) % clips.length);
+      }).catch(() => {});
+      if (fill) { fill.preload = 'auto'; fill.play().catch(() => {}); }
+    };
+    vids.forEach((v, j) => v.addEventListener('ended', () => {
+      if (j !== cur) return;
+      k = (k + 1) % clips.length; cur = 1 - cur;
+      const next = vids[cur];
+      load(next, k); next.currentTime = 0;
+      next.classList.add('on'); v.classList.remove('on');
+      label(); go();
     }));
+    vids[0].classList.add('on');
+    // The replay mark next to "twice." turns once each time the clip inside the word starts over.
+    if (fill && replay) {
+      let last = 0;
+      fill.addEventListener('timeupdate', () => {
+        if (fill.currentTime < last) { replay.classList.remove('spin'); void replay.offsetWidth; replay.classList.add('spin'); }
+        last = fill.currentTime;
+      });
+    }
+    toggle.addEventListener('click', () => {
+      wanted = !wanted;
+      toggle.setAttribute('aria-pressed', String(!wanted));
+      toggle.setAttribute('aria-label', wanted ? toggle.dataset.pause! : toggle.dataset.play!);
+      hero.classList.toggle('held', !wanted);
+      go();
+    });
+    const open = (from: HTMLElement) => document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: clips[k].i, from } }));
+    sound.addEventListener('click', () => open(sound));
+    mon.querySelector<HTMLElement>('[data-screen]')!.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('button')) open(sound); });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.25 }).observe(mon);
+    new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); go(); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('visibilitychange', go);
+    // Start once the page has loaded and the browser is idle, so the reels never slow down the first paint.
+    const start = () => { ready = true; go(); };
+    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 400));
+    if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+    if (!wanted) { hero.classList.add('held'); toggle.setAttribute('aria-pressed', 'true'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
+
+    // With a mouse, the monitor turns a little toward the pointer and the things around it shift by their own depth.
     if (matchMedia('(hover: hover) and (pointer: fine)').matches && !still) {
       let x = 0, y = 0, queued = false;
       const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
       const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
       hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
       hero.addEventListener('pointerleave', () => { x = 0; y = 0; ask(); });
+      const screen = mon.querySelector<HTMLElement>('[data-screen]')!;
+      screen.addEventListener('pointermove', (e) => {
+        const r = screen.getBoundingClientRect(), over = !(e.target as HTMLElement).closest('button');
+        screen.style.setProperty('--cx', `${e.clientX - r.left}px`); screen.style.setProperty('--cy', `${e.clientY - r.top}px`);
+        screen.classList.toggle('hover', over);
+      });
+      screen.addEventListener('pointerleave', () => screen.classList.remove('hover'));
     }
   }
 </script>
 
 <style>
-  /* Hero: the headline big on white, and beside it the studio's desk: a green cutting mat running off the edge of the page,
-     with two of our reels printed out, the approved script and a price sticker on it. Everything drops onto the mat once;
-     after that it only moves when someone moves it. */
-  .hero { position: relative; overflow: hidden; --mx: 0; --my: 0; }
-  .h-grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr); gap: clamp(28px, 4.4vw, 80px); align-items: center;
-    min-height: calc(100svh - 58px); padding-top: calc(var(--header) + clamp(20px, 4vh, 48px)); padding-bottom: clamp(40px, 7vh, 80px); }
+  /* Hero: the headline big on white, the last word filled with moving footage, and beside it a reel playing on a
+     monitor that stands on the green cutting mat, with its edit timeline in front of it. */
+  .hero { position: relative; overflow: hidden; --mx: 0; --my: 0; --p: 0; }
+  .h-grid { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); gap: clamp(28px, 4vw, 72px); align-items: center;
+    min-height: calc(100svh - 58px); padding-top: calc(var(--header) + clamp(16px, 3vh, 40px)); padding-bottom: clamp(36px, 6vh, 72px); }
   .h-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; container-type: inline-size; min-width: 0; }
   .h-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
   .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--mat); }
@@ -173,91 +270,134 @@ const prints = [0, 3].filter((i) => ads[i]).map((i) => ({ a: ads[i], i }));
   :global(html[lang='fr']) .h-title { font-size: min(clamp(50px, 8.6vw, 156px), 14.6cqi); }
   .ln { display: block; overflow: hidden; padding: .02em .1em .14em 0; margin-bottom: -.08em; width: fit-content; white-space: nowrap; }
   .ln > span { display: inline-block; }
-  .hl { position: relative; isolation: isolate; padding: 0 .1em; margin-left: -.1em; }
-  .hl::before { content: ''; position: absolute; inset: .2em 0 -.02em; z-index: -1; border-radius: .12em; background: var(--pink); transform-origin: left; animation: wipe 800ms 900ms var(--ease) both; }
-  @keyframes wipe { from { transform: scaleX(0); } }
   .rise { animation: rise 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes rise { from { transform: translateY(105%); } }
   .up { animation: fade-up 900ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(18px); } }
+
+  /* The last word: white paper with the letters cut out, footage running behind it (screen blending turns black into
+     whatever is underneath). Before the clip loads, its first frame fills the letters. */
+  .fill { position: relative; isolation: isolate; padding-right: .5em; }
+  .fill-v { position: absolute; z-index: 0; left: 0; right: .5em; top: .1em; bottom: .02em; overflow: hidden; background: var(--ink); }
+  .fill-v video { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.4) contrast(1.15) brightness(.7); }
+  .fill-t { position: relative; z-index: 1; display: inline-block; background: #fff; color: #000; mix-blend-mode: screen; }
+  .fill-o { position: absolute; z-index: 2; left: 0; top: 0; color: transparent; -webkit-text-stroke: max(1px, .01em) var(--ink); pointer-events: none; }
+  .replay { position: absolute; z-index: 2; right: .02em; top: .2em; width: .36em; aspect-ratio: 1; border-radius: 50%; background: var(--pink); border: max(1px, .012em) solid var(--ink); display: grid; place-items: center;
+    animation: pop 700ms 1100ms cubic-bezier(.3, 1.6, .5, 1) both; }
+  .replay svg { width: 58%; height: 58%; fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .replay.spin svg { animation: spin 900ms cubic-bezier(.65, 0, .35, 1); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pop { from { opacity: 0; transform: scale(.3) rotate(-90deg); } }
   .h-lede { margin: 0; max-width: 34rem; color: var(--fg-2); }
   .big-btn { padding: 17px 26px; font-size: 16px; }
 
-  /* The desk. Its size is the unit for everything on it, so the arrangement holds at any width. */
-  .desk { position: relative; height: clamp(540px, 74svh, 720px); container-type: size; user-select: none; -webkit-user-select: none; }
-  .desk-mat { position: absolute; inset: 0 calc(-1 * (var(--gutter) + max(0px, (100vw - var(--wide)) / 2))) 0 0; border-radius: 28px 0 0 28px; border-right: 0;
-    animation: fade-up 1000ms 200ms cubic-bezier(.22, 1, .36, 1) both; }
+  /* The stage: the mat runs off the right edge of the page; its height is the unit for what stands on it. */
+  .stage { position: relative; height: clamp(560px, 78svh, 760px); container-type: size; perspective: 1400px; }
+  .stage-mat { position: absolute; inset: 0 calc(-1 * (var(--gutter) + max(0px, (100vw - var(--wide)) / 2))) 0 0; border-radius: 28px 0 0 28px; border-right: 0;
+    animation: wipe 1200ms 120ms cubic-bezier(.7, 0, .2, 1) both; }
+  @keyframes wipe { from { clip-path: inset(0 0 0 100% round 28px 0 0 28px); } to { clip-path: inset(0 0 0 0 round 28px 0 0 28px); } }
   .ruler { position: absolute; left: 0; top: 16px; display: flex; pointer-events: none; }
   .ruler i { width: 120px; padding-left: 5px; font: 600 10px/1 var(--font); font-style: normal; color: rgba(255, 255, 255, .55); }
-  .desk-hint { position: absolute; left: 22px; bottom: 18px; margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255, 255, 255, .62); transition: opacity 500ms var(--ease); }
-  .desk-hint .fine { display: none; }
-  @media (hover: hover) and (pointer: fine) { .desk-hint .fine { display: inline; } .desk-hint .touch { display: none; } }
-  .moved .desk-hint { opacity: 0; }
 
-  /* Anything on the mat. --dx and --dy are where it was dragged to, in % of the desk; --depth is how far it follows the pointer. */
-  .obj { position: absolute; z-index: 1; display: block; padding: 0; margin: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left;
-    translate: calc(var(--dx, 0) * 1cqw) calc(var(--dy, 0) * 1cqh);
-    transform: translate(calc(var(--mx) * var(--depth, 10) * 1px), calc(var(--my) * var(--depth, 10) * 1px)); transition: transform 900ms var(--ease); }
-  @media (hover: hover) and (pointer: fine) { .obj { cursor: grab; } .obj.held { cursor: grabbing; } }
-  .face { display: block; position: relative; transform: rotate(var(--r, 0deg)); box-shadow: var(--lift);
-    transition: translate 300ms var(--ease), rotate 300ms var(--ease), scale 300ms var(--ease), box-shadow 300ms var(--ease);
-    animation: drop 1100ms cubic-bezier(.2, 1.15, .4, 1) backwards; animation-delay: var(--in, 400ms); }
-  @keyframes drop { from { opacity: 0; transform: translateY(-7cqh) rotate(calc(var(--r, 0deg) + 7deg)) scale(1.06); box-shadow: 0 60px 90px -30px rgba(0, 0, 0, .35); } 45% { opacity: 1; } }
-  .held .face { scale: 1.035; rotate: calc(var(--r, 0deg) * -.4); box-shadow: 0 2px 6px rgba(0, 0, 0, .08), 0 44px 70px -28px rgba(0, 0, 0, .5); }
+  /* The monitor: a black frame, the reel inside, story bars and the caption on top, "Watch with sound" at the bottom. */
+  .monitor { position: absolute; z-index: 1; top: 6cqh; height: 80cqh; aspect-ratio: 9 / 16; left: calc(58% - 22.5cqh);
+    animation: stand 1400ms 380ms cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes stand { from { opacity: 0; transform: translateY(14cqh) rotateX(28deg) scale(.92); } 40% { opacity: 1; } }
+  .m-frame { position: relative; height: 100%; padding: 9px; border-radius: 34px; background: #0B0B0B; border: 1px solid var(--ink);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 30px 60px -24px rgba(0, 0, 0, .55), 0 70px 120px -50px rgba(0, 0, 0, .5);
+    transform: rotateY(calc(var(--mx) * 12deg)) rotateX(calc(var(--my) * -9deg)); transition: transform 900ms var(--ease); }
+  .m-screen { position: relative; height: 100%; overflow: hidden; border-radius: 26px; background: #1a1a1a; cursor: pointer; isolation: isolate; }
+  .poster, .v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .v { opacity: 0; transition: opacity 280ms var(--ease); }
+  .live .v.on { opacity: 1; }
+  /* With a mouse, a play badge follows the pointer over the picture. */
+  .cur { position: absolute; z-index: 3; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; display: grid; place-items: center; background: var(--pink); color: var(--ink);
+    pointer-events: none; opacity: 0; translate: var(--cx, 50%) var(--cy, 50%); scale: .4; transition: opacity 220ms var(--ease), scale 260ms var(--ease); }
+  .cur svg { width: 20px; height: 20px; margin-left: 3px; fill: currentColor; }
+  .m-screen.hover .cur { opacity: 1; scale: 1; }
+  .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, .5), transparent 24%, transparent 72%, rgba(0, 0, 0, .38)); }
+  .bars { position: absolute; z-index: 2; left: 14px; right: 14px; top: 12px; display: flex; gap: 4px; }
+  .bars i { flex: 1; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, .32); }
+  .bars b { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
+  .m-top { position: absolute; z-index: 2; left: 14px; right: 10px; top: 24px; display: flex; justify-content: space-between; align-items: start; gap: 10px; color: #fff; }
+  .m-cap { display: grid; gap: 3px; margin: 0; font-weight: 700; font-size: clamp(13px, 2cqh, 16px); letter-spacing: -0.01em; line-height: 1.15; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
+  .m-cap small { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .8; font-variant-numeric: tabular-nums; }
+  .ctl { flex: none; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .18); color: #fff; cursor: pointer;
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: background 200ms var(--ease); }
+  .ctl:hover { background: rgba(255, 255, 255, .32); }
+  .ctl svg { width: 14px; height: 14px; fill: currentColor; }
+  .ctl .i-play, .held .ctl .i-pause { display: none; }
+  .held .ctl .i-play { display: block; margin-left: 2px; }
+  .snd { position: absolute; z-index: 2; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px 10px 12px; border: 0; border-radius: 999px;
+    background: #fff; color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; cursor: pointer; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5);
+    transition: background 200ms var(--ease), transform 300ms var(--ease); }
+  .snd:hover { background: var(--pink); transform: translateY(-2px); }
+  .snd svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .snd svg path:first-child { fill: currentColor; }
+  .playing .snd .w1 { animation: wv 1.4s ease-in-out infinite; }
+  .playing .snd .w2 { animation: wv 1.4s .2s ease-in-out infinite; }
+  @keyframes wv { 50% { opacity: .25; } }
+  .snd:focus-visible { box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px #fff; }
+  .ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
-  .o-paper { left: 5cqw; top: 20cqh; width: 47cqw; --r: -3deg; --depth: 12; --in: 520ms; }
-  .o-print1 { left: 51cqw; top: 5cqh; width: 30cqw; --r: 4.5deg; --depth: 20; --in: 680ms; z-index: 2; }
-  .o-print2 { left: 64cqw; top: 44cqh; width: 29cqw; --r: -5deg; --depth: 26; --in: 820ms; }
-  .o-stick { left: 9cqw; top: 61cqh; width: 21cqw; --r: -12deg; --depth: 32; --in: 1000ms; z-index: 2; }
+  /* The edit timeline: video, music and subtitle tracks, the hook marked over the first two seconds, a playhead. */
+  .tl { position: absolute; z-index: 2; right: calc(42% + 3cqh); bottom: 4cqh; width: min(350px, 70cqw);
+    transform: translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
+  .tl-in { padding: 12px 14px 14px; background: var(--surface); color: var(--ink); border: 1px solid var(--ink); border-radius: 16px; box-shadow: var(--lift-l);
+    animation: slide 1000ms 900ms cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes slide { from { opacity: 0; transform: translateX(-36px); } }
+  .tl-head { display: flex; align-items: center; gap: 8px; margin: 0 0 20px; font-size: 12px; }
+  .tl-head b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; }
+  .rec { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #E5484D; }
+  .playing .rec { animation: blink 1.2s steps(2, jump-none) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .tc { flex: none; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--fg-2); }
+  .tl-body { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+  .tl-labels { display: grid; grid-template-rows: 30px 20px 10px; gap: 6px; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: .06em; color: var(--fg-3); }
+  .tl-tracks { position: relative; display: grid; grid-template-rows: 30px 20px 10px; gap: 6px; }
+  .trk { position: relative; display: block; border-radius: 5px; overflow: hidden; }
+  .film { background: var(--surface-2) center / 100% 100%; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12) inset; }
+  .wave .w { position: absolute; inset: 0; display: flex; align-items: center; gap: 2px; }
+  .wave i { flex: 1; height: calc(var(--h) * 100%); border-radius: 2px; background: rgba(0, 0, 0, .16); }
+  .wave .on i { background: var(--mat); }
+  .wave .on { clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0); }
+  .subs i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--yellow); box-shadow: 0 0 0 1px rgba(0, 0, 0, .14) inset; }
+  .hook { position: absolute; z-index: 1; left: 0; top: -4px; bottom: -4px; width: calc(100% / 6); border-radius: 6px; background: rgba(244, 193, 196, .38); box-shadow: 0 0 0 1.5px var(--pink) inset; transition: background 300ms var(--ease); }
+  .at-hook .hook { background: rgba(244, 193, 196, .62); }
+  .hook em { position: absolute; left: 0; bottom: calc(100% + 3px); padding: 2px 6px; border-radius: 4px; background: var(--pink); font: 700 9px/1.3 var(--font); font-style: normal; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+  .head { position: absolute; z-index: 2; top: -8px; bottom: -6px; left: calc(var(--p) * 100%); width: 2px; margin-left: -1px; background: var(--ink); }
+  .head::before { content: ''; position: absolute; top: 0; left: -4px; border: 5px solid transparent; border-top: 6px solid var(--ink); border-bottom: 0; }
 
-  .paper { padding: 3.4cqw 3.4cqw 4.6cqw; background: var(--white); color: var(--ink); border: 1px solid var(--ink); border-radius: 2.4cqw; }
-  .p-top { margin: 0 0 1.6cqw; font-size: clamp(10px, 2.1cqw, 12px); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
-  .p-list { list-style: none; margin: 0; padding: 0; }
-  .p-list li { display: grid; grid-template-columns: 4cqw 1fr; align-items: baseline; gap: 1.4cqw; padding: 1.9cqw 0; border-top: 1px solid var(--hair); font-weight: 600; font-size: clamp(12px, 3cqw, 17px); letter-spacing: -0.01em; }
-  .p-list b { font-size: clamp(10px, 2.1cqw, 12px); color: var(--fg-3); }
-  .stamp { position: absolute; right: 3cqw; bottom: -2.6cqw; padding: 1.2cqw 2cqw; border: 2px solid var(--mat); border-radius: 8px; background: var(--white); color: var(--mat); font-weight: 700; font-size: clamp(10px, 2.3cqw, 13px); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; transform: rotate(-7deg);
-    animation: stamp 520ms 1700ms cubic-bezier(.3, 1.6, .5, 1) both; }
-  @keyframes stamp { from { opacity: 0; transform: rotate(-7deg) scale(1.7); } }
+  /* The price sticker, stuck on the mat beside the monitor. */
+  .stick { position: absolute; z-index: 2; left: calc(58% + 19cqh); top: 30cqh; width: clamp(96px, 15cqh, 124px);
+    transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 16px)); transition: transform 900ms var(--ease); }
+  .stick-in { aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: 2px; text-align: center; background: var(--yellow); color: var(--ink); border: 1px solid var(--ink); transform: rotate(-12deg);
+    box-shadow: var(--lift); animation: stamp 620ms 1300ms cubic-bezier(.3, 1.6, .5, 1) both; }
+  @keyframes stamp { from { opacity: 0; transform: rotate(-12deg) scale(1.6); } }
+  .stick small { font-size: 12px; font-weight: 700; }
+  .stick b { font-size: clamp(20px, 3.4cqh, 26px); letter-spacing: -0.04em; line-height: 1; }
 
-  /* The reels, printed: a white border, the photo, and a caption written under it. */
-  .print .face { padding: 1.7cqw 1.7cqw 0; background: var(--white); color: var(--ink); border: 1px solid var(--ink); border-radius: 1cqw; }
-  .print .media { position: relative; display: block; overflow: hidden; border-radius: .5cqw; background: var(--surface-2); aspect-ratio: 9 / 16; }
-  .print img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
-  .play { position: absolute; right: 1.6cqw; bottom: 1.6cqw; display: grid; place-items: center; width: clamp(28px, 7cqw, 40px); aspect-ratio: 1; border-radius: 50%; background: rgba(255, 255, 255, .92); color: var(--ink);
-    transition: background 220ms var(--ease), scale 300ms var(--ease); }
-  .play svg { width: 42%; height: 42%; margin-left: 8%; fill: currentColor; }
-  .cap { display: grid; gap: .5cqw; padding: 1.6cqw .2cqw 2.2cqw; font-weight: 700; font-size: clamp(11px, 2.4cqw, 14px); letter-spacing: -0.01em; line-height: 1.15; }
-  .cap small { font-size: clamp(9px, 1.7cqw, 10px); letter-spacing: .1em; text-transform: uppercase; color: var(--fg-3); }
-  .tape { position: absolute; z-index: 1; left: 50%; top: -2.4cqw; width: 46%; height: 4.8cqw; translate: -50% 0; rotate: -5deg; background: rgba(244, 193, 196, .88);
-    clip-path: polygon(0 8%, 4% 0, 8% 10%, 12% 0, 88% 0, 92% 10%, 96% 0, 100% 8%, 100% 92%, 96% 100%, 92% 90%, 88% 100%, 12% 100%, 8% 90%, 4% 100%, 0 92%); }
-  @media (hover: hover) and (pointer: fine) {
-    .print:hover:not(.held) .face { translate: 0 -6px; box-shadow: var(--lift-l); }
-    .print:hover .play { background: var(--pink); scale: 1.08; }
-  }
-  .print:focus-visible { outline: none; }
-  .print:focus-visible .face { outline: 2px solid var(--ink); outline-offset: 4px; }
-
-  .stick { aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: .4cqw; text-align: center; background: var(--yellow); color: var(--ink); border: 1px solid var(--ink); }
-  .stick small { font-size: clamp(10px, 2.3cqw, 13px); font-weight: 700; }
-  .stick b { font-size: clamp(17px, 4.6cqw, 28px); letter-spacing: -0.04em; line-height: 1; }
-
-  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); } }
-  /* One column: the desk sits under the copy and the mat runs the full width of the screen. */
+  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); } .tl { width: min(300px, 64cqw); } }
+  /* One column: the stage sits under the copy, the mat runs the full width and the timeline sits under the monitor. */
   @media (max-width: 960px) {
     .h-grid { grid-template-columns: 1fr; min-height: 0; gap: clamp(36px, 6vw, 56px); }
-    .desk { width: min(100%, 600px); height: auto; aspect-ratio: 6 / 7; justify-self: center; }
-    .desk-mat { left: calc(50% - 50vw); right: calc(50% - 50vw); border-radius: 0; border-inline: 0; }
-    .desk-hint { left: calc(50% - 50cqw + 4px); }
+    .stage { height: auto; container-type: normal; display: grid; justify-items: center; padding: 44px 0 30px; clip-path: inset(0 -100vw); }
+    .stage-mat { left: calc(50% - 50vw); right: calc(50% - 50vw); border-radius: 0; border-inline: 0; animation: none; }
+    .monitor { position: relative; top: auto; left: auto; height: auto; width: min(320px, 74vw); }
+    .tl { position: relative; right: auto; bottom: auto; width: min(420px, 100%); margin-top: -64px; transform: none; }
+    .snd { bottom: 76px; }
+    .stick { top: 40%; left: auto; right: max(0px, calc(50% - 250px)); width: 100px; }
+    .stick b { font-size: 22px; white-space: nowrap; }
   }
   @media (max-width: 560px) {
     .big-btn { padding: 15px 20px; font-size: 15px; } .h-copy .actions { width: 100%; } .h-copy .actions .btn { flex: 1 1 auto; }
-    .desk-hint { bottom: 14px; font-size: 10px; }
-    .o-paper { left: 1cqw; top: 19cqh; width: 54cqw; }
-    .o-print1 { left: 54cqw; top: 4cqh; width: 33cqw; }
-    .o-print2 { left: 64cqw; top: 41cqh; width: 33cqw; }
-    .o-stick { left: 4cqw; top: 66cqh; width: 25cqw; }
+    .stick { width: 86px; right: -4px; }
+    .stick b { font-size: 19px; } .stick small { font-size: 10px; }
   }
-  @media (prefers-reduced-motion: reduce) { .rise, .up, .hl::before, .pulse::after, .stamp, .face, .desk-mat { animation: none; } .obj { transition: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .rise, .up, .pulse::after, .replay, .stage-mat, .monitor, .tl-in, .stick-in { animation: none; }
+    .m-frame, .tl, .stick { transition: none; }
+  }
 
   /* The formats we make, running in a band under the hero. */
   .ticker { overflow: hidden; padding-block: 18px; background: var(--ink); color: #fff; }

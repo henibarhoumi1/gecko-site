@@ -12,7 +12,7 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const w = c(lang).work;
 ---
-<Base lang={lang} footerCta={false} title={`${w.title}: ${w.client}`}>
+<Base lang={lang} footerCta={false} title={`${w.title}${lang === 'fr' ? '\u00a0: ' : ': '}${w.client}`} page="work">
   <section class="case-head lit">
     <div class="wrap wide">
       <p class="case-tag rv">{w.label}</p>

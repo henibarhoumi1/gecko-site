@@ -3,14 +3,18 @@ import '../styles/brand.css';
 import '../styles/site.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { t, other, type Locale } from '../i18n/strings';
+import { t, type Locale } from '../i18n/strings';
 import { swapLang } from '../i18n/paths';
-interface Props { lang: Locale; title?: string; description?: string; noindex?: boolean; footerCta?: boolean }
-const { lang, title, description, noindex, footerCta = true } = Astro.props;
+import { m, type Page } from '../i18n/meta';
+interface Props { lang: Locale; title?: string; page?: Page; description?: string; noindex?: boolean; footerCta?: boolean }
+const { lang, title, page, description, noindex, footerCta = true } = Astro.props;
 const s = t(lang);
-const fullTitle = title ? `${title} · Gecko` : `Gecko · ${s.line}`;
-const desc = description ?? s.meta.description;
+const fullTitle = title ? `${title.replace(/\.$/, '')} · Gecko` : `Gecko · ${m(lang).home}`;
+const desc = description ?? (page ? m(lang).desc[page] : s.meta.description);
 const path = Astro.url.pathname;
+// Full addresses for Google: this page, and the same page in each language (English is the default).
+const abs = (p: string) => new URL(p, Astro.site).href;
+const localised = /^\/(en|fr)(\/|$)/.test(path);
 ---
 <!doctype html>
 <html lang={lang}>
@@ -24,12 +28,24 @@ const path = Astro.url.pathname;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="alternate" hreflang={other(lang)} href={swapLang(path, other(lang))} />
+    {!noindex && <link rel="canonical" href={abs(path)} />}
+    {!noindex && localised && (
+      <>
+        <link rel="alternate" hreflang="en" href={abs(swapLang(path, 'en'))} />
+        <link rel="alternate" hreflang="fr" href={abs(swapLang(path, 'fr'))} />
+        <link rel="alternate" hreflang="x-default" href={abs(swapLang(path, 'en'))} />
+      </>
+    )}
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={new URL(path, Astro.site).href} />
+    <meta property="og:site_name" content="Gecko" />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'fr' ? 'en_US' : 'fr_FR'} />
+    <meta property="og:url" content={abs(path)} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
-    <meta property="og:image" content={new URL('/brand/og.png', Astro.site).href} />
+    <meta property="og:image" content={abs(lang === 'fr' ? '/brand/og-fr.png' : '/brand/og.png')} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>document.documentElement.classList.add('pre'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>

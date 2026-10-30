@@ -64,6 +64,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
         ))}
       </ol>
       <aside class="m-side">
+        <a class="btn m-cta" href={href(lang, 'apply')}>{n.apply} <span class="arr" aria-hidden="true">→</span></a>
         <div class="m-reach">
           <p class="m-k">{n.reach}</p>
           <a href={site.whatsapp} rel="noopener">WhatsApp {site.phone}</a>
@@ -225,6 +226,14 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
     .m-d { display: none; }
     .m-links a { grid-template-columns: 1fr; }
   }
-  @media (max-width: 560px) { .cta, .lang { display: none; } .bar { height: 56px; } }
+  .m-cta { justify-self: start; padding: 16px 24px; font-size: 16px; background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .m-cta:hover { background: #fff; border-color: #fff; color: var(--ink); }
+  @media (max-width: 560px) {
+    .lang { display: none; }
+    .bar { height: 56px; gap: 12px; }
+    .cta { padding: 11px 14px; font-size: 13px; white-space: nowrap; }
+    .burger { height: 40px; padding: 0 6px 0 14px; }
+  }
+  @media (max-width: 379px) { .cta { display: none; } }
   @media (prefers-reduced-motion: reduce) { .site-header, .bar, .menu, .m-links li, .m-side, .glide { transition: none; } }
 </style>

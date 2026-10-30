@@ -21,7 +21,7 @@ const arrow = (d: string) => `<svg viewBox="0 0 24 24" width="20" height="20" fi
           <img src={a.poster} alt="" loading={i < 2 ? 'eager' : 'lazy'} draggable="false" />
           <video muted loop playsinline preload="none"></video>
         </span>
-        <button type="button" class="open" data-open tabindex={i === 0 ? 0 : -1} aria-label={`${w.title1} ${i + 1}: ${a.angle[lang]}`}></button>
+        <button type="button" class="open" data-open tabindex={i === 0 ? 0 : -1} aria-label={`${w.title1} ${i + 1}${lang === 'fr' ? '\u00a0: ' : ': '}${a.angle[lang]}`}></button>
       </div>
     ))}
   </div>

@@ -22,7 +22,7 @@
   --surface-2: #FAF9F6;
   --fg: #000000;
   --fg-2: #3B3835;
-  --fg-3: rgba(0, 0, 0, .5);
+  --fg-3: rgba(0, 0, 0, .56);
   --hair: rgba(0, 0, 0, .12);
   --hair-2: var(--ink);
   --edge: var(--ink);
@@ -100,7 +100,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--fg); -webki
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .68); --fg-3: rgba(255, 255, 255, .46);
+.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .68); --fg-3: rgba(255, 255, 255, .56);
   --hair: rgba(255, 255, 255, .14); --hair-2: rgba(255, 255, 255, .34); --edge: rgba(255, 255, 255, .2);
   --tint: rgba(255, 255, 255, .05); --tint-2: rgba(255, 255, 255, .08); --tint-3: rgba(255, 255, 255, .12);
   background: var(--bg); color: var(--fg); }

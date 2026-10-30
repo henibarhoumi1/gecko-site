@@ -147,7 +147,6 @@ export const strings = {
       terms: [
         'The Test and bespoke projects: a 50% deposit books your production date, the other 50% is due once you approve the delivered ads. Final files unlock after that.',
         'Monthly plans: paid before the 5th of each month. No shoot before payment.',
-        'Sign a monthly plan within 14 days of your Test and half of its price comes off your first month.',
       ],
       intlTitle: 'Outside Tunisia',
       intl: 'We take on remote edits for brands abroad and shoot in Tunisia for foreign brands. Ask for a quote.',
@@ -165,9 +164,9 @@ export const strings = {
     faq: [
       { q: 'What does it cost?', a: 'The Test is 999 TND, one time: 3 reels and 1 static from a 3-hour shoot. Regular is 2,900 TND a month for 10 reels and Pro is 3,800 TND a month for 15 reels, each with 1 production day a month. Creative Partner is priced to your volume, from 20 to 100 reels a month. Launch prices are for our first 5 clients, until 31 December 2026, and exclude VAT.' },
       { q: 'Can we try you before a monthly plan?', a: 'Yes, that’s the Test: one 3-hour shoot, 3 reels and 1 static, 999 TND one time. A way to see how we work before you commit to a monthly plan.' },
-      { q: 'What isn’t included in the price?', a: 'Ad spend, studio, talent and props. You approve each outside cost before anything is booked, we pay it upfront, and the invoice is added to your remaining 50%.' },
+      { q: 'What isn’t included in the price?', a: 'Ad spend, studio, talent and props. You approve each outside cost before anything is booked and we pay it upfront. Its invoice comes with the balance on the Test and projects, or separately on monthly plans.' },
       { q: 'Is there a minimum commitment?', a: 'Monthly plans run 3 months minimum, then month to month with 30 days’ notice. The first month finds what works, the next two make more of it.' },
-      { q: 'How fast do we get the ads?', a: 'The first draft arrives 7 days after the shoot. Final files follow once you’ve approved the changes and paid the balance.' },
+      { q: 'How fast do we get the ads?', a: 'The first draft arrives 7 days after the shoot. Final files follow once you’ve approved them and the payment is settled.' },
       { q: 'How does payment work?', a: 'Projects: a 50% deposit books your date and the other 50% is due once you approve the delivered ads. Monthly plans are paid before the 5th of each month.' },
       { q: 'What exactly do we receive?', a: 'Final files cut in 9:16 and 4:5, with subtitles and licensed music, ready to download from your workspace once approved. Raw footage isn’t part of standard delivery.' },
       { q: 'Who owns the ads, and can we run them as paid ads?', a: 'You can use every delivered piece on your own channels and in your ads.' },
@@ -336,7 +335,6 @@ export const strings = {
       terms: [
         'Le Test et les projets sur mesure : un acompte de 50 % réserve votre date de production, les 50 % restants sont dus une fois les pubs livrées validées. Les fichiers finaux sont ensuite débloqués.',
         'Plans mensuels : payés avant le 5 de chaque mois. Pas de tournage avant paiement.',
-        'Signez un plan mensuel dans les 14 jours après votre Test et la moitié de son prix est déduite de votre premier mois.',
       ],
       intlTitle: 'Hors de Tunisie',
       intl: 'Nous prenons des montages à distance pour des marques à l’étranger et tournons en Tunisie pour des marques étrangères. Demandez un devis.',
@@ -354,9 +352,9 @@ export const strings = {
     faq: [
       { q: 'Combien ça coûte ?', a: 'Le Test coûte 999 TND, une seule fois : 3 reels et 1 visuel fixe, en 3 heures de tournage. Regular coûte 2 900 TND par mois pour 10 reels et Pro 3 800 TND par mois pour 15 reels, chacun avec 1 journée de production par mois. Creative Partner est chiffré selon votre volume, de 20 à 100 reels par mois. Prix de lancement réservés à nos 5 premiers clients, jusqu’au 31 décembre 2026, hors TVA.' },
       { q: 'Peut-on vous tester avant un plan mensuel ?', a: 'Oui, c’est le Test : un tournage de 3 heures, 3 reels et 1 visuel fixe, 999 TND une seule fois. Une façon de voir comment on travaille avant de vous engager sur un plan mensuel.' },
-      { q: 'Qu’est-ce qui n’est pas inclus dans le prix ?', a: 'Le budget pub, le studio, les talents et les accessoires. Vous validez chaque coût avant réservation, on l’avance, et la facture s’ajoute à vos 50 % restants.' },
+      { q: 'Qu’est-ce qui n’est pas inclus dans le prix ?', a: 'Le budget pub, le studio, les talents et les accessoires. Vous validez chaque coût avant réservation et on l’avance. Sa facture arrive avec le solde pour le Test et les projets, ou à part sur les plans mensuels.' },
       { q: 'Y a-t-il un engagement minimum ?', a: 'Les plans mensuels durent 3 mois minimum, puis au mois avec 30 jours de préavis. Le premier mois trouve ce qui marche, les deux suivants en font plus.' },
-      { q: 'En combien de temps recevons-nous les pubs ?', a: 'Le premier montage arrive 7 jours après le tournage. Les fichiers finaux suivent une fois les retouches validées et le solde réglé.' },
+      { q: 'En combien de temps recevons-nous les pubs ?', a: 'Le premier montage arrive 7 jours après le tournage. Les fichiers finaux suivent une fois les pubs validées et le paiement réglé.' },
       { q: 'Comment se passe le paiement ?', a: 'Projets : un acompte de 50 % réserve votre date, les 50 % restants sont dus une fois les pubs livrées validées. Plans mensuels : payés avant le 5 de chaque mois.' },
       { q: 'Que recevons-nous exactement ?', a: 'Des fichiers finaux montés en 9:16 et 4:5, sous-titrés, avec une musique sous licence, à télécharger depuis votre espace une fois validés. Les rushes ne font pas partie de la livraison standard.' },
       { q: 'À qui appartiennent les pubs, et peut-on les sponsoriser ?', a: 'Vous pouvez utiliser chaque pièce livrée sur vos réseaux et dans vos pubs.' },

@@ -14,7 +14,7 @@ const k = c(lang).offers;
 const p = c(lang).plans;
 const h = c(lang).home;
 ---
-<Base lang={lang} title={o.title}>
+<Base lang={lang} title={o.title} page="offers">
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:22px">
       <h1 class="h1 rv">{k.title}</h1>
@@ -24,6 +24,7 @@ const h = c(lang).home;
 
   <section class="section plans-sec">
     <div class="wrap wide">
+      <h2 class="sr">{h.plansTitle}</h2>
       <Plans lang={lang} />
       <p class="note rv">{p.spec.out} {o.launchNote} {o.monthlyNote}</p>
     </div>
@@ -71,7 +72,6 @@ const h = c(lang).home;
     <div class="wrap wide faq-grid">
       <div class="faq-lead rv">
         <h2 class="h2">{k.faqTitle}</h2>
-        <a class="btn" href={href(lang, 'faq')}>{h.faqAll} <span class="arr" aria-hidden="true">→</span></a>
       </div>
       <div class="stack rv" style="--gap:10px">
         <div class="faq lead-faq">
@@ -80,7 +80,7 @@ const h = c(lang).home;
             <ul class="terms text">{o.terms.map((i) => <li>{i}</li>)}</ul>
           </details>
         </div>
-        <Faq items={s.faq} scroll hint={h.faqHint} />
+        <Faq items={s.faq} limit={6} more={{ href: href(lang, 'faq'), label: h.faqAll }} />
       </div>
     </div>
   </section>
