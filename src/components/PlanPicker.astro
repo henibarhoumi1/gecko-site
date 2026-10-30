@@ -35,7 +35,7 @@ const start = 0;
 
   <div class="stage rv" style="--d:120ms">
     {plans.map((m, i) => (
-      <article class={`card ${m.custom ? 'dark on-black' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
+      <div class={`card ${m.custom ? 'dark on-black' : ''}`} role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
         {!m.custom && <span class={`sticker ${m.once ? 'once' : ''}`} aria-hidden="true">{m.once ? p.exclusive : o.launch}</span>}
         <header>
           <p class="fitb" hidden>✓ {p.fit}</p>
@@ -60,9 +60,9 @@ const start = 0;
         <ul class="ticks-list">{m.items[lang].map((it) => <li>{it}</li>)}</ul>
         <p class="out">{p.spec.out}</p>
         <a class={`btn ${m.custom ? '' : 'primary'}`} href={`${href(lang, 'apply')}?plan=${m.key}`}>{m.custom ? p.talk : `${p.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
-      </article>
+      </div>
     ))}
-    <article class="card bespoke" role="tabpanel" id="panel-bespoke" aria-labelledby="tab-bespoke" hidden data-panel={plans.length}>
+    <div class="card bespoke" role="tabpanel" id="panel-bespoke" aria-labelledby="tab-bespoke" hidden data-panel={plans.length}>
       <header>
         <p class="fitb" hidden>✓ {p.fit}</p>
         <h3 class="name">{p.bespokeName}</h3>
@@ -72,7 +72,7 @@ const start = 0;
       <ul class="kinds">{c(lang).offers.beyond.items.map((it) => <li><b>{it.t}</b><span>{it.d}</span></li>)}</ul>
       <p class="out">{p.bespokeNote}</p>
       <a class="btn primary" href={`${href(lang, 'apply')}?plan=bespoke`}>{c(lang).offers.beyond.cta} <span class="arr" aria-hidden="true">→</span></a>
-    </article>
+    </div>
   </div>
 </div>
 
