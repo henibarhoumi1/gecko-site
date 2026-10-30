@@ -20,81 +20,68 @@ const mo = h.monitor;
 // The hero monitor plays a short silent cut of each case study reel; a click opens the full reel with sound.
 const clips = ads.map((a, i) => {
   const slug = a.src!.replace(/^.*glucelia-|\.mp4$/g, '');
-  return { i, src: `/work/clip-${slug}.mp4`, poster: a.poster!, strip: `/work/strip-${slug}.jpg`, brand: a.brand, cap: a.angle[lang] };
+  return { i, src: `/work/clip-${slug}.mp4`, poster: a.poster!, brand: a.brand, cap: a.angle[lang] };
 });
-// The edit timeline under it: a fixed waveform and subtitle blocks, drawn the same for every reel.
-const wave = Array.from({ length: 56 }, (_, k) => (0.28 + 0.72 * Math.abs(Math.sin(k * 1.7) * Math.cos(k * 0.43))).toFixed(2));
-const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
 ---
 <Base lang={lang} footerCta={false} page="home">
   <section class="hero" data-hero>
-    <div class="wrap wide h-grid">
-      <div class="h-copy">
-        <p class="h-kick up" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
-        <h1 class="h-title" aria-label={h.title.join(' ')}>
-          {h.title.map((line, i) => (
-            <span class="ln" aria-hidden="true">
-              {i < h.title.length - 1 ? (
-                <span class="rise" style={`--d:${100 + i * 110}ms`}>{line}</span>
-              ) : (
-                <span class="rise fill" style={`--d:${100 + i * 110}ms`}>
-                  <span class="fill-v"><video data-fill src="/work/hero-twice.mp4" poster="/work/hero-twice.jpg" muted loop playsinline preload="none" tabindex="-1"></video></span>
-                  <span class="fill-t">{line}</span>
-                  <span class="fill-o">{line}</span>
-                  <span class="replay" data-replay><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.6h-4.6" /></svg></span>
-                </span>
-              )}
-            </span>
-          ))}
-        </h1>
-        <p class="text text-l h-lede up" style="--d:440ms">{h.sub}</p>
-        <div class="actions up" style="--d:520ms">
-          <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
+    <div class="pin" data-pin>
+      <div class="dark" aria-hidden="true"></div>
+      <div class="wrap wide h-grid">
+        <div class="h-copy">
+          <p class="h-kick up" style="--d:40ms"><span class="pulse" aria-hidden="true"></span>{h.kicker}</p>
+          <h1 class="h-title" aria-label={h.title.join(' ')}>
+            {h.title.map((line, i) => (
+              <span class="ln" aria-hidden="true">
+                {i < h.title.length - 1 ? (
+                  <span class="rise" style={`--d:${100 + i * 110}ms`}>{line}</span>
+                ) : (
+                  <span class="rise fill" style={`--d:${100 + i * 110}ms`}>
+                    <span class="fill-v"><video data-fill src="/work/hero-twice.mp4" poster="/work/hero-twice.jpg" muted loop playsinline preload="none" tabindex="-1"></video></span>
+                    <span class="fill-t">{line}</span>
+                    <span class="fill-o">{line}</span>
+                    <span class="replay" data-replay><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.6h-4.6" /></svg></span>
+                  </span>
+                )}
+              </span>
+            ))}
+          </h1>
+          <p class="text text-l h-lede up" style="--d:440ms">{h.sub}</p>
+          <div class="actions up" style="--d:520ms">
+            <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
+          </div>
         </div>
-      </div>
 
-      <div class="stage" data-stage>
-        <div class="stage-mat mat" aria-hidden="true"><span class="ruler">{Array.from({ length: 14 }, (_, k) => <i>{k + 1}</i>)}</span></div>
-        <div class="monitor" data-monitor role="group" aria-label={mo.label} data-clips={JSON.stringify(clips)}>
-          <div class="m-frame">
-            <div class="m-screen" data-screen>
-              <img class="poster" src={clips[0].poster} alt="" width="540" height="960" fetchpriority="high" decoding="async" />
-              <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
-              <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
-              <span class="shade" aria-hidden="true"></span>
-              <span class="cur" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span>
-              <div class="bars" aria-hidden="true">{clips.map(() => <i><b></b></i>)}</div>
-              <div class="m-top">
-                <p class="m-cap" aria-live="off"><small>{clips[0].brand} · <span data-count>01/{String(clips.length).padStart(2, '0')}</span></small><span data-cap>{clips[0].cap}</span></p>
-                <button type="button" class="ctl" data-toggle aria-pressed="false" aria-label={mo.pause} data-pause={mo.pause} data-play={mo.play}>
-                  <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
-                  <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
+        <div class="slot" data-slot>
+          <div class="monitor" data-monitor role="group" aria-label={mo.label} data-clips={JSON.stringify(clips)}>
+            <div class="m-frame">
+              <div class="m-screen" data-screen>
+                <img class="poster" src={clips[0].poster} alt="" width="540" height="960" fetchpriority="high" decoding="async" />
+                <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+                <video class="v" data-v muted playsinline preload="none" tabindex="-1" aria-hidden="true"></video>
+                <span class="shade" aria-hidden="true"></span>
+                <span class="cur" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg></span>
+                <div class="bars" aria-hidden="true">{clips.map(() => <i><b></b></i>)}</div>
+                <div class="m-top">
+                  <p class="m-cap" aria-live="off"><small>{clips[0].brand} · <span data-count>01/{String(clips.length).padStart(2, '0')}</span></small><span data-cap>{clips[0].cap}</span></p>
+                  <button type="button" class="ctl" data-toggle aria-pressed="false" aria-label={mo.pause} data-pause={mo.pause} data-play={mo.play}>
+                    <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
+                    <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
+                  </button>
+                </div>
+                <button type="button" class="snd" data-sound>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="w1" d="M15.5 9a4 4 0 0 1 0 6" /><path class="w2" d="M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
+                  <span>{mo.sound}</span>
                 </button>
               </div>
-              <button type="button" class="snd" data-sound>
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="w1" d="M15.5 9a4 4 0 0 1 0 6" /><path class="w2" d="M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
-                <span>{mo.sound}</span>
-              </button>
             </div>
           </div>
         </div>
-        <div class="tl" aria-hidden="true">
-          <div class="tl-in">
-            <p class="tl-head"><span class="rec"></span><b data-tl-name>{mo.reel} 01 · {clips[0].cap}</b><span class="tc" data-tc>00:00:00</span></p>
-            <div class="tl-body">
-              <div class="tl-labels"><span>V1</span><span>A1</span><span>CC</span></div>
-              <div class="tl-tracks">
-                <span class="hook"><em>{mo.hook}</em></span>
-                <span class="trk film" data-film style={`background-image:url(${clips[0].strip})`}></span>
-                <span class="trk wave">{[0, 1].map((on) => <span class={`w ${on ? 'on' : ''}`}>{wave.map((v) => <i style={`--h:${v}`}></i>)}</span>)}</span>
-                <span class="trk subs">{subs.map(([a, b]) => <i style={`left:${a}%;width:${b - a}%`}></i>)}</span>
-                <span class="head"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="stick" aria-hidden="true"><span class="stick-in"><small>{h.stick[0]}</small><b>{h.stick[1]}</b></span></div>
+      </div>
+      <div class="credits">
+        <div class="cr-l"><p class="cr-k">{mo.kick} · Glucélia</p><p class="cr-line">{mo.line}</p></div>
+        <div class="cr-r"><a class="link cr-cta" href={href(lang, 'work')}>{mo.cta} <span aria-hidden="true">→</span></a></div>
       </div>
     </div>
   </section>
@@ -141,14 +128,17 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
 
 <script>
   import '../../scripts/marquee';
-  // The hero monitor: short silent cuts of the case study reels play one after the other, with a progress bar per reel
-  // and an edit timeline whose playhead follows the picture. Two video elements take turns, so the next reel is loaded
-  // before it's needed and the cut is clean. Nothing plays until the page has loaded, while the hero is off screen,
-  // while a dialog or the menu is open, with reduced motion, or with data saver on. "Watch with sound" opens the full reel.
+  // The hero reel: short silent cuts of the case study reels play one after the other, with a progress bar per reel.
+  // Two video elements take turns, so the next reel is loaded before it's needed and the cut is clean. Nothing plays
+  // until the page has loaded, while the reel is off screen, while a dialog or the menu is open, with reduced motion
+  // or with data saver on. "Watch with sound" opens the full reel.
+  // Lights down: as the page scrolls, the reel moves to the middle and grows to the full height of the screen while the
+  // page around it fades to black and the headline steps back, so the hero runs straight into the black Work section.
+  // On a wide screen the hero holds still (sticky) while this plays; on a phone it happens as the reel scrolls up.
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const mon = document.querySelector<HTMLElement>('[data-monitor]');
   if (hero && mon) {
-    type Clip = { i: number; src: string; poster: string; strip: string; brand: string; cap: string };
+    type Clip = { i: number; src: string; poster: string; brand: string; cap: string };
     const clips: Clip[] = JSON.parse(mon.dataset.clips!);
     const vids = [...mon.querySelectorAll<HTMLVideoElement>('[data-v]')];
     const bars = [...mon.querySelectorAll<HTMLElement>('.bars b')];
@@ -156,35 +146,25 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
     const count = mon.querySelector<HTMLElement>('[data-count]')!;
     const toggle = mon.querySelector<HTMLButtonElement>('[data-toggle]')!;
     const sound = mon.querySelector<HTMLButtonElement>('[data-sound]')!;
-    const name = hero.querySelector<HTMLElement>('[data-tl-name]')!;
-    const tc = hero.querySelector<HTMLElement>('[data-tc]')!;
-    const film = hero.querySelector<HTMLElement>('[data-film]')!;
+    const screen = mon.querySelector<HTMLElement>('[data-screen]')!;
     const fill = hero.querySelector<HTMLVideoElement>('[data-fill]');
     const replay = hero.querySelector<HTMLElement>('[data-replay]');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const save = !!(navigator as any).connection?.saveData;
-    const reel = name.textContent!.split(' ')[0];
     const pad = (n: number) => String(n).padStart(2, '0');
     let k = 0, cur = 0, wanted = !still && !save, ready = false, seen = false, blocked = false, raf = 0;
 
     const load = (v: HTMLVideoElement, n: number) => {
-      if (v.dataset.n === String(n)) return;
-      v.dataset.n = String(n); v.preload = 'auto'; v.src = clips[n].src; v.load();
+      if (v.dataset.clip === String(n)) return;
+      v.dataset.clip = String(n); v.preload = 'auto'; v.src = clips[n].src; v.load();
     };
     const label = () => {
-      const c = clips[k];
-      cap.textContent = c.cap; count.textContent = `${pad(k + 1)}/${pad(clips.length)}`;
-      name.textContent = `${reel} ${pad(k + 1)} · ${c.cap}`;
-      film.style.backgroundImage = `url(${c.strip})`;
+      cap.textContent = clips[k].cap; count.textContent = `${pad(k + 1)}/${pad(clips.length)}`;
       bars.forEach((b, j) => (b.style.transform = `scaleX(${j < k ? 1 : 0})`));
     };
     const frame = () => {
       const v = vids[cur];
-      const t = v.currentTime, p = v.duration ? Math.min(1, t / v.duration) : 0;
-      hero.style.setProperty('--p', p.toFixed(4));
-      bars[k].style.transform = `scaleX(${p})`;
-      tc.textContent = `00:${pad(Math.floor(t))}:${pad(Math.floor((t % 1) * 25))}`;
-      hero.classList.toggle('at-hook', t < 2);
+      bars[k].style.transform = `scaleX(${v.duration ? Math.min(1, v.currentTime / v.duration) : 0})`;
       raf = requestAnimationFrame(frame);
     };
     const stop = () => { vids.forEach((v) => v.pause()); fill?.pause(); cancelAnimationFrame(raf); raf = 0; hero.classList.remove('playing'); };
@@ -223,44 +203,98 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
       hero.classList.toggle('held', !wanted);
       go();
     });
-    const open = (from: HTMLElement) => document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: clips[k].i, from } }));
-    sound.addEventListener('click', () => open(sound));
-    mon.querySelector<HTMLElement>('[data-screen]')!.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('button')) open(sound); });
+    const open = () => document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: clips[k].i, from: sound } }));
+    sound.addEventListener('click', open);
+    screen.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('button')) open(); });
     new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.25 }).observe(mon);
     new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); go(); })
       .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     document.addEventListener('visibilitychange', go);
-    // Start once the page has loaded and the browser is idle, so the reels never slow down the first paint.
     const start = () => { ready = true; go(); };
     const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 400));
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
     if (!wanted) { hero.classList.add('held'); toggle.setAttribute('aria-pressed', 'true'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
 
-    // With a mouse, the monitor turns a little toward the pointer and the things around it shift by their own depth.
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !still) {
-      let x = 0, y = 0, queued = false;
-      const paint = () => { queued = false; hero.style.setProperty('--mx', x.toFixed(3)); hero.style.setProperty('--my', y.toFixed(3)); };
-      const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
-      hero.addEventListener('pointermove', (e) => { const r = hero.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; ask(); });
-      hero.addEventListener('pointerleave', () => { x = 0; y = 0; ask(); });
-      const screen = mon.querySelector<HTMLElement>('[data-screen]')!;
+    // With a mouse, a play badge follows the pointer over the picture.
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
       screen.addEventListener('pointermove', (e) => {
-        const r = screen.getBoundingClientRect(), over = !(e.target as HTMLElement).closest('button');
-        screen.style.setProperty('--cx', `${e.clientX - r.left}px`); screen.style.setProperty('--cy', `${e.clientY - r.top}px`);
-        screen.classList.toggle('hover', over);
+        const r = screen.getBoundingClientRect();
+        screen.style.setProperty('--cx', `${(e.clientX - r.left) / r.width * 100}%`); screen.style.setProperty('--cy', `${(e.clientY - r.top) / r.height * 100}%`);
+        screen.classList.toggle('hover', !(e.target as HTMLElement).closest('button'));
       });
       screen.addEventListener('pointerleave', () => screen.classList.remove('hover'));
+    }
+
+    // Lights down.
+    if (!still) {
+      const wide = matchMedia('(min-width: 961px)');
+      const slot = hero.querySelector<HTMLElement>('[data-slot]')!;
+      const clamp = (x: number) => Math.min(1, Math.max(0, x));
+      const ease = (x: number) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+      const band = (x: number, a: number, b: number) => clamp((x - a) / (b - a));
+      const pin = hero.querySelector<HTMLElement>('[data-pin]')!;
+      const dark = hero.querySelector<HTMLElement>('.dark')!;
+      let box = { x: 0, y: 0, w: 1, h: 1 }, queued = false;
+      hero.classList.add('anim');
+      const measure = () => {
+        hero.classList.toggle('cine', wide.matches);
+        // The slot is never transformed and the reel sits in its middle, so it gives the reel's resting place.
+        const r = slot.getBoundingClientRect(), pr = pin.getBoundingClientRect();
+        box = { x: r.left + r.width / 2 - pr.left, y: r.top + r.height / 2 - pr.top, w: mon.offsetWidth, h: mon.offsetHeight };
+        paint();
+      };
+      const paint = () => {
+        queued = false;
+        const vh = innerHeight, r = hero.getBoundingClientRect();
+        let p: number;
+        if (wide.matches) p = clamp(-r.top / Math.max(1, r.height - vh));
+        else { const s = slot.getBoundingClientRect(); p = scrollY <= 0 ? 0 : clamp((vh * .8 - s.top) / (vh * .6)); }
+        const e = ease(band(p, 0, wide.matches ? .62 : 1));
+        hero.style.setProperty('--p', p.toFixed(4));
+        // The circle opens from the reel's middle, wherever the reel is at this point of the scroll.
+        const m = mon.getBoundingClientRect(), pr = pin.getBoundingClientRect();
+        const cx = m.left + m.width / 2 - pr.left, cy = m.top + m.height / 2 - pr.top;
+        const far = Math.hypot(Math.max(cx, pr.width - cx), Math.max(cy, pr.height - cy));
+        const d = ease(band(p, wide.matches ? .04 : .1, wide.matches ? .56 : .85));
+        dark.style.clipPath = `circle(${(d * far).toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
+        hero.style.setProperty('--fade', (wide.matches ? band(p, 0, .32) : band(p, .15, .6)).toFixed(3));
+        hero.style.setProperty('--cred', band(p, .62, .9).toFixed(3));
+        hero.classList.toggle('gone', (wide.matches ? band(p, 0, .32) : band(p, .15, .6)) >= .99);
+        if (wide.matches) {
+          // From where the reel stands beside the headline to the middle of the screen, as tall as the screen allows.
+          const target = Math.min(vh - 112, innerWidth * .9 * 16 / 9);
+          const s = 1 + (target / box.h - 1) * e;
+          const dx = (innerWidth / 2 - box.x) * e, dy = (vh / 2 + 6 - box.y) * e;
+          mon.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px) scale(${s.toFixed(4)}) rotate(${(3 * (1 - e)).toFixed(2)}deg)`;
+        } else {
+          mon.style.transform = `scale(${(.9 + .1 * e).toFixed(4)})`;
+        }
+      };
+      const ask = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
+      addEventListener('scroll', ask, { passive: true });
+      addEventListener('resize', () => requestAnimationFrame(measure));
+      wide.addEventListener('change', measure);
+      measure();
+      addEventListener('load', measure, { once: true });
     }
   }
 </script>
 
 <style>
-  /* Hero: the headline big on white, the last word filled with moving footage, and beside it a reel playing on a
-     monitor that stands on the green cutting mat, with its edit timeline in front of it. */
-  .hero { position: relative; overflow: hidden; --mx: 0; --my: 0; --p: 0; }
-  .h-grid { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); gap: clamp(28px, 4vw, 72px); align-items: center;
+  /* Hero: the headline big on white, the last word filled with moving footage, and beside it a reel playing on a phone
+     in front of a pink disc. As the page scrolls, the lights go down: the reel takes the middle of the screen. */
+  .hero { position: relative; --p: 0; --dark: 0; --fade: 0; --cred: 0; }
+  .hero.cine { height: 230svh; }
+  .pin { position: relative; isolation: isolate; }
+  .cine .pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+  /* The lights going down: a black circle opening from behind the reel until it covers the screen. */
+  .dark { position: absolute; inset: 0; z-index: 1; background: #000; clip-path: circle(0 at 75% 50%); pointer-events: none; }
+  .h-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(0, .82fr); gap: clamp(28px, 4vw, 72px); align-items: center;
     min-height: calc(100svh - 58px); padding-top: calc(var(--header) + clamp(16px, 3vh, 40px)); padding-bottom: clamp(36px, 6vh, 72px); }
-  .h-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; container-type: inline-size; min-width: 0; }
+  .cine .h-grid { min-height: 100svh; }
+  .h-copy { display: grid; gap: clamp(22px, 2.6vw, 34px); justify-items: start; container-type: inline-size; min-width: 0;
+    opacity: calc(1 - var(--fade)); transform: translateY(calc(var(--fade) * -48px)); }
+  .gone .h-copy { visibility: hidden; }
   .h-kick { display: inline-flex; align-items: center; gap: 10px; margin: 0; padding: 7px 14px 7px 10px; border: 1px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
   .pulse { position: relative; width: 9px; height: 9px; border-radius: 50%; background: var(--mat); }
   .pulse::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--mat); opacity: 0; animation: ping 2.4s var(--ease) infinite; }
@@ -276,7 +310,7 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
   @keyframes fade-up { from { opacity: 0; transform: translateY(18px); } }
 
   /* The last word: white paper with the letters cut out, footage running behind it (screen blending turns black into
-     whatever is underneath). Before the clip loads, its first frame fills the letters. */
+     whatever is underneath), and an ink outline so the letters always read. */
   .fill { position: relative; isolation: isolate; padding-right: .5em; }
   .fill-v { position: absolute; z-index: 0; left: 0; right: .5em; top: .1em; bottom: .02em; overflow: hidden; background: var(--ink); }
   .fill-v video { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.4) contrast(1.15) brightness(.7); }
@@ -291,28 +325,24 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
   .h-lede { margin: 0; max-width: 34rem; color: var(--fg-2); }
   .big-btn { padding: 17px 26px; font-size: 16px; }
 
-  /* The stage: the mat runs off the right edge of the page; its height is the unit for what stands on it. */
-  .stage { position: relative; height: clamp(560px, 78svh, 760px); container-type: size; perspective: 1400px; }
-  .stage-mat { position: absolute; inset: 0 calc(-1 * (var(--gutter) + max(0px, (100vw - var(--wide)) / 2))) 0 0; border-radius: 28px 0 0 28px; border-right: 0;
-    animation: wipe 1200ms 120ms cubic-bezier(.7, 0, .2, 1) both; }
-  @keyframes wipe { from { clip-path: inset(0 0 0 100% round 28px 0 0 28px); } to { clip-path: inset(0 0 0 0 round 28px 0 0 28px); } }
-  .ruler { position: absolute; left: 0; top: 16px; display: flex; pointer-events: none; }
-  .ruler i { width: 120px; padding-left: 5px; font: 600 10px/1 var(--font); font-style: normal; color: rgba(255, 255, 255, .55); }
+  /* Where the reel stands: a pink disc behind it, which fades as the lights go down. */
+  .slot { position: relative; display: grid; place-items: center; height: clamp(520px, 74svh, 740px); }
+  .slot::before { content: ''; position: absolute; left: 50%; top: 50%; width: 92%; max-width: 72svh; aspect-ratio: 1; border-radius: 50%; background: var(--pink); translate: -46% -50%;
+    opacity: calc(1 - var(--fade)); scale: calc(1 - var(--fade) * .25); animation: disc 1200ms 150ms cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes disc { from { scale: .6; opacity: 0; } }
 
-  /* The monitor: a black frame, the reel inside, story bars and the caption on top, "Watch with sound" at the bottom. */
-  .monitor { position: absolute; z-index: 1; top: 6cqh; height: 80cqh; aspect-ratio: 9 / 16; left: calc(58% - 22.5cqh);
-    animation: stand 1400ms 380ms cubic-bezier(.16, 1, .3, 1) both; }
-  @keyframes stand { from { opacity: 0; transform: translateY(14cqh) rotateX(28deg) scale(.92); } 40% { opacity: 1; } }
-  .m-frame { position: relative; height: 100%; padding: 9px; border-radius: 34px; background: #0B0B0B; border: 1px solid var(--ink);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 30px 60px -24px rgba(0, 0, 0, .55), 0 70px 120px -50px rgba(0, 0, 0, .5);
-    transform: rotateY(calc(var(--mx) * 12deg)) rotateX(calc(var(--my) * -9deg)); transition: transform 900ms var(--ease); }
+  /* The phone: a black frame, the reel inside, story bars and the caption on top, "Watch with sound" at the bottom. */
+  .monitor { position: relative; z-index: 2; height: 100%; aspect-ratio: 9 / 16; transform: rotate(3deg); transform-origin: 50% 50%;
+    animation: stand 1300ms 320ms cubic-bezier(.16, 1, .3, 1) both; }
+  @keyframes stand { from { opacity: 0; translate: 0 12svh; scale: .92; } 40% { opacity: 1; } }
+  .m-frame { position: relative; height: 100%; padding: 9px; border-radius: 34px; background: #0B0B0B; border: 1px solid #2A2A2A;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .08) inset, 0 30px 60px -24px rgba(0, 0, 0, .5), 0 70px 120px -50px rgba(0, 0, 0, .45); }
   .m-screen { position: relative; height: 100%; overflow: hidden; border-radius: 26px; background: #1a1a1a; cursor: pointer; isolation: isolate; }
   .poster, .v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .v { opacity: 0; transition: opacity 280ms var(--ease); }
   .live .v.on { opacity: 1; }
-  /* With a mouse, a play badge follows the pointer over the picture. */
-  .cur { position: absolute; z-index: 3; left: 0; top: 0; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; display: grid; place-items: center; background: var(--pink); color: var(--ink);
-    pointer-events: none; opacity: 0; translate: var(--cx, 50%) var(--cy, 50%); scale: .4; transition: opacity 220ms var(--ease), scale 260ms var(--ease); }
+  .cur { position: absolute; z-index: 3; left: var(--cx, 50%); top: var(--cy, 50%); width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; display: grid; place-items: center; background: var(--pink); color: var(--ink);
+    pointer-events: none; opacity: 0; scale: .4; transition: opacity 220ms var(--ease), scale 260ms var(--ease); }
   .cur svg { width: 20px; height: 20px; margin-left: 3px; fill: currentColor; }
   .m-screen.hover .cur { opacity: 1; scale: 1; }
   .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(180deg, rgba(0, 0, 0, .5), transparent 24%, transparent 72%, rgba(0, 0, 0, .38)); }
@@ -320,7 +350,7 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
   .bars i { flex: 1; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, .32); }
   .bars b { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
   .m-top { position: absolute; z-index: 2; left: 14px; right: 10px; top: 24px; display: flex; justify-content: space-between; align-items: start; gap: 10px; color: #fff; }
-  .m-cap { display: grid; gap: 3px; margin: 0; font-weight: 700; font-size: clamp(13px, 2cqh, 16px); letter-spacing: -0.01em; line-height: 1.15; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
+  .m-cap { display: grid; gap: 3px; margin: 0; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; line-height: 1.15; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
   .m-cap small { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; opacity: .8; font-variant-numeric: tabular-nums; }
   .ctl { flex: none; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, .18); color: #fff; cursor: pointer;
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); transition: background 200ms var(--ease); }
@@ -328,75 +358,45 @@ const subs = [[3, 15], [18, 31], [34, 47], [50, 62], [65, 79], [82, 96]];
   .ctl svg { width: 14px; height: 14px; fill: currentColor; }
   .ctl .i-play, .held .ctl .i-pause { display: none; }
   .held .ctl .i-play { display: block; margin-left: 2px; }
-  .snd { position: absolute; z-index: 2; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px 10px 12px; border: 0; border-radius: 999px;
+  .snd { position: absolute; z-index: 2; left: 50%; bottom: 16px; translate: -50% 0; display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px 11px 13px; border: 0; border-radius: 999px; white-space: nowrap;
     background: #fff; color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; cursor: pointer; box-shadow: 0 10px 24px -10px rgba(0, 0, 0, .5);
-    transition: background 200ms var(--ease), transform 300ms var(--ease); }
-  .snd:hover { background: var(--pink); transform: translateY(-2px); }
+    transition: background 200ms var(--ease), translate 300ms var(--ease); }
+  .snd:hover { background: var(--pink); translate: -50% -2px; }
   .snd svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .snd svg path:first-child { fill: currentColor; }
   .playing .snd .w1 { animation: wv 1.4s ease-in-out infinite; }
   .playing .snd .w2 { animation: wv 1.4s .2s ease-in-out infinite; }
   @keyframes wv { 50% { opacity: .25; } }
-  .snd:focus-visible { box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px #fff; }
+  .snd:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ink), 0 0 0 5px #fff; }
   .ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
-  /* The edit timeline: video, music and subtitle tracks, the hook marked over the first two seconds, a playhead. */
-  .tl { position: absolute; z-index: 2; right: calc(42% + 3cqh); bottom: 4cqh; width: min(350px, 70cqw);
-    transform: translate(calc(var(--mx) * -14px), calc(var(--my) * -10px)); transition: transform 900ms var(--ease); }
-  .tl-in { padding: 12px 14px 14px; background: var(--surface); color: var(--ink); border: 1px solid var(--ink); border-radius: 16px; box-shadow: var(--lift-l);
-    animation: slide 1000ms 900ms cubic-bezier(.16, 1, .3, 1) both; }
-  @keyframes slide { from { opacity: 0; transform: translateX(-36px); } }
-  .tl-head { display: flex; align-items: center; gap: 8px; margin: 0 0 20px; font-size: 12px; }
-  .tl-head b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: -0.01em; }
-  .rec { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #E5484D; }
-  .playing .rec { animation: blink 1.2s steps(2, jump-none) infinite; }
-  @keyframes blink { 50% { opacity: .25; } }
-  .tc { flex: none; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--fg-2); }
-  .tl-body { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
-  .tl-labels { display: grid; grid-template-rows: 30px 20px 10px; gap: 6px; align-items: center; font-size: 9px; font-weight: 700; letter-spacing: .06em; color: var(--fg-3); }
-  .tl-tracks { position: relative; display: grid; grid-template-rows: 30px 20px 10px; gap: 6px; }
-  .trk { position: relative; display: block; border-radius: 5px; overflow: hidden; }
-  .film { background: var(--surface-2) center / 100% 100%; box-shadow: 0 0 0 1px rgba(0, 0, 0, .12) inset; }
-  .wave .w { position: absolute; inset: 0; display: flex; align-items: center; gap: 2px; }
-  .wave i { flex: 1; height: calc(var(--h) * 100%); border-radius: 2px; background: rgba(0, 0, 0, .16); }
-  .wave .on i { background: var(--mat); }
-  .wave .on { clip-path: inset(0 calc((1 - var(--p)) * 100%) 0 0); }
-  .subs i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: var(--yellow); box-shadow: 0 0 0 1px rgba(0, 0, 0, .14) inset; }
-  .hook { position: absolute; z-index: 1; left: 0; top: -4px; bottom: -4px; width: calc(100% / 6); border-radius: 6px; background: rgba(244, 193, 196, .38); box-shadow: 0 0 0 1.5px var(--pink) inset; transition: background 300ms var(--ease); }
-  .at-hook .hook { background: rgba(244, 193, 196, .62); }
-  .hook em { position: absolute; left: 0; bottom: calc(100% + 3px); padding: 2px 6px; border-radius: 4px; background: var(--pink); font: 700 9px/1.3 var(--font); font-style: normal; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
-  .head { position: absolute; z-index: 2; top: -8px; bottom: -6px; left: calc(var(--p) * 100%); width: 2px; margin-left: -1px; background: var(--ink); }
-  .head::before { content: ''; position: absolute; top: 0; left: -4px; border: 5px solid transparent; border-top: 6px solid var(--ink); border-bottom: 0; }
+  /* What the reel is, shown on black once the lights are down. */
+  .credits { position: relative; z-index: 3; display: none; color: #fff; opacity: var(--cred); }
+  .anim .credits { display: flex; }
+  .cine .credits { position: absolute; left: 0; right: 0; bottom: clamp(28px, 5vh, 56px); max-width: var(--wide); margin-inline: auto; padding-inline: var(--gutter);
+    justify-content: space-between; align-items: end; gap: 24px; pointer-events: none; }
+  .cine .credits > * { width: calc(50% - min(23vw, (100svh - 112px) * 9 / 32) - 40px); }
+  .credits a { pointer-events: auto; }
+  .cr-k { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 255, 255, .6); }
+  .cr-line { margin: 0; font-weight: 700; font-size: clamp(20px, 1.8vw, 28px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+  .cr-r { display: flex; justify-content: flex-end; }
+  .cr-cta { font-size: 16px; color: #fff; }
 
-  /* The price sticker, stuck on the mat beside the monitor. */
-  .stick { position: absolute; z-index: 2; left: calc(58% + 19cqh); top: 30cqh; width: clamp(96px, 15cqh, 124px);
-    transform: translate(calc(var(--mx) * 22px), calc(var(--my) * 16px)); transition: transform 900ms var(--ease); }
-  .stick-in { aspect-ratio: 1; border-radius: 50%; display: grid; place-content: center; gap: 2px; text-align: center; background: var(--yellow); color: var(--ink); border: 1px solid var(--ink); transform: rotate(-12deg);
-    box-shadow: var(--lift); animation: stamp 620ms 1300ms cubic-bezier(.3, 1.6, .5, 1) both; }
-  @keyframes stamp { from { opacity: 0; transform: rotate(-12deg) scale(1.6); } }
-  .stick small { font-size: 12px; font-weight: 700; }
-  .stick b { font-size: clamp(20px, 3.4cqh, 26px); letter-spacing: -0.04em; line-height: 1; }
-
-  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); } .tl { width: min(300px, 64cqw); } }
-  /* One column: the stage sits under the copy, the mat runs the full width and the timeline sits under the monitor. */
+  @media (max-width: 1200px) and (min-width: 961px) { .h-grid { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); } }
+  /* One column: the reel sits under the copy, and the lights go down as it scrolls up the screen. */
   @media (max-width: 960px) {
-    .h-grid { grid-template-columns: 1fr; min-height: 0; gap: clamp(36px, 6vw, 56px); }
-    .stage { height: auto; container-type: normal; display: grid; justify-items: center; padding: 44px 0 30px; clip-path: inset(0 -100vw); }
-    .stage-mat { left: calc(50% - 50vw); right: calc(50% - 50vw); border-radius: 0; border-inline: 0; animation: none; }
-    .monitor { position: relative; top: auto; left: auto; height: auto; width: min(320px, 74vw); }
-    .tl { position: relative; right: auto; bottom: auto; width: min(420px, 100%); margin-top: -64px; transform: none; }
-    .snd { bottom: 76px; }
-    .stick { top: 40%; left: auto; right: max(0px, calc(50% - 250px)); width: 100px; }
-    .stick b { font-size: 22px; white-space: nowrap; }
+    .h-grid { grid-template-columns: 1fr; min-height: 0; gap: clamp(36px, 6vw, 56px); padding-bottom: 28px; }
+    .slot { height: auto; padding-block: 12px; }
+    .slot::before { width: min(116vw, 640px); max-width: none; }
+    .monitor { height: auto; width: min(330px, 78vw); transform: none; }
+    .anim .credits { flex-direction: column; gap: 14px; padding: 8px var(--gutter) 56px; text-align: center; align-items: center; }
+    .cr-r { justify-content: center; }
   }
   @media (max-width: 560px) {
     .big-btn { padding: 15px 20px; font-size: 15px; } .h-copy .actions { width: 100%; } .h-copy .actions .btn { flex: 1 1 auto; }
-    .stick { width: 86px; right: -4px; }
-    .stick b { font-size: 19px; } .stick small { font-size: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .rise, .up, .pulse::after, .replay, .stage-mat, .monitor, .tl-in, .stick-in { animation: none; }
-    .m-frame, .tl, .stick { transition: none; }
+    .rise, .up, .pulse::after, .replay, .slot::before, .monitor { animation: none; }
   }
 
   /* The formats we make, running in a band under the hero. */
