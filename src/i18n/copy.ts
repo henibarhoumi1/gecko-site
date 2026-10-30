@@ -13,7 +13,7 @@ const en = {
     kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     // The two crossing bands before pricing.
     bands: { big: ['Plans from 999 TND', 'Launch prices until 31 December 2026', 'For our first 5 clients'], small: ['Ads made to be watched twice', 'Scripts approved before the shoot', 'First draft 7 days after the shoot'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
-    monitor: { label: 'Reels from the Glucélia case study', reel: 'Reel', sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', hook: 'Hook', show: 'Show reel', kick: 'Work · Case study', line: 'One product, four ways in, made at CreativesLab in 2026.', cta: 'See the case study', list: 'The four reels' },
+    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', credit: 'On screen: Glucélia, four reels made at CreativesLab in 2026.', cta: 'See the case study', from: 'Plans from 999 TND. Launch prices for our first 5 clients.' },
     sub: 'We develop, shoot and edit short video ads for brands, plus launches and brand films when the idea calls for more.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -255,7 +255,7 @@ const fr: Copy = {
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Offres dès 999 TND', 'Prix de lancement jusqu’au 31 décembre 2026', 'Pour nos 5 premiers clients'], small: ['Des pubs faites pour être revues', 'Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
-    monitor: { label: 'Reels de l’étude de cas Glucélia', reel: 'Reel', sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', hook: 'Accroche', show: 'Afficher le reel', kick: 'Réalisations · Étude de cas', line: 'Un produit, quatre angles, réalisés chez CreativesLab en 2026.', cta: 'Voir l’étude de cas', list: 'Les quatre reels' },
+    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', credit: 'À l’écran\u00a0: Glucélia, quatre reels réalisés chez CreativesLab en 2026.', cta: 'Voir l’étude de cas', from: 'Offres dès 999 TND. Prix de lancement pour nos 5 premiers clients.' },
     sub: 'On conçoit, tourne et monte des pubs vidéo courtes pour les marques, ainsi que des lancements et des films de marque quand l’idée demande plus.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',

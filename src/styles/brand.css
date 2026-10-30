@@ -1,6 +1,6 @@
 /* Gecko brand tokens. White pages, black type and ink lines, pink and yellow accents, one sans family.
-   Green is the studio's working surface: the hero carries its cutting-mat texture, and it marks ticks and
-   selected states. A few bands go black (the ticker, the reels, the footer) and flip the theme with .on-black. */
+   Green marks ticks and selected states. A few bands go black (the home hero, the ticker, the reels, the footer)
+   and flip the theme with .on-black. */
 
 :root {
   --pink: #F4C1C4;

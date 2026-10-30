@@ -82,10 +82,13 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   const burger = header.querySelector<HTMLButtonElement>('[data-burger]')!;
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
   // Solid once you leave the top; hidden while reading down, back on the way up. A few pixels of slack stop flicker.
+  // Over a dark hero the bar turns light on dark until the hero has gone by.
+  const dark = document.querySelector<HTMLElement>('[data-hero-dark]');
   let last = scrollY, ticking = false;
   const update = () => {
     const y = scrollY, d = y - last;
     header.classList.toggle('solid', y > 24);
+    if (dark) header.classList.toggle('over', dark.getBoundingClientRect().bottom > 72);
     if (y < 160 || header.classList.contains('open')) header.classList.remove('away');
     else if (d > 6) header.classList.add('away');
     else if (d < -6) header.classList.remove('away');
@@ -153,6 +156,9 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
     border: var(--line) solid transparent; border-radius: 999px; background: transparent;
     transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
   .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-color: var(--hair); box-shadow: 0 14px 34px -22px rgba(0, 0, 0, .35); }
+  .over .bar { --fg: #FFFFFF; --bg: #000000; --hair: rgba(255, 255, 255, .16); --hair-2: rgba(255, 255, 255, .42); --tint: rgba(255, 255, 255, .08); --tint-2: rgba(255, 255, 255, .14); color: #fff; }
+  .over.solid .bar { background: rgba(18, 18, 18, .55); border-color: rgba(255, 255, 255, .12); box-shadow: 0 14px 34px -22px rgba(0, 0, 0, .7); }
+  .over .lang-m { --fg: #000000; --surface: #FFFFFF; --edge: #000000; --tint: rgba(0, 0, 0, .035); }
   .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
   .brand:hover { transform: rotate(-4deg) scale(1.04); }
