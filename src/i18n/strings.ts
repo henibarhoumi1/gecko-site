@@ -176,7 +176,7 @@ export const strings = {
       { q: 'Do you take on bigger productions?', a: 'Yes, for the right brief: launch campaigns, brand films, special campaigns and product films. Each one is scoped and quoted from your brief.' },
     ],
     contact: { whatsapp: 'WhatsApp', email: 'Email', instagram: 'Instagram' },
-    footer: { legal: 'Legal notice', address: 'Tunis, Tunisia' },
+    footer: { legal: 'Legal notice', address: 'Tunis, Tunisia', portal: 'Client login' },
     legal: {
       title: 'Legal notice and privacy',
       pending: 'Company details (name, tax number, address) will be published here once registration is complete.',
@@ -358,7 +358,7 @@ export const strings = {
       { q: 'Prenez-vous des productions plus grandes ?', a: 'Oui, pour le bon brief : campagnes de lancement, films de marque, campagnes spéciales et films produit. Chacun est chiffré selon votre brief.' },
     ],
     contact: { whatsapp: 'WhatsApp', email: 'E-mail', instagram: 'Instagram' },
-    footer: { legal: 'Mentions légales', address: 'Tunis, Tunisie' },
+    footer: { legal: 'Mentions légales', address: 'Tunis, Tunisie', portal: 'Espace client' },
     legal: {
       title: 'Mentions légales et confidentialité',
       pending: 'Les informations de la société (nom, matricule fiscal, adresse) seront publiées ici une fois l’immatriculation terminée.',

@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   // The live address, used for canonical links, the sitemap and share previews.
-  site: 'https://gecko-site-theta.vercel.app',
+  site: 'https://gecko-creative.com',
   trailingSlash: 'always',
   // Styles go inside each page, so a page never shows up unstyled if a separate stylesheet fails to load.
   build: { inlineStylesheets: 'always' },
