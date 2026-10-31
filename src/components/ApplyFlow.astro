@@ -1,4 +1,5 @@
 ---
+import { mark } from '../i18n/mark';
 // The brief, one tap at a time. Questions branch on earlier answers (no ad budget question if they don't run ads,
 // no "what do you sell" for an event), and the brief card fills in as they go and names the plan that fits.
 // With a Web3Forms key it emails Gecko; without one it opens WhatsApp with the brief filled in. Once it is sent,
@@ -16,6 +17,7 @@ const a = c(lang).apply;
 const s = t(lang).apply;
 const ct = t(lang).contact;
 const H = heading;
+const [t0, t1] = mark(a.title);
 const qs = a.qs as { key: string; q: string; row: string; multi?: boolean; hint?: string; when?: Record<string, number[]>; opts: string[][] }[];
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
@@ -43,7 +45,7 @@ const recs: Record<string, string> = {
 <div class="apply">
   <div class="lead stack" style="--gap:22px">
     <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
-    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{a.title}</H>
+    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{t0}<span class="hl">{t1}</span></H>
     <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
 
     <div class="brief rv" style="--d:180ms" data-brief aria-live="polite">

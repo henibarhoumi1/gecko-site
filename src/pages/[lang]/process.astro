@@ -1,16 +1,19 @@
 ---
+import { mark } from '../../i18n/mark';
 import Base from '../../layouts/Base.astro';
+import Workspace from '../../components/Workspace.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const p = c(lang).process;
+const [t0, t1] = mark(p.title);
 ---
 <Base lang={lang} title={p.title} page="process">
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:22px">
-      <h1 class="h1 rv">{p.title}</h1>
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text text-l lede rv" style="--d:80ms">{p.sub}</p>
     </div>
   </section>
@@ -32,6 +35,8 @@ const p = c(lang).process;
       <p class="monthly rv">{p.monthly}</p>
     </div>
   </section>
+
+  <Workspace lang={lang} cta={false} />
 </Base>
 
 <script>

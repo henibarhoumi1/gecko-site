@@ -1,79 +1,100 @@
 ---
-// The Glucélia case study: who it was for, the reels, the creative choices behind them and the people who made them.
+// Work: the reels laid out on the cutting mat with their idea and format, the formats we make, and one small credit line.
+// Why each reel works sits inside the full-screen viewer, for whoever wants it.
 import Base from '../../layouts/Base.astro';
 import ReelCard from '../../components/ReelCard.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
-import Choices from '../../components/Choices.astro';
-import { type Locale } from '../../i18n/strings';
+import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
 import { ads } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const w = c(lang).work;
+const formats = t(lang).home.formats;
+const pad = (n: number) => String(n).padStart(2, '0');
+// A format with a reel on this page carries the pink marker and jumps to that reel.
+const low = (x: string) => x.toLowerCase();
+const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWith(low(a.format[lang])));
 ---
-<Base lang={lang} title={`${w.title}${lang === 'fr' ? '\u00a0: ' : ': '}${w.client}`} page="work">
-  <section class="case-head lit">
+<Base lang={lang} title={w.title} page="work">
+  <section class="page-head lit">
     <div class="wrap wide">
-      <p class="case-tag rv">{w.label}</p>
-      <h1 class="name rv" style="--d:60ms">{w.client}</h1>
-      <div class="intro-row">
-        <dl class="facts rv" style="--d:180ms">
-          {w.facts.map(([k, v]) => <div><dt class="label">{k}</dt><dd>{v}</dd></div>)}
-        </dl>
-      </div>
+      <h1 class="h1 w-h rv"><span class="hl">{w.title}</span>.</h1>
+      <p class="text-l lede rv" style="--d:80ms">{w.lead}</p>
     </div>
   </section>
 
-  <section class="on-black reels-sec">
-    <div class="wrap">
-      <div class="head rv"><h2 class="h2">{w.reelsTitle}</h2><p class="hint">{w.soundHint}</p></div>
-      <div class={`reels scroll-row n${ads.length}`} data-swipe>
-        {ads.map((a, i) => <div class="rv" style={`--d:${i * 80}ms`}><ReelCard ad={a} i={i} lang={lang} eager={i < 4} /></div>)}
-      </div>
+  <section class="on-mat wall-sec">
+    <div class="ruler" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <span>{i * 5}</span>)}</div>
+    <div class="wrap wide">
+      <p class="hint rv">{w.hint}</p>
+      <ol class={`wall n${ads.length}`}>
+        {ads.map((a, i) => (
+          <li class="rv" id={`reel-${i + 1}`} style={`--d:${i * 80}ms`}>
+            <span class="tp" aria-hidden="true"></span>
+            <ReelCard ad={a} i={i} lang={lang} eager={i < 4} />
+            <p class="cap"><b>{pad(i + 1)}</b><span>{a.angle[lang]}</span>{a.format && <i>{a.format[lang]}</i>}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   </section>
 
-  <section class="section choices-sec">
-    <div class="wrap"><Choices lang={lang} title={w.choicesTitle} /></div>
-  </section>
-  <section class="section team-sec">
-    <div class="wrap wide team">
-      <p class="label rv">{w.team}</p>
-      <ul class="people">
-        {w.people.map((p, i) => <li class="rv" style={`--d:${i * 80}ms`}>{p}</li>)}
+  <section class="section formats-sec">
+    <div class="wrap wide">
+      <div class="head rv"><h2 class="h2">{w.formatsTitle}</h2><p class="sub">{w.formatsSub}</p></div>
+      <ul class="formats">
+        {formats.map((f, i) => {
+          const r = reelFor(f);
+          return (
+            <li class="rv" style={`--d:${Math.min(i, 8) * 40}ms`}>
+              {r >= 0 ? <a href={`#reel-${r + 1}`}><span class="hl">{f}</span> <sup>{pad(r + 1)}</sup></a> : <span>{f}</span>}
+            </li>
+          );
+        })}
       </ul>
+      <p class="credit rv">{w.credit} {w.credits}{lang === 'fr' ? ' : ' : ': '}{w.people.join(', ')}.</p>
     </div>
   </section>
 
   <ReelViewer lang={lang} />
 </Base>
 <style>
-  .case-head { padding-top: calc(var(--header) + clamp(56px, 8vw, 120px)); padding-bottom: clamp(48px, 6vw, 88px); }
-  .case-tag { margin: 0 0 18px; font-weight: 600; font-size: 14px; color: var(--fg-2); }
-  .name { margin: 0; font-weight: 700; font-size: clamp(72px, 15vw, 240px); line-height: .86; letter-spacing: -0.065em; }
-  .intro-row { margin-top: clamp(28px, 4vw, 56px); padding-top: 24px; border-top: 1px solid var(--hair-2); }
-  .facts { margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 24px; }
-  .facts > div + div { padding-left: clamp(16px, 2vw, 28px); border-left: 1px solid var(--hair); }
-  .facts dd { margin: 4px 0 0; font-weight: 700; font-size: clamp(20px, 1.8vw, 26px); letter-spacing: -0.02em; }
-  .reels-sec { padding-block: var(--section); }
-  .hint { margin: 0; font-size: 15px; color: var(--fg-2); }
-  .reels { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 28px); }
-  .reels.n2 { grid-template-columns: repeat(2, minmax(0, 320px)); }
-  .reels.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .team { display: grid; gap: 22px; }
-  .team .label { margin: 0; }
-  .people { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 0; }
-  .people li { font-weight: 700; font-size: clamp(32px, 5.4vw, 84px); line-height: 1.02; letter-spacing: -0.05em; }
-  .people li:not(:last-child)::after { content: ','; margin-right: .35em; }
-  .team-sec { border-top: 1px solid var(--hair); }
-  @media (max-width: 860px) {
-    .facts { grid-template-columns: 1fr 1fr; }
-    .facts > div + div:nth-child(odd) { padding-left: 0; border-left: 0; }
-    .reels.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w-h { font-size: clamp(64px, 12vw, 200px); line-height: .9; letter-spacing: -0.06em; }
+  .page-head .lede { margin: clamp(18px, 2vw, 28px) 0 0; }
+
+  .wall-sec { padding-block: clamp(56px, 7vw, 104px) clamp(64px, 8vw, 120px); }
+  .hint { margin: 0 0 clamp(28px, 3vw, 44px); font-size: 14px; font-weight: 600; color: var(--fg-2); }
+  .wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 36px); }
+  .wall li { position: relative; scroll-margin-top: calc(var(--header) + 24px); }
+  .wall li:nth-child(odd) { transform-origin: 50% 0; }
+  .wall li.in:nth-child(4n+1) { rotate: -1.2deg; } .wall li.in:nth-child(4n+2) { rotate: .8deg; }
+  .wall li.in:nth-child(4n+3) { rotate: -.6deg; } .wall li.in:nth-child(4n) { rotate: 1.1deg; }
+  /* Two strips of yellow tape hold each reel to the mat. */
+  .tp { position: absolute; z-index: 3; inset: 0 0 52px 0; pointer-events: none; }
+  .tp::before, .tp::after { content: ''; position: absolute; width: clamp(40px, 4vw, 64px); height: clamp(14px, 1.3vw, 20px); background: var(--yellow); opacity: .95;
+    clip-path: polygon(0 10%, 8% 0, 16% 12%, 24% 2%, 76% 0, 84% 10%, 92% 0, 100% 8%, 100% 92%, 92% 100%, 84% 90%, 76% 100%, 24% 98%, 16% 88%, 8% 100%, 0 90%); }
+  .tp::before { left: -12px; top: 12px; transform: rotate(-38deg); }
+  .tp::after { right: -12px; top: 12px; transform: rotate(38deg); }
+  .cap { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0; font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.015em; }
+  .cap b { flex: none; font-size: 11px; letter-spacing: .1em; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+  .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 13px; font-weight: 600; color: var(--fg-2); }
+
+  .formats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-2); }
+  .formats li { padding: clamp(12px, 1.2vw, 18px) 0; border-bottom: 1px solid var(--hair); font-weight: 700; font-size: clamp(24px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.045em; }
+  .formats a { color: var(--fg); text-decoration: none; }
+  .formats a:hover sup { color: var(--fg); }
+  .formats sup { font-size: 12px; letter-spacing: .06em; color: var(--fg-3); vertical-align: super; }
+  .formats a:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
+  .credit { margin: clamp(40px, 5vw, 72px) 0 0; max-width: 46rem; font-size: 14px; line-height: 1.5; color: var(--fg-3); }
+
+  @media (max-width: 960px) {
+    .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
+    .formats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .cap i { display: none; }
   }
-  @media (max-width: 760px) {
-    .reels :global(.reel) { transform: translateY(calc((1 - var(--near, 1)) * 22px)) scale(calc(.86 + .14 * var(--near, 1))); opacity: calc(.55 + .45 * var(--near, 1)); transform-origin: 50% 60%; }
-    .reels > * { flex-basis: 72%; }
-  }
+  @media (max-width: 520px) { .formats { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .wall li.in { rotate: none !important; } }
 </style>

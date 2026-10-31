@@ -45,22 +45,6 @@ export const monthly: Offer[] = [
   },
 ];
 
-export const campaign: Offer = {
-  key: 'campaign', name: 'Campaign', launch: 3600, standard: 4800, monthly: false,
-  items: {
-    en: ['For a launch, an opening, Ramadan or a season', 'Concept and 1 production day', '10 reels, 2 carousels'],
-    fr: ['Pour un lancement, une ouverture, Ramadan ou une saison', 'Concept et 1 journée de production', '10 reels, 2 carrousels'],
-  },
-};
-
-export const audit = {
-  name: 'Ad Audit', price: 150,
-  text: {
-    en: 'Not ready to shoot? A 20-minute video review of your current ads and Instagram, plus 5 hook ideas for your products. Fully credited if you book a Test within 30 days.',
-    fr: 'Pas prêt à tourner ? Une revue vidéo de 20 minutes de vos pubs et de votre Instagram, plus 5 idées d’accroche pour vos produits. Entièrement déduite si vous réservez un Test sous 30 jours.',
-  },
-};
-
 // Everything the pricing sections show, in order: the monthly plans first, then the Test as the way in.
 export const plans: Offer[] = [...monthly, test];
 

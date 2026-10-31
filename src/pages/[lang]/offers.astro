@@ -6,6 +6,7 @@ import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
+import { mark } from '../../i18n/mark';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -13,11 +14,12 @@ const o = s.offers;
 const k = c(lang).offers;
 const p = c(lang).plans;
 const h = c(lang).home;
+const [t0, t1] = mark(k.title);
 ---
 <Base lang={lang} title={o.title} page="offers">
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:22px">
-      <h1 class="h1 rv">{k.title}</h1>
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text text-l lede rv" style="--d:80ms">{k.sub}</p>
     </div>
   </section>
@@ -36,7 +38,7 @@ const h = c(lang).home;
       <div class="split">
         {[k.make, k.run, k.costs].map((x, i) => (
           <article class="part rv" style={`--d:${i * 70}ms`}>
-            <p class="tag-pill">{x.tag}</p>
+            <p class="tag-l"><span class="tape flat">{x.tag}</span></p>
             <h3 class="h3">{x.t}</h3>
             <p class="text">{x.d}</p>
           </article>
@@ -68,6 +70,15 @@ const h = c(lang).home;
     </div>
   </section>
 
+  <section class="section paying-sec">
+    <div class="wrap wide paying">
+      <h2 class="h2 rv">{k.pay.title}</h2>
+      <dl class="rows">
+        {k.pay.rows.map(([a, b], i) => <div class="rv" style={`--d:${i * 50}ms`}><dt>{a}</dt><dd>{b}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+
   <section class="section faq-sec">
     <div class="wrap wide faq-grid">
       <div class="faq-lead rv">
@@ -96,7 +107,15 @@ const h = c(lang).home;
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
   .part { display: grid; gap: 12px; align-content: start; padding-top: 22px; border-top: 1px solid var(--hair-2); }
   .part .text { margin: 0; color: var(--fg-2); }
-  .tag-pill { margin: 0; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .tag-l { margin: 0 0 4px; }
+  .paying-sec { border-top: 1px solid var(--hair); }
+  .paying { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .paying .h2 { max-width: 10ch; }
+  .rows { margin: 0; border-top: 1px solid var(--hair-2); }
+  .rows > div { display: grid; grid-template-columns: minmax(140px, .5fr) minmax(0, 1fr); gap: 8px 32px; padding: clamp(16px, 1.6vw, 22px) 0; border-bottom: 1px solid var(--hair); }
+  .rows dt { font-weight: 700; letter-spacing: -0.01em; }
+  .rows dd { margin: 0; color: var(--fg-2); }
+  @media (max-width: 860px) { .paying, .rows > div { grid-template-columns: 1fr; } }
   .every { margin-top: clamp(40px, 4.4vw, 64px); padding-top: 22px; display: grid; grid-template-columns: auto 1fr; gap: 16px 40px; align-items: baseline; border-top: 1px solid var(--hair); }
   .every .ticks-list { display: flex; flex-wrap: wrap; gap: 12px 32px; }
   .every .ticks-list li { white-space: nowrap; font-size: 15px; }

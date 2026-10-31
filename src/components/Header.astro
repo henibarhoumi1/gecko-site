@@ -13,10 +13,10 @@ const { lang } = Astro.props;
 const n = c(lang).nav;
 const path = Astro.url.pathname;
 const links = [
-  [href(lang, 'work'), n.work], [href(lang, 'process'), n.process], [href(lang, 'offers'), n.offers], [href(lang, 'about'), n.about], [href(lang, 'contact'), n.contact],
+  [href(lang, 'work'), n.work], [href(lang, 'offers'), n.offers], [href(lang, 'process'), n.process], [href(lang, 'about'), n.about], [href(lang, 'contact'), n.contact],
 ] as const;
 const panel = [
-  [href(lang, 'work'), n.work, n.desc.work], [href(lang, 'process'), n.process, n.desc.process], [href(lang, 'offers'), n.offers, n.desc.offers],
+  [href(lang, 'work'), n.work, n.desc.work], [href(lang, 'offers'), n.offers, n.desc.offers], [href(lang, 'process'), n.process, n.desc.process],
   [href(lang, 'about'), n.about, n.desc.about], [href(lang, 'faq'), n.faq, n.desc.faq], [href(lang, 'contact'), n.contact, n.desc.contact],
 ] as const;
 const langs = [
@@ -40,7 +40,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
       <div class="lang" data-lang>
         <button type="button" class="lang-b" aria-expanded="false" aria-controls="lang-m" aria-label={n.lang} data-lang-b><svg class="globe" viewBox="0 0 24 24" aria-hidden="true" set:html={globe} /><span>{here.short}</span></button>
         <ul class="lang-m" id="lang-m" data-lang-m hidden>
-          {langs.map((x) => <li><a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}>{x.name}<span class="tick" aria-hidden="true">✓</span></a></li>)}
+          {langs.map((x) => <li><a href={x.url} hreflang={x.l} lang={x.l} aria-current={x.l === lang ? 'true' : undefined}>{x.name}<span class="tick" aria-hidden="true">•</span></a></li>)}
         </ul>
       </div>
       <a class="btn primary cta" href={href(lang, 'apply')}>{n.apply}<span class="ca" aria-hidden="true">→</span></a>

@@ -1,15 +1,16 @@
 ---
-// The creative choices behind the Glucélia reels, numbered on thin lines in two columns. The Work page shows them under
-// the reels; the home page shows them right after the work, ending on a link through to the case study.
-import { c } from '../i18n/copy';
-import type { Locale } from '../i18n/strings';
-interface Props { lang: Locale; title: string; link?: { href: string; label: string } }
-const { lang, title, link } = Astro.props;
-const w = c(lang).work;
+// A numbered list of short ideas on thin lines, in two columns: the home page uses it for how an ad gets made, right
+// after the work. It can end on text links.
+interface Props { title: string; items: { t: string; d: string }[]; links?: { href: string; label: string }[] }
+const { title, items, links = [] } = Astro.props;
+// The last two words of the title carry the pink marker.
+const words = title.split(' ');
+const lead = words.slice(0, -2).join(' ');
+const tail = words.slice(-2).join(' ');
 ---
-<div class="head rv"><h2 class="h2 ch-h">{title}</h2></div>
+<div class="head rv"><h2 class="h2 ch-h">{lead} <span class="hl">{tail}</span></h2></div>
 <ol class="choices">
-  {w.choices.map((ch, i) => (
+  {items.map((ch, i) => (
     <li class="rv" style={`--d:${i * 70}ms`}>
       <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
       <h3 class="t">{ch.t}</h3>
@@ -17,17 +18,22 @@ const w = c(lang).work;
     </li>
   ))}
 </ol>
-{link && <a class="more rv" href={link.href}><span class="lb">{link.label}</span> <span class="ar" aria-hidden="true">→</span></a>}
+{links.length > 0 && (
+  <p class="more-row rv">
+    {links.map((l) => <a class="more" href={l.href}><span class="lb">{l.label}</span> <span class="ar" aria-hidden="true">→</span></a>)}
+  </p>
+)}
 
 <style>
-  .ch-h { max-width: 14ch; }
+  .ch-h { max-width: 16ch; }
   .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--hair); }
   .choices li { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 3vw, 44px) clamp(0px, 2vw, 32px) clamp(24px, 3vw, 44px) 0; border-bottom: 1px solid var(--hair); }
   .choices li:nth-child(even) { padding-left: clamp(20px, 3vw, 44px); border-left: 1px solid var(--hair); }
-  .n { font-weight: 700; font-size: 14px; color: var(--fg-3); }
+  .n { font-weight: 700; font-size: 14px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
   .t { margin: 0; font-weight: 700; font-size: clamp(26px, 2.6vw, 40px); line-height: 1.04; letter-spacing: -0.04em; max-width: 16ch; }
   .text { margin: 0; max-width: 30rem; color: var(--fg-2); }
-  .more { display: inline-flex; align-items: baseline; gap: .35em; margin-top: clamp(32px, 4vw, 56px); font-weight: 700; font-size: clamp(28px, 3.6vw, 56px); line-height: 1; letter-spacing: -0.045em; color: var(--fg); text-decoration: none; }
+  .more-row { display: flex; flex-wrap: wrap; gap: 12px clamp(28px, 4vw, 64px); margin: clamp(32px, 4vw, 56px) 0 0; }
+  .more { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(24px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.045em; color: var(--fg); text-decoration: none; }
   /* The pink marker from the headline swipes under the link on hover. */
   .lb { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 80% / 0 38% no-repeat; transition: background-size 520ms var(--ease); }
   .ar { transition: transform 360ms var(--ease); }

@@ -1,4 +1,5 @@
 ---
+import { mark } from '../../i18n/mark';
 import Wa from '../../components/Wa.astro';
 import Base from '../../layouts/Base.astro';
 import ContactForm from '../../components/ContactForm.astro';
@@ -11,6 +12,7 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const k = c(lang).contact;
 const n = c(lang).nav;
+const [t0, t1] = mark(k.title);
 // Line icons drawn in SVG, so they look the same on every phone and computer (emoji differ a lot on Windows).
 const icons = {
   call: '<path d="M6.6 3.5h2.6l1.5 4-2 1.3a10.5 10.5 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2.1 2.1 0 0 1-2.3 2.1A16.5 16.5 0 0 1 4.5 5.8a2.1 2.1 0 0 1 2.1-2.3z"/>',
@@ -27,7 +29,7 @@ const ways = [
 <Base lang={lang} footerCta={false} title={n.contact} page="contact">
   <section class="page-head lit">
     <div class="wrap wide stack" style="--gap:20px">
-      <h1 class="h1 rv">{k.title}</h1>
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
     </div>
   </section>
 

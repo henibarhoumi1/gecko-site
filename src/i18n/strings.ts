@@ -28,7 +28,6 @@ export const strings = {
       casesTitle: 'What the ad account showed',
       grid: 'Work',
       gridTitle: 'Four ads, four ideas',
-      gridHint: 'Made by Heni for Hismile and Glucélia, before Gecko. Tap an ad for sound.',
       reelLabel: 'Watch the work',
       sound: 'Sound', mute: 'Mute',
       allWork: 'All work',
@@ -55,7 +54,7 @@ export const strings = {
         cta: 'Apply',
         tap: 'Tap to skip',
       },
-      formats: ['UGC ads', 'Founder ads', 'Product demos', 'Skits', 'Street interviews', 'Before and after', 'Unboxings', 'Testimonials', 'Tutorials', 'POV ads', 'Green screen', 'Reaction ads', 'ASMR', 'Podcast clips', 'Stop motion', 'Recut ads', 'Statics', 'Carousels'],
+      formats: ['UGC ads', 'Founder ads', 'Product demos', 'Skits', 'Street interviews', 'Before and after', 'Comparisons', 'Unboxings', 'Testimonials', 'Tutorials', 'POV ads', 'Green screen', 'Reaction ads', 'ASMR', 'Podcast clips', 'Stop motion', 'Recut ads', 'Statics', 'Carousels'],
       anatomyLabel: 'Anatomy of an ad',
       anatomyTitle: 'What happens in 30 seconds',
       anatomyHint: 'Tap a part of the ad.',
@@ -155,11 +154,6 @@ export const strings = {
     about: {
       title: 'About',
       intro: 'Gecko is a video ad studio in Tunis. We make short ads for brands that sell online, and we judge them by what they sell, not by how they look.',
-      heniTitle: 'Heni Barhoumi, founder and director',
-      heniText: 'Heni writes, directs and edits every Gecko ad. Before Gecko, Heni made ads for Hismile and Glucélia: a loud dentist character, a whitening test filmed against the clock, and a switch that turns a grey dinner back into colour. You can watch all four on the home page.',
-      heniEmpty: 'Heni’s portrait',
-      crewTitle: 'On set',
-      crewEmpty: 'The crew at work',
     },
     faq: [
       { q: 'What does it cost?', a: 'The Test is 999 TND, one time: 3 reels and 1 static from a 3-hour shoot. Regular is 2,900 TND a month for 10 reels and Pro is 3,800 TND a month for 15 reels, each with 1 production day a month. Creative Partner is priced to your volume, from 20 to 100 reels a month. Launch prices are for our first 5 clients, until 31 December 2026, and exclude VAT.' },
@@ -189,7 +183,7 @@ export const strings = {
       privacyTitle: 'Privacy',
       privacy: 'The forms on this site open WhatsApp or your email app with your answers filled in, and you send them to us yourself. We use what you send only to reply to you, and we never sell or share it. To have your data deleted, write to',
     },
-    notFound: { title: 'This page doesn’t exist.', back: 'Back to home' },
+    notFound: { title: 'This page didn’t make the cut.', back: 'Back to home' },
   },
   fr: {
     meta: {
@@ -216,7 +210,6 @@ export const strings = {
       casesTitle: 'Ce que le compte publicitaire a montré',
       grid: 'Projets',
       gridTitle: 'Quatre pubs, quatre idées',
-      gridHint: 'Faites par Heni pour Hismile et Glucélia, avant Gecko. Touchez une pub pour le son.',
       reelLabel: 'Voir le travail',
       sound: 'Son', mute: 'Couper',
       allWork: 'Tous les projets',
@@ -243,7 +236,7 @@ export const strings = {
         cta: 'Postuler',
         tap: 'Touchez pour passer',
       },
-      formats: ['Pubs UGC', 'Pubs fondateur', 'Démos produit', 'Sketchs', 'Micro-trottoirs', 'Avant / après', 'Déballages', 'Témoignages', 'Tutos', 'Pubs POV', 'Fond vert', 'Pubs réaction', 'ASMR', 'Extraits podcast', 'Stop motion', 'Pubs remontées', 'Visuels fixes', 'Carrousels'],
+      formats: ['Pubs UGC', 'Pubs fondateur', 'Démos produit', 'Sketchs', 'Micro-trottoirs', 'Avant / après', 'Comparaisons', 'Déballages', 'Témoignages', 'Tutos', 'Pubs POV', 'Fond vert', 'Pubs réaction', 'ASMR', 'Extraits podcast', 'Stop motion', 'Pubs remontées', 'Visuels fixes', 'Carrousels'],
       anatomyLabel: 'Anatomie d’une pub',
       anatomyTitle: 'Ce qui se passe en 30 secondes',
       anatomyHint: 'Touchez une partie de la pub.',
@@ -343,11 +336,6 @@ export const strings = {
     about: {
       title: 'À propos',
       intro: 'Gecko est un studio de publicités vidéo à Tunis. Nous faisons des pubs courtes pour les marques qui vendent en ligne, et nous les jugeons sur ce qu’elles vendent, pas sur leur look.',
-      heniTitle: 'Heni Barhoumi, fondateur et réalisateur',
-      heniText: 'Heni écrit, réalise et monte chaque pub Gecko. Avant Gecko, Heni a fait des pubs pour Hismile et Glucélia : un dentiste haut en couleur, un test de blanchiment filmé contre la montre, et un interrupteur qui rend sa couleur à un dîner gris. Les quatre sont sur la page d’accueil.',
-      heniEmpty: 'Portrait de Heni',
-      crewTitle: 'Sur le tournage',
-      crewEmpty: 'L’équipe au travail',
     },
     faq: [
       { q: 'Combien ça coûte ?', a: 'Le Test coûte 999 TND, une seule fois : 3 reels et 1 visuel fixe, en 3 heures de tournage. Regular coûte 2 900 TND par mois pour 10 reels et Pro 3 800 TND par mois pour 15 reels, chacun avec 1 journée de production par mois. Creative Partner est chiffré selon votre volume, de 20 à 100 reels par mois. Prix de lancement réservés à nos 5 premiers clients, jusqu’au 31 décembre 2026, hors TVA.' },
@@ -377,7 +365,7 @@ export const strings = {
       privacyTitle: 'Confidentialité',
       privacy: 'Les formulaires de ce site ouvrent WhatsApp ou votre messagerie avec vos réponses déjà remplies, et c’est vous qui nous les envoyez. Nous utilisons ce que vous envoyez uniquement pour vous répondre, sans jamais le vendre ni le partager. Pour faire supprimer vos données, écrivez à',
     },
-    notFound: { title: 'Cette page n’existe pas.', back: 'Retour à l’accueil' },
+    notFound: { title: 'Cette page a été coupée au montage.', back: 'Retour à l’accueil' },
   },
 } as const;
 

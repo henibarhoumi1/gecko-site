@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import { t, type Locale } from '../i18n/strings';
 import { swapLang } from '../i18n/paths';
 import { m, type Page } from '../i18n/meta';
+import { site } from '../data/site';
 interface Props { lang: Locale; title?: string; page?: Page; description?: string; noindex?: boolean; footerCta?: boolean; theme?: string }
 const { lang, title, page, description, noindex, footerCta = true, theme = '#FFFFFF' } = Astro.props;
 const s = t(lang);
@@ -15,6 +16,12 @@ const path = Astro.url.pathname;
 // Full addresses for Google: this page, and the same page in each language (English is the default).
 const abs = (p: string) => new URL(p, Astro.site).href;
 const localised = /^\/(en|fr)(\/|$)/.test(path);
+// Who we are, for search engines: the studio, its city and how to reach it.
+const org = JSON.stringify({
+  '@context': 'https://schema.org', '@type': 'ProfessionalService', name: 'Gecko', url: abs('/'), logo: abs('/apple-touch-icon.png'),
+  description: m(lang).desc.home, email: site.email, telephone: site.phone, areaServed: 'TN',
+  address: { '@type': 'PostalAddress', addressLocality: 'Tunis', addressCountry: 'TN' }, sameAs: site.socials.map((x) => x.url),
+});
 ---
 <!doctype html>
 <html lang={lang}>
@@ -25,6 +32,7 @@ const localised = /^\/(en|fr)(\/|$)/.test(path);
     <meta name="description" content={desc} />
     <meta name="theme-color" content={theme} />
     {noindex && <meta name="robots" content="noindex" />}
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -47,6 +55,7 @@ const localised = /^\/(en|fr)(\/|$)/.test(path);
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
+    {!noindex && page === 'home' && <script type="application/ld+json" set:html={org} />}
     <script is:inline>document.documentElement.classList.add('pre'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>
   <body>

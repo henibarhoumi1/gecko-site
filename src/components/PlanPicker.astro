@@ -35,7 +35,7 @@ const start = 0;
     {plans.map((m, i) => (
       <div class="card" role="tabpanel" id={`panel-${m.key}`} aria-labelledby={`tab-${m.key}`} hidden={i !== start} data-panel={i}>
         <header>
-          <p class="fitb" hidden>✓ {p.fit}</p>
+          <p class="fitb" hidden><span>{p.fit}</span></p>
           <h3 class="name">{m.name}</h3>
           {m.for && <p class="for">{m.for[lang]}</p>}
         </header>
@@ -48,7 +48,7 @@ const start = 0;
               <span class="unit">{cur} {m.once ? p.once : p.month}</span>
             </p>
           )}
-          {m.monthly && !m.custom && <p class="lp">{o.launch}</p>}
+          {m.monthly && !m.custom && <p class="lp"><span class="tape">{p.launchTape}</span></p>}
         </div>
         <p class="reels"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {m.once ? p.reelsOnce : p.reels}</p>
         <dl class="spec">
@@ -63,7 +63,7 @@ const start = 0;
     ))}
     <div class="card bespoke" role="tabpanel" id="panel-bespoke" aria-labelledby="tab-bespoke" hidden data-panel={plans.length}>
       <header>
-        <p class="fitb" hidden>✓ {p.fit}</p>
+        <p class="fitb" hidden><span>{p.fit}</span></p>
         <h3 class="name">{p.bespokeName}</h3>
         <p class="for">{p.bespokeFor}</p>
       </header>
@@ -130,9 +130,11 @@ const start = 0;
   .picker { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 0 clamp(32px, 6vw, 96px); align-items: start; }
   .intro { grid-column: 1 / -1; margin-bottom: clamp(32px, 4vw, 56px); font-size: clamp(40px, 5.4vw, 80px); max-width: 10ch; }
   .side { display: grid; gap: clamp(24px, 3vw, 36px); }
-  .you { display: inline-block; margin-left: 6px; padding: 3px 8px; border-radius: 999px; background: var(--yellow); color: var(--ink); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; vertical-align: 3px; }
+  .you { display: inline-block; margin-left: 8px; padding: 4px 8px 3px; background: var(--yellow); color: var(--ink); font-size: 12px; font-weight: 700; vertical-align: 2px; transform: rotate(-2deg);
+    clip-path: polygon(0 8%, 6% 0, 12% 10%, 88% 0, 94% 10%, 100% 6%, 100% 92%, 94% 100%, 88% 90%, 12% 100%, 6% 90%, 0 96%); }
   .you[hidden] { display: none; }
-  .fitb { margin: 0 0 4px; justify-self: start; padding: 6px 12px; border-radius: 999px; background: var(--pink); color: var(--ink); font-size: 13px; font-weight: 700; }
+  .fitb { margin: 0 0 4px; justify-self: start; font-size: 15px; font-weight: 700; }
+  .fitb span { padding-inline: .1em; background: linear-gradient(var(--pink), var(--pink)) 0 88% / 100% 42% no-repeat; }
   .fitb[hidden] { display: none; }
   /* The plans as a list on thin lines. The one you pick turns black and gets the pink marker from the headline. */
   .tabs { display: grid; border-top: 1px solid var(--hair-2); }
@@ -159,7 +161,8 @@ const start = 0;
   .num.word { font-size: clamp(48px, 5vw, 80px); }
   .num { font-weight: 700; font-size: clamp(64px, 7vw, 112px); line-height: .9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
   .unit { font-weight: 600; font-size: clamp(17px, 1.4vw, 20px); color: var(--fg-2); }
-  .lp { margin: 0; font-size: 14px; color: var(--fg-3); }
+  .lp { margin: 12px 0 0; }
+  .lp .tape { white-space: normal; max-width: 100%; }
   .reels { margin: 0; font-size: 17px; color: var(--fg-2); }
   .reels b { font-size: 22px; letter-spacing: -0.02em; color: var(--fg); }
   .spec { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; padding-top: 18px; border-top: 1px solid var(--hair); }

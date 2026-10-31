@@ -26,7 +26,7 @@ const p = c(lang).plans;
         {m.custom
           ? <p class="price"><span class="num">{p.custom}</span></p>
           : <p class="price"><span class="num">{fmt(m.launch, lang)}</span> <span class="unit">{o.currency} {m.once ? p.once : p.month}</span></p>}
-        {m.monthly && !m.custom && <p class="lp">{o.launch}</p>}
+        {m.monthly && !m.custom && <p class="lp"><span class="tape">{c(lang).plans.launchTape}</span></p>}
         <a class="btn go" href={`${href(lang, 'apply')}?plan=${m.key}`} aria-label={`${m.custom ? p.talk : p.choose}: ${m.name}`}>{m.custom ? p.talk : p.choose} <span class="arr" aria-hidden="true">→</span></a>
       </div>
     </article>
@@ -52,7 +52,8 @@ const p = c(lang).plans;
   .price { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
   .num { font-weight: 700; font-size: clamp(26px, 2.3vw, 36px); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
   .unit { font-size: 14px; font-weight: 600; color: var(--fg-2); }
-  .lp { margin: 0; font-size: 13px; color: var(--fg-3); }
+  .lp { margin: 8px 0 4px; }
+  .lp .tape { font-size: 12px; white-space: normal; max-width: 100%; }
   .go { margin-top: 12px; }
   @media (max-width: 1100px) and (min-width: 761px) {
     .row { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr) minmax(190px, .8fr); grid-template-areas: 'who qty buy' 'inc inc buy'; }

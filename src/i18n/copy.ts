@@ -2,7 +2,7 @@
 import type { Locale } from './strings';
 
 const en = {
-  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'The Glucélia case study', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
+  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'Reels and the thinking behind them', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
   home: {
     title: ['Ads made', 'to be watched', 'twice.'],
     // On phones the headline breaks word by word so each word can be as big as the screen allows.
@@ -14,10 +14,10 @@ const en = {
     badge: 'Case study · Glucélia · 2026 · ',
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
-    kicks: { work: 'Case study · Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
+    kicks: { work: 'Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     // The two crossing bands before the brief. Words only: prices live in the plans.
-    bands: { big: ['Ads made to be watched twice', 'Made in Tunis', 'One team, from brief to final cut'], small: ['Scripts approved before the shoot', 'First draft 7 days after the shoot', 'Final files in 9:16 and 4:5'], mini: ['Start with the Test', '3 reels and 1 static', 'One 3-hour shoot', '999 TND, one time'] },
-    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'See the case study' },
+    bands: { big: ['Scripts approved before the shoot', 'First draft 7 days after the shoot', 'Files in 9:16 and 4:5', 'One team, from brief to final cut'], small: ['Monthly ads', 'Launch campaigns', 'Brand films', 'Product films', 'Ramadan campaigns'] },
+    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'All the work' },
     sub: 'Every replay is another look at your product. We write, shoot and edit short video ads for brands that sell online.',
     cta: 'Start a project',
     ctaAlt: 'See the plans',
@@ -35,7 +35,17 @@ const en = {
       flow: { steps: ['Brief', 'Script', 'Shoot', 'Edit', 'Ads'], days: '7 days' },
       review: { title: 'Results review', rows: [['Hook B', 'Keep'], ['Hook A', 'Drop'], ['Next round', 'More like B']] },
     },
-    thinking: 'The thinking behind them.',
+    // Right after the work: how an ad gets made to be watched twice, in four moves.
+    method: {
+      title: 'How we make an ad worth a second look.',
+      items: [
+        { t: 'Start from a reason to buy.', d: 'Every ad begins with one written angle: the reason your customer should care. The camera comes after.' },
+        { t: 'Win the first second.', d: 'Each reel opens on something odd, loud or beautiful enough to stop a thumb. Monthly plans get at least two openings per reel, and your results pick the stronger one.' },
+        { t: 'Show it, don’t explain it.', d: 'A change people can see says more than a list of benefits, so the product does the talking.' },
+        { t: 'Leave something to find.', d: 'Small details, quick cuts and a payoff at the end, so people watch it again.' },
+      ],
+      process: 'How a project runs',
+    },
     plansTitle: 'Pick your plan.',
     plansSub: 'Try us with the Test, or pick a monthly plan for fresh ads every month.',
     plansCta: 'All offers and bespoke projects',
@@ -55,6 +65,7 @@ const en = {
     bespokeName: 'Bespoke project', bespokeMeta: 'Quoted from your brief', bespokeFor: 'For launches, films and campaigns that need more than a monthly plan.', bespokePrice: 'On quote', bespokeNote: 'Scoped and quoted from your brief. Studio, talent and props are on you: you approve each cost, we pay it upfront and invoice it with the remaining 50%.',
     custom: 'Custom price', customShort: 'custom', customNote: 'Priced to your volume, from 20 to 100 reels a month.', upTo: 'to',
     fit: 'Best fit for your brief', forYou: 'For you',
+    launchTape: 'Launch price · first 5 clients',
   },
   apply: {
     title: 'Tell us what you’re making.',
@@ -90,7 +101,7 @@ const en = {
     fitLead: 'From your answers, start with', fitSee: 'See the plan',
   },
   contact: {
-    title: 'Tell us what you’re working on.',
+    title: 'Talk to the team.',
     ways: 'Reach us directly',
     whatsapp: 'WhatsApp', call: 'Call', email: 'Email', instagram: 'Instagram', based: 'Studio',
     place: 'Tunis, Tunisia',
@@ -101,22 +112,15 @@ const en = {
     project: 'Starting a project?', projectCta: 'Answer a few quick questions',
   },
   work: {
-    title: 'Case study',
-    label: 'Case study · 2026',
-    client: 'Glucélia',
-    intro: 'Made by our founder’s team at CreativesLab: one product, four ways in, each built to stop the scroll and make the product the obvious answer.',
-    facts: [['Client', 'Glucélia'], ['Year', '2026'], ['Studio', 'CreativesLab'], ['Made', '4 reels']],
-    choicesTitle: 'The choices behind them.',
-    choices: [
-      { t: 'Show the change, don’t explain it.', d: 'No long voiceover about benefits. The reel shows life before and life with Glucélia, and lets the switch do the selling.' },
-      { t: 'Give the product a rival.', d: 'Putting Glucélia up against the usual options turns an ad into a contest people want to see the end of.' },
-      { t: 'Win the first second.', d: 'Every reel opens on something odd, loud or beautiful enough to stop a thumb, before the brand ever appears.' },
-      { t: 'Made to be watched twice.', d: 'Small details, quick cuts and a payoff at the end, so people replay it, and every replay is another look at the product.' },
-    ],
-    team: 'The people behind it',
+    title: 'Work',
+    lead: 'Short ads, each built on one idea.',
+    hint: 'Open a reel to watch it full screen with sound.',
+    why: 'Why it works', whyHide: 'Hide',
+    formatsTitle: 'What we make.',
+    formatsSub: 'The formats we write, shoot and edit. The marked ones are in the reels above.',
+    credit: 'Made for Glucélia in 2026, before Gecko.',
+    credits: 'Credits',
     people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
-    reelsTitle: 'The four reels.',
-    soundHint: 'Open a reel to watch it full screen with sound.',
     close: 'Close', prev: 'Previous', nextReel: 'Next', sound: 'Turn sound on', mute: 'Turn sound off', title1: 'Reel',
   },
   space: {
@@ -139,6 +143,14 @@ const en = {
       invoices: [['Deposit · 50%', 'Paid'], ['Studio rental · advanced', 'Added to balance'], ['Balance · 50%', 'Due on approval']],
     },
     cta: 'See how a project runs',
+    // The home page walks through a project while the workspace stays on screen; each step opens its tab (pane).
+    story: [
+      { t: 'Brief and quote', d: 'We talk about your product and your customers, then agree deliverables, dates and price in writing. The 50% deposit books your date.', pane: 3 },
+      { t: 'Scripts', d: 'Every script waits for your yes before anything is filmed. Change what you want, right in the workspace.', pane: 1 },
+      { t: 'Shoot', d: 'You always see the next date and what we need from you, from the shoot day to the first draft.', pane: 0 },
+      { t: 'First draft', d: 'It arrives 7 days after the shoot, as watermarked previews. Your comments pin to the exact second.', pane: 1 },
+      { t: 'Final files', d: 'Once you approve and the balance is paid, every final file is ready to download, with its invoice beside it.', pane: 2 },
+    ],
   },
   process: {
     title: 'How a project runs.',
@@ -156,6 +168,9 @@ const en = {
   },
   about: {
     title: 'A studio for ideas that have to sell.',
+    lede: 'Gecko is a creative and production studio in Tunis. We make short video ads for brands that sell online, and bigger films when the idea needs it.',
+    photos: 'On set.',
+    hire: 'We’re hiring: talent, creators, camera and editors',
     facts: [
       { k: 'Today', v: 'Video ads', d: 'Short ads for brands that sell online. It’s our signature and where our experience runs deepest.' },
       { k: 'For the right brief', v: 'Bigger productions', d: 'Launch campaigns, brand films and special projects, scoped from the idea up.' },
@@ -195,6 +210,16 @@ const en = {
       quote: 'Scoped and quoted from your brief.',
       cta: 'Tell us about the project',
     },
+    pay: {
+      title: 'How paying works.',
+      rows: [
+        ['Test and projects', '50% to book your date, 50% after you approve the watermarked previews.'],
+        ['Monthly plans', 'Paid before the 5th of each month. 3 months minimum, then 30 days’ notice.'],
+        ['Outside costs', 'Studio, talent and props: you approve each one, we pay it upfront and invoice it.'],
+        ['Prices', 'In TND, VAT excluded. Launch prices for the first 5 clients, until 31 December 2026.'],
+        ['Not included', 'Ad spend, media buying and raw footage.'],
+      ],
+    },
     terms: 'What are the full terms?',
     faqTitle: 'Before you ask.',
   },
@@ -202,6 +227,13 @@ const en = {
     title: 'Questions, answered.',
     more: 'Still wondering about something?',
     moreCta: 'Message us',
+    // The questions in four groups, by their place in the list (the same in both languages).
+    groups: [
+      { t: 'Plans and prices', ids: [0, 1, 2, 17] },
+      { t: 'How it works', ids: [11, 12, 9, 10, 8] },
+      { t: 'Shoots and files', ids: [4, 6, 7, 13, 14, 15, 16] },
+      { t: 'Payment and terms', ids: [5, 3] },
+    ],
   },
   footer: { pages: 'Pages', reach: 'Contact', follow: 'Follow' },
   join: {
@@ -242,7 +274,7 @@ const en = {
 type Copy = typeof en;
 
 const fr: Copy = {
-  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'L’étude de cas Glucélia', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
+  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'Les reels et la réflexion derrière', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
   home: {
     title: ['Des pubs', 'à regarder', 'deux fois.'],
     titleM: ['Des', 'pubs', 'à', 'regarder', 'deux', 'fois.'],
@@ -252,9 +284,9 @@ const fr: Copy = {
     badge: 'Étude de cas · Glucélia · 2026 · ',
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
-    kicks: { work: 'Étude de cas · Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
-    bands: { big: ['Des pubs à regarder deux fois', 'Fait à Tunis', 'Une seule équipe, du brief au montage final'], small: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers finaux en 9:16 et 4:5'], mini: ['Commencez par le Test', '3 reels et 1 visuel fixe', '3 heures de tournage', '999 TND, une seule fois'] },
-    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Voir l’étude de cas' },
+    kicks: { work: 'Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
+    bands: { big: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers en 9:16 et 4:5', 'Une seule équipe, du brief au montage final'], small: ['Pubs chaque mois', 'Campagnes de lancement', 'Films de marque', 'Films produit', 'Campagnes Ramadan'] },
+    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Toutes les réalisations' },
     sub: 'Une pub regardée deux fois, c’est votre produit vu deux fois. On écrit, tourne et monte des pubs vidéo courtes pour les marques qui vendent en ligne.',
     cta: 'Lancer un projet',
     ctaAlt: 'Voir les plans',
@@ -272,7 +304,16 @@ const fr: Copy = {
       flow: { steps: ['Brief', 'Script', 'Tournage', 'Montage', 'Pubs'], days: '7\u00a0jours' },
       review: { title: 'Revue des résultats', rows: [['Accroche B', 'On garde'], ['Accroche A', 'On arrête'], ['Prochaine série', 'Plus comme B']] },
     },
-    thinking: 'La réflexion derrière ces reels.',
+    method: {
+      title: 'Comment on fait une pub qui mérite un second regard.',
+      items: [
+        { t: 'Partir d’une raison d’acheter.', d: 'Chaque pub part d’un angle écrit\u00a0: la raison pour laquelle votre client devrait s’y intéresser. La caméra vient après.' },
+        { t: 'Gagner la première seconde.', d: 'Chaque reel s’ouvre sur quelque chose d’étrange, de fort ou de beau, assez pour arrêter le pouce. Les plans mensuels ont au moins deux accroches par reel, et vos résultats choisissent la meilleure.' },
+        { t: 'Le montrer, pas l’expliquer.', d: 'Un changement qu’on voit en dit plus qu’une liste d’avantages\u00a0: le produit parle de lui-même.' },
+        { t: 'Laisser quelque chose à découvrir.', d: 'Des détails, un montage rapide et une chute à la fin, pour qu’on la regarde encore.' },
+      ],
+      process: 'Le déroulé d’un projet',
+    },
     plansTitle: 'Choisissez votre plan.',
     plansSub: 'Essayez-nous avec le Test, ou choisissez un plan mensuel pour de nouvelles pubs chaque mois.',
     plansCta: 'Toutes les offres et projets sur mesure',
@@ -291,6 +332,7 @@ const fr: Copy = {
     bespokeName: 'Projet sur mesure', bespokeMeta: 'Sur devis', bespokeFor: 'Pour les lancements, films et campagnes qui demandent plus qu’un plan mensuel.', bespokePrice: 'Sur devis', bespokeNote: 'Cadré et chiffré selon votre brief. Studio, talents et accessoires sont à votre charge : vous validez chaque coût, on l’avance et on le facture avec les 50 % restants.',
     custom: 'Prix sur mesure', customShort: 'sur mesure', customNote: 'Selon votre volume, de 20 à 100 reels par mois.', upTo: 'à',
     fit: 'Le plus adapté à votre brief', forYou: 'Pour vous',
+    launchTape: 'Prix de lancement · 5 premiers clients',
   },
   apply: {
     title: 'Dites-nous ce que vous préparez.',
@@ -325,7 +367,7 @@ const fr: Copy = {
     fitLead: 'D’après vos réponses, commencez par', fitSee: 'Voir le plan',
   },
   contact: {
-    title: 'Parlez-nous de votre projet.',
+    title: 'Parlez à l’équipe.',
     ways: 'Nous joindre directement',
     whatsapp: 'WhatsApp', call: 'Appeler', email: 'E-mail', instagram: 'Instagram', based: 'Studio',
     place: 'Tunis, Tunisie',
@@ -336,22 +378,15 @@ const fr: Copy = {
     project: 'Vous lancez un projet ?', projectCta: 'Répondre à quelques questions',
   },
   work: {
-    title: 'Étude de cas',
-    label: 'Étude de cas · 2026',
-    client: 'Glucélia',
-    intro: 'Réalisé par l’équipe de notre fondateur chez CreativesLab : un produit, quatre angles, chacun pensé pour arrêter le scroll et faire du produit la réponse évidente.',
-    facts: [['Client', 'Glucélia'], ['Année', '2026'], ['Studio', 'CreativesLab'], ['Réalisé', '4 reels']],
-    choicesTitle: 'Les choix derrière ces reels.',
-    choices: [
-      { t: 'Montrer le changement, pas l’expliquer.', d: 'Pas de longue voix off sur les bénéfices. Le reel montre la vie avant et la vie avec Glucélia, et laisse le contraste vendre.' },
-      { t: 'Donner un rival au produit.', d: 'Opposer Glucélia aux options habituelles transforme la pub en un duel dont on veut voir la fin.' },
-      { t: 'Gagner la première seconde.', d: 'Chaque reel s’ouvre sur quelque chose d’étrange, de fort ou de beau, assez pour arrêter le pouce avant même que la marque apparaisse.' },
-      { t: 'Fait pour être regardé deux fois.', d: 'Des détails, des coupes rapides et une chute à la fin, pour qu’on le revoie, et chaque revisionnage est un regard de plus sur le produit.' },
-    ],
-    team: 'L’équipe derrière le projet',
+    title: 'Réalisations',
+    lead: 'Des pubs courtes, chacune construite sur une idée.',
+    hint: 'Ouvrez un reel pour le voir en plein écran avec le son.',
+    why: 'Pourquoi ça marche', whyHide: 'Masquer',
+    formatsTitle: 'Ce qu’on fait.',
+    formatsSub: 'Les formats qu’on écrit, tourne et monte. Ceux qui sont marqués sont dans les reels ci-dessus.',
+    credit: 'Réalisés pour Glucélia en 2026, avant Gecko.',
+    credits: 'Crédits',
     people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
-    reelsTitle: 'Les quatre reels.',
-    soundHint: 'Ouvrez un reel pour le voir en plein écran avec le son.',
     close: 'Fermer', prev: 'Précédent', nextReel: 'Suivant', sound: 'Activer le son', mute: 'Couper le son', title1: 'Reel',
   },
   space: {
@@ -374,6 +409,13 @@ const fr: Copy = {
       invoices: [['Acompte · 50 %', 'Payé'], ['Location studio · avancée', 'Ajoutée au solde'], ['Solde · 50 %', 'À la validation']],
     },
     cta: 'Voir le déroulé d’un projet',
+    story: [
+      { t: 'Brief et devis', d: 'On parle de votre produit et de vos clients, puis on fixe livrables, dates et prix par écrit. L’acompte de 50\u00a0% réserve votre date.', pane: 3 },
+      { t: 'Scripts', d: 'Chaque script attend votre accord avant le moindre tournage. Changez ce que vous voulez, directement dans l’espace.', pane: 1 },
+      { t: 'Tournage', d: 'Vous voyez toujours la prochaine date et ce qu’il nous faut de vous, du jour du tournage au premier montage.', pane: 0 },
+      { t: 'Premier montage', d: 'Il arrive 7 jours après le tournage, en aperçus filigranés. Vos commentaires se placent à la seconde près.', pane: 1 },
+      { t: 'Fichiers finaux', d: 'Une fois validés et le solde réglé, tous les fichiers finaux sont prêts à télécharger, chacun avec sa facture.', pane: 2 },
+    ],
   },
   process: {
     title: 'Comment se déroule un projet.',
@@ -391,6 +433,9 @@ const fr: Copy = {
   },
   about: {
     title: 'Un studio pour les idées qui doivent vendre.',
+    lede: 'Gecko est un studio de création et de production à Tunis. On fait des pubs vidéo courtes pour les marques qui vendent en ligne, et des films plus ambitieux quand l’idée le demande.',
+    photos: 'Sur le tournage.',
+    hire: 'On recrute\u00a0: talents, créateurs, image et montage',
     facts: [
       { k: 'Aujourd’hui', v: 'Pubs vidéo', d: 'Des pubs courtes pour les marques qui vendent en ligne. C’est notre signature, et là où notre expérience est la plus solide.' },
       { k: 'Pour le bon brief', v: 'Productions plus grandes', d: 'Campagnes de lancement, films de marque et projets spéciaux, pensés à partir de l’idée.' },
@@ -430,6 +475,16 @@ const fr: Copy = {
       quote: 'Chiffrés selon votre brief.',
       cta: 'Parlez-nous du projet',
     },
+    pay: {
+      title: 'Comment on paie.',
+      rows: [
+        ['Test et projets', '50\u00a0% pour réserver votre date, 50\u00a0% après validation des aperçus filigranés.'],
+        ['Plans mensuels', 'Payés avant le 5 de chaque mois. 3 mois minimum, puis 30 jours de préavis.'],
+        ['Frais extérieurs', 'Studio, talents et accessoires\u00a0: vous validez chacun, on les avance et on les facture.'],
+        ['Prix', 'En TND, hors TVA. Prix de lancement pour les 5 premiers clients, jusqu’au 31 décembre 2026.'],
+        ['Non inclus', 'Le budget pub, l’achat média et les rushes.'],
+      ],
+    },
     terms: 'Quelles sont les conditions complètes ?',
     faqTitle: 'Avant de nous écrire.',
   },
@@ -437,6 +492,12 @@ const fr: Copy = {
     title: 'Vos questions, nos réponses.',
     more: 'Une autre question ?',
     moreCta: 'Écrivez-nous',
+    groups: [
+      { t: 'Plans et prix', ids: [0, 1, 2, 17] },
+      { t: 'Comment ça marche', ids: [11, 12, 9, 10, 8] },
+      { t: 'Tournages et fichiers', ids: [4, 6, 7, 13, 14, 15, 16] },
+      { t: 'Paiement et conditions', ids: [5, 3] },
+    ],
   },
   footer: { pages: 'Pages', reach: 'Contact', follow: 'Suivre' },
   join: {

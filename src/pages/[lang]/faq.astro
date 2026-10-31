@@ -1,4 +1,5 @@
 ---
+import { mark } from '../../i18n/mark';
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import { t, type Locale } from '../../i18n/strings';
@@ -11,12 +12,13 @@ const lang = Astro.params.lang as Locale;
 const s = t(lang);
 const f = c(lang).faqPage;
 const n = c(lang).nav;
+const [t0, t1] = mark(f.title);
 ---
 <Base lang={lang} title={n.faq} page="faq">
   <section class="page-head lit">
     <div class="wrap wide qa">
       <div class="lead rv">
-        <h1 class="h1">{f.title}</h1>
+        <h1 class="h1">{t0}<span class="hl">{t1}</span></h1>
         <div class="more">
           <p class="text text-l lede">{f.more}</p>
           <div class="actions">
@@ -25,11 +27,20 @@ const n = c(lang).nav;
           </div>
         </div>
       </div>
-      <div class="rv" style="--d:80ms"><Faq items={s.faq} /></div>
+      <div class="groups">
+        {f.groups.map((g, i) => (
+          <div class="group rv" style={`--d:${80 + i * 60}ms`}>
+            <h2 class="g-t">{g.t}</h2>
+            <Faq items={g.ids.map((x) => s.faq[x])} />
+          </div>
+        ))}
+      </div>
     </div>
   </section>
 </Base>
 <style>
+  .groups { display: grid; gap: clamp(36px, 4vw, 56px); }
+  .g-t { margin: 0 0 6px; font-weight: 700; font-size: 14px; letter-spacing: 0; color: var(--fg-3); }
   .page-head { padding-bottom: var(--section); }
   .qa { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .lead { position: sticky; top: 120px; display: grid; gap: clamp(28px, 4vw, 48px); }

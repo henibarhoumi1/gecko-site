@@ -4,15 +4,20 @@ import Compare from '../../components/Compare.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
+import { href } from '../../i18n/paths';
+import { mark } from '../../i18n/mark';
+import { photos } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const a = c(lang).about;
 const n = c(lang).nav;
+const [t0, t1] = mark(a.title);
 ---
 <Base lang={lang} title={n.about} page="about">
   <section class="page-head lit">
     <div class="wrap wide">
-      <h1 class="h1 rv">{a.title}</h1>
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
+      <p class="text-l lede rv" style="--d:60ms">{a.lede}</p>
       <dl class="facts">
         {a.facts.map((f, i) => (
           <div class="fact rv" style={`--d:${80 + i * 70}ms`}>
@@ -25,9 +30,36 @@ const n = c(lang).nav;
   </section>
 
   <Compare lang={lang} />
+
+  {photos.length > 0 && (
+    <section class="section on-mat shots-sec">
+      <div class="ruler" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <span>{i * 5}</span>)}</div>
+      <div class="wrap wide">
+        <h2 class="h2 rv">{a.photos}</h2>
+        <ul class="shots">{photos.map((ph, i) => <li class="rv" style={`--d:${i * 60}ms`}><img src={ph.src} alt={ph.alt[lang]} loading="lazy" /></li>)}</ul>
+      </div>
+    </section>
+  )}
+
+  <section class="section hire-sec">
+    <div class="wrap wide">
+      <a class="hire rv" href={href(lang, 'join')}><span class="lb">{a.hire}</span> <span class="ar" aria-hidden="true">→</span></a>
+    </div>
+  </section>
 </Base>
 
 <style>
+  .page-head .lede { margin: clamp(20px, 2.4vw, 32px) 0 0; max-width: 40rem; }
+  .shots-sec .h2 { margin-bottom: clamp(28px, 3vw, 44px); }
+  .shots { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); }
+  .shots img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+  .hire-sec { border-top: 1px solid var(--hair); }
+  .hire { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(26px, 3.4vw, 52px); line-height: 1.05; letter-spacing: -0.045em; color: var(--fg); text-decoration: none; }
+  .lb { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 80% / 0 38% no-repeat; transition: background-size 520ms var(--ease); }
+  .ar { transition: transform 360ms var(--ease); }
+  .hire:hover .lb { background-size: 100% 38%; }
+  .hire:hover .ar { transform: translateX(12px); }
+  @media (max-width: 760px) { .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .page-head .h1 { max-width: 13ch; }
   .facts { margin: clamp(40px, 5vw, 72px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-2); }
   .fact { padding: 24px clamp(16px, 2.4vw, 32px) 0 0; }
