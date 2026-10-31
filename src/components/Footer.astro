@@ -41,7 +41,10 @@ const n = k.nav;
   </div>
   <div class="wrap wide"><div class="base">
     <p>© {new Date().getFullYear()} Gecko</p>
-    <a href={href(lang, 'legal')}>{s.footer.legal}</a>
+    <span class="links">
+      <a href={site.portal} rel="noopener">{s.footer.portal}</a>
+      <a href={href(lang, 'legal')}>{s.footer.legal}</a>
+    </span>
   </div></div>
 </footer>
 <style>
@@ -61,6 +64,7 @@ const n = k.nav;
   .base p { margin: 0; }
   .base a { color: inherit; text-decoration: none; }
   .base a:hover { color: var(--fg); }
+  .base .links { display: flex; gap: 20px; flex-wrap: wrap; }
   /* Narrow screens: the monogram steps aside (the bar already carries the logo) and the columns wrap. */
   @media (max-width: 860px) { .inner { grid-template-columns: repeat(3, auto); justify-content: start; } .mark { display: none; } }
   @media (max-width: 560px) { .inner { grid-template-columns: 1fr; gap: 28px; } .pages { grid-template-columns: repeat(3, auto); gap: 10px 28px; } .col { font-size: 15px; } .col a { white-space: nowrap; } }
