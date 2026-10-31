@@ -21,7 +21,12 @@ const hx = h.hero;
 // The headline's full stop is drawn as a dot: it is where the landing opens onto the work.
 // Wide screens set it in three lines; phones and upright tablets word by word (titleM), each as big as the screen allows.
 const cut = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
-const sets = [{ k: 'd', lines: cut(h.title), marks: 1 }, { k: 'm', lines: cut(h.titleM), marks: h.marksM }];
+const sets = [{ k: 'd', lines: cut(h.title) }, { k: 'm', lines: cut(h.titleM) }];
+// The last line keeps changing, like a reel on replay: each word rises in and the marker draws under it again.
+const rot = h.rot.map((w) => w.replace(/\.$/, ''));
+// Each headline is sized from its widest line, the changing words included (in characters, roughly half an em each).
+const widest = (lines: string[]) => Math.max(...lines.slice(0, -1).map((l) => l.length), ...rot.map((w) => w.length + 1));
+const fit = `--cw:${widest(h.title)};--cm:${widest(h.titleM)};--lm:${h.titleM.length}`;
 // The work stage plays a short silent loop of each reel; a click opens the full reel with sound.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -36,20 +41,16 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     <div class="stage">
       <section class="hero" data-hero aria-labelledby="h-title">
         <div class="wrap wide h-in">
-          <p class="h-kick up" style="--d:260ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
+          <div class="bars up" style={`--d:260ms;--n:${rot.length}`} aria-hidden="true" data-bars>{rot.map(() => <i><b></b></i>)}</div>
+          <p class="h-kick up" style="--d:320ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
           <div class="h-tbox">
-            <h1 class="h-title" id="h-title" aria-label={h.title.join(' ')} style={`--lm:${h.titleM.length}`}>
-              {sets.map(({ k: set, lines, marks }) => lines.map((line, i) => (
-                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${340 + i * (set === 'd' ? 120 : 80)}ms`}>{i >= lines.length - marks ? <><span class="mark">{line}</span>{i === lines.length - 1 && <span class="stop" data-stop></span>}</> : line}</span></span>
+            <h1 class="h-title" id="h-title" aria-label={h.title.join(' ')} style={fit}>
+              {sets.map(({ k: set, lines }) => lines.map((line, i) => (
+                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${340 + i * (set === 'd' ? 120 : 80)}ms`}>{i === lines.length - 1
+                  ? <><span class="mark rot" data-rot>{rot.map((w, j) => <span class={j ? 'w' : 'w on'}>{w}</span>)}</span><span class="stop" data-stop></span></>
+                  : line}</span></span>
               )))}
             </h1>
-          </div>
-          <p class="h-lede up" style="--d:760ms">{h.sub}</p>
-          <div class="h-cta up" style="--d:860ms">
-            <div class="actions">
-              <a class="btn primary big-btn" href={href(lang, 'apply')}>{h.cta} <span class="arr" aria-hidden="true">→</span></a>
-              <a class="btn big-btn" href="#plans">{h.ctaAlt}</a>
-            </div>
           </div>
         </div>
         <div class="ticker" aria-hidden="true">
@@ -138,7 +139,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const stops = [...hero.querySelectorAll<HTMLElement>('[data-stop]')];
     let stop = stops[0];
     const hit = hero.querySelector<HTMLButtonElement>('[data-stop-hit]')!;
-    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick, .h-lede, .h-cta')];
+    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick, .bars')];
     const head = work.querySelector<HTMLElement>('[data-w-head]')!;
     const title = head.querySelector<HTMLElement>('h2')!;
     const deck = work.querySelector<HTMLElement>('[data-deck]')!;
@@ -269,6 +270,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         frame();
       };
       addEventListener('scroll', frame, { passive: true });
+      // The changing last word moves the dot, so the iris follows it.
+      hero.addEventListener('rot', measure);
       // A phone's address bar showing or hiding only changes the height a little: keep the layout, follow the height.
       addEventListener('resize', () => { if (innerWidth !== W) measure(); else { H = innerHeight; last = -1; frame(); } });
       addEventListener('load', measure, { once: true });
@@ -298,6 +301,61 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         addEventListener('scroll', () => { if (tz !== 1 && intro.classList.contains('moving')) aim(); }, { passive: true });
       }
     }
+
+    // The headline is set as big as its box allows: the widest line, counting the widest of the changing words, meets
+    // the box's width, or all the lines meet its height. The CSS size before this runs is a close guess.
+    const bars = [...hero.querySelectorAll<HTMLElement>('[data-bars] i')];
+    const rots = [...hero.querySelectorAll<HTMLElement>('[data-rot]')];
+    const tbox = hero.querySelector<HTMLElement>('.h-tbox')!;
+    const h1 = tbox.querySelector<HTMLElement>('h1')!;
+    const fitTitle = () => {
+      h1.style.fontSize = '';
+      const lines = [...h1.querySelectorAll<HTMLElement>('.ln')].filter((l) => l.offsetWidth);
+      if (!lines.length) return;
+      const wide = Math.max(...lines.map((l) => {
+        const r = l.querySelector<HTMLElement>('[data-rot]');
+        if (!r) return l.offsetWidth;
+        const ws = [...r.children] as HTMLElement[];
+        return l.offsetWidth - r.offsetWidth + Math.max(...ws.map((w) => w.offsetWidth));
+      }));
+      const cs = getComputedStyle(tbox);
+      const bw = tbox.clientWidth, bh = tbox.clientHeight - parseFloat(cs.paddingTop);
+      const k = Math.min(bw / wide, bh / h1.offsetHeight);
+      h1.style.fontSize = `${(parseFloat(getComputedStyle(h1).fontSize) * k * .995).toFixed(2)}px`;
+      rots.forEach((r) => { const on = r.querySelector<HTMLElement>('.on'); if (on) r.style.width = `${on.offsetWidth}px`; });
+      hero.dispatchEvent(new Event('rot'));
+    };
+    let fitT = 0;
+    addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fitTitle, 120); });
+    document.fonts?.ready.then(fitTitle);
+    fitTitle();
+
+    // The last line of the headline plays like a story: a bar fills along the top, then the next word rises in, the
+    // marker draws under it again and the dot slides along to its new end. It rests while the landing is out of
+    // sight, while the iris is open and with reduced motion.
+    const n = bars.length, beat = 2600;
+    if (!still && n > 1) {
+      let at = 0, timer = 0, live = true;
+      const fill = () => bars.forEach((b, i) => { b.className = i < at ? 'done' : i === at ? 'run' : ''; });
+      const swap = () => {
+        const next = (at + 1) % n;
+        rots.forEach((r) => {
+          const ws = [...r.children] as HTMLElement[];
+          r.style.width = `${r.offsetWidth}px`;
+          ws[at].classList.remove('on'); ws[at].classList.add('out');
+          ws[next].classList.add('on');
+          setTimeout(() => ws.forEach((w, i) => i !== next && w.classList.remove('out')), 700);
+          r.style.width = `${ws[next].offsetWidth}px`;
+          r.classList.remove('again'); void r.offsetWidth; r.classList.add('again');
+        });
+        at = next; fill();
+        setTimeout(() => hero.dispatchEvent(new Event('rot')), 720);
+      };
+      const tick = () => { if (live && !intro.classList.contains('moving') && !document.hidden) swap(); else fill(); timer = setTimeout(tick, beat); };
+      new IntersectionObserver(([e]) => { live = e.isIntersecting; }).observe(hero);
+      // The first word waits for the headline to land.
+      setTimeout(() => { hero.classList.add('playing'); fill(); timer = setTimeout(tick, beat); }, 2200);
+    }
   }
 </script>
 
@@ -307,17 +365,23 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .intro { position: relative; }
   .stage { position: relative; }
   .hero { position: relative; display: flex; flex-direction: column; height: 100svh; min-height: 560px; overflow: hidden; background: var(--bg); color: var(--fg); }
-  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); grid-template-rows: auto auto minmax(0, 1fr); column-gap: clamp(32px, 4vw, 80px);
-    grid-template-areas: 'kick lede' '. cta' 'title title'; padding-top: calc(var(--header) + clamp(6px, 2vh, 24px)); padding-bottom: clamp(20px, 4vh, 48px); }
+  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-areas: 'bars' 'kick' 'title'; padding-top: calc(var(--header) + clamp(6px, 2vh, 24px)); padding-bottom: clamp(20px, 4vh, 48px); }
+  /* Story bars along the top: one per word of the changing line, filling as it plays. */
+  .bars { grid-area: bars; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; margin-bottom: clamp(14px, 2.4vh, 24px); }
+  .bars i { display: block; height: 3px; border-radius: 3px; background: var(--tint-3); overflow: hidden; }
+  .bars b { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
+  .bars .done b { transform: none; }
+  .bars .run b { animation: fill 2600ms linear both; }
+  .hero:not(.playing) .bars i:first-child b { animation: fill 2200ms linear both; animation-delay: 0ms; }
+  @keyframes fill { to { transform: none; } }
   .h-kick { grid-area: kick; align-self: start; display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: var(--fg-2); }
   .k-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 4px var(--pink-soft); }
-  .h-lede { grid-area: lede; }
-  .h-cta { grid-area: cta; margin-top: clamp(18px, 2.6vh, 26px); }
   /* The headline takes whatever room is left under the pitch: as wide as the longest line allows, as tall as the box. */
   .h-tbox { grid-area: title; container-type: size; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; padding-top: clamp(12px, 2.4vh, 28px); }
   .h-title { margin: 0; font-weight: 700; letter-spacing: -0.06em; line-height: .86;
-    font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / 6.9), calc((100svh - 440px) / 2.75));
-    font-size: min(calc(100cqw / 6.9), calc(100cqh / 2.75)); }
+    font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / (var(--cw) * .56)), calc((100svh - 300px) / 2.75));
+    font-size: min(calc(100cqw / (var(--cw) * .56)), calc(100cqh / 2.75)); }
   .ln { display: block; overflow: hidden; width: fit-content; white-space: nowrap; padding: .03em .1em .1em .06em; margin: 0 0 -.1em -.06em; }
   .ln.m { display: none; }
   .rise { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
@@ -329,6 +393,15 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .mark::before { background: var(--pink-soft); animation: swipe 620ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: 900ms; }
   .mark::after { background: var(--pink); animation: swipe 720ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: 1380ms; }
   @keyframes swipe { from { transform: scaleX(0); } }
+  /* The changing word: the one on screen sits in the line, the others wait below it and leave upwards. */
+  .rot { display: inline-block; position: relative; vertical-align: top; white-space: nowrap; transition: width 700ms cubic-bezier(.65, 0, .35, 1); }
+  .rot .w { display: inline-block; }
+  .rot .w:not(.on) { position: absolute; left: 0; top: 0; transform: translateY(115%); }
+  .rot .w.on { transition: transform 760ms cubic-bezier(.22, 1, .36, 1) 80ms; }
+  .rot .w.out { transform: translateY(-115%); transition: transform 600ms cubic-bezier(.65, 0, .35, 1); }
+  .rot.again::before { animation: none; transform: scaleX(0); }
+  .rot.again::after { animation: swipe2 720ms cubic-bezier(.65, 0, .35, 1) 260ms both; }
+  @keyframes swipe2 { from { transform: scaleX(0); } }
   .stop { display: inline-block; width: .2em; height: .2em; margin-left: .05em; border-radius: 50%; background: var(--mat); animation: pop 650ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: 1750ms; }
   @keyframes pop { from { transform: translateY(-1.2em) scale(.4); opacity: 0; } 55% { opacity: 1; } }
   .stop-hit { position: absolute; z-index: 2; left: 0; top: 0; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
@@ -337,10 +410,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .intro:not(.iris) .stop-hit { display: none; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
-  .h-lede { margin: 0; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; letter-spacing: -0.01em; color: var(--fg-2); text-wrap: pretty; }
-  .big-btn { padding: 17px 26px; font-size: 16px; }
-  .hero .btn.primary:hover { background: var(--pink); border-color: var(--pink); color: var(--ink); }
-  .hero .btn:not(.primary):hover { background: var(--tint-2); }
 
   /* The formats we make, running along the foot of the landing. */
   .ticker { flex: none; overflow: hidden; padding-block: 17px; background: var(--ink); color: #fff; }
@@ -408,27 +477,14 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .cursor svg { width: 12px; height: 12px; fill: currentColor; }
   .cursor.on { opacity: 1; scale: 1; }
 
-  @media (max-width: 1100px) and (min-width: 761px) {
-    .h-in { grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); }
-    .big-btn { padding: 15px 20px; font-size: 15px; }
-  }
-  /* Short, wide screens: the pitch moves down beside the headline so the headline can stay big. */
-  @media (min-width: 761px) and (max-height: 700px) {
-    .h-in { grid-template-rows: auto minmax(0, 1fr) auto; grid-template-areas: 'kick kick' 'title lede' 'title cta'; }
-    .h-lede { align-self: end; }
-    .h-tbox { grid-row: 2 / 4; }
-  }
   /* Phones and upright tablets: the kicker, then the headline as big as the screen allows, then the pitch. */
   @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) {
-    .h-in { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr) auto; grid-template-areas: 'kick' 'lede' 'title' 'cta'; padding-bottom: 20px; }
-    .h-lede { margin-top: 14px; max-width: 36ch; }
+    .h-in { padding-bottom: 20px; }
     .h-tbox { padding-top: 18px; }
-    .h-cta { margin-top: 20px; }
-    .h-title { font-size: min(26vw, 10svh); font-size: min(calc(100cqw / 3.9), calc(100cqh / (var(--lm) * .9))); }
+    .h-title { font-size: min(18vw, 12svh); font-size: min(calc(100cqw / (var(--cm) * .56)), calc(100cqh / (var(--lm) * .9))); }
     .ln.d { display: none; }
     .ln.m { display: block; }
     .h-kick { font-size: 13px; }
-    .h-lede { font-size: 15px; }
     .ticker { padding-block: 14px; }
     .ticker li { font-size: 15px; gap: 24px; padding-right: 24px; }
     .stop-hit { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
@@ -438,10 +494,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     .w-head { flex-direction: column-reverse; align-items: stretch; gap: 12px; min-height: 0; }
     .w-meta { justify-content: space-between; padding-bottom: 0; }
   }
-  @media (max-width: 560px) {
-    .big-btn { padding: 15px 18px; font-size: 15px; } .h-cta .actions .btn { flex: 1 1 auto; }
-  }
-  @media (max-width: 760px) and (max-height: 700px) { .h-lede { display: none; } }
   /* Upright screens: the reels go two by two. */
   @media (max-width: 960px) and (orientation: portrait), (max-width: 640px) {
     .work { --wt: clamp(52px, 17vw, 140px); --cap: 36px; }
@@ -456,6 +508,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   @media (max-width: 374px) { .w-kick { display: none; } }
   @media (prefers-reduced-motion: reduce) {
     .rise, .up, .mark::before, .mark::after, .stop { animation: none; }
+    .bars { display: none; }
   }
 
   .faq-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
