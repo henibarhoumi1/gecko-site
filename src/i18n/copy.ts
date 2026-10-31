@@ -16,7 +16,7 @@ const en = {
     badge: 'Case study · Glucélia · 2026 · ',
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
-    kicks: { work: 'Glucélia', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
+    kicks: { work: 'Selected reels', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
     // The two crossing bands before the brief. Words only: prices live in the plans.
     bands: { big: ['Scripts approved before the shoot', 'First draft 7 days after the shoot', 'Files in 9:16 and 4:5', 'One team, from brief to final cut'], small: ['Monthly ads', 'Launch campaigns', 'Brand films', 'Product films', 'Ramadan campaigns'] },
     hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'All the work' },
@@ -286,7 +286,7 @@ const fr: Copy = {
     badge: 'Étude de cas · Glucélia · 2026 · ',
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
-    kicks: { work: 'Glucélia', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
+    kicks: { work: 'Sélection', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers en 9:16 et 4:5', 'Une seule équipe, du brief au montage final'], small: ['Pubs chaque mois', 'Campagnes de lancement', 'Films de marque', 'Films produit', 'Campagnes Ramadan'] },
     hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Toutes les réalisations' },
     cta: 'Lancer un projet',
