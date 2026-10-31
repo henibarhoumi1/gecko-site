@@ -26,6 +26,8 @@ const sets = [{ k: 'd', lines: cut(h.title) }, { k: 'm', lines: cut(h.titleM) }]
 const rot = h.rot.map((w) => w.replace(/\.$/, ''));
 // Each headline is sized from its widest line, the changing words included (in characters, roughly half an em each).
 const widest = (lines: string[]) => Math.max(...lines.slice(0, -1).map((l) => l.length), ...rot.map((w) => w.length + 1));
+// Every letter is its own piece, so letters can rise one after another and change weight on their own.
+const split = (t: string) => [...t].map((ch, i) => ({ ch, i }));
 const fit = `--cw:${widest(h.title)};--cm:${widest(h.titleM)};--lm:${h.titleM.length}`;
 // The work stage plays a short silent loop of each reel; a click opens the full reel with sound.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
@@ -46,9 +48,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
           <div class="h-tbox">
             <h1 class="h-title" id="h-title" aria-label={h.title.join(' ')} style={fit}>
               {sets.map(({ k: set, lines }) => lines.map((line, i) => (
-                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${340 + i * (set === 'd' ? 120 : 80)}ms`}>{i === lines.length - 1
-                  ? <><span class="mark rot" data-rot>{rot.map((w, j) => <span class={j ? 'w' : 'w on'}>{w}</span>)}</span><span class="stop" data-stop></span></>
-                  : line}</span></span>
+                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${300 + i * (set === 'd' ? 140 : 90)}ms`}>{i === lines.length - 1
+                  ? <><span class="mark rot" data-rot>{rot.map((w, j) => <span class={j ? 'w' : 'w on'}>{split(w).map(({ ch, i: q }) => (ch === ' ' ? ' ' : <span class={j ? 'ch' : 'ch r'} style={`--i:${q}`}>{ch}</span>))}</span>)}</span><span class="stop" data-stop></span></>
+                  : split(line).map(({ ch, i: q }) => (ch === ' ' ? ' ' : <span class="ch r" style={`--i:${q}`}>{ch}</span>))}</span></span>
               )))}
             </h1>
           </div>
@@ -310,8 +312,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const h1 = tbox.querySelector<HTMLElement>('h1')!;
     const fitTitle = () => {
       h1.style.fontSize = '';
+      // Measured at full weight, whatever the letters are doing at that moment.
+      h1.classList.add('measure');
+      rots.forEach((r) => (r.style.width = ''));
       const lines = [...h1.querySelectorAll<HTMLElement>('.ln')].filter((l) => l.offsetWidth);
-      if (!lines.length) return;
+      if (!lines.length) return h1.classList.remove('measure');
       const wide = Math.max(...lines.map((l) => {
         const r = l.querySelector<HTMLElement>('[data-rot]');
         if (!r) return l.offsetWidth;
@@ -322,9 +327,41 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       const bw = tbox.clientWidth, bh = tbox.clientHeight - parseFloat(cs.paddingTop);
       const k = Math.min(bw / wide, bh / h1.offsetHeight);
       h1.style.fontSize = `${(parseFloat(getComputedStyle(h1).fontSize) * k * .995).toFixed(2)}px`;
-      rots.forEach((r) => { const on = r.querySelector<HTMLElement>('.on'); if (on) r.style.width = `${on.offsetWidth}px`; });
+      place();
+      h1.classList.remove('measure');
       hero.dispatchEvent(new Event('rot'));
     };
+    // Where each letter sits across the headline (0 at the left edge, 1 at the right), for the wave and the pointer.
+    let letters: { el: HTMLElement; x: number; y: number }[] = [];
+    const place = () => {
+      const b = h1.getBoundingClientRect();
+      const was = h1.classList.contains('measure');
+      h1.classList.add('measure');
+      letters = [...h1.querySelectorAll<HTMLElement>('.ch')].filter((el) => el.offsetWidth).map((el) => {
+        const r = el.getBoundingClientRect();
+        el.style.setProperty('--x', ((r.left - b.left) / b.width).toFixed(3));
+        return { el, x: r.left - b.left + r.width / 2, y: el.closest('.ln')!.getBoundingClientRect().top - b.top + r.height / 2 };
+      });
+      if (!was) h1.classList.remove('measure');
+    };
+    // With a mouse, the ink thins out under the pointer: letters close to it lose weight and swell back as it leaves.
+    if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      let px = -1e4, py = -1e4, pending = false;
+      const thin = () => {
+        pending = false;
+        const b = h1.getBoundingClientRect(), reach = parseFloat(getComputedStyle(h1).fontSize) * 1.25;
+        const off = intro.classList.contains('moving');
+        letters.forEach(({ el, x, y }) => {
+          const d = Math.hypot(px - b.left - x, py - b.top - y);
+          const v = off ? 0 : Math.max(0, 1 - d / reach);
+          const k = (v * v * (3 - 2 * v)).toFixed(2);
+          if (el.style.getPropertyValue('--pull') !== k) el.style.setProperty('--pull', k);
+        });
+      };
+      const ask = () => { if (!pending) { pending = true; requestAnimationFrame(thin); } };
+      hero.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; ask(); });
+      hero.addEventListener('pointerleave', () => { px = py = -1e4; ask(); });
+    }
     let fitT = 0;
     addEventListener('resize', () => { clearTimeout(fitT); fitT = setTimeout(fitTitle, 120); });
     document.fonts?.ready.then(fitTitle);
@@ -341,15 +378,22 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         const next = (at + 1) % n;
         rots.forEach((r) => {
           const ws = [...r.children] as HTMLElement[];
-          r.style.width = `${r.offsetWidth}px`;
+          // The word's box slides from the old width to the new one, then lets go so the ink can breathe.
+          h1.classList.add('measure');
+          const from = ws[at].offsetWidth, to = ws[next].offsetWidth;
+          h1.classList.remove('measure');
+          r.style.width = `${from}px`; void r.offsetWidth;
           ws[at].classList.remove('on'); ws[at].classList.add('out');
           ws[next].classList.add('on');
-          setTimeout(() => ws.forEach((w, i) => i !== next && w.classList.remove('out')), 700);
-          r.style.width = `${ws[next].offsetWidth}px`;
+          setTimeout(() => ws.forEach((w, i) => i !== next && w.classList.remove('out')), 950);
+          r.style.width = `${to}px`;
+          setTimeout(() => (r.style.width = ''), 1200);
           r.classList.remove('again'); void r.offsetWidth; r.classList.add('again');
         });
+        // A wave of thin ink runs through the whole headline, left to right, as the new word arrives.
+        h1.classList.remove('wave'); void h1.offsetWidth; h1.classList.add('wave');
         at = next; fill();
-        setTimeout(() => hero.dispatchEvent(new Event('rot')), 720);
+        setTimeout(() => { place(); hero.dispatchEvent(new Event('rot')); }, 760);
       };
       const tick = () => { if (live && !intro.classList.contains('moving') && !document.hidden) swap(); else fill(); timer = setTimeout(tick, beat); };
       new IntersectionObserver(([e]) => { live = e.isIntersecting; }).observe(hero);
@@ -360,6 +404,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 </script>
 
 <style>
+  @property --wave { syntax: '<number>'; inherits: false; initial-value: 0; }
+  @property --pull { syntax: '<number>'; inherits: false; initial-value: 0; }
   /* The landing: white, type only. The kicker and the pitch sit at the top, the headline fills the bottom and the
      formats we make run along the foot in a black band. */
   .intro { position: relative; }
@@ -382,10 +428,19 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .h-title { margin: 0; font-weight: 700; letter-spacing: -0.06em; line-height: .86;
     font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / (var(--cw) * .56)), calc((100svh - 300px) / 2.75));
     font-size: min(calc(100cqw / (var(--cw) * .56)), calc(100cqh / 2.75)); }
-  .ln { display: block; overflow: hidden; width: fit-content; white-space: nowrap; padding: .03em .1em .1em .06em; margin: 0 0 -.1em -.06em; }
+  .ln { display: block; overflow: hidden; width: fit-content; white-space: nowrap; padding: .08em .1em .1em .06em; margin: -.05em 0 -.1em -.06em; }
   .ln.m { display: none; }
-  .rise { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
-  @keyframes rise { from { transform: translateY(108%); } }
+  /* Letter by letter. Each one rises in thin and fills with ink as it lands (Inter's weight axis, 240 to 700); later a
+     wave of thin ink passes through, and a mouse thins whatever it hovers. */
+  .rise { display: inline-block; }
+  .ch { display: inline-block; font-weight: calc(700 - max(var(--wave), var(--pull)) * 460); transition: --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .ch.r { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both, ink 1500ms cubic-bezier(.45, 0, .2, 1) both;
+    animation-delay: calc(var(--d) + var(--i) * 34ms), calc(var(--d) + var(--i) * 34ms + 120ms); }
+  @keyframes rise { from { transform: translateY(112%); } }
+  @keyframes ink { from { --wave: 1; } }
+  .measure .ch { font-weight: 700 !important; }
+  .wave .ch { animation: wave 1100ms cubic-bezier(.45, 0, .55, 1) both; animation-delay: calc(var(--x, 0) * 560ms); }
+  @keyframes wave { 45% { --wave: .9; } }
   /* The pink marker passes twice under the last words, a light stroke then the full one (made to be watched twice),
      and the full stop lands as a green dot: the mat the work sits on. */
   .mark { position: relative; z-index: 0; }
@@ -396,9 +451,10 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   /* The changing word: the one on screen sits in the line, the others wait below it and leave upwards. */
   .rot { display: inline-block; position: relative; vertical-align: top; white-space: nowrap; transition: width 700ms cubic-bezier(.65, 0, .35, 1); }
   .rot .w { display: inline-block; }
-  .rot .w:not(.on) { position: absolute; left: 0; top: 0; transform: translateY(115%); }
-  .rot .w.on { transition: transform 760ms cubic-bezier(.22, 1, .36, 1) 80ms; }
-  .rot .w.out { transform: translateY(-115%); transition: transform 600ms cubic-bezier(.65, 0, .35, 1); }
+  .rot .w:not(.on) { position: absolute; left: 0; top: 0; }
+  .rot .w:not(.on) .ch { transform: translateY(118%); }
+  .rot .w.on .ch { transition: transform 920ms cubic-bezier(.34, 1.25, .64, 1) calc(60ms + var(--i) * 42ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .rot .w.out .ch { transform: translateY(-118%); transition: transform 560ms cubic-bezier(.65, 0, .35, 1) calc(var(--i) * 30ms), --pull 420ms; }
   .rot.again::before { animation: none; transform: scaleX(0); }
   .rot.again::after { animation: swipe2 720ms cubic-bezier(.65, 0, .35, 1) 260ms both; }
   @keyframes swipe2 { from { transform: scaleX(0); } }
@@ -507,7 +563,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   /* The narrowest phones keep the link and the pause button; the year line goes. */
   @media (max-width: 374px) { .w-kick { display: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .rise, .up, .mark::before, .mark::after, .stop { animation: none; }
+    .rise, .ch.r, .wave .ch, .up, .mark::before, .mark::after, .stop { animation: none; }
     .bars { display: none; }
   }
 
