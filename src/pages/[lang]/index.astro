@@ -18,17 +18,14 @@ const s = t(lang);
 const k = c(lang);
 const h = k.home;
 const hx = h.hero;
-// The headline's full stop is drawn as a dot: it is where the landing opens onto the work.
-// Wide screens set it in three lines; phones and upright tablets word by word (titleM), each as big as the screen allows.
-const cut = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
-const sets = [{ k: 'd', lines: cut(h.title) }, { k: 'm', lines: cut(h.titleM) }];
-// The last line keeps changing, like a reel on replay: each word rises in and the marker draws under it again.
-const rot = h.rot.map((w) => w.replace(/\.$/, ''));
-// Each headline is sized from its widest line, the changing words included (in characters, roughly half an em each).
-const widest = (lines: string[]) => Math.max(...lines.slice(0, -1).map((l) => l.length), ...rot.map((w) => w.length + 1));
+// The landing is a short ad in three beats. Each beat ends on a dot; the last one is where the landing opens onto
+// the work. Wide screens and phones each get their own line breaks, so the type can be as big as the screen allows.
+const dot = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
+const scenes = h.scenes.map((sc) => [{ k: 'd', lines: dot(sc.d) }, { k: 'm', lines: dot(sc.m) }]);
+const said = h.scenes.map((sc) => sc.d.join(' ')).join(' ');
 // Every letter is its own piece, so letters can rise one after another and change weight on their own.
 const split = (t: string) => [...t].map((ch, i) => ({ ch, i }));
-const fit = `--cw:${widest(h.title)};--cm:${widest(h.titleM)};--lm:${h.titleM.length}`;
+const ad = h.ad;
 // The work stage plays a short silent loop of each reel; a click opens the full reel with sound.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -43,16 +40,22 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     <div class="stage">
       <section class="hero" data-hero aria-labelledby="h-title">
         <div class="wrap wide h-in">
-          <div class="bars up" style={`--d:260ms;--n:${rot.length}`} aria-hidden="true" data-bars>{rot.map(() => <i><b></b></i>)}</div>
-          <p class="h-kick up" style="--d:320ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
+          <p class="h-kick up" style="--d:200ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
           <div class="h-tbox">
-            <h1 class="h-title" id="h-title" aria-label={h.title.join(' ')} style={fit}>
-              {sets.map(({ k: set, lines }) => lines.map((line, i) => (
-                <span class={`ln ${set}`} aria-hidden="true"><span class="rise" style={`--d:${300 + i * (set === 'd' ? 140 : 90)}ms`}>{i === lines.length - 1
-                  ? <><span class="mark rot" data-rot>{rot.map((w, j) => <span class={j ? 'w' : 'w on'}>{split(w).map(({ ch, i: q }) => (ch === ' ' ? ' ' : <span class={j ? 'ch' : 'ch r'} style={`--i:${q}`}>{ch}</span>))}</span>)}</span><span class="stop" data-stop></span></>
-                  : split(line).map(({ ch, i: q }) => (ch === ' ' ? ' ' : <span class="ch r" style={`--i:${q}`}>{ch}</span>))}</span></span>
-              )))}
+            <h1 class="h-title" id="h-title" aria-label={said} data-title>
+              {scenes.map((sets, n) => (
+                <span class={n ? 'scene' : 'scene on first'} aria-hidden="true" data-scene>
+                  {sets.map(({ k: set, lines }) => lines.map((line, i) => (
+                    <span class={`ln ${set}`} style={`--l:${i}`}><span class={i === lines.length - 1 && n === scenes.length - 1 ? 'mark' : ''}>{split(line).map(({ ch, i: q }) => (ch === ' ' ? ' ' : <span class="ch" style={`--i:${q}`}>{ch}</span>))}</span>{i === lines.length - 1 && <span class="stop" data-stop></span>}</span>
+                  )))}
+                </span>
+              ))}
             </h1>
+          </div>
+          <div class="h-foot up" style="--d:500ms" aria-hidden="true">
+            <p class="ad-t"><span class="ad-k tape flat">{ad.label}</span><span data-clock>0:00</span></p>
+            <button type="button" class="skip" data-skip tabindex="-1" data-in={ad.skipIn} data-go={ad.skip}><span data-skip-t>{ad.skipIn} 5</span><svg viewBox="0 0 16 16"><path d="M3 3.2v9.6L10 8zM11.5 3h1.8v10h-1.8z" /></svg></button>
+            <div class="ad-bar"><b data-bar></b></div>
           </div>
         </div>
         <div class="ticker" aria-hidden="true">
@@ -141,7 +144,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const stops = [...hero.querySelectorAll<HTMLElement>('[data-stop]')];
     let stop = stops[0];
     const hit = hero.querySelector<HTMLButtonElement>('[data-stop-hit]')!;
-    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick, .bars')];
+    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick, .h-foot')];
     const head = work.querySelector<HTMLElement>('[data-w-head]')!;
     const title = head.querySelector<HTMLElement>('h2')!;
     const deck = work.querySelector<HTMLElement>('[data-deck]')!;
@@ -257,7 +260,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         D = pin.offsetHeight || 1;
         top = intro.offsetTop;
         // Offsets leave out transforms, so the dot is found where it rests.
-        stop = stops.find((el) => el.offsetWidth) ?? stops[0];
+        stop = stops.find((el) => el.offsetWidth && el.closest('.on')) ?? stops.find((el) => el.offsetWidth) ?? stops[0];
         let x = stop.offsetWidth / 2, y = stop.offsetHeight / 2;
         for (let el: HTMLElement | null = stop; el && el !== hero; el = el.offsetParent as HTMLElement | null) { x += el.offsetLeft; y += el.offsetTop; }
         ox = x; oy = y; r0 = stop.offsetWidth / 2;
@@ -304,52 +307,42 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       }
     }
 
-    // The headline is set as big as its box allows: the widest line, counting the widest of the changing words, meets
-    // the box's width, or all the lines meet its height. The CSS size before this runs is a close guess.
-    const bars = [...hero.querySelectorAll<HTMLElement>('[data-bars] i')];
-    const rots = [...hero.querySelectorAll<HTMLElement>('[data-rot]')];
+    // The headline is set as big as its box allows: the widest line of any beat meets the box's width, or the tallest
+    // beat meets its height. All beats share one cell, so the box never jumps between them.
+    const htl = hero.querySelector<HTMLElement>('[data-title]')!;
+    const beats = [...htl.querySelectorAll<HTMLElement>('[data-scene]')];
     const tbox = hero.querySelector<HTMLElement>('.h-tbox')!;
-    const h1 = tbox.querySelector<HTMLElement>('h1')!;
     const fitTitle = () => {
-      h1.style.fontSize = '';
+      htl.style.fontSize = '';
       // Measured at full weight, whatever the letters are doing at that moment.
-      h1.classList.add('measure');
-      rots.forEach((r) => (r.style.width = ''));
-      const lines = [...h1.querySelectorAll<HTMLElement>('.ln')].filter((l) => l.offsetWidth);
-      if (!lines.length) return h1.classList.remove('measure');
-      const wide = Math.max(...lines.map((l) => {
-        const r = l.querySelector<HTMLElement>('[data-rot]');
-        if (!r) return l.offsetWidth;
-        const ws = [...r.children] as HTMLElement[];
-        return l.offsetWidth - r.offsetWidth + Math.max(...ws.map((w) => w.offsetWidth));
-      }));
-      const cs = getComputedStyle(tbox);
-      const bw = tbox.clientWidth, bh = tbox.clientHeight - parseFloat(cs.paddingTop);
-      const k = Math.min(bw / wide, bh / h1.offsetHeight);
-      h1.style.fontSize = `${(parseFloat(getComputedStyle(h1).fontSize) * k * .995).toFixed(2)}px`;
-      place();
-      h1.classList.remove('measure');
+      htl.classList.add('measure');
+      const lines = [...htl.querySelectorAll<HTMLElement>('.ln')].filter((l) => l.offsetWidth);
+      if (lines.length) {
+        const wide = Math.max(...lines.map((l) => l.offsetWidth));
+        const tall = Math.max(...beats.map((b) => b.offsetHeight));
+        const bw = tbox.clientWidth, bh = tbox.clientHeight - parseFloat(getComputedStyle(tbox).paddingTop);
+        const k = Math.min(bw / wide, bh / tall);
+        htl.style.fontSize = `${(parseFloat(getComputedStyle(htl).fontSize) * k * .995).toFixed(2)}px`;
+        place();
+      }
+      htl.classList.remove('measure');
       hero.dispatchEvent(new Event('rot'));
     };
-    // Where each letter sits across the headline (0 at the left edge, 1 at the right), for the wave and the pointer.
+    // Where each letter sits, for the pointer.
     let letters: { el: HTMLElement; x: number; y: number }[] = [];
     const place = () => {
-      const b = h1.getBoundingClientRect();
-      const was = h1.classList.contains('measure');
-      h1.classList.add('measure');
-      letters = [...h1.querySelectorAll<HTMLElement>('.ch')].filter((el) => el.offsetWidth).map((el) => {
-        const r = el.getBoundingClientRect();
-        el.style.setProperty('--x', ((r.left - b.left) / b.width).toFixed(3));
-        return { el, x: r.left - b.left + r.width / 2, y: el.closest('.ln')!.getBoundingClientRect().top - b.top + r.height / 2 };
+      const b = htl.getBoundingClientRect();
+      letters = [...htl.querySelectorAll<HTMLElement>('.on .ch')].filter((el) => el.offsetWidth).map((el) => {
+        const r = el.getBoundingClientRect(), ln = el.closest('.ln')!.getBoundingClientRect();
+        return { el, x: r.left - b.left + r.width / 2, y: ln.top - b.top + ln.height / 2 };
       });
-      if (!was) h1.classList.remove('measure');
     };
     // With a mouse, the ink thins out under the pointer: letters close to it lose weight and swell back as it leaves.
     if (!still && matchMedia('(hover: hover) and (pointer: fine)').matches) {
       let px = -1e4, py = -1e4, pending = false;
       const thin = () => {
         pending = false;
-        const b = h1.getBoundingClientRect(), reach = parseFloat(getComputedStyle(h1).fontSize) * 1.25;
+        const b = htl.getBoundingClientRect(), reach = parseFloat(getComputedStyle(htl).fontSize) * 1.25;
         const off = intro.classList.contains('moving');
         letters.forEach(({ el, x, y }) => {
           const d = Math.hypot(px - b.left - x, py - b.top - y);
@@ -367,99 +360,114 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     document.fonts?.ready.then(fitTitle);
     fitTitle();
 
-    // The last line of the headline plays like a story: a bar fills along the top, then the next word rises in, the
-    // marker draws under it again and the dot slides along to its new end. It rests while the landing is out of
-    // sight, while the iris is open and with reduced motion.
-    const n = bars.length, beat = 2600;
-    if (!still && n > 1) {
-      let at = 0, timer = 0, live = true;
-      const fill = () => bars.forEach((b, i) => { b.className = i < at ? 'done' : i === at ? 'run' : ''; });
-      const swap = () => {
-        const next = (at + 1) % n;
-        rots.forEach((r) => {
-          const ws = [...r.children] as HTMLElement[];
-          // The word's box slides from the old width to the new one, then lets go so the ink can breathe.
-          h1.classList.add('measure');
-          const from = ws[at].offsetWidth, to = ws[next].offsetWidth;
-          h1.classList.remove('measure');
-          r.style.width = `${from}px`; void r.offsetWidth;
-          ws[at].classList.remove('on'); ws[at].classList.add('out');
-          ws[next].classList.add('on');
-          setTimeout(() => ws.forEach((w, i) => i !== next && w.classList.remove('out')), 950);
-          r.style.width = `${to}px`;
-          setTimeout(() => (r.style.width = ''), 1200);
-          r.classList.remove('again'); void r.offsetWidth; r.classList.add('again');
-        });
-        // A wave of thin ink runs through the whole headline, left to right, as the new word arrives.
-        h1.classList.remove('wave'); void h1.offsetWidth; h1.classList.add('wave');
-        at = next; fill();
-        setTimeout(() => { place(); hero.dispatchEvent(new Event('rot')); }, 760);
-      };
-      const tick = () => { if (live && !intro.classList.contains('moving') && !document.hidden) swap(); else fill(); timer = setTimeout(tick, beat); };
-      new IntersectionObserver(([e]) => { live = e.isIntersecting; }).observe(hero);
-      // The first word waits for the headline to land.
-      setTimeout(() => { hero.classList.add('playing'); fill(); timer = setTimeout(tick, beat); }, 2200);
-    }
+    // The ad plays. A yellow bar runs along the foot with the clock beside it, and each beat hands over to the next:
+    // its letters leave upwards one by one while the next beat's rise in, thin, and fill with ink. The skip button
+    // counts down from 5, then opens the work. When the ad ends it plays again. The clock only runs while the landing
+    // is on screen and closed.
+    const clock = hero.querySelector<HTMLElement>('[data-clock]')!;
+    const bar = hero.querySelector<HTMLElement>('[data-bar]')!;
+    const skip = hero.querySelector<HTMLButtonElement>('[data-skip]')!;
+    const skipT = skip.querySelector<HTMLElement>('[data-skip-t]')!;
+    const lens = [3000, 3000, 4600], total = lens.reduce((a, b) => a + b, 0), wait = 5;
+    let t = 0, at = 0, prev = 0, live = true, freed = false;
+    const ends = lens.map((_, i) => lens.slice(0, i + 1).reduce((a, b) => a + b, 0));
+    const show = (n: number) => {
+      if (n === at) return;
+      beats.forEach((b, i) => { b.classList.remove('first'); b.classList.toggle('on', i === n); b.classList.toggle('out', i === at); });
+      setTimeout(() => beats.forEach((b, i) => i !== n && b.classList.remove('out')), 1000);
+      at = n;
+      place();
+      setTimeout(() => { place(); hero.dispatchEvent(new Event('rot')); }, 60);
+    };
+    const paint = () => {
+      const s = Math.floor(t / 1000);
+      clock.textContent = `0:${String(s).padStart(2, '0')} / 0:${String(Math.round(total / 1000)).padStart(2, '0')}`;
+      bar.style.transform = `scaleX(${(t / total).toFixed(4)})`;
+      if (!freed) {
+        const left = wait - s;
+        if (left <= 0) { freed = true; skip.classList.add('free'); skipT.textContent = skip.dataset.go!; skip.tabIndex = 0; skip.removeAttribute('aria-hidden'); }
+        else skipT.textContent = `${skip.dataset.in} ${left}`;
+      }
+    };
+    const run = (now: number) => {
+      const dt = prev ? Math.min(100, now - prev) : 0; prev = now;
+      if (live && !document.hidden && !intro.classList.contains('moving')) {
+        t += dt;
+        if (t >= total) t = 0;
+        // With reduced motion the beats still change, they just don't move.
+        show(ends.findIndex((e) => t < e));
+        paint();
+      }
+      requestAnimationFrame(run);
+    };
+    new IntersectionObserver(([e]) => { live = e.isIntersecting; }).observe(hero);
+    paint();
+    // The first beat lands before the clock starts.
+    setTimeout(() => requestAnimationFrame(run), still ? 0 : 900);
+    skip.addEventListener('click', () => {
+      if (!freed) return;
+      if (intro.classList.contains('iris')) hit.click();
+      else work.scrollIntoView({ behavior: still ? 'auto' : 'smooth' });
+    });
   }
 </script>
 
 <style>
   @property --wave { syntax: '<number>'; inherits: false; initial-value: 0; }
   @property --pull { syntax: '<number>'; inherits: false; initial-value: 0; }
-  /* The landing: white, type only. The kicker and the pitch sit at the top, the headline fills the bottom and the
-     formats we make run along the foot in a black band. */
+  /* The landing: white, type only, played as a short ad. The kicker sits at the top, the headline fills the middle,
+     the ad player (clock, skip button, progress bar) sits under it and the formats we make run along the foot. */
   .intro { position: relative; }
   .stage { position: relative; }
   .hero { position: relative; display: flex; flex-direction: column; height: 100svh; min-height: 560px; overflow: hidden; background: var(--bg); color: var(--fg); }
-  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr);
-    grid-template-areas: 'bars' 'kick' 'title'; padding-top: calc(var(--header) + clamp(6px, 2vh, 24px)); padding-bottom: clamp(20px, 4vh, 48px); }
-  /* Story bars along the top: one per word of the changing line, filling as it plays. */
-  .bars { grid-area: bars; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 6px; margin-bottom: clamp(14px, 2.4vh, 24px); }
-  .bars i { display: block; height: 3px; border-radius: 3px; background: var(--tint-3); overflow: hidden; }
-  .bars b { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
-  .bars .done b { transform: none; }
-  .bars .run b { animation: fill 2600ms linear both; }
-  .hero:not(.playing) .bars i:first-child b { animation: fill 2200ms linear both; animation-delay: 0ms; }
-  @keyframes fill { to { transform: none; } }
+  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: 'kick' 'title' 'foot'; padding-top: calc(var(--header) + clamp(10px, 3vh, 32px)); padding-bottom: clamp(18px, 3vh, 36px); }
   .h-kick { grid-area: kick; align-self: start; display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: var(--fg-2); }
   .k-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 4px var(--pink-soft); }
-  /* The headline takes whatever room is left under the pitch: as wide as the longest line allows, as tall as the box. */
+  /* The headline takes whatever room is left: as wide as the longest line allows, as tall as the box. */
   .h-tbox { grid-area: title; container-type: size; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; padding-top: clamp(12px, 2.4vh, 28px); }
-  .h-title { margin: 0; font-weight: 700; letter-spacing: -0.06em; line-height: .86;
-    font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / (var(--cw) * .56)), calc((100svh - 300px) / 2.75));
-    font-size: min(calc(100cqw / (var(--cw) * .56)), calc(100cqh / 2.75)); }
+  .h-title { display: grid; margin: 0; font-weight: 700; letter-spacing: -0.06em; line-height: .86;
+    font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / 8), calc((100svh - 320px) / 2.3));
+    font-size: min(calc(100cqw / 8), calc(100cqh / 2.3)); }
+  /* The three beats share one cell, set from the bottom, so the box never jumps when one hands over to the next. */
+  .scene { grid-area: 1 / 1; align-self: end; display: block; pointer-events: none; }
   .ln { display: block; overflow: hidden; width: fit-content; white-space: nowrap; padding: .08em .1em .1em .06em; margin: -.05em 0 -.1em -.06em; }
   .ln.m { display: none; }
-  /* Letter by letter. Each one rises in thin and fills with ink as it lands (Inter's weight axis, 240 to 700); later a
-     wave of thin ink passes through, and a mouse thins whatever it hovers. */
-  .rise { display: inline-block; }
-  .ch { display: inline-block; font-weight: calc(700 - max(var(--wave), var(--pull)) * 460); transition: --pull 420ms cubic-bezier(.22, 1, .36, 1); }
-  .ch.r { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both, ink 1500ms cubic-bezier(.45, 0, .2, 1) both;
-    animation-delay: calc(var(--d) + var(--i) * 34ms), calc(var(--d) + var(--i) * 34ms + 120ms); }
-  @keyframes rise { from { transform: translateY(112%); } }
+  /* Letter by letter. A beat's letters rise in one after another, thin, and fill with ink as they land (Inter's weight
+     axis, 240 to 700); when the beat ends they leave upwards the same way. A mouse thins whatever it hovers. */
+  .ch { display: inline-block; font-weight: calc(700 - max(var(--wave), var(--pull)) * 460); transform: translateY(118%); --wave: 1; transition: --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .scene.on .ch { transform: none; --wave: 0;
+    transition: transform 950ms cubic-bezier(.22, 1, .36, 1) calc(var(--l) * 110ms + var(--i) * 32ms), --wave 1300ms cubic-bezier(.45, 0, .2, 1) calc(var(--l) * 110ms + var(--i) * 32ms + 140ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .scene.out .ch { transform: translateY(-118%); --wave: .6;
+    transition: transform 520ms cubic-bezier(.65, 0, .35, 1) calc(var(--l) * 50ms + var(--i) * 16ms), --wave 400ms ease, --pull 420ms; }
+  .scene.first .ch { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both, ink 1500ms cubic-bezier(.45, 0, .2, 1) both;
+    animation-delay: calc(300ms + var(--l) * 130ms + var(--i) * 34ms), calc(420ms + var(--l) * 130ms + var(--i) * 34ms); }
+  @keyframes rise { from { transform: translateY(118%); } }
   @keyframes ink { from { --wave: 1; } }
   .measure .ch { font-weight: 700 !important; }
-  .wave .ch { animation: wave 1100ms cubic-bezier(.45, 0, .55, 1) both; animation-delay: calc(var(--x, 0) * 560ms); }
-  @keyframes wave { 45% { --wave: .9; } }
-  /* The pink marker passes twice under the last words, a light stroke then the full one (made to be watched twice),
-     and the full stop lands as a green dot: the mat the work sits on. */
+  /* The last words of the last beat get the pink marker, and every beat ends on the green dot: the mat the work sits on. */
   .mark { position: relative; z-index: 0; }
-  .mark::before, .mark::after { content: ''; position: absolute; z-index: -1; left: -.05em; right: -.02em; top: .58em; bottom: .12em; transform-origin: 0 50%; }
-  .mark::before { background: var(--pink-soft); animation: swipe 620ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: 900ms; }
-  .mark::after { background: var(--pink); animation: swipe 720ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: 1380ms; }
-  @keyframes swipe { from { transform: scaleX(0); } }
-  /* The changing word: the one on screen sits in the line, the others wait below it and leave upwards. */
-  .rot { display: inline-block; position: relative; vertical-align: top; white-space: nowrap; transition: width 700ms cubic-bezier(.65, 0, .35, 1); }
-  .rot .w { display: inline-block; }
-  .rot .w:not(.on) { position: absolute; left: 0; top: 0; }
-  .rot .w:not(.on) .ch { transform: translateY(118%); }
-  .rot .w.on .ch { transition: transform 920ms cubic-bezier(.34, 1.25, .64, 1) calc(60ms + var(--i) * 42ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
-  .rot .w.out .ch { transform: translateY(-118%); transition: transform 560ms cubic-bezier(.65, 0, .35, 1) calc(var(--i) * 30ms), --pull 420ms; }
-  .rot.again::before { animation: none; transform: scaleX(0); }
-  .rot.again::after { animation: swipe2 720ms cubic-bezier(.65, 0, .35, 1) 260ms both; }
-  @keyframes swipe2 { from { transform: scaleX(0); } }
-  .stop { display: inline-block; width: .2em; height: .2em; margin-left: .05em; border-radius: 50%; background: var(--mat); animation: pop 650ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: 1750ms; }
+  .mark::after { content: ''; position: absolute; z-index: -1; left: -.05em; right: -.02em; top: .58em; bottom: .12em; background: var(--pink); transform: scaleX(0); transform-origin: 0 50%; }
+  .on .mark::after { transform: none; transition: transform 720ms cubic-bezier(.65, 0, .35, 1) 900ms; }
+  .out .mark::after { opacity: 0; transition: opacity 200ms; }
+  .stop { display: inline-block; width: .2em; height: .2em; margin-left: .05em; border-radius: 50%; background: var(--mat); transform: scale(0); }
+  .on .stop { transform: none; transition: transform 600ms cubic-bezier(.34, 1.56, .64, 1) 760ms; }
+  .out .stop { transform: scale(0); transition: transform 240ms ease; }
+  .first .stop { animation: pop 650ms cubic-bezier(.34, 1.56, .64, 1) both 1250ms; }
   @keyframes pop { from { transform: translateY(-1.2em) scale(.4); opacity: 0; } 55% { opacity: 1; } }
+
+  /* The ad player along the foot: the clock, the skip button that counts down, and the yellow progress bar. */
+  .h-foot { grid-area: foot; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0 16px; margin-top: clamp(16px, 2.6vh, 30px); }
+  .ad-t { display: flex; align-items: center; gap: 12px; margin: 0; font-size: 13px; font-weight: 600; color: var(--fg-2); font-variant-numeric: tabular-nums; }
+  .ad-k { font-size: 12px; padding: .45em .8em .4em; }
+  .skip { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px 12px 20px; border: 1px solid var(--hair); border-radius: 999px; background: transparent; color: var(--fg-3); font: 700 14px/1 var(--font); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; cursor: default;
+    transition: background 260ms var(--ease), color 260ms var(--ease), border-color 260ms var(--ease); }
+  .skip svg { width: 12px; height: 12px; fill: currentColor; }
+  .skip.free { background: var(--ink); border-color: var(--ink); color: #fff; cursor: pointer; }
+  .skip.free:hover { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+  .skip:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .ad-bar { grid-column: 1 / -1; height: 4px; margin-top: 14px; border-radius: 4px; background: var(--tint-3); overflow: hidden; }
+  .ad-bar b { display: block; height: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: 0 50%; }
   .stop-hit { position: absolute; z-index: 2; left: 0; top: 0; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
   .stop-hit:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .moving .stop-hit, .moving .stop { visibility: hidden; }
@@ -537,7 +545,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) {
     .h-in { padding-bottom: 20px; }
     .h-tbox { padding-top: 18px; }
-    .h-title { font-size: min(18vw, 12svh); font-size: min(calc(100cqw / (var(--cm) * .56)), calc(100cqh / (var(--lm) * .9))); }
+    .h-title { font-size: min(17vw, 11svh); font-size: min(calc(100cqw / 5.4), calc(100cqh / 3.1)); }
+    .skip { padding: 10px 14px 10px 16px; font-size: 13px; }
     .ln.d { display: none; }
     .ln.m { display: block; }
     .h-kick { font-size: 13px; }
@@ -563,8 +572,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   /* The narrowest phones keep the link and the pause button; the year line goes. */
   @media (max-width: 374px) { .w-kick { display: none; } }
   @media (prefers-reduced-motion: reduce) {
-    .rise, .ch.r, .wave .ch, .up, .mark::before, .mark::after, .stop { animation: none; }
-    .bars { display: none; }
+    .first .ch, .up, .first .stop { animation: none; }
   }
 
   .faq-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }

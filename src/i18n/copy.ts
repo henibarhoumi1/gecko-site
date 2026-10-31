@@ -4,11 +4,14 @@ import type { Locale } from './strings';
 const en = {
   nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'Reels and the thinking behind them', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
   home: {
-    title: ['Ads made', 'to be watched', 'twice.'],
-    // On phones the headline takes more, shorter lines so each can be as big as the screen allows.
-    titleM: ['Ads', 'made', 'to be', 'watched', 'twice.'],
-    // The last line keeps changing on the landing, like a reel on replay. The first one is the line you read first.
-    rot: ['twice.', 'again.', 'on repeat.'],
+    // The landing plays like a short ad in three beats: d is how a wide screen sets each line, m how a phone does.
+    // The last line of the last beat carries the pink marker.
+    scenes: [
+      { d: ['This is', 'an ad.'], m: ['This', 'is an', 'ad.'] },
+      { d: ['You’re still', 'watching.'], m: ['You’re', 'still', 'watching.'] },
+      { d: ['That’s the kind', 'we make.'], m: ['That’s', 'the kind', 'we make.'] },
+    ],
+    ad: { label: 'Ad', skipIn: 'Skip ad in', skip: 'Skip to the work', replay: 'Replay' },
     compare: { title: 'What changes with Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more hooks per reel on monthly plans, so your results pick the winner.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We read the results you share and write the next round from them.']] },
     kicker: 'Creative and production studio, Tunis',
     badge: 'Case study · Glucélia · 2026 · ',
@@ -274,9 +277,12 @@ type Copy = typeof en;
 const fr: Copy = {
   nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'Les reels et la réflexion derrière', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
   home: {
-    title: ['Des pubs', 'à regarder', 'deux fois.'],
-    titleM: ['Des', 'pubs', 'à regarder', 'deux fois.'],
-    rot: ['deux fois.', 'encore.', 'en boucle.'],
+    scenes: [
+      { d: ['Ceci est', 'une pub.'], m: ['Ceci', 'est une', 'pub.'] },
+      { d: ['Vous regardez', 'encore.'], m: ['Vous', 'regardez', 'encore.'] },
+      { d: ['C’est', 'notre métier.'], m: ['C’est', 'notre', 'métier.'] },
+    ],
+    ad: { label: 'Pub', skipIn: 'Passer dans', skip: 'Voir les réalisations', replay: 'Revoir' },
     compare: { title: 'Ce qui change avec Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux accroches par reel sur les plans mensuels, pour que vos résultats désignent la meilleure.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On lit les résultats que vous partagez et on écrit la suite à partir d’eux.']] },
     kicker: 'Studio de création et de production, Tunis',
     badge: 'Étude de cas · Glucélia · 2026 · ',
