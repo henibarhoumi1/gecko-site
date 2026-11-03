@@ -1,0 +1,38 @@
+name: site-audit
+# A one-off look at the live site from outside: screenshots on desktop and phone, page basics, broken
+# links, and Lighthouse scores. Results are uploaded as an artifact.
+on:
+  push:
+    branches: [site-audit]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      BASE: https://gecko-site.henibarhoumi1.workers.dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 && npx playwright install --with-deps chromium
+      - run: node tools/audit.mjs
+      - name: Lighthouse (phone and desktop)
+        run: |
+          mkdir -p out/lh
+          export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
+          for p in en/ en/work/ en/offers/ en/contact/ fr/; do
+            n=$(echo "$p" | tr '/' '_')
+            npx lighthouse "$BASE/$p" --quiet --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="out/lh/mobile_$n.json" || true
+            npx lighthouse "$BASE/$p" --quiet --preset=desktop --chrome-flags="--headless=new --no-sandbox" --output=json --output-path="out/lh/desktop_$n.json" || true
+          done
+          node -e "
+          const fs=require('fs');for(const f of fs.readdirSync('out/lh')){const j=JSON.parse(fs.readFileSync('out/lh/'+f));const c=j.categories||{};const a=j.audits||{};
+          console.log(f, Object.entries(c).map(([k,v])=>k+'='+Math.round(v.score*100)).join(' '), 'LCP='+(a['largest-contentful-paint']||{}).displayValue, 'CLS='+(a['cumulative-layout-shift']||{}).displayValue, 'TBT='+(a['total-blocking-time']||{}).displayValue, 'weight='+(a['total-byte-weight']||{}).displayValue);}" | tee out/lh-summary.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site-audit
+          path: out
+          retention-days: 7
