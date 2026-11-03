@@ -1,0 +1,94 @@
+---
+// A page per service (src/data/services.ts), for people who search for what Gecko makes.
+import Base from '../../../layouts/Base.astro';
+import { locales, type Locale } from '../../../i18n/strings';
+import { href } from '../../../i18n/paths';
+import { services } from '../../../data/services';
+export const getStaticPaths = () => locales.flatMap((lang) => services.map((s) => ({ params: { lang, slug: s.slug } })));
+const lang = Astro.params.lang as Locale;
+const s = services.find((x) => x.slug === Astro.params.slug)!;
+const fr = lang === 'fr';
+const w = {
+  gets: fr ? 'Ce que vous recevez' : 'What you get',
+  how: fr ? 'Comment ça se passe' : 'How it works',
+  howAll: fr ? 'Le déroulé complet' : 'The full process',
+  formats: fr ? 'Formats' : 'Formats',
+  work: fr ? 'Voir les reels' : 'See the reels',
+  price: fr ? 'Prix' : 'Price',
+  offers: fr ? 'Tous les plans' : 'All plans',
+  faq: fr ? 'Questions' : 'Questions',
+  cta: fr ? 'Démarrer un projet' : 'Start a project',
+  others: fr ? 'Aussi chez Gecko' : 'Also at Gecko',
+};
+const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: s.faq.map((f) => ({ '@type': 'Question', name: f.q[lang], acceptedAnswer: { '@type': 'Answer', text: f.a[lang] } })) });
+---
+<Base lang={lang} title={s.title[lang]} description={s.desc[lang]}>
+  <script type="application/ld+json" set:html={faqLd} />
+  <section class="page-head lit">
+    <div class="wrap wide stack" style="--gap:22px">
+      <p class="kicker rv">{s.title[lang]}</p>
+      <h1 class="h1 rv">{s.h1[lang]}</h1>
+      <p class="text text-l lede rv" style="--d:80ms">{s.lede[lang]}</p>
+      <p class="rv" style="--d:120ms"><a class="btn primary" href={href(lang, 'apply')}>{w.cta} <span class="arr" aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+
+  <section class="svc">
+    <div class="wrap wide svc-grid">
+      <div class="rv">
+        <h2 class="h3">{w.gets}</h2>
+        <ul class="svc-list">{s.gets[lang].map((g) => <li>{g}</li>)}</ul>
+      </div>
+      <div class="rv" style="--d:80ms">
+        <h2 class="h3">{w.how}</h2>
+        <ol class="svc-steps">{s.steps.map((st) => <li><strong>{st.t[lang]}</strong><span>{st.d[lang]}</span></li>)}</ol>
+        <a class="more" href={href(lang, 'process')}>{w.howAll} →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="svc">
+    <div class="wrap wide svc-grid">
+      <div class="rv">
+        <h2 class="h3">{w.formats}</h2>
+        <ul class="svc-chips">{s.formats[lang].map((f) => <li>{f}</li>)}</ul>
+        <a class="more" href={href(lang, 'work')}>{w.work} →</a>
+      </div>
+      <div class="rv" style="--d:80ms">
+        <h2 class="h3">{w.price}</h2>
+        <p class="text">{s.price[lang]}</p>
+        <a class="more" href={href(lang, 'offers')}>{w.offers} →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="svc">
+    <div class="wrap wide">
+      <h2 class="h3 rv">{w.faq}</h2>
+      <dl class="svc-faq">{s.faq.map((f) => <div class="rv"><dt>{f.q[lang]}</dt><dd class="text">{f.a[lang]}</dd></div>)}</dl>
+      <p class="others rv">{w.others}: {services.filter((x) => x.slug !== s.slug).map((x, i) => <>{i > 0 && ' · '}<a href={href(lang, `services/${x.slug}`)}>{x.title[lang]}</a></>)}</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .kicker { margin: 0; font-weight: 700; font-size: 14px; color: var(--fg-3); }
+  .svc { padding-block: clamp(36px, 5vw, 72px); border-top: 1px solid var(--hair); }
+  .svc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 80px); }
+  .h3 { margin: 0 0 18px; font-size: clamp(24px, 2.4vw, 34px); letter-spacing: -0.03em; line-height: 1.05; }
+  .svc-list, .svc-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+  .svc-list li { padding-left: 22px; position: relative; line-height: 1.45; }
+  .svc-list li::before { content: '—'; position: absolute; left: 0; color: var(--fg-3); }
+  .svc-steps { counter-reset: s; }
+  .svc-steps li { counter-increment: s; display: grid; gap: 4px; padding-left: 40px; position: relative; line-height: 1.45; }
+  .svc-steps li::before { content: '0' counter(s); position: absolute; left: 0; top: 2px; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .svc-chips { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .svc-chips li { padding: 8px 14px; border: 1px solid var(--hair-2, currentColor); border-radius: 999px; font-size: 15px; }
+  .more { display: inline-block; margin-top: 18px; padding-block: 6px; font-weight: 700; color: inherit; text-decoration: none; }
+  .svc-faq { margin: 0; display: grid; gap: 22px; max-width: 760px; }
+  .svc-faq dt { font-weight: 700; margin-bottom: 4px; }
+  .svc-faq dd { margin: 0; }
+  .others { margin-top: 36px; color: var(--fg-3); }
+  .others a { color: var(--fg); padding-block: 6px; display: inline-block; }
+  @media (max-width: 760px) { .svc-grid { grid-template-columns: 1fr; } }
+</style>

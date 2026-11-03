@@ -9,6 +9,7 @@ const { lang, cta = true } = Astro.props;
 const s = t(lang);
 const k = c(lang);
 const n = k.nav;
+import { services } from '../data/services';
 ---
 <footer class="site-footer on-black">
   {cta && <div class="wrap wide">
@@ -26,6 +27,10 @@ const n = k.nav;
         <a href={href(lang, 'faq')}>{n.faq}</a>
         <a href={href(lang, 'contact')}>{n.contact}</a>
       </div>
+    </nav>
+    <nav class="col" aria-label={lang === 'fr' ? 'Services' : 'Services'}>
+      <p class="h">Services</p>
+      {services.map((x) => <a href={href(lang, `services/${x.slug}`)}>{x.title[lang]}</a>)}
     </nav>
     <div class="col">
       <p class="h">{k.footer.reach}</p>
@@ -52,17 +57,17 @@ const n = k.nav;
   .big { display: block; font-weight: 700; font-size: clamp(36px, 6vw, 96px); letter-spacing: -0.05em; line-height: .95; text-decoration: none; color: var(--fg); padding-bottom: clamp(24px, 3vw, 40px); margin-bottom: clamp(28px, 3.5vw, 48px); border-bottom: 1px solid var(--hair); }
   .big span { display: inline-block; color: var(--pink); transition: transform 360ms var(--ease); }
   .big:hover span { transform: translateX(16px); }
-  .inner { display: grid; grid-template-columns: 1fr auto auto auto; gap: 28px clamp(36px, 5vw, 96px); align-items: start; }
+  .inner { display: grid; grid-template-columns: 1fr auto auto auto auto; gap: 28px clamp(36px, 5vw, 96px); align-items: start; }
   .mark { display: block; width: clamp(34px, 3vw, 44px); }
   .mark img { width: 100%; height: auto; }
   .h { margin: 0 0 4px; font-weight: 700; font-size: 13px; color: var(--fg-3); }
   .col { display: grid; align-content: start; gap: 10px; font-size: 15px; }
   .pages { display: grid; grid-template-columns: repeat(2, auto); gap: 10px 36px; justify-content: start; }
-  .col a { text-decoration: none; color: var(--fg); width: fit-content; white-space: nowrap; }
+  .col a { text-decoration: none; color: var(--fg); width: fit-content; white-space: nowrap; display: inline-block; padding-block: 6px; margin-block: -6px; }
   .col a:hover { color: var(--pink); }
   .base { margin-top: clamp(32px, 4vw, 52px); padding-top: 16px; border-top: 1px solid var(--hair); display: flex; justify-content: space-between; gap: 16px; font-size: 13px; color: var(--fg-3); }
   .base p { margin: 0; }
-  .base a { color: inherit; text-decoration: none; }
+  .base a { color: inherit; text-decoration: none; display: inline-block; padding-block: 8px; margin-block: -8px; }
   .base a:hover { color: var(--fg); }
   .base .links { display: flex; gap: 20px; flex-wrap: wrap; }
   /* Narrow screens: the monogram steps aside (the bar already carries the logo) and the columns wrap onto a new line

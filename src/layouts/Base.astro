@@ -56,7 +56,7 @@ const org = JSON.stringify({
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     {!noindex && page === 'home' && <script type="application/ld+json" set:html={org} />}
-    <script is:inline>document.documentElement.classList.add('pre'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
+    <script is:inline>document.documentElement.classList.add('pre', 'js'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>
   <body>
     <Header lang={lang} />
@@ -64,6 +64,14 @@ const org = JSON.stringify({
     <Footer lang={lang} cta={footerCta} />
     <script>
       import Lenis from 'lenis';
+      import { track } from '../scripts/intake';
+      // Counts only: one page view, and each tap on a WhatsApp link (src/scripts/intake.ts).
+      if ((document as any).prerendering) document.addEventListener('prerenderingchange', () => track('view'), { once: true });
+      else track('view');
+      document.addEventListener('click', (e) => {
+        const a = (e.target as Element).closest?.('a[href*="wa.me/"]');
+        if (a) track('wa_click');
+      });
       // A new page always opens at the top (unless the link points to a section).
       // Inside a frame (the preview link), the page around it is brought back up too after an internal click.
       const framed = window !== window.top && !!document.referrer && new URL(document.referrer).origin === location.origin;
