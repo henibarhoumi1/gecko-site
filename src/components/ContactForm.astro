@@ -23,6 +23,7 @@ const k = c(lang).contact;
   <p class="text status" role="status" aria-live="polite"></p>
 </form>
 <script>
+  import { saveLead, track } from '../scripts/intake';
   document.querySelectorAll<HTMLFormElement>('[data-cform]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('.status')!;
     form.addEventListener('submit', async (e) => {
@@ -32,6 +33,14 @@ const k = c(lang).contact;
       const msg = form.querySelector<HTMLTextAreaElement>('[name=message]')!;
       const bad = [name, mail, msg].find((i) => !i.value.trim() || (i === mail && !mail.checkValidity()));
       if (bad) { bad.focus(); bad.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
+      const phone = form.querySelector<HTMLInputElement>('[name=phone]')!.value;
+      const bot = form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '';
+      // Saved straight into Gecko's Pipeline. Only if that fails does the visitor's mail app open instead.
+      if (await saveLead({ kind: 'contact', name: name.value.trim(), email: mail.value.trim(), phone, message: msg.value.trim(), website: bot })) {
+        track('contact_done');
+        form.reset(); status.textContent = form.dataset.sent!;
+        return;
+      }
       if (!form.dataset.key) {
         const body = `${msg.value}\n\n${name.value}\n${mail.value}\n${form.querySelector<HTMLInputElement>('[name=phone]')!.value}`;
         location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(name.value)}&body=${encodeURIComponent(body)}`;
