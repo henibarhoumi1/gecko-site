@@ -20,6 +20,9 @@ for (const [label, ctxOpts] of [['desktop', { viewport: { width: 1440, height: 9
     const res = await page.goto(BASE + p, { waitUntil: 'networkidle', timeout: 60000 }).catch(e => null);
     const loadMs = Date.now() - t0;
     await page.waitForTimeout(1500);
+    // Scroll through the page like a visitor so everything that rises into view is shown, then back to the top.
+    await page.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } window.scrollTo(0, 0); });
+    await page.waitForTimeout(800);
     const info = await page.evaluate(() => {
       const q = s => document.querySelector(s);
       const lcp = new Promise(r => { let v = 0; new PerformanceObserver(l => { for (const e of l.getEntries()) v = e.startTime; }).observe({ type: 'largest-contentful-paint', buffered: true }); setTimeout(() => r(v), 300); });
@@ -40,6 +43,8 @@ for (const [label, ctxOpts] of [['desktop', { viewport: { width: 1440, height: 9
     }).catch(e => ({ error: String(e) }));
     (info.links || []).forEach(l => links.add(l));
     delete info.links;
+    await page.evaluate(() => { document.querySelectorAll('.rv').forEach(e => e.classList.add('in')); document.documentElement.classList.remove('pre'); });
+    await page.waitForTimeout(600);
     const name = `${label}${p.replace(/\//g, '_')}`;
     await page.screenshot({ path: `out/shots/${name}.jpg`, type: 'jpeg', quality: 60, fullPage: true }).catch(() => {});
     report.push({ label, path: p, status: res?.status(), loadMs, bytes, requests, errors, failed, ...info });
