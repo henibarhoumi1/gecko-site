@@ -6,7 +6,7 @@ on:
     branches: [site-audit]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   audit:
     runs-on: ubuntu-24.04
@@ -31,8 +31,10 @@ jobs:
           node -e "
           const fs=require('fs');for(const f of fs.readdirSync('out/lh')){const j=JSON.parse(fs.readFileSync('out/lh/'+f));const c=j.categories||{};const a=j.audits||{};
           console.log(f, Object.entries(c).map(([k,v])=>k+'='+Math.round(v.score*100)).join(' '), 'LCP='+(a['largest-contentful-paint']||{}).displayValue, 'CLS='+(a['cumulative-layout-shift']||{}).displayValue, 'TBT='+(a['total-blocking-time']||{}).displayValue, 'weight='+(a['total-byte-weight']||{}).displayValue);}" | tee out/lh-summary.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: site-audit
-          path: out
-          retention-days: 7
+      - name: Save results to the site-audit-results branch
+        run: |
+          rm -f out/lh/*.json
+          cd out && git init -q && git checkout -q -b site-audit-results
+          git -c user.name=audit -c user.email=audit@users.noreply.github.com add -A
+          git -c user.name=audit -c user.email=audit@users.noreply.github.com commit -qm "audit results"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" site-audit-results

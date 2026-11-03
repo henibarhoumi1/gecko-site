@@ -41,7 +41,7 @@ for (const [label, ctxOpts] of [['desktop', { viewport: { width: 1440, height: 9
     (info.links || []).forEach(l => links.add(l));
     delete info.links;
     const name = `${label}${p.replace(/\//g, '_')}`;
-    await page.screenshot({ path: `out/shots/${name}.png`, fullPage: true }).catch(() => {});
+    await page.screenshot({ path: `out/shots/${name}.jpg`, type: 'jpeg', quality: 60, fullPage: true }).catch(() => {});
     report.push({ label, path: p, status: res?.status(), loadMs, bytes, requests, errors, failed, ...info });
     await page.close();
   }
