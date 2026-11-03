@@ -1,0 +1,22 @@
+// Checks the preview sends its counts and a contact message to the TESTING database.
+import { chromium } from 'playwright';
+const BASE = process.env.BASE.replace(/\/$/, '');
+const browser = await chromium.launch();
+const page = await browser.newPage();
+const seen = [];
+page.on('response', (r) => { if (r.url().includes('/rest/v1/rpc/')) seen.push(`${r.status()} ${r.url().replace(/^https:\/\/([a-z]+)\.supabase\.co\/rest\/v1\/rpc\//, '$1 ')}`); });
+page.on('console', (m) => m.type() === 'error' && console.log('console error:', m.text()));
+const res = await page.goto(BASE + '/en/contact/', { waitUntil: 'networkidle' });
+console.log('status', res.status());
+console.log('canonical', await page.getAttribute('link[rel=canonical]', 'href'));
+console.log('og', await page.getAttribute('meta[property="og:image"]', 'content'));
+await page.fill('#cf-name', 'Audit Test (ignore)');
+await page.fill('#cf-mail', 'audit-test@example.com');
+await page.fill('#cf-msg', 'Automatic check of the website form. Ignore.');
+await page.click('[data-cform] button[type=submit]');
+await page.waitForTimeout(3000);
+console.log('form status:', await page.textContent('[data-cform] .status'));
+await page.evaluate(() => document.documentElement.classList.remove('js'));
+console.log('visible without script:', await page.isVisible('h1'));
+console.log(seen.join('\n'));
+await browser.close();
