@@ -48,7 +48,6 @@ const icons = [
 
     <div class="app-wrap rv" style="--d:120ms" data-ws-wrap>
       <p class="eg"><span class="tape">{k.example}</span></p>
-      <p class="toast" data-ws-toast aria-hidden="true"><span class="tdot"></span><span><b>{m.toast}</b><span data-ws-toast-text></span></span></p>
       <div class="app" data-ws data-live={JSON.stringify(m.live)} data-now={m.now}>
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>gecko / {m.project}</span></div>
         <div class="body">
@@ -120,15 +119,12 @@ const icons = [
     app.addEventListener('ws:show', (e) => { const i = (e as CustomEvent<number>).detail; if (i !== cur) { cur = i; show(i); } });
     tabs.forEach((t, i) => t.addEventListener('click', () => { cur = i; }));
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const wrap = app.closest<HTMLElement>('[data-ws-wrap]')!;
     // It comes alive once it is on screen: the timeline and the meter fill, then new activity drops in every few
-    // seconds, the way it does for a client during a project. The small notice shows once, with the first update.
+    // seconds, the way it does for a client during a project.
     const feed = app.querySelector<HTMLUListElement>('[data-ws-feed]')!;
     const count = app.querySelector<HTMLElement>('[data-ws-count]')!;
-    const toast = wrap.querySelector<HTMLElement>('[data-ws-toast]')!;
-    const toastText = wrap.querySelector<HTMLElement>('[data-ws-toast-text]')!;
     const live: string[] = JSON.parse(app.dataset.live || '[]');
-    let n = 0, timer = 0, seen = false, toasted = false;
+    let n = 0, timer = 0, seen = false;
     const drop = () => {
       if (panes[0].hidden || document.hidden) return;
       const text = live[n++ % live.length];
@@ -142,7 +138,6 @@ const icons = [
       const c = Number(count.textContent);
       count.textContent = String(c >= 10 ? 7 : c + 1);
       app.style.setProperty('--fill', `${(Number(count.textContent) / 10) * 100}%`);
-      if (!toasted) { toasted = true; toastText.textContent = text; toast.classList.add('up'); }
     };
     new IntersectionObserver(([e]) => {
       if (e.isIntersecting) {
@@ -234,11 +229,6 @@ const icons = [
   .app-wrap { position: relative; }
   .eg { position: absolute; z-index: 2; top: -14px; right: 18px; margin: 0; }
   .app { position: relative; z-index: 1; border: 1px solid var(--ink); border-radius: 18px; background: var(--white); color: var(--ink); overflow: hidden; font-size: 14px; --fill: 70%; }
-  .toast { position: absolute; z-index: 3; left: -18px; top: 30%; margin: 0; display: flex; align-items: center; gap: 10px; max-width: 260px; padding: 10px 14px 10px 10px; border-radius: 14px; background: var(--ink); color: #fff; border: 1px solid var(--ink); box-shadow: var(--lift); font-size: 13px; line-height: 1.3; opacity: 0; transform: translate(-10px, 10px) scale(.92); pointer-events: none; }
-  .toast b { display: block; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; color: var(--yellow); }
-  .tdot { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--mat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat; }
-  .toast.up { animation: ws-toast 3.2s cubic-bezier(.2, .9, .3, 1.2) both; }
-  @keyframes ws-toast { 0% { opacity: 0; transform: translate(-10px, 10px) scale(.92); } 12%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translate(0, -8px) scale(.98); } }
   .act li.new { animation: ws-in 600ms cubic-bezier(.2, .9, .3, 1.1) both; }
   .act li.new > span:first-child::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--pink); vertical-align: 1px; }
   @keyframes ws-in { from { opacity: 0; transform: translateY(-10px); background: var(--yellow-soft); } }
@@ -318,15 +308,6 @@ const icons = [
   .story .main > [data-ws-pane][hidden] { display: grid !important; visibility: hidden; }  /* beats the site-wide [hidden] rule */
   @media (max-width: 1060px) { .ws { grid-template-columns: 1fr; } }
   @media (max-width: 620px) {
-    .toast { left: 8px; top: auto; bottom: -18px; }
-    .pts { grid-template-columns: 1fr; }
-    .body { grid-template-columns: 1fr; min-height: 0; }
-    .side { grid-auto-flow: column; grid-auto-columns: 1fr; padding: 8px; overflow-x: auto; border-right: 0; border-bottom: 1px solid rgba(0, 0, 0, .12); }
-    .mono { display: none; }
-    .side button { justify-content: center; padding: 9px 6px; font-size: 12px; gap: 6px; }
-    .side .ic { display: none; }
-    .main { padding: 16px; }
-    .tl-steps span { font-size: 10px; }
-  }
+    }
   @media (prefers-reduced-motion: reduce) { .st i { animation: none; } .meter i { transition: none; } }
 </style>
