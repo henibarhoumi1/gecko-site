@@ -12,25 +12,15 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
-      BASE: https://gecko-site.henibarhoumi1.workers.dev
+      BASE: https://workspace-tour-gecko-site.henibarhoumi1.workers.dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
-      - run: node tools/load-video.mjs
+      - run: node tools/tour.mjs
       - run: node tools/scroll-perf.mjs
-      - run: node tools/live-intake.mjs
-      - name: Layout shifts and Lighthouse
-        run: |
-          export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          for p in en/ fr/; do for preset in mobile desktop; do
-            flag=""; [ $preset = desktop ] && flag="--preset=desktop"
-            npx lighthouse "$BASE/$p" --quiet $flag --chrome-flags='--headless=new --no-sandbox' --output=json --output-path=lh.json >/dev/null 2>&1 || true
-            node -e "const j=require('./lh.json');const a=j.audits;console.log('LHX $preset $p', Object.entries(j.categories).map(([k,v])=>k.slice(0,4)+'='+Math.round(v.score*100)).join(' '), 'LCP', a['largest-contentful-paint'].displayValue, 'CLS', a['cumulative-layout-shift'].displayValue, 'TBT', a['total-blocking-time'].displayValue)"
-          done; done
       - name: Save results to the site-audit-results branch
         run: |
           rm -f out/lh/*.json
