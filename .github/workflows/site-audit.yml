@@ -12,14 +12,14 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
-      BASE: https://gecko-site.henibarhoumi1.workers.dev
+      BASE: https://hero-line-gecko-site.henibarhoumi1.workers.dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: node tools/full-audit.mjs
+      - run: node tools/hero.mjs
       - name: Lighthouse (phone and desktop)
         if: false
         run: |
