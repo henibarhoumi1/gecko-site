@@ -19,6 +19,7 @@ jobs:
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
+      - run: node tools/full-audit.mjs
       - name: Lighthouse diagnosis (home, phone and desktop)
         run: |
           export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
