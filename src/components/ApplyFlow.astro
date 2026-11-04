@@ -123,7 +123,7 @@ const recs: Record<string, string> = {
 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
-      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-error={s.error}>{a.done}</p>
+      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-saved={a.savedDone} data-error={s.error}>{a.done}</p>
       <div class="fit-done" data-fit-done hidden>
         <p class="label">{a.fitLead}</p>
         <p class="fit-name" data-fit-name></p>
@@ -313,7 +313,7 @@ const recs: Record<string, string> = {
       meta.forEach((m, k) => { const l = label(k); if (l) answers[m.key] = l; });
       if (val('link')) answers.link = val('link');
       if (val('reach')) answers.reach = val('reach');
-      void saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
+      const saving = saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
         message: val('note'), plan: val('plan'), answers, website: form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '' });
       track('brief_done');
       if (!form.dataset.key) {
@@ -322,6 +322,8 @@ const recs: Record<string, string> = {
         open(url, '_blank', 'noopener');
         $<HTMLAnchorElement>('[data-wa-link]').href = url; $('[data-fallback]').hidden = false;
         finish(msg.dataset.waDone!);
+        // Once the brief is safely in Gecko's Pipeline, say so: sending in WhatsApp becomes optional.
+        saving.then((ok) => { if (ok) msg.textContent = msg.dataset.saved!; });
         return;
       }
       try {
