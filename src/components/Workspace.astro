@@ -216,6 +216,8 @@ const icons = [
   .sd { min-height: 0; overflow: hidden; }
   .sd > span { display: block; padding-top: 8px; font-size: 16px; line-height: 1.45; max-width: 30rem; opacity: 0; transition: opacity 300ms var(--ease); }
   .steps li.on .sd > span { opacity: 1; transition-delay: 120ms; }
+  /* Room for three lines whichever step is on, so the list keeps one height as the tour moves. */
+  .story .steps li.on .sd > span { min-height: calc(8px + 3 * 1.45em); }
   .steps li.on .sb b { background: linear-gradient(var(--pink), var(--pink)) 0 88% / 100% 30% no-repeat; }
   .steps li:not(.on) .st-b:hover .sb b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
   .st-b:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
