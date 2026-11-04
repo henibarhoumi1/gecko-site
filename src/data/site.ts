@@ -13,6 +13,9 @@ export const site = {
   socials: [
     { name: 'Instagram', handle: '@geckoagency_', url: 'https://instagram.com/geckoagency_' },
   ],
+  // The legal notice (/legal/). Fill in each line from the registration papers; empty lines stay hidden, and while
+  // the name is empty the page says the details are coming. Never fill these with guesses.
+  company: { name: '', form: '', rne: '', tax: '', address: '', director: '' },
   // Web3Forms access key for the forms. Empty = forms open WhatsApp with the answers filled in.
   formKey: '',
 };

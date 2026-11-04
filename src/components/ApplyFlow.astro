@@ -22,7 +22,8 @@ const qs = a.qs as { key: string; q: string; row: string; multi?: boolean; hint?
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
   { name: 'brand', label: s.brand, auto: 'organization' },
-  { name: 'link', label: s.link },
+  // Optional: a new brand may have no website or page yet, and that shouldn't stop the brief.
+  { name: 'link', label: s.link, optional: true },
   { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
 ];
 const wa = site.whatsapp.replace('https://wa.me/', '');
@@ -105,8 +106,8 @@ const recs: Record<string, string> = {
       <div class="fields">
         {fields.map((f) => (
           <div class="field" data-f={f.name}>
-            <label for={`flow-${f.name}`}>{f.label}</label>
-            <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required autocomplete={f.auto} data-label={f.label} />
+            <label for={`flow-${f.name}`}>{f.label}{f.optional && <> <span class="opt">({a.optional})</span></>}</label>
+            <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required={!f.optional} data-optional={f.optional ? '' : undefined} autocomplete={f.auto} data-label={f.label} />
           </div>
         ))}
         <div class="field" data-f="email" hidden>
@@ -123,7 +124,7 @@ const recs: Record<string, string> = {
 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
-      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-error={s.error}>{a.done}</p>
+      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-saved={a.savedDone} data-error={s.error}>{a.done}</p>
       <div class="fit-done" data-fit-done hidden>
         <p class="label">{a.fitLead}</p>
         <p class="fit-name" data-fit-name></p>
@@ -305,7 +306,7 @@ const recs: Record<string, string> = {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-last] .fields input:not(:disabled)')];
-      const bad = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
+      const bad = inputs.find((i) => (!i.value.trim() && !i.hasAttribute('data-optional')) || (i.type === 'email' && i.value.trim() && !i.checkValidity()));
       if (bad) { bad.focus(); anim(bad.closest('.field')!, [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       // The brief is saved in Gecko's Pipeline first, so it isn't lost if WhatsApp is never sent.
       const val = (n: string) => form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name=${n}]:not(:disabled)`)?.value.trim() ?? '';
@@ -313,7 +314,7 @@ const recs: Record<string, string> = {
       meta.forEach((m, k) => { const l = label(k); if (l) answers[m.key] = l; });
       if (val('link')) answers.link = val('link');
       if (val('reach')) answers.reach = val('reach');
-      void saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
+      const saving = saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
         message: val('note'), plan: val('plan'), answers, website: form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '' });
       track('brief_done');
       if (!form.dataset.key) {
@@ -322,6 +323,8 @@ const recs: Record<string, string> = {
         open(url, '_blank', 'noopener');
         $<HTMLAnchorElement>('[data-wa-link]').href = url; $('[data-fallback]').hidden = false;
         finish(msg.dataset.waDone!);
+        // Once the brief is safely in Gecko's Pipeline, say so: sending in WhatsApp becomes optional.
+        saving.then((ok) => { if (ok) msg.textContent = msg.dataset.saved!; });
         return;
       }
       try {
