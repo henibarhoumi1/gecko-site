@@ -19,6 +19,7 @@ jobs:
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg >/dev/null
       - run: node tools/load-video.mjs
       - run: node tools/scroll-perf.mjs
       - name: What moves while the home page loads (Lighthouse)
