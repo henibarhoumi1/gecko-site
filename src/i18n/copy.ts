@@ -19,8 +19,9 @@ const en = {
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
     kicks: { work: 'Selected reels', space: 'Client workspace', why: 'The difference', plans: 'Pricing', faq: 'Questions', apply: 'Start here' },
-    // The two crossing bands before the brief. Words only: prices live in the plans.
-    bands: { big: ['Scripts approved before the shoot', 'First draft 7 days after the shoot', 'Files in 9:16 and 4:5', 'One team, from brief to final cut'], small: ['Monthly ads', 'Launch campaigns', 'Brand films', 'Product films', 'Ramadan campaigns'] },
+    // The two crossing bands before the brief. Yellow: how we make an ad. Pink: the road from brief to post. Words
+    // only: prices live in the plans, formats in the hero ticker.
+    bands: { big: ['Made to be watched twice', 'A hook in the first second', 'Scripts approved before the shoot', 'Made for the sound off', 'One idea per ad', 'First draft 7 days after the shoot'], small: ['Brief', 'Ideas', 'Scripts', 'Casting', 'Locations', 'Shoot day', 'Edit', 'Your notes', 'Final cut', 'Posted'] },
     hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'All the work' },
     cta: 'Start a project',
     why: {
@@ -291,7 +292,7 @@ const fr: Copy = {
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Sélection', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
-    bands: { big: ['Scripts validés avant le tournage', 'Premier montage 7 jours après le tournage', 'Fichiers en 9:16 et 4:5', 'Une seule équipe, du brief au montage final'], small: ['Pubs chaque mois', 'Campagnes de lancement', 'Films de marque', 'Films produit', 'Campagnes Ramadan'] },
+    bands: { big: ['Faites pour être regardées deux fois', 'Une accroche dès la première seconde', 'Scripts validés avant le tournage', 'Pensées pour le son coupé', 'Une idée par pub', 'Premier montage 7 jours après le tournage'], small: ['Brief', 'Idées', 'Scripts', 'Casting', 'Lieux', 'Jour de tournage', 'Montage', 'Vos retours', 'Montage final', 'En ligne'] },
     hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Toutes les réalisations' },
     cta: 'Lancer un projet',
     why: {
