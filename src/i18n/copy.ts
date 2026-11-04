@@ -148,12 +148,15 @@ const en = {
     },
     cta: 'See how a project runs',
     // The home page walks through a project while the workspace stays on screen; each step opens its tab (pane).
+    // The home page: a short, big version. The workspace plays each step while the list moves (pane = tab).
+    storyTitle: ['One link.', 'The whole project.'],
+    storySub: 'Approve scripts, watch previews, download your files. No chat threads.',
     story: [
-      { t: 'Brief and quote', d: 'We talk about your product and your customers, then agree deliverables, dates and price in writing. The 50% deposit books your date.', pane: 3 },
-      { t: 'Scripts', d: 'Every script waits for your yes before anything is filmed. Change what you want, right in the workspace.', pane: 1 },
-      { t: 'Shoot', d: 'You always see the next date and what we need from you, from the shoot day to the first draft.', pane: 0 },
-      { t: 'First draft', d: 'It arrives 7 days after the shoot, as watermarked previews. Approve each one or write what to change, right under it.', pane: 1 },
-      { t: 'Final files', d: 'Once you approve and the balance is paid, every final file is ready to download.', pane: 2 },
+      { t: 'Brief and quote', d: 'Price and dates, agreed in writing.', pane: 3 },
+      { t: 'Scripts', d: 'Nothing is filmed without your yes.', pane: 1 },
+      { t: 'Shoot', d: 'You always know the next date.', pane: 0 },
+      { t: 'First draft', d: '7 days after the shoot. Your notes go right under it.', pane: 1 },
+      { t: 'Final files', d: 'Approved, paid, downloaded.', pane: 2 },
     ],
   },
   process: {
@@ -415,12 +418,14 @@ const fr: Copy = {
       invoices: [['Acompte · 50 %', 'Payé'], ['Location studio · avancée', 'Ajoutée au solde'], ['Solde · 50 %', 'À la validation']],
     },
     cta: 'Voir le déroulé d’un projet',
+    storyTitle: ['Un lien.', 'Tout le projet.'],
+    storySub: 'Validez les scripts, regardez les aperçus, récupérez vos fichiers. Sans fil de discussion.',
     story: [
-      { t: 'Brief et devis', d: 'On parle de votre produit et de vos clients, puis on fixe livrables, dates et prix par écrit. L’acompte de 50\u00a0% réserve votre date.', pane: 3 },
-      { t: 'Scripts', d: 'Chaque script attend votre accord avant le moindre tournage. Changez ce que vous voulez, directement dans l’espace.', pane: 1 },
-      { t: 'Tournage', d: 'Vous voyez toujours la prochaine date et ce qu’il nous faut de vous, du jour du tournage au premier montage.', pane: 0 },
-      { t: 'Premier montage', d: 'Il arrive 7 jours après le tournage, en aperçus filigranés. Validez chacun ou écrivez ce qu’il faut changer, juste en dessous.', pane: 1 },
-      { t: 'Fichiers finaux', d: 'Une fois validés et le solde réglé, tous les fichiers finaux sont prêts à télécharger.', pane: 2 },
+      { t: 'Brief et devis', d: 'Prix et dates, validés par écrit.', pane: 3 },
+      { t: 'Scripts', d: 'Rien n’est tourné sans votre accord.', pane: 1 },
+      { t: 'Tournage', d: 'Vous connaissez toujours la prochaine date.', pane: 0 },
+      { t: 'Premier montage', d: '7 jours après le tournage. Vos remarques juste en dessous.', pane: 1 },
+      { t: 'Fichiers finaux', d: 'Validé, payé, téléchargé.', pane: 2 },
     ],
   },
   process: {

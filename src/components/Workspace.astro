@@ -4,7 +4,9 @@
 // same look as the real app (white sidebar, the logo, a pink pill on the open tab), so the site and the portal match.
 // As a story (home page), it is a short guided tour: the five steps of a project play through one after another (a
 // line fills under the step that is on), and the workspace beside them opens the matching tab. Click a step to stay on
-// it. No long scroll: the whole tour fits in about one screen.
+// it. No long scroll: the whole tour fits in about one screen. On the home page the workspace is the hero: big, running
+// off the right edge of the page, with a pointer that does what a client does (opens the tab, approves the script,
+// plays the preview, downloads the file) as each step comes on.
 import Logo from './Logo.astro';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
@@ -23,8 +25,10 @@ const icons = [
 <section class="section ws-sec" id="workspace">
   <div class:list={['wrap ws', { story }]} data-ws-story={story ? '' : undefined}>
     <div class="ws-copy">
-      <h2 class="h2 rv">{k.title}</h2>
-      <p class="text text-l rv" style="--d:80ms">{k.sub}</p>
+      {story ? (
+        <h2 class="h2 ws-title rv"><span>{k.storyTitle[0]}</span> <span><span class="mk">{k.storyTitle[1]}</span></span></h2>
+      ) : <h2 class="h2 rv">{k.title}</h2>}
+      <p class="text text-l rv" style="--d:80ms">{story ? k.storySub : k.sub}</p>
       {story ? (
         <ol class="steps">
           {k.story.map((st, i) => (
@@ -49,6 +53,7 @@ const icons = [
     <div class="app-wrap rv" style="--d:120ms" data-ws-wrap>
       <p class="eg"><span class="tape">{k.example}</span></p>
       <div class="app" data-ws data-live={JSON.stringify(m.live)} data-now={m.now}>
+        {story && <span class="cur" aria-hidden="true" data-ws-cur><svg viewBox="0 0 20 20"><path d="M3 2l14 7.5-6.2 1.7L8 17.6z" /></svg></span>}
         <div class="chrome" aria-hidden="true"><i></i><i></i><i></i><span>gecko / {m.project}</span></div>
         <div class="body">
           <div class="side" role="tablist" aria-label={k.title}>
@@ -82,14 +87,14 @@ const icons = [
                 ))}
               </ul>
               <div class="pv">
-                <div class="pv-frame"><img src="/work/glucelia-vs-the-world.jpg" alt="" width="540" height="960" loading="lazy" decoding="async" /><span class="wm">PREVIEW</span><span class="play" aria-hidden="true">▶</span></div>
-                <div class="pv-note"><p class="tk">{m.preview}</p><p class="cm"><b>{m.at}</b> {m.comment}</p></div>
+                <div class="pv-frame" data-ws-pv><video src="/work/clip-vs-the-world.mp4" poster="/work/glucelia-vs-the-world.jpg" muted playsinline loop preload="none" width="540" height="960" aria-hidden="true"></video><span class="wm">PREVIEW</span><span class="play" aria-hidden="true">▶</span></div>
+                <div class="pv-note"><p class="tk">{m.preview}</p><p class="cm" data-ws-cm><b>{m.at}</b> {m.comment}</p></div>
               </div>
             </div>
 
             <div class="pane" data-ws-pane="2" hidden>
               <ul class="rows">
-                {m.files.map(([t, s]) => <li><span>{t}</span><em>{s}</em><span class="dl" aria-hidden="true">↓</span></li>)}
+                {m.files.map(([t, s]) => <li><span>{t}</span><em>{s}</em><span class="dl" aria-hidden="true" data-dl>↓</span></li>)}
               </ul>
               <p class="lock">{m.locked}</p>
             </div>
@@ -146,10 +151,15 @@ const icons = [
       } else if (timer) { clearInterval(timer); timer = 0; }
     }, { threshold: 0.35 }).observe(app);
     app.querySelectorAll<HTMLButtonElement>('[data-approve]').forEach((b) => b.addEventListener('click', () => {
+      if (b.classList.contains('yes')) return;
+      b.dataset.label ??= b.textContent ?? '';
       b.classList.add('yes'); b.disabled = true; b.textContent = '✓';
-      const badge = app.querySelector('[data-ws-tab="1"] em');
-      if (badge) { const n = Number(badge.textContent) - 1; n > 0 ? (badge.textContent = String(n)) : badge.remove(); }
+      const badge = app.querySelector<HTMLElement>('[data-ws-tab="1"] em');
+      if (badge) { const n = Number(badge.textContent) - 1; badge.textContent = String(n); badge.hidden = n <= 0; }
     }));
+    // The preview plays (muted) when clicked.
+    const pv = app.querySelector<HTMLElement>('[data-ws-pv]');
+    pv?.addEventListener('click', () => { const v = pv.querySelector('video')!; pv.classList.add('playing'); void v.play().catch(() => pv.classList.remove('playing')); });
   });
 
   // The tour: while the section is on screen, each step stays on for a few seconds (a line fills under it), then the
@@ -160,10 +170,49 @@ const icons = [
     const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let at = 0, manual = still, seen = false, hover = false;
+    const cur = still ? null : app.querySelector<HTMLElement>('[data-ws-cur]');
+    const cm = app.querySelector<HTMLElement>('[data-ws-cm]');
+    if (!cur) cm?.classList.add('show');
+    // The pointer: glides to an element of the workspace and taps it.
+    let timers: number[] = [];
+    const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms));
+    const point = (el: Element | null) => {
+      if (!cur || !el) return;
+      const a = app.getBoundingClientRect(), r = el.getBoundingClientRect();
+      cur.style.transform = `translate(${(r.left - a.left + r.width * .5).toFixed(0)}px, ${(r.top - a.top + r.height * .55).toFixed(0)}px)`;
+      cur.classList.add('on');
+    };
+    const tap = () => { if (!cur) return; cur.classList.remove('tap'); void cur.offsetWidth; cur.classList.add('tap'); };
+    const q = <T extends Element = HTMLElement>(sel: string) => app.querySelector<T>(sel);
+    // Back to the start of the project: scripts waiting, preview not played, files not downloaded.
+    const reset = () => {
+      app.querySelectorAll<HTMLButtonElement>('[data-approve]').forEach((b) => { if (b.dataset.label) b.textContent = b.dataset.label; b.classList.remove('yes'); b.disabled = false; });
+      const badge = q('[data-ws-tab="1"] em'); if (badge) { badge.textContent = '2'; badge.hidden = false; }
+      const pv = q('[data-ws-pv]'); const v = pv?.querySelector('video'); if (v) { v.pause(); v.currentTime = 0; } pv?.classList.remove('playing');
+      cm?.classList.remove('show');
+      app.querySelectorAll('.got, .pop').forEach((x) => x.classList.remove('got', 'pop'));
+    };
+    // What the pointer does on each step, after it has opened the tab.
+    const acts: [() => Element | null, (el: Element) => void][] = [
+      [() => q('[data-ws-pane="3"] .rows li:first-child em'), (el) => el.classList.add('pop')],
+      [() => q('[data-approve]:not(.yes)'), (el) => (el as HTMLButtonElement).click()],
+      [() => q('[data-ws-pane="0"] .tile.y'), (el) => el.classList.add('pop')],
+      [() => q('[data-ws-pv]'), (el) => { (el as HTMLElement).click(); later(500, () => cm?.classList.add('show')); }],
+      [() => q('[data-dl]'), (el) => el.classList.add('got')],
+    ];
     const pick = (i: number) => {
       at = i;
+      timers.forEach(clearTimeout); timers = [];
       steps.forEach((x, j) => { x.classList.toggle('on', j === i); x.classList.remove('run'); });
-      app.dispatchEvent(new CustomEvent('ws:show', { detail: Number(steps[i].dataset.step) }));
+      const pane = Number(steps[i].dataset.step);
+      if (!cur) app.dispatchEvent(new CustomEvent('ws:show', { detail: pane }));
+      else {
+        if (i === 0) reset();
+        point(q(`[data-ws-tab="${pane}"]`));
+        later(700, () => { tap(); app.dispatchEvent(new CustomEvent('ws:show', { detail: pane })); });
+        later(1300, () => point(acts[i]?.[0]() ?? null));
+        later(2150, () => { tap(); const el = acts[i]?.[0](); if (el) acts[i][1](el); });
+      }
       if (!manual) { void steps[i].offsetWidth; steps[i].classList.add('run'); }
     };
     const sync = () => root.classList.toggle('paused', !seen || hover || document.hidden);
@@ -199,7 +248,7 @@ const icons = [
   .steps { list-style: none; margin: 8px 0 4px; padding: 0; display: grid; width: 100%; border-top: 1px solid var(--hair); }
   .steps li { position: relative; border-bottom: 1px solid var(--hair); }
   .steps li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
-  .steps li.run::after { animation: tour-fill 4.6s linear forwards; }
+  .steps li.run::after { animation: tour-fill 5.4s linear forwards; }
   .paused .steps li.run::after { animation-play-state: paused; }
   .chosen .steps li.on::after { transform: scaleX(1); }
   @keyframes tour-fill { to { transform: scaleX(1); } }
@@ -212,7 +261,7 @@ const icons = [
   .sd > span { display: block; padding-top: 8px; font-size: 16px; line-height: 1.45; max-width: 30rem; opacity: 0; transition: opacity 300ms var(--ease); }
   .steps li.on .sd > span { opacity: 1; transition-delay: 120ms; }
   /* Room for three lines whichever step is on, so the list keeps one height as the tour moves. */
-  .story .steps li.on .sd > span { min-height: calc(8px + 3 * 1.45em); }
+  .story .steps li.on .sd > span { min-height: calc(8px + 2 * 1.45em); }
   .steps li.on .sb b { background: linear-gradient(var(--pink), var(--pink)) 0 88% / 100% 30% no-repeat; }
   .steps li:not(.on) .st-b:hover .sb b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
   .st-b:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
@@ -291,7 +340,10 @@ const icons = [
   .due { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .2); font-weight: 700; }
   .pv { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center; }
   .pv-frame { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; display: grid; place-items: center; background: #141414; }
-  .pv-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pv-frame { cursor: pointer; }
+  .pv-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pv-frame.playing .play { opacity: 0; transform: scale(.6); }
+  .pv-frame .play { transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
   .pv-frame .wm { z-index: 1; color: rgba(255, 255, 255, .55); }
   .pv-frame .play { position: relative; z-index: 1; }
   .wm { position: absolute; font-weight: 700; font-size: 13px; letter-spacing: .2em; color: rgba(0, 0, 0, .25); transform: rotate(-60deg); }
@@ -310,4 +362,61 @@ const icons = [
   @media (max-width: 620px) {
     }
   @media (prefers-reduced-motion: reduce) { .st i { animation: none; } .meter i { transition: none; } }
+
+  /* ---------- Home: the workspace as the hero ---------- */
+  .ws-title { max-width: none !important; font-size: clamp(44px, 5.6vw, 92px); line-height: .95; letter-spacing: -0.05em; }
+  .ws-title > span { display: block; }
+  .mk { background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 32% no-repeat; }
+  .story .ws-copy { gap: 22px; }
+  .story .ws-copy .text { max-width: 26rem; }
+  .story .eg { right: auto; left: 28px; }
+  .story .cm { opacity: 0; transform: translateY(8px); transition: opacity 360ms var(--ease), transform 460ms cubic-bezier(.2, .9, .3, 1.2); }
+  .story .cm.show { opacity: 1; transform: none; }
+  .story .tile, .story .rows em { transition: transform 300ms cubic-bezier(.3, 1.6, .5, 1), box-shadow 300ms var(--ease); }
+  .story .pop { transform: scale(1.06); box-shadow: 0 0 0 3px var(--ink); }
+  .dl { transition: background 260ms var(--ease), color 260ms var(--ease); }
+  .dl.got { background: var(--ink); color: #fff; font-size: 0; }
+  .dl.got::after { content: '✓'; font-size: 13px; }
+  /* The pointer: black with a white edge, a pink ring when it taps. It never takes clicks. */
+  .cur { position: absolute; z-index: 6; top: 0; left: 0; width: 24px; height: 24px; margin: -3px 0 0 -4px; pointer-events: none; opacity: 0; transform: translate(70%, 40%); transition: transform 760ms cubic-bezier(.65, 0, .35, 1), opacity 300ms var(--ease); }
+  .cur.on { opacity: 1; }
+  .cur svg { width: 100%; height: 100%; overflow: visible; }
+  .cur path { fill: var(--ink); stroke: #fff; stroke-width: 1.6; stroke-linejoin: round; }
+  .cur::after { content: ''; position: absolute; left: -6px; top: -7px; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--pink); opacity: 0; }
+  .cur.tap::after { animation: cur-tap 520ms ease-out; }
+  .cur.tap svg { animation: cur-press 260ms ease-out; }
+  @keyframes cur-tap { from { transform: scale(.3); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
+  @keyframes cur-press { 50% { transform: scale(.82); } }
+  @media (min-width: 1061px) {
+    .ws.story { grid-template-columns: minmax(0, .68fr) minmax(0, 1.32fr); gap: clamp(40px, 5vw, 88px); }
+    /* The workspace runs off the right edge of the page. */
+    .story .app-wrap { margin-right: calc(-1 * ((100vw - min(100vw, var(--max))) / 2 + var(--gutter))); }
+    .story .app { border-right: 0; border-radius: 22px 0 0 22px; font-size: 15px; }
+    .story .chrome { padding: 14px 18px; }
+    .story .body { grid-template-columns: 220px 1fr; min-height: 620px; }
+    .story .side { padding: 22px 14px; }
+    .story .mono { width: 76px; margin-bottom: 22px; }
+    .story .side button { font-size: 15px; padding: 11px 12px; }
+    .story .main { padding: 30px clamp(28px, 3vw, 48px) 34px; gap: 22px; }
+    .story .pn { font-size: 28px; }
+    .story .pm { font-size: 14px; }
+    .story .rows li { padding: 14px 0; }
+    .story .pv { grid-template-columns: 190px 1fr; gap: 22px; }
+    .story .cm { font-size: 16px; padding: 14px 16px; }
+    .story .tv { font-size: 18px; }
+  }
+  @media (max-width: 1060px) {
+    .story .app-wrap { margin-right: calc(-1 * var(--gutter)); }
+    .story .app { border-right: 0; border-radius: 18px 0 0 18px; }
+  }
+  @media (max-width: 620px) {
+    .story .body { grid-template-columns: 52px 1fr; min-height: 0; }
+    .story .side { padding: 14px 6px; }
+    .story .mono, .story .side .tl, .story .side em { display: none; }
+    .story .side button { justify-content: center; padding: 10px 0; }
+    .story .main { padding: 16px 14px 18px; }
+    .story .pv { grid-template-columns: 112px 1fr; }
+    .story .tl-steps li { font-size: 10px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .cur { display: none; } }
 </style>
