@@ -19,15 +19,15 @@ jobs:
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: node tools/full-audit.mjs
-      - name: Lighthouse, five pages, phone and desktop
+      - run: node tools/load-video.mjs
+      - run: node tools/scroll-perf.mjs
+      - name: What moves while the home page loads (Lighthouse)
         run: |
           export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
-          for p in en/ en/work/ en/offers/ en/contact/ fr/; do for preset in mobile desktop; do
-            flag=""; [ $preset = desktop ] && flag="--preset=desktop"
-            npx lighthouse "$BASE/$p" --quiet $flag --chrome-flags='--headless=new --no-sandbox' --output=json --output-path=lh.json >/dev/null 2>&1 || true
-            node -e "const j=require('./lh.json');const a=j.audits;console.log('LHX $preset $p', Object.entries(j.categories).map(([k,v])=>k.slice(0,4)+'='+Math.round(v.score*100)).join(' '), 'LCP', a['largest-contentful-paint'].displayValue, 'CLS', a['cumulative-layout-shift'].displayValue, 'SI', a['speed-index'].displayValue)"
-          done; done
+          for p in en/ fr/; do
+            npx lighthouse "$BASE/$p" --quiet --preset=desktop --chrome-flags='--headless=new --no-sandbox' --output=json --output-path=lh.json >/dev/null 2>&1 || true
+            node -e "const j=require('./lh.json');const a=j.audits;console.log('CLS $p', a['cumulative-layout-shift'].displayValue);for(const k of ['layout-shifts','layout-shift-elements']){const x=a[k];if(x&&x.details&&x.details.items)console.log('CLS $p '+k, JSON.stringify(x.details.items.slice(0,4).map(i=>({node:i.node&&(i.node.selector||i.node.snippet),score:i.score,cause:i.subItems&&i.subItems.items&&i.subItems.items.map(s=>s.extra&&s.extra.value||s.cause).slice(0,3)}))).slice(0,900))}"
+          done
       - name: Save results to the site-audit-results branch
         run: |
           rm -f out/lh/*.json
