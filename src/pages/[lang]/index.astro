@@ -5,7 +5,6 @@ import ApplyFlow from '../../components/ApplyFlow.astro';
 import PlanPicker from '../../components/PlanPicker.astro';
 import Workspace from '../../components/Workspace.astro';
 import Bands from '../../components/Bands.astro';
-import ReelViewer from '../../components/ReelViewer.astro';
 import Choices from '../../components/Choices.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -26,12 +25,12 @@ const said = h.scenes[0].d.join(' ');
 // Every letter is its own piece, so letters can rise one after another and change weight on their own.
 const split = (t: string) => [...t].map((ch, i) => ({ ch, i }));
 // The work stage plays a short silent loop of each reel; a click opens the full reel with sound.
-const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
+const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
 const pad = (n: number) => String(n).padStart(2, '0');
 // Right under the prices, the questions a first-time client is really asking: can we try you, what if an ad doesn't
 // perform, how long are we tied in, how we pay, how fast, and do I have to be on camera.
 const faqs = [1, 10, 3, 5, 4, 14].map((i) => s.faq[i]);
-const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 10l-4 4" />';
+const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 ---
 <Base lang={lang} page="home">
   <div class="intro" data-intro>
@@ -67,16 +66,12 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
             <div class="w-meta">
               <p class="w-kick">{h.kicks.work} · 2026</p>
               <a class="w-all" href={href(lang, 'work')}>{hx.cta} <span aria-hidden="true">→</span></a>
-              <button type="button" class="w-ctl" data-toggle aria-pressed="false" aria-label={hx.pause} data-pause={hx.pause} data-play={hx.play}>
-                <svg class="i-pause" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3h2v10H5zM9 3h2v10H9z" /></svg>
-                <svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.2v9.6L13 8z" /></svg>
-              </button>
             </div>
           </div>
           <ol class="deck" data-deck>
             {clips.map((cl) => (
               <li class="card" style={`--k:${cl.i}`}>
-                <button type="button" class="c-media" data-cut={cl.i} aria-label={`${hx.sound}: ${cl.cap}`}>
+                <button type="button" class="c-media" data-cut={cl.i} data-full={cl.full} aria-pressed="false" aria-label={`${k.work.sound}: ${cl.cap}`} data-on={`${k.work.sound}: ${cl.cap}`} data-off={`${k.work.mute}: ${cl.cap}`}>
                   <img src={cl.poster} alt="" width="540" height="960" decoding="async" />
                   <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={cl.src}></video>
                   <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
@@ -86,7 +81,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
             ))}
           </ol>
         </div>
-        <span class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg>{hx.sound}</span>
       </section>
     </div>
   </div>
@@ -118,7 +112,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     </div>
   </section>
 
-  <ReelViewer lang={lang} />
 </Base>
 
 <script>
@@ -140,7 +133,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const cards = [...deck.querySelectorAll<HTMLElement>('.card')];
     const media = cards.map((el) => el.querySelector<HTMLButtonElement>('[data-cut]')!);
     const vids = media.map((m) => m.querySelector('video')!);
-    const toggle = work.querySelector<HTMLButtonElement>('[data-toggle]')!;
     const slide = intro.classList.contains('slide');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const save = !!(navigator as any).connection?.saveData;
@@ -150,23 +142,44 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 
     // The reels play, silent and looping, while the work is in view. Nothing plays before the page has loaded, while a
     // dialog or the menu is open, with reduced motion, with data saver on or after the pause button.
-    let wanted = !still && !save, ready = false, seen = false, blocked = false, shown = true, warm = false;
+    let wanted = !still && !save, ready = false, seen = false, blocked = false, shown = true, warm = false, loud = -1;
     const load = (v: HTMLVideoElement) => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
     const go = () => {
       const on = ready && seen && shown && !blocked && !document.hidden && wanted;
-      vids.forEach((v) => { if (on) { load(v); v.play().catch(() => {}); } else v.pause(); });
+      vids.forEach((v, j) => { if (on || (j === loud && seen && !document.hidden && !blocked)) { load(v); v.play().catch(() => {}); } else v.pause(); });
     };
     vids.forEach((v, j) => v.addEventListener('playing', () => cards[j].classList.add('live')));
-    toggle.addEventListener('click', () => {
-      wanted = !wanted;
-      toggle.setAttribute('aria-pressed', String(!wanted));
-      toggle.setAttribute('aria-label', wanted ? toggle.dataset.pause! : toggle.dataset.play!);
-      work.classList.toggle('held', !wanted);
-      go();
-    });
-    if (!wanted) { work.classList.add('held'); toggle.setAttribute('aria-pressed', 'true'); toggle.setAttribute('aria-label', toggle.dataset.play!); }
-    // A click opens the reel full screen with sound, growing out of the card.
-    media.forEach((m, j) => m.addEventListener('click', () => document.dispatchEvent(new CustomEvent('reel:play', { detail: { i: j, from: m, grow: m } }))));
+    // A click turns the sound on for that reel, in place: it switches to the full cut, starts it from the beginning
+    // and fades the sound in. Another click turns it off again. Only one reel plays with sound at a time.
+    const fade = (v: HTMLVideoElement, to: number, ms: number, then?: () => void) => {
+      const from = v.volume, t0 = performance.now();
+      const step = (t: number) => { const k = Math.min(1, (t - t0) / ms); v.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); else then?.(); };
+      requestAnimationFrame(step);
+    };
+    const quiet = (j: number) => {
+      const v = vids[j];
+      media[j].setAttribute('aria-pressed', 'false');
+      media[j].setAttribute('aria-label', media[j].dataset.on!);
+      cards[j].classList.remove('loud');
+      fade(v, 0, 250, () => { v.muted = true; });
+      if (loud === j) loud = -1;
+    };
+    const sound = (j: number) => {
+      if (loud > -1 && loud !== j) quiet(loud);
+      loud = j;
+      const v = vids[j], m = media[j];
+      m.setAttribute('aria-pressed', 'true');
+      m.setAttribute('aria-label', m.dataset.off!);
+      cards[j].classList.add('loud', 'live');
+      const start = () => { v.currentTime = 0; v.muted = false; v.volume = 0; v.play().then(() => fade(v, 1, 600)).catch(() => {}); };
+      if (v.getAttribute('src') !== m.dataset.full) {
+        v.preload = 'auto';
+        v.src = m.dataset.full!;
+        v.addEventListener('canplay', start, { once: true });
+        v.load();
+      } else start();
+    };
+    media.forEach((m, j) => m.addEventListener('click', () => (loud === j ? quiet(j) : sound(j))));
     new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.15 }).observe(deck);
     new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); go(); })
       .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -174,26 +187,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const start = () => { ready = true; go(); };
     const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1200 }) : setTimeout(start, 300));
     if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
-
-    // With a mouse, a "Watch with sound" badge trails the pointer across the reels.
-    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      const cur = work.querySelector<HTMLElement>('[data-cursor]')!;
-      let x = 0, y = 0, tx = 0, ty = 0, glide = 0;
-      const step = () => {
-        x += (tx - x) * .22; y += (ty - y) * .22;
-        cur.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
-        glide = Math.abs(tx - x) + Math.abs(ty - y) > .4 ? requestAnimationFrame(step) : 0;
-      };
-      deck.addEventListener('pointermove', (e) => {
-        const r = work.getBoundingClientRect();
-        tx = e.clientX - r.left; ty = e.clientY - r.top;
-        const on = !!(e.target as HTMLElement).closest('[data-cut]');
-        if (on && !cur.classList.contains('on')) { x = tx; y = ty; }
-        cur.classList.toggle('on', on);
-        if (!glide) glide = requestAnimationFrame(step);
-      });
-      deck.addEventListener('pointerleave', () => cur.classList.remove('on'));
-    }
 
     // The dot is a button too: it takes you straight through to the work.
     const through = () => {
@@ -398,13 +391,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .w-all { font-size: 14px; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; transition: background 200ms var(--ease), color 200ms var(--ease); }
   .w-all:hover { background: #fff; color: var(--ink); }
   .w-all:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  .w-ctl { display: grid; place-items: center; flex: none; width: 34px; height: 34px; padding: 0; border: 1px solid rgba(255, 255, 255, .28); border-radius: 50%; background: transparent; color: #fff; cursor: pointer;
-    transition: background 200ms var(--ease), border-color 200ms var(--ease); }
-  .w-ctl:hover { background: rgba(255, 255, 255, .14); border-color: #fff; }
-  .w-ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-  .w-ctl svg { width: 12px; height: 12px; fill: currentColor; }
-  .w-ctl .i-play, .held .w-ctl .i-pause { display: none; }
-  .held .w-ctl .i-play { display: block; margin-left: 2px; }
   .deck { position: relative; display: flex; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
   .card { position: relative; flex: 0 1 calc((100% - 3 * var(--gap)) / 4); min-width: 0; max-width: calc((100svh - var(--pt) - var(--pb) - var(--hh) - var(--cap)) * 9 / 16); transform-origin: 50% 60%; }
   .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: clamp(10px, 1vw, 16px); overflow: hidden; background: #141414; color: #fff; cursor: pointer;
@@ -412,23 +398,22 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .c-media img, .c-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .c-media video { opacity: 0; transition: opacity 600ms var(--ease); }
   .live .c-media video { opacity: 1; }
-  .c-mute { position: absolute; z-index: 1; top: 10px; right: 10px; width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: rgba(0, 0, 0, .45); fill: none; stroke: #fff; stroke-width: 1.8;
-    stroke-linecap: round; stroke-linejoin: round; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  /* The sound switch: bottom centre of each reel. Muted shows a crossed speaker, sound on shows the waves. */
+  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 38px; height: 38px; margin-left: -19px; padding: 9px; border-radius: 50%; background: #000; fill: none; stroke: #fff; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; transition: background 200ms var(--ease); }
   .c-mute :global(path:first-child) { fill: #fff; }
+  .c-mute :global(.on) { display: none; }
+  .loud .c-mute { background: #fff; stroke: #000; }
+  .loud .c-mute :global(path:first-child) { fill: #000; }
+  .loud .c-mute :global(.on) { display: inline; }
+  .loud .c-mute :global(.off) { display: none; }
+  .c-media:hover .c-mute { background: #fff; stroke: #000; }
+  .c-media:hover .c-mute :global(path:first-child) { fill: #000; }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-  @media (hover: hover) {
-    .deck:hover .c-media { opacity: .42; }
-    .deck .c-media:hover { opacity: 1; transform: scale(1.025); }
-  }
   .c-cap { display: flex; align-items: baseline; gap: 10px; height: var(--cap); margin: 0; padding-top: 13px; overflow: hidden; white-space: nowrap; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
   .c-cap b { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { overflow: hidden; text-overflow: ellipsis; }
   .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 12px; font-weight: 600; color: #fff; }
-  /* The badge that trails the pointer over the reels. */
-  .cursor { position: absolute; z-index: 4; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 0 18px; padding: 11px 16px 11px 13px; border-radius: 999px; white-space: nowrap;
-    background: var(--pink); color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; pointer-events: none; opacity: 0; scale: .6; transition: opacity 220ms var(--ease), scale 300ms var(--ease); }
-  .cursor svg { width: 12px; height: 12px; fill: currentColor; }
-  .cursor.on { opacity: 1; scale: 1; }
 
   /* Phones and upright tablets: the kicker, then the headline as big as the screen allows, then the pitch. */
   @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) {
