@@ -176,14 +176,7 @@ export const strings = {
       { q: 'Do you take on bigger productions?', a: 'Yes, for the right brief: launch campaigns, brand films, special campaigns and product films. Each one is scoped and quoted from your brief.' },
     ],
     contact: { whatsapp: 'WhatsApp', email: 'Email', instagram: 'Instagram' },
-    footer: { legal: 'Legal notice', address: 'Tunis, Tunisia', portal: 'Client login' },
-    legal: {
-      title: 'Legal notice and privacy',
-      pending: 'Company details (name, tax number, address) will be published here once registration is complete.',
-      privacyTitle: 'Privacy',
-      privacy: 'When you send a brief or a message, your answers are saved in Gecko’s private client system (hosted by Supabase) so we can reply; briefs also open WhatsApp, which you send yourself. We use what you send only to reply to you and to prepare your project, and we never sell or share it. We count page visits without storing anything about you: no cookies, no tracking across sites. To have your data deleted, write to',
-      company: 'Company', host: 'Hosting', hostValue: 'Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, United States', fields: { name: 'Name', form: 'Legal form', rne: 'Registration number (RNE)', tax: 'Tax ID (matricule fiscal)', address: 'Registered address', director: 'Publication director' },
-    },
+    footer: { address: 'Tunis, Tunisia', portal: 'Client login' },
     notFound: { title: 'This page didn’t make the cut.', back: 'Back to home' },
   },
   fr: {
@@ -359,14 +352,7 @@ export const strings = {
       { q: 'Prenez-vous des productions plus grandes ?', a: 'Oui, pour le bon brief : campagnes de lancement, films de marque, campagnes spéciales et films produit. Chacun est chiffré selon votre brief.' },
     ],
     contact: { whatsapp: 'WhatsApp', email: 'E-mail', instagram: 'Instagram' },
-    footer: { legal: 'Mentions légales', address: 'Tunis, Tunisie', portal: 'Espace client' },
-    legal: {
-      title: 'Mentions légales et confidentialité',
-      pending: 'Les informations de la société (nom, matricule fiscal, adresse) seront publiées ici une fois l’immatriculation terminée.',
-      privacyTitle: 'Confidentialité',
-      privacy: 'Quand vous envoyez un brief ou un message, vos réponses sont enregistrées dans le système client privé de Gecko (hébergé par Supabase) pour que nous puissions vous répondre ; les briefs ouvrent aussi WhatsApp, que vous envoyez vous-même. Nous utilisons ce que vous envoyez uniquement pour vous répondre et préparer votre projet, sans jamais le vendre ni le partager. Nous comptons les visites sans rien enregistrer sur vous : ni cookies, ni suivi d’un site à l’autre. Pour faire supprimer vos données, écrivez à',
-      company: 'Société', host: 'Hébergement', hostValue: 'Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis', fields: { name: 'Nom', form: 'Forme juridique', rne: 'Numéro RNE', tax: 'Matricule fiscal', address: 'Siège social', director: 'Directeur de la publication' },
-    },
+    footer: { address: 'Tunis, Tunisie', portal: 'Espace client' },
     notFound: { title: 'Cette page a été coupée au montage.', back: 'Retour à l’accueil' },
   },
 } as const;
