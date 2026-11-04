@@ -4,14 +4,14 @@
 export const site = {
   phone: '+216 26 191 555',
   whatsapp: 'https://wa.me/21626191555',
-  email: 'henibarhoumi1@gmail.com',
+  email: 'hello@gecko-creative.com',
   // The client portal, part of the Gecko app (repo gecko-ops). Linked in the footer.
   portal: 'https://gecko-app.henibarhoumi1.workers.dev',
-  instagram: 'https://instagram.com/geckoagency_',
-  instagramHandle: '@geckoagency_',
+  instagram: 'https://instagram.com/geckocreativestudio',
+  instagramHandle: '@geckocreativestudio',
   // Every social profile shown on the contact page and in the footer. Add the others here once the links are confirmed.
   socials: [
-    { name: 'Instagram', handle: '@geckoagency_', url: 'https://instagram.com/geckoagency_' },
+    { name: 'Instagram', handle: '@geckocreativestudio', url: 'https://instagram.com/geckocreativestudio' },
   ],
   // The legal notice (/legal/). Fill in each line from the registration papers; empty lines stay hidden, and while
   // the name is empty the page says the details are coming. Never fill these with guesses.
