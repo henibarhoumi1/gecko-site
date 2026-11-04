@@ -88,7 +88,9 @@ const org = JSON.stringify({
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       // Smooth, weighted scrolling. Paused while a dialog or the menu is open.
       if (!still) {
-        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, touchMultiplier: 1 });
+        // A page can soften the scroll near a point that matters (window.scrollDamp returns a factor for each wheel step).
+        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, touchMultiplier: 1,
+          virtualScroll: (d: { deltaY: number }) => { const k = (window as any).scrollDamp?.(d.deltaY); if (k) d.deltaY *= k; return true; } });
         (window as any).lenis = lenis;
         const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
         requestAnimationFrame(raf);
