@@ -26,7 +26,8 @@ for (const [view, opts] of [['desktop', { viewport: { width: 1440, height: 900 }
     let worst = 0, at = -1; const series = [];
     for (let i = 0; i < n; i++) { let dark = 0; for (let j = i * fr; j < (i + 1) * fr; j++) if (raw[j] < 50) dark++; const f = dark / fr; series.push(f.toFixed(2)); if (f > worst) { worst = f; at = i; } }
     console.log(`VID ${tag}: frames ${n}, darkest top strip ${(worst * 100).toFixed(0)}% at frame ${at}; series ${series.join(' ')}`.slice(0, 900));
-    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', vpath, '-vf', `select=lt(n\\,48),scale=${view === 'desktop' ? 360 : 180}:-1,tile=8x6`, '-frames:v', '1', `out/vid/${tag}.jpg`]);
+    const from = Math.max(0, at - 4);
+    execFileSync('ffmpeg', ['-v', 'error', '-y', '-i', vpath, '-vf', `select=between(n\\,${from}\\,${from + 11}),scale=${view === 'desktop' ? 360 : 180}:-1,tile=6x2`, '-frames:v', '1', `out/vid/${tag}.jpg`]);
   }
 }
 fs.rmSync('out/vid/tmp', { recursive: true, force: true });
