@@ -153,7 +153,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     // and fades the sound in. Another click turns it off again. Only one reel plays with sound at a time.
     const fade = (v: HTMLVideoElement, to: number, ms: number, then?: () => void) => {
       const from = v.volume, t0 = performance.now();
-      const step = (t: number) => { const k = Math.min(1, (t - t0) / ms); v.volume = from + (to - from) * k; if (k < 1) requestAnimationFrame(step); else then?.(); };
+      const step = (t: number) => { const k = Math.min(1, (t - t0) / ms); v.volume = Math.min(1, Math.max(0, from + (to - from) * k)); if (k < 1) requestAnimationFrame(step); else then?.(); };
       requestAnimationFrame(step);
     };
     const quiet = (j: number) => {
