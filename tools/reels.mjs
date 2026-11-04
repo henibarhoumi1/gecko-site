@@ -1,6 +1,6 @@
 import { chromium, devices } from 'playwright';
 const BASE = process.env.BASE.replace(/\/$/, '');
-const browser = await chromium.launch({ args: ['--autoplay-policy=no-user-gesture-required'] });
+const browser = await chromium.launch({ channel: 'chrome', args: ['--autoplay-policy=no-user-gesture-required'] });
 for (const [label, opts] of [['desktop', { viewport: { width: 1440, height: 900 } }], ['phone', { ...devices['iPhone 13'] }]]) {
   const page = await (await browser.newContext(opts)).newPage();
   page.on('pageerror', (e) => console.log('REEL pageerror', String(e)));
