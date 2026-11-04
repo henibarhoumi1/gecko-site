@@ -19,19 +19,7 @@ const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
 
 <script>
   import '../scripts/marquee';
-  // The bands lean a little more while they cross the screen. Transform only, one write per frame.
-  document.querySelectorAll<HTMLElement>('[data-bands]').forEach((box) => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    let on = false, queued = false;
-    const paint = () => {
-      queued = false;
-      const r = box.getBoundingClientRect();
-      box.style.setProperty('--tilt', Math.max(-1, Math.min(1, (r.top + r.height / 2 - innerHeight / 2) / innerHeight)).toFixed(3));
-    };
-    const ask = () => { if (on && !queued) { queued = true; requestAnimationFrame(paint); } };
-    new IntersectionObserver(([e]) => { on = e.isIntersecting; ask(); }).observe(box);
-    addEventListener('scroll', ask, { passive: true });
-  });
+  // The bands keep their crossing angle; only the words run along them (marquee). Nothing is tied to the scroll.
 </script>
 
 <style>

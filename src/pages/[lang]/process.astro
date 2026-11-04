@@ -46,7 +46,8 @@ const [t0, t1] = mark(p.title);
     let ticking = false;
     const tick = () => {
       const mid = innerHeight * 0.62;
-      steps.forEach((s) => s.classList.toggle('passed', s.getBoundingClientRect().top < mid));
+      const past = steps.map((s) => s.getBoundingClientRect().top < mid);
+      steps.forEach((s, i) => s.classList.toggle('passed', past[i]));
       ticking = false;
     };
     addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }, { passive: true });
