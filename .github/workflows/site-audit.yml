@@ -19,7 +19,15 @@ jobs:
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: node tools/live-intake.mjs
+      - run: node tools/full-audit.mjs
+      - name: Lighthouse, five pages, phone and desktop
+        run: |
+          export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
+          for p in en/ en/work/ en/offers/ en/contact/ fr/; do for preset in mobile desktop; do
+            flag=""; [ $preset = desktop ] && flag="--preset=desktop"
+            npx lighthouse "$BASE/$p" --quiet $flag --chrome-flags='--headless=new --no-sandbox' --output=json --output-path=lh.json >/dev/null 2>&1 || true
+            node -e "const j=require('./lh.json');const a=j.audits;console.log('LHX $preset $p', Object.entries(j.categories).map(([k,v])=>k.slice(0,4)+'='+Math.round(v.score*100)).join(' '), 'LCP', a['largest-contentful-paint'].displayValue, 'CLS', a['cumulative-layout-shift'].displayValue, 'SI', a['speed-index'].displayValue)"
+          done; done
       - name: Save results to the site-audit-results branch
         run: |
           rm -f out/lh/*.json
