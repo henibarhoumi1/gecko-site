@@ -33,7 +33,6 @@ const [t0, t1] = mark(a.title);
 
   {photos.length > 0 && (
     <section class="section on-mat shots-sec">
-      <div class="ruler" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <span>{i * 5}</span>)}</div>
       <div class="wrap wide">
         <h2 class="h2 rv">{a.photos}</h2>
         <ul class="shots">{photos.map((ph, i) => <li class="rv" style={`--d:${i * 60}ms`}><img src={ph.src} alt={ph.alt[lang]} loading="lazy" /></li>)}</ul>

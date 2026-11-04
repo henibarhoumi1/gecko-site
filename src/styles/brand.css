@@ -16,9 +16,11 @@
   --pink-soft: #FBE3E4;
   --yellow: #F3DF9E;
   --yellow-soft: #FAF0CF;
-  --mat: #2E6B4E;
-  --mat-deep: #1F4D37;
-  --mat-soft: #DCEBE2;
+  /* The green cutting mat was retired on 4 Nov 2026: sections that sat on it now sit on ink. The names stay so the
+     components keep working; status tints use the yellow instead. */
+  --mat: #000000;
+  --mat-deep: #000000;
+  --mat-soft: var(--yellow-soft);
   --mat-minor: rgba(255, 255, 255, .07);
   --mat-major: rgba(255, 255, 255, .17);
   --white: #FFFFFF;
@@ -30,8 +32,9 @@
   --surface: #FFFFFF;
   --surface-2: #FAF9F6;
   --fg: #000000;
-  --fg-2: #3B3835;
-  --fg-3: rgba(0, 0, 0, .56);
+  /* No grey text: hierarchy comes from size and weight, not from fading the ink. */
+  --fg-2: var(--fg);
+  --fg-3: var(--fg);
   --hair: rgba(0, 0, 0, .12);
   --hair-2: var(--ink);
   --edge: var(--ink);
@@ -81,28 +84,23 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 .on-white, .on-paper { background: var(--bg); color: var(--fg); }
 .on-pink   { background: var(--pink); color: var(--ink); }
 .on-yellow { background: var(--yellow); color: var(--ink); }
-.on-pink .soft, .on-yellow .soft { color: rgba(0, 0, 0, .72); }
+.on-pink .soft, .on-yellow .soft { color: #000; }
 
 /* The green cutting mat: a fine grid, a bolder grid every 5 squares and a ruler along the top edge.
    .on-mat is a full-width section, .mat a card. */
 .on-mat, .mat {
   position: relative; isolation: isolate; color: #fff; background-color: var(--mat);
-  background-image:
-    linear-gradient(var(--mat-major) 1px, transparent 1px), linear-gradient(90deg, var(--mat-major) 1px, transparent 1px),
-    linear-gradient(var(--mat-minor) 1px, transparent 1px), linear-gradient(90deg, var(--mat-minor) 1px, transparent 1px);
-  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
-  background-position: -1px -1px;
 }
-.on-mat::before, .mat::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px; z-index: -1; pointer-events: none;
+.on-mat::before, .mat::before { display: none; content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14px; z-index: -1; pointer-events: none;
   background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .45) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(255, 255, 255, .75) 0 1px, transparent 1px 120px);
   background-size: 100% 8px, 100% 14px; background-repeat: no-repeat; }
-.on-mat::after, .mat::after { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+.on-mat::after, .mat::after { display: none; content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(135deg, transparent calc(50% - .5px), rgba(255, 255, 255, .08) 50%, transparent calc(50% + .5px)), radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, .07), transparent 60%); }
 .mat { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--ink); }
-.on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: rgba(255, 255, 255, .75); }
-.on-mat { overflow-x: clip; --bg: var(--mat); --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .78); --fg-3: rgba(255, 255, 255, .6); --hair: rgba(255, 255, 255, .2); --hair-2: rgba(255, 255, 255, .45); --edge: rgba(255, 255, 255, .3); }
+.on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: #fff; }
+.on-mat { overflow-x: clip; --bg: var(--mat); --fg: #FFFFFF; --fg-2: #fff; --fg-3: #fff; --hair: rgba(255, 255, 255, .2); --hair-2: rgba(255, 255, 255, .45); --edge: rgba(255, 255, 255, .3); }
 /* The ruler printed along the top of the mat: a number every five squares. */
-.ruler { position: absolute; z-index: -1; left: 0; top: 16px; display: flex; pointer-events: none; font: 600 10px/1 var(--font); letter-spacing: .04em; color: rgba(255, 255, 255, .5); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ruler { display: none; position: absolute; z-index: -1; left: 0; top: 16px; display: flex; pointer-events: none; font: 600 10px/1 var(--font); letter-spacing: .04em; color: rgba(255, 255, 255, .5); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ruler span { flex: none; width: 120px; padding-left: 4px; }
 
 /* Yellow tape: holds things down and labels them, with slightly torn ends. Used instead of badges. */
@@ -123,7 +121,7 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .68); --fg-3: rgba(255, 255, 255, .56);
+.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: #fff; --fg-3: #fff;
   --hair: rgba(255, 255, 255, .14); --hair-2: rgba(255, 255, 255, .34); --edge: rgba(255, 255, 255, .2);
   --tint: rgba(255, 255, 255, .05); --tint-2: rgba(255, 255, 255, .08); --tint-3: rgba(255, 255, 255, .12);
   background: var(--bg); color: var(--fg); }

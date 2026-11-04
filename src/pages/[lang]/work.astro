@@ -1,5 +1,5 @@
 ---
-// Work: the reels laid out on the cutting mat with their idea and format, the formats we make, and one small credit line.
+// Work: the reels on black with their idea and format, the formats we make, and one small credit line.
 // Why each reel works sits inside the full-screen viewer, for whoever wants it.
 import Base from '../../layouts/Base.astro';
 import ReelCard from '../../components/ReelCard.astro';
@@ -26,7 +26,6 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   </section>
 
   <section class="on-mat wall-sec">
-    <div class="ruler" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <span>{i * 5}</span>)}</div>
     <div class="wrap wide">
       <p class="hint rv">{w.hint}</p>
       <ol class={`wall n${ads.length}`}>
@@ -69,14 +68,7 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   .wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 36px); }
   .wall li { position: relative; scroll-margin-top: calc(var(--header) + 24px); }
   .wall li:nth-child(odd) { transform-origin: 50% 0; }
-  .wall li.in:nth-child(4n+1) { rotate: -1.2deg; } .wall li.in:nth-child(4n+2) { rotate: .8deg; }
-  .wall li.in:nth-child(4n+3) { rotate: -.6deg; } .wall li.in:nth-child(4n) { rotate: 1.1deg; }
-  /* Two strips of yellow tape hold each reel to the mat. */
-  .tp { position: absolute; z-index: 3; inset: 0 0 52px 0; pointer-events: none; }
-  .tp::before, .tp::after { content: ''; position: absolute; width: clamp(40px, 4vw, 64px); height: clamp(14px, 1.3vw, 20px); background: var(--yellow); opacity: .95;
-    clip-path: polygon(0 10%, 8% 0, 16% 12%, 24% 2%, 76% 0, 84% 10%, 92% 0, 100% 8%, 100% 92%, 92% 100%, 84% 90%, 76% 100%, 24% 98%, 16% 88%, 8% 100%, 0 90%); }
-  .tp::before { left: -12px; top: 12px; transform: rotate(-38deg); }
-  .tp::after { right: -12px; top: 12px; transform: rotate(38deg); }
+  .tp { display: none; }
   .cap { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0; font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.015em; }
   .cap b { flex: none; font-size: 11px; letter-spacing: .1em; color: var(--fg-3); font-variant-numeric: tabular-nums; }
   .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
