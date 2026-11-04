@@ -12,7 +12,7 @@ for (const [tag, base] of sites) for (const [label, opts] of [['desktop', { view
   const vh = await page.evaluate(() => innerHeight);
   const step = Math.round(vh / 4);
   let found = null;
-  for (let i = 0; i <= 9; i++) {
+  for (let i = 0; i <= 6; i++) {
     if (i) { await page.mouse.wheel(0, step); }
     await page.waitForTimeout(900);
     const vis = await page.evaluate(() => { const c = document.querySelector('.card .c-media'); if (!c) return 0; const r = c.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight && getComputedStyle(c.closest('.card')).opacity > 0.9 ? 1 : 0; });
@@ -20,7 +20,7 @@ for (const [tag, base] of sites) for (const [label, opts] of [['desktop', { view
     await page.screenshot({ path: `out/frames/${tag}_${label}_${i}.jpg`, type: 'jpeg', quality: 50 });
   }
   // snap test: from the top, one scroll of 70% of a screen, then rest
-  await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(800);
+  await page.evaluate(() => { const l = window.lenis; if (l) l.scrollTo(0, { immediate: true, force: true }); else scrollTo(0, 0); }); await page.waitForTimeout(1200);
   await page.mouse.wheel(0, Math.round(vh * .7)); await page.waitForTimeout(2000);
   console.log(`SNAP ${label}: work top after resting = ${await page.evaluate(() => Math.round(document.querySelector('#work').getBoundingClientRect().top))}`);
   await page.mouse.wheel(0, Math.round(vh * .2)); await page.waitForTimeout(2000);
