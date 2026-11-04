@@ -240,18 +240,23 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       measure();
       // The title and the reels rise onto the mat the first time it comes into view.
       new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
-      // A gentle catch: when a scroll heading towards the work comes to rest with the work nearly lined up (within
-      // about a third of the screen), the page settles onto it, so one flick never leaves it half on screen. It only
-      // ever helps in the direction you were already going, so slow scrolling past the work is never pulled back.
-      // Further away, while a dialog or menu is open, or with a finger still on the screen, it does nothing.
-      let rest = 0, settling = false, touching = false, lastY = scrollY, dir = 0;
+      // A gentle catch: when one scroll reaches or crosses the start of the work and comes to rest nearly lined up
+      // (short of it by up to a third of the screen, or past it by up to a quarter), the page settles onto it, so a
+      // single flick never leaves the work half on screen. A scroll that started already inside the work is left
+      // alone, so slow scrolling through it is never pulled back. Nothing happens while a finger is down or a dialog
+      // or menu is open.
+      let rest = 0, settling = false, touching = false, from = NaN;
       addEventListener('touchstart', () => { touching = true; }, { passive: true });
       addEventListener('touchend', () => { touching = false; clearTimeout(rest); rest = window.setTimeout(settle, 160); }, { passive: true });
       const settle = () => {
         if (touching || settling || document.documentElement.classList.contains('locked')) return;
         const t = work.getBoundingClientRect().top;
-        const towards = (dir > 0 && t > 2 && t < H * .34) || (dir < 0 && t < -2 && t > -H * .3);
-        if (!towards) return;
+        const start = from; from = NaN;
+        if (Math.abs(t) < 2 || !(start > 2 || start < -2)) return;
+        // Coming down from the landing, or up from further down the page.
+        const down = start > 0 && t < H * .34 && t > -H * .25;
+        const up = start < 0 && t > -H * .3 && t < H * .25 && start < -H * .02;
+        if (!(down || up)) return;
         settling = true;
         const to = scrollY + t, l = (window as any).lenis;
         const done = () => { settling = false; };
@@ -259,8 +264,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         else { scrollTo({ top: to, behavior: 'smooth' }); setTimeout(done, 600); }
       };
       addEventListener('scroll', () => {
-        if (scrollY !== lastY) { dir = Math.sign(scrollY - lastY); lastY = scrollY; }
         if (settling) return;
+        // Where the work was when this scroll began.
+        if (Number.isNaN(from)) from = work.getBoundingClientRect().top;
         clearTimeout(rest); rest = window.setTimeout(settle, 160);
       }, { passive: true });
 
