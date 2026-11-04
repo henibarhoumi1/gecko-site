@@ -10,6 +10,7 @@ const scenarios = {
   reloadWork: async (p) => { await p.goto(BASE + '/en/'); await p.waitForTimeout(2000); await p.evaluate(() => scrollTo(0, document.querySelector('#work').getBoundingClientRect().top + scrollY + 200)); await p.waitForTimeout(1200); await p.reload(); await p.waitForTimeout(2500); },
   reloadDeep: async (p) => { await p.goto(BASE + '/en/offers/'); await p.waitForTimeout(1500); await p.evaluate(() => scrollTo(0, 2500)); await p.waitForTimeout(1200); await p.reload(); await p.waitForTimeout(2500); },
   navigate: async (p) => { await p.goto(BASE + '/en/'); await p.waitForTimeout(2000); const l = p.locator('header a[href="/en/offers/"]').first(); if (await l.isVisible()) { await l.hover(); await p.waitForTimeout(900); await l.click(); } else { await p.goto(BASE + '/en/offers/'); } await p.waitForTimeout(2500); },
+  navigate2: async (p) => { await p.goto(BASE + '/en/offers/'); await p.waitForTimeout(1800); for (const href of ['/en/about/', '/en/work/', '/fr/']) { const l = p.locator(`header a[href="${href}"]`).first(); if (await l.isVisible()) { await l.hover(); await p.waitForTimeout(700); await l.click(); } else { await p.goto(BASE + href); } await p.waitForTimeout(1600); } },
   freshWork: async (p) => { await p.goto(BASE + '/en/work/'); await p.waitForTimeout(2500); },
 };
 for (const [view, opts] of [['desktop', { viewport: { width: 1440, height: 900 } }], ['phone', { ...devices['iPhone 13'] }]]) {
