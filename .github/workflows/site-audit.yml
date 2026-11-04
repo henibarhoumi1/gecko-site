@@ -19,7 +19,7 @@ jobs:
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: node tools/final-check.mjs
+      - run: node tools/frames.mjs
       - name: Save results to the site-audit-results branch
         run: |
           rm -f out/lh/*.json
