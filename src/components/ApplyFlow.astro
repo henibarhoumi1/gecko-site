@@ -140,6 +140,8 @@ const recs: Record<string, string> = {
 </div>
 
 <script>
+  import { saveLead, track } from '../scripts/intake';
+  let started = false;
   type Meta = { key: string; row: string; multi: boolean; when: Record<string, number[]> | null };
   document.querySelectorAll<HTMLFormElement>('[data-flow]').forEach((form) => {
     const root = form.closest('.apply')!;
@@ -236,6 +238,7 @@ const recs: Record<string, string> = {
     };
     steps.slice(0, last).forEach((step, k) => {
       step.querySelectorAll<HTMLButtonElement>('.chip').forEach((chip) => chip.addEventListener('click', () => {
+        if (!started) { started = true; track('brief_start'); }
         const i = Number(chip.dataset.i);
         if (meta[k].multi) {
           const cur = ans[meta[k].key] ?? [];
@@ -304,6 +307,15 @@ const recs: Record<string, string> = {
       const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-last] .fields input:not(:disabled)')];
       const bad = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
       if (bad) { bad.focus(); anim(bad.closest('.field')!, [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
+      // The brief is saved in Gecko's Pipeline first, so it isn't lost if WhatsApp is never sent.
+      const val = (n: string) => form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name=${n}]:not(:disabled)`)?.value.trim() ?? '';
+      const answers: Record<string, string> = {};
+      meta.forEach((m, k) => { const l = label(k); if (l) answers[m.key] = l; });
+      if (val('link')) answers.link = val('link');
+      if (val('reach')) answers.reach = val('reach');
+      void saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
+        message: val('note'), plan: val('plan'), answers, website: form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '' });
+      track('brief_done');
       if (!form.dataset.key) {
         const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
         const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`;

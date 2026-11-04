@@ -1,0 +1,28 @@
+name: check
+# Every pull request and every change to main: the site must build, and every link to a page or file of the
+# site must lead somewhere. Cloudflare only deploys main, so a red check here means: don't merge.
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - name: Build as the live site does
+        run: npm run build
+        env: { PUBLIC_LIVE: "1" }
+      - name: Every internal link and file exists
+        run: node tools/check-links.mjs
+      - name: Pages name the address the site lives on
+        run: |
+          if grep -rl 'https://gecko-creative.com' dist --include=*.html | head -1 | grep -q .; then
+            echo "::error::Pages point to gecko-creative.com, which isn't live yet. Set SITE_URL once it is."; exit 1
+          fi

@@ -48,9 +48,9 @@ a { color: inherit; }
 .head .sub { max-width: 28rem; color: var(--fg-2); }
 
 /* Reveal on scroll */
-.rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); transition-delay: min(var(--d, 0ms), 240ms); }
-.rv.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+html.js .rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); transition-delay: min(var(--d, 0ms), 240ms); }
+html.js .rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { html.js .rv { opacity: 1; transform: none; transition: none; } }
 
 /* Buttons and links */
 .btn { cursor: pointer; }
