@@ -437,7 +437,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .scene.on .ch { transform: none; --wave: 0;
     transition: transform 950ms cubic-bezier(.22, 1, .36, 1) calc(var(--l) * 110ms + var(--i) * 32ms), --wave 1300ms cubic-bezier(.45, 0, .2, 1) calc(var(--l) * 110ms + var(--i) * 32ms + 140ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
   .scene.first .ch { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both, ink 1500ms cubic-bezier(.45, 0, .2, 1) both;
-    animation-delay: calc(120ms + var(--l) * 100ms + var(--i) * 26ms), calc(220ms + var(--l) * 100ms + var(--i) * 26ms); }
+    animation-delay: calc(300ms + var(--l) * 130ms + var(--i) * 34ms), calc(420ms + var(--l) * 130ms + var(--i) * 34ms); }
   @keyframes rise { from { transform: translateY(118%); } }
   @keyframes ink { from { --wave: 1; } }
   .measure .ch { font-weight: 700 !important; }

@@ -22,7 +22,8 @@ const qs = a.qs as { key: string; q: string; row: string; multi?: boolean; hint?
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
   { name: 'brand', label: s.brand, auto: 'organization' },
-  { name: 'link', label: s.link },
+  // Optional: a new brand may have no website or page yet, and that shouldn't stop the brief.
+  { name: 'link', label: s.link, optional: true },
   { name: 'phone', label: s.phone, type: 'tel', auto: 'tel' },
 ];
 const wa = site.whatsapp.replace('https://wa.me/', '');
@@ -105,8 +106,8 @@ const recs: Record<string, string> = {
       <div class="fields">
         {fields.map((f) => (
           <div class="field" data-f={f.name}>
-            <label for={`flow-${f.name}`}>{f.label}</label>
-            <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required autocomplete={f.auto} data-label={f.label} />
+            <label for={`flow-${f.name}`}>{f.label}{f.optional && <> <span class="opt">({a.optional})</span></>}</label>
+            <input id={`flow-${f.name}`} name={f.name} type={f.type ?? 'text'} required={!f.optional} data-optional={f.optional ? '' : undefined} autocomplete={f.auto} data-label={f.label} />
           </div>
         ))}
         <div class="field" data-f="email" hidden>
@@ -305,7 +306,7 @@ const recs: Record<string, string> = {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const inputs = [...form.querySelectorAll<HTMLInputElement>('[data-last] .fields input:not(:disabled)')];
-      const bad = inputs.find((i) => !i.value.trim() || (i.type === 'email' && !i.checkValidity()));
+      const bad = inputs.find((i) => (!i.value.trim() && !i.hasAttribute('data-optional')) || (i.type === 'email' && i.value.trim() && !i.checkValidity()));
       if (bad) { bad.focus(); anim(bad.closest('.field')!, [{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
       // The brief is saved in Gecko's Pipeline first, so it isn't lost if WhatsApp is never sent.
       const val = (n: string) => form.querySelector<HTMLInputElement | HTMLTextAreaElement>(`[name=${n}]:not(:disabled)`)?.value.trim() ?? '';
