@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
-      BASE: https://workspace-tour-gecko-site.henibarhoumi1.workers.dev
+      BASE: https://gecko-site.henibarhoumi1.workers.dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
