@@ -438,8 +438,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .held .w-ctl .i-play { display: block; margin-left: 2px; }
   .deck { position: relative; display: flex; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
   .card { position: relative; flex: 0 1 calc((100% - 3 * var(--gap)) / 4); min-width: 0; max-width: calc((100svh - var(--pt) - var(--pb) - var(--hh) - var(--cap)) * 9 / 16); transform-origin: 50% 60%; }
-  /* Two strips of yellow tape hold each reel down on the mat. */
-    clip-path: polygon(0 10%, 8% 0, 16% 12%, 24% 2%, 76% 0, 84% 10%, 92% 0, 100% 8%, 100% 92%, 92% 100%, 84% 90%, 76% 100%, 24% 98%, 16% 88%, 8% 100%, 0 90%); }
   .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: clamp(10px, 1vw, 16px); overflow: hidden; background: #141414; color: #fff; cursor: pointer;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, .16); transition: transform 500ms var(--ease), opacity 400ms var(--ease); }
   .c-media img, .c-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
