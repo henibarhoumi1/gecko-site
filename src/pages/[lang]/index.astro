@@ -237,39 +237,26 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       measure();
       // The title and the reels rise onto the mat the first time it comes into view.
       new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
-      // The work catches the scroll. One scroll that reaches the start of the work stops there, lined up, even if it
-      // was strong enough to carry on: from the landing going down, or from further down going up. The next scroll
-      // moves on as normal, and a scroll that starts inside the work is never held. A scroll that comes to rest just
-      // short of the work (up to almost half a screen) settles onto it. On touch screens the browser's own snapping
-      // does the same job (see the styles), so the page never fights a finger.
+      // A smooth arrival at the work. Near the start of the work the scroll gets softer, like a gentle brake: each
+      // wheel step moves the page less the closer the work is to lining up, so a normal scroll slows down and comes to
+      // rest on it, and scrolling on carries past it without any jump. If a scroll stops very close (within a tenth
+      // of the screen) the page eases the last few pixels. Touch screens use the browser's proximity snap instead.
       const l = (window as any).lenis;
-      let rest = 0, held = false, from = NaN;
-      const line = (t: number, then?: () => void) => {
-        held = true;
-        const done = () => {
-          // Swallow the end of a strong flick before letting go, so it doesn't carry the page on past the work.
-          if (l) l.stop();
-          setTimeout(() => { if (l) l.start(); held = false; from = NaN; then?.(); }, 380);
-        };
-        if (l) l.scrollTo(scrollY + t, { duration: .5, lock: true, force: true, easing: (x: number) => 1 - Math.pow(1 - x, 3), onComplete: done });
-        else { scrollTo({ top: scrollY + t }); done(); }
+      (window as any).scrollDamp = () => {
+        const t = work.getBoundingClientRect().top, band = H * .32;
+        return Math.abs(t) >= band ? 1 : .38 + .62 * (Math.abs(t) / band);
       };
+      let rest = 0, easing = false;
       const settle = () => {
-        const start = from; from = NaN;
-        if (held || document.documentElement.classList.contains('locked')) return;
+        if (easing || document.documentElement.classList.contains('locked')) return;
         const t = work.getBoundingClientRect().top;
-        if (start > H * .05 && t > 2 && t < H * .45) line(t);
+        if (Math.abs(t) < 2 || Math.abs(t) > H * .1) return;
+        easing = true;
+        const done = () => { easing = false; };
+        if (l) l.scrollTo(scrollY + t, { duration: .9, easing: (x: number) => (x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2), onComplete: done });
+        else done();
       };
-      if (l) addEventListener('scroll', () => {
-        if (held || document.documentElement.classList.contains('locked')) return;
-        const t = work.getBoundingClientRect().top;
-        // Where the work was when this scroll began.
-        if (Number.isNaN(from)) from = t;
-        const crossedDown = from > H * .05 && t <= 0 && t > -H;
-        const crossedUp = from < -H * .05 && t >= 0 && t < H;
-        if (crossedDown || crossedUp) { clearTimeout(rest); line(t); return; }
-        clearTimeout(rest); rest = window.setTimeout(settle, 160);
-      }, { passive: true });
+      if (l) addEventListener('scroll', () => { if (!easing) { clearTimeout(rest); rest = window.setTimeout(settle, 220); } }, { passive: true });
 
       // With a mouse the dot leans towards the pointer and swells as it comes close, like a button waiting to be pressed.
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
