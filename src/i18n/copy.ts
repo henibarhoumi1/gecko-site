@@ -12,9 +12,9 @@ const en = {
       { d: ['One team,', 'from script', 'to cut.'], m: ['One', 'team,', 'from', 'script', 'to cut.'] },
     ],
     compare: { title: 'What changes with Gecko.', sub: 'Most ads go wrong in the same places. Here’s where we work differently.', usual: 'The usual way', gecko: 'With Gecko', rows: [['Hand-offs', 'A writer, a filmmaker and an editor, each with their own reading of your brief.', 'One team takes your brief from script to final cut.'], ['The idea', 'Ads that look good and give nobody a reason to buy.', 'Every concept starts from why your customer buys.'], ['Hooks', 'One video, one guess, and the next month starts from zero.', 'Two or more hooks per reel on monthly plans, so your results pick the winner.'], ['Scripts', 'You see the ad for the first time after the shoot is paid for.', 'You approve every script before we film.'], ['Timing', 'Dates that slip and messages that wait days for an answer.', 'Dates agreed in writing, and you always know what we need from you.'], ['Next round', 'Nobody checks what sold, so the next round repeats the last.', 'We read the results you share and write the next round from them.']] },
-    kicker: 'Creative and production studio, Tunis',
-    // Under the kicker: what Gecko makes and for whom, so the first screen says it before any scroll.
-    sub: 'Short video ads for brands that sell online, written, shot and edited by one team.',
+    kicker: 'Video ad studio · Tunis',
+    // Beside the headline: what Gecko makes and for whom, then the positioning line.
+    sub: 'Short video ads for brands that sell online.', line: 'From the first idea to the final cut.',
     badge: 'Case study · Glucélia · 2026 · ',
     play: 'Play', watch: 'Watch',
     marquee: 'Let’s make your next ad',
@@ -285,8 +285,8 @@ const fr: Copy = {
       { d: ['Une équipe,', 'du script', 'au montage.'], m: ['Une', 'équipe,', 'du script', 'au montage.'] },
     ],
     compare: { title: 'Ce qui change avec Gecko.', sub: 'La plupart des pubs ratent aux mêmes endroits. Voici où nous travaillons autrement.', usual: 'La méthode habituelle', gecko: 'Avec Gecko', rows: [['Les relais', 'Un rédacteur, un vidéaste et un monteur, chacun avec sa lecture de votre brief.', 'Une seule équipe mène votre brief du script au montage final.'], ['L’idée', 'Des pubs jolies qui ne donnent à personne une raison d’acheter.', 'Chaque concept part de la raison d’achat de vos clients.'], ['Les accroches', 'Une vidéo, un pari, et le mois suivant repart de zéro.', 'Au moins deux accroches par reel sur les plans mensuels, pour que vos résultats désignent la meilleure.'], ['Les scripts', 'Vous découvrez la pub une fois le tournage payé.', 'Vous validez chaque script avant le tournage.'], ['Les délais', 'Des dates qui glissent et des messages qui attendent des jours.', 'Des dates fixées par écrit, et vous savez toujours ce dont nous avons besoin.'], ['La suite', 'Personne ne regarde ce qui a vendu, alors le mois suivant répète le précédent.', 'On lit les résultats que vous partagez et on écrit la suite à partir d’eux.']] },
-    kicker: 'Studio de création et de production, Tunis',
-    sub: 'Des pubs vidéo courtes pour les marques qui vendent en ligne, écrites, tournées et montées par une seule équipe.',
+    kicker: 'Studio de pubs vidéo · Tunis',
+    sub: 'Des pubs vidéo courtes pour les marques qui vendent en ligne.', line: 'De la première idée au montage final.',
     badge: 'Étude de cas · Glucélia · 2026 · ',
     play: 'Lire', watch: 'Voir',
     marquee: 'Faisons votre prochaine pub',
