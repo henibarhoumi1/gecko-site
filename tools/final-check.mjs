@@ -24,7 +24,7 @@ await last.locator('input[name=brand]').fill('Audit Brand');
 await last.locator('input[name=phone]').fill('+216 20 000 001');
 await last.locator('button[type=submit], .send').first().click({ timeout: 5000 }).catch(async () => page.locator('form[data-flow] .send').click());
 await page.waitForTimeout(3500);
-console.log('step now:', await page.locator('form[data-flow] [data-step]:not([hidden])').first().getAttribute('data-key'), 'focus:', await page.evaluate(() => document.activeElement?.getAttribute('name') + ' ' + document.activeElement?.className), 'last visible:', await last.isVisible(), 'at:', await page.getAttribute('form[data-flow]', 'data-at'));
+console.log('at:', await page.getAttribute('form[data-flow]', 'data-at'));
 console.log('brief message:', (await page.textContent('[data-msg]'))?.trim());
 console.log(rpc.join('\n'));
 await page.goto(BASE + '/fr/legal/', { waitUntil: 'networkidle' });
