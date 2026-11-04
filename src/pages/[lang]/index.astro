@@ -237,26 +237,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       measure();
       // The title and the reels rise onto the mat the first time it comes into view.
       new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
-      // A smooth arrival at the work. Near the start of the work the scroll gets softer, like a gentle brake: each
-      // wheel step moves the page less the closer the work is to lining up, so a normal scroll slows down and comes to
-      // rest on it, and scrolling on carries past it without any jump. If a scroll stops very close (within a tenth
-      // of the screen) the page eases the last few pixels. Touch screens use the browser's proximity snap instead.
-      const l = (window as any).lenis;
-      (window as any).scrollDamp = () => {
-        const t = work.getBoundingClientRect().top, band = H * .32;
-        return Math.abs(t) >= band ? 1 : .38 + .62 * (Math.abs(t) / band);
-      };
-      let rest = 0, easing = false;
-      const settle = () => {
-        if (easing || document.documentElement.classList.contains('locked')) return;
-        const t = work.getBoundingClientRect().top;
-        if (Math.abs(t) < 2 || Math.abs(t) > H * .1) return;
-        easing = true;
-        const done = () => { easing = false; };
-        if (l) l.scrollTo(scrollY + t, { duration: .9, easing: (x: number) => (x < .5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2), onComplete: done });
-        else done();
-      };
-      if (l) addEventListener('scroll', () => { if (!easing) { clearTimeout(rest); rest = window.setTimeout(settle, 220); } }, { passive: true });
+      // No brake and no snapping: the work arrives with the scroll and the page always moves with the hand.
 
       // With a mouse the dot leans towards the pointer and swells as it comes close, like a button waiting to be pressed.
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -340,7 +321,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 </script>
 
 <style>
-  @property --wave { syntax: '<number>'; inherits: false; initial-value: 0; }
   @property --pull { syntax: '<number>'; inherits: false; initial-value: 0; }
   /* The landing: white, type only. The headline fills the screen, cut from one line to the
      next, and the formats we make run along the foot. */
@@ -368,13 +348,10 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .ln.m { display: none; }
   /* Letter by letter. A beat's letters rise in one after another, thin, and fill with ink as they land (Inter's weight
      axis, 240 to 700); when the beat ends they leave upwards the same way. A mouse thins whatever it hovers. */
-  .ch { display: inline-block; font-weight: calc(700 - max(var(--wave), var(--pull)) * 460); transform: translateY(118%); --wave: 1; transition: --pull 420ms cubic-bezier(.22, 1, .36, 1); }
-  .scene.on .ch { transform: none; --wave: 0;
-    transition: transform 950ms cubic-bezier(.22, 1, .36, 1) calc(var(--l) * 110ms + var(--i) * 32ms), --wave 1300ms cubic-bezier(.45, 0, .2, 1) calc(var(--l) * 110ms + var(--i) * 32ms + 140ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
-  .scene.first .ch { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both, ink 1500ms cubic-bezier(.45, 0, .2, 1) both;
-    animation-delay: calc(300ms + var(--l) * 130ms + var(--i) * 34ms), calc(420ms + var(--l) * 130ms + var(--i) * 34ms); }
+  .ch { display: inline-block; font-weight: calc(700 - var(--pull) * 460); transform: translateY(118%); transition: --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .scene.on .ch { transform: none; transition: transform 950ms cubic-bezier(.22, 1, .36, 1) calc(var(--l) * 110ms + var(--i) * 32ms), --pull 420ms cubic-bezier(.22, 1, .36, 1); }
+  .scene.first .ch { animation: rise 1150ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(300ms + var(--l) * 130ms + var(--i) * 34ms); }
   @keyframes rise { from { transform: translateY(118%); } }
-  @keyframes ink { from { --wave: 1; } }
   .measure .ch { font-weight: 700 !important; }
   /* The last words of the last beat get the pink marker, and every beat ends on the green dot: the mat the work sits on. */
   .mark { position: relative; z-index: 0; }
@@ -402,12 +379,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   /* The mat slides up over the landing with the scroll. The landing is held in place underneath and steps back a
      little (smaller, fainter) as it is covered; nothing is pinned, so the page always moves with the finger. */
   .slide .hero { position: sticky; top: 0; z-index: 0; transform-origin: 50% 35%; transform: scale(calc(1 - var(--cover, 0) * .06)); }
-  /* Touch screens: the browser snaps to the start of the work when a swipe ends near it (no smooth-scroll script
-     runs on touch, so nothing fights the finger). */
-  @media (hover: none) and (pointer: coarse) {
-    :global(html:has(.slide)) { scroll-snap-type: y proximity; }
-    .slide .work { scroll-snap-align: start; }
-  }
+
   .slide.moving .hero { will-change: transform; }
   .slide .work { position: relative; z-index: 1; border-radius: clamp(18px, 2.2vw, 32px) clamp(18px, 2.2vw, 32px) 0 0; }
   /* The title and the reels rise onto the mat the first time it comes into view, the reels one after another. */
@@ -422,13 +394,13 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; min-height: var(--hh); padding-bottom: clamp(16px, 2.8vh, 30px); }
   .w-title { margin: 0; font-weight: 700; font-size: min(var(--wt), calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / (var(--n) * .48))); line-height: .86; letter-spacing: -0.06em; white-space: nowrap; outline: none; }
   .w-meta { display: flex; align-items: center; gap: 14px; padding-bottom: .3em; }
-  .w-kick { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: rgba(255, 255, 255, .78); white-space: nowrap; }
+  .w-kick { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: #fff; white-space: nowrap; }
   .w-all { font-size: 14px; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; transition: background 200ms var(--ease), color 200ms var(--ease); }
   .w-all:hover { background: #fff; color: var(--ink); }
   .w-all:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .w-ctl { display: grid; place-items: center; flex: none; width: 34px; height: 34px; padding: 0; border: 1px solid rgba(255, 255, 255, .28); border-radius: 50%; background: transparent; color: #fff; cursor: pointer;
     transition: background 200ms var(--ease), border-color 200ms var(--ease); }
-  .w-ctl:hover { background: rgba(255, 255, 255, .14); border-color: rgba(255, 255, 255, .5); }
+  .w-ctl:hover { background: rgba(255, 255, 255, .14); border-color: #fff; }
   .w-ctl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .w-ctl svg { width: 12px; height: 12px; fill: currentColor; }
   .w-ctl .i-play, .held .w-ctl .i-pause { display: none; }
@@ -449,9 +421,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     .deck .c-media:hover { opacity: 1; transform: scale(1.025); }
   }
   .c-cap { display: flex; align-items: baseline; gap: 10px; height: var(--cap); margin: 0; padding-top: 13px; overflow: hidden; white-space: nowrap; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
-  .c-cap b { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: rgba(255, 255, 255, .5); }
+  .c-cap b { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { overflow: hidden; text-overflow: ellipsis; }
-  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .66); }
+  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 12px; font-weight: 600; color: #fff; }
   /* The badge that trails the pointer over the reels. */
   .cursor { position: absolute; z-index: 4; left: 0; top: 0; display: inline-flex; align-items: center; gap: 8px; margin: 18px 0 0 18px; padding: 11px 16px 11px 13px; border-radius: 999px; white-space: nowrap;
     background: var(--pink); color: var(--ink); font: 700 13px/1 var(--font); letter-spacing: -0.01em; pointer-events: none; opacity: 0; scale: .6; transition: opacity 220ms var(--ease), scale 300ms var(--ease); }
