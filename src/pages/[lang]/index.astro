@@ -39,9 +39,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     <div class="stage">
       <section class="hero" data-hero aria-labelledby="h-title">
         <div class="wrap wide h-in">
-          <div class="h-top">
-            <p class="h-kick up" style="--d:200ms">{h.kicker}</p>
-          </div>
           <p class="h-sub up" style="--d:900ms"><strong>{h.sub}</strong> <span>{h.line}</span></p>
           <div class="h-tbox">
             <h1 class="h-title" id="h-title" aria-label={said} data-title>
@@ -240,33 +237,37 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       measure();
       // The title and the reels rise onto the mat the first time it comes into view.
       new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
-      // A gentle catch: when one scroll reaches or crosses the start of the work and comes to rest nearly lined up
-      // (short of it by up to almost half the screen, or past it by up to a quarter), the page settles onto it, so a
-      // single flick never leaves the work half on screen. A scroll that started already inside the work is left
-      // alone, so slow scrolling through it is never pulled back. Nothing happens while a finger is down or a dialog
-      // or menu is open.
-      let rest = 0, settling = false, touching = false, from = NaN;
-      addEventListener('touchstart', () => { touching = true; }, { passive: true });
-      addEventListener('touchend', () => { touching = false; clearTimeout(rest); rest = window.setTimeout(settle, 160); }, { passive: true });
-      const settle = () => {
-        if (touching || settling || document.documentElement.classList.contains('locked')) return;
-        const t = work.getBoundingClientRect().top;
-        const start = from; from = NaN;
-        if (Math.abs(t) < 2 || !(start > 2 || start < -2)) return;
-        // Coming down from the landing, or up from further down the page.
-        const down = start > 0 && t < H * .45 && t > -H * .25;
-        const up = start < 0 && t > -H * .3 && t < H * .25 && start < -H * .02;
-        if (!(down || up)) return;
-        settling = true;
-        const to = scrollY + t, l = (window as any).lenis;
-        const done = () => { settling = false; };
-        if (l) l.scrollTo(to, { duration: .6, easing: (x: number) => 1 - Math.pow(1 - x, 3), onComplete: done });
-        else { scrollTo({ top: to, behavior: 'smooth' }); setTimeout(done, 600); }
+      // The work catches the scroll. One scroll that reaches the start of the work stops there, lined up, even if it
+      // was strong enough to carry on: from the landing going down, or from further down going up. The next scroll
+      // moves on as normal, and a scroll that starts inside the work is never held. A scroll that comes to rest just
+      // short of the work (up to almost half a screen) settles onto it. On touch screens the browser's own snapping
+      // does the same job (see the styles), so the page never fights a finger.
+      const l = (window as any).lenis;
+      let rest = 0, held = false, from = NaN;
+      const line = (t: number, then?: () => void) => {
+        held = true;
+        const done = () => {
+          // Swallow the end of a strong flick before letting go, so it doesn't carry the page on past the work.
+          if (l) l.stop();
+          setTimeout(() => { if (l) l.start(); held = false; from = NaN; then?.(); }, 380);
+        };
+        if (l) l.scrollTo(scrollY + t, { duration: .5, lock: true, force: true, easing: (x: number) => 1 - Math.pow(1 - x, 3), onComplete: done });
+        else { scrollTo({ top: scrollY + t }); done(); }
       };
-      addEventListener('scroll', () => {
-        if (settling) return;
+      const settle = () => {
+        const start = from; from = NaN;
+        if (held || document.documentElement.classList.contains('locked')) return;
+        const t = work.getBoundingClientRect().top;
+        if (start > H * .05 && t > 2 && t < H * .45) line(t);
+      };
+      if (l) addEventListener('scroll', () => {
+        if (held || document.documentElement.classList.contains('locked')) return;
+        const t = work.getBoundingClientRect().top;
         // Where the work was when this scroll began.
-        if (Number.isNaN(from)) from = work.getBoundingClientRect().top;
+        if (Number.isNaN(from)) from = t;
+        const crossedDown = from > H * .05 && t <= 0 && t > -H;
+        const crossedUp = from < -H * .05 && t >= 0 && t < H;
+        if (crossedDown || crossedUp) { clearTimeout(rest); line(t); return; }
         clearTimeout(rest); rest = window.setTimeout(settle, 160);
       }, { passive: true });
 
@@ -354,22 +355,20 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 <style>
   @property --wave { syntax: '<number>'; inherits: false; initial-value: 0; }
   @property --pull { syntax: '<number>'; inherits: false; initial-value: 0; }
-  /* The landing: white, type only. The kicker sits at the top, the headline fills the rest, cut from one line to the
+  /* The landing: white, type only. The headline fills the screen, cut from one line to the
      next, and the formats we make run along the foot. */
   .intro { position: relative; }
   .stage { position: relative; }
   .hero { position: relative; display: flex; flex-direction: column; height: 100svh; min-height: 560px; overflow: hidden; background: var(--bg); color: var(--fg); }
-  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
-    grid-template-areas: 'kick' 'title'; padding-top: calc(var(--header) + clamp(10px, 3vh, 32px)); padding-bottom: clamp(18px, 3vh, 36px); }
-  .h-kick { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-3); }
-  .h-top { grid-area: kick; }
+  .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'title'; padding-top: calc(var(--header) + clamp(10px, 3vh, 32px)); padding-bottom: clamp(18px, 3vh, 36px); }
   /* What Gecko makes, set beside the short last line of the headline on wide screens and under the label on phones. */
   .h-sub { grid-area: title; z-index: 1; justify-self: end; align-self: end; max-width: 23ch; margin: 0 0 .35em; font-size: clamp(18px, 1.45vw, 23px); line-height: 1.3; letter-spacing: -0.015em; text-wrap: balance; }
   .h-sub strong { font-weight: 650; color: var(--fg); }
-  .h-sub span { font-weight: 450; color: var(--fg-2); }
+  .h-sub span { font-weight: 450; color: var(--fg); }
   @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) {
-    .h-in { grid-template-areas: 'kick' 'sub' 'title'; grid-template-rows: auto auto minmax(0, 1fr); }
-    .h-sub { grid-area: sub; justify-self: start; align-self: start; max-width: 30ch; margin: 10px 0 0; font-size: 16px; }
+    .h-in { grid-template-areas: 'sub' 'title'; grid-template-rows: auto minmax(0, 1fr); }
+    .h-sub { grid-area: sub; justify-self: start; align-self: start; max-width: 30ch; margin: 0; font-size: 16px; }
   }
   /* The headline takes whatever room is left: as wide as the longest line allows, as tall as the box. */
   .h-tbox { grid-area: title; container-type: size; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; padding-top: clamp(12px, 2.4vh, 28px); }
@@ -415,9 +414,14 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 
   /* The mat slides up over the landing with the scroll. The landing is held in place underneath and steps back a
      little (smaller, fainter) as it is covered; nothing is pinned, so the page always moves with the finger. */
-  .slide .hero { position: sticky; top: 0; z-index: 0; transform-origin: 50% 35%;
-    transform: scale(calc(1 - var(--cover, 0) * .06)); opacity: calc(1 - var(--cover, 0) * .6); }
-  .slide.moving .hero { will-change: transform, opacity; }
+  .slide .hero { position: sticky; top: 0; z-index: 0; transform-origin: 50% 35%; transform: scale(calc(1 - var(--cover, 0) * .06)); }
+  /* Touch screens: the browser snaps to the start of the work when a swipe ends near it (no smooth-scroll script
+     runs on touch, so nothing fights the finger). */
+  @media (hover: none) and (pointer: coarse) {
+    :global(html:has(.slide)) { scroll-snap-type: y proximity; }
+    .slide .work { scroll-snap-align: start; }
+  }
+  .slide.moving .hero { will-change: transform; }
   .slide .work { position: relative; z-index: 1; border-radius: clamp(18px, 2.2vw, 32px) clamp(18px, 2.2vw, 32px) 0 0; }
   /* The title and the reels rise onto the mat the first time it comes into view, the reels one after another. */
   .slide .w-head, .slide .card { opacity: 0; transform: translate3d(0, 56px, 0); transition: opacity 700ms var(--ease), transform 1000ms cubic-bezier(.22, 1, .36, 1); }
@@ -474,8 +478,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     .h-title { font-size: min(17vw, 11svh); font-size: min(calc(100cqw / 5.4), calc(100cqh / 3.1)); }
     .ln.d { display: none; }
     .ln.m { display: block; }
-    .h-kick { font-size: 13px; }
-    .ticker { padding-block: 14px; }
+      .ticker { padding-block: 14px; }
     .ticker li { font-size: 15px; gap: 24px; padding-right: 24px; }
     .stop-hit { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
   }
