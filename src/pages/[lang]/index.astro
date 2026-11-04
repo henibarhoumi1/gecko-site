@@ -39,7 +39,10 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     <div class="stage">
       <section class="hero" data-hero aria-labelledby="h-title">
         <div class="wrap wide h-in">
-          <p class="h-kick up" style="--d:200ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
+          <div class="h-top">
+            <p class="h-kick up" style="--d:200ms"><span class="k-dot" aria-hidden="true"></span>{h.kicker}</p>
+            <p class="h-kick h-sub up" style="--d:260ms">{h.sub}</p>
+          </div>
           <div class="h-tbox">
             <h1 class="h-title" id="h-title" aria-label={said} data-title>
               {scenes.map((sets, n) => (
@@ -415,6 +418,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .h-in { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr);
     grid-template-areas: 'kick' 'title'; padding-top: calc(var(--header) + clamp(10px, 3vh, 32px)); padding-bottom: clamp(18px, 3vh, 36px); }
   .h-kick { grid-area: kick; align-self: start; display: inline-flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: var(--fg-2); }
+  .h-top { grid-area: kick; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 8px 32px; }
+  .h-sub { max-width: 34ch; font-weight: 500; text-align: right; text-wrap: balance; }
+  @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) { .h-sub { text-align: left; font-size: 13px; max-width: 40ch; color: var(--fg-3); } }
   .k-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 4px var(--pink-soft); }
   /* The headline takes whatever room is left: as wide as the longest line allows, as tall as the box. */
   .h-tbox { grid-area: title; container-type: size; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; padding-top: clamp(12px, 2.4vh, 28px); }
