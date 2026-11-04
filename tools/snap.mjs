@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 const browser = await chromium.launch();
-for (const [tag, base] of [['new', 'https://smooth-arrival-gecko-site.henibarhoumi1.workers.dev'], ['live', 'https://gecko-site.henibarhoumi1.workers.dev']]) {
+for (const [tag, base] of [['live', 'https://gecko-site.henibarhoumi1.workers.dev']]) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(base + '/en/', { waitUntil: 'load' });
   await page.waitForTimeout(3000);
