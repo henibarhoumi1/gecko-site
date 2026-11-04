@@ -2,8 +2,9 @@
 // The client workspace: what every client works from. Copy on the left, and on the right a working model of the
 // workspace (example data) whose sidebar tabs switch between overview, approvals, files and payments. It wears the
 // same look as the real app (white sidebar, the logo, a pink pill on the open tab), so the site and the portal match.
-// As a story (home page), the left side walks through a project step by step while the workspace stays on screen
-// and opens the matching tab for each step.
+// As a story (home page), it is a short guided tour: the five steps of a project play through one after another (a
+// line fills under the step that is on), and the workspace beside them opens the matching tab. Click a step to stay on
+// it. No long scroll: the whole tour fits in about one screen.
 import Logo from './Logo.astro';
 import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
@@ -30,7 +31,7 @@ const icons = [
             <li class:list={['rv', { on: i === 0 }]} style={`--d:${120 + i * 60}ms`} data-step={st.pane}>
               <button type="button" class="st-b" aria-label={`${String(i + 1).padStart(2, '0')} ${st.t}`}>
                 <span class="sn" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                <span class="sb"><b>{st.t}</b><span>{st.d}</span></span>
+                <span class="sb"><b>{st.t}</b><span class="sd"><span>{st.d}</span></span></span>
               </button>
             </li>
           ))}
@@ -82,7 +83,7 @@ const icons = [
                 ))}
               </ul>
               <div class="pv">
-                <div class="pv-frame"><span class="wm">PREVIEW</span><span class="play" aria-hidden="true">▶</span></div>
+                <div class="pv-frame"><img src="/work/glucelia-vs-the-world.jpg" alt="" width="540" height="960" loading="lazy" decoding="async" /><span class="wm">PREVIEW</span><span class="play" aria-hidden="true">▶</span></div>
                 <div class="pv-note"><p class="tk">{m.preview}</p><p class="cm"><b>{m.at}</b> {m.comment}</p></div>
               </div>
             </div>
@@ -156,19 +157,33 @@ const icons = [
     }));
   });
 
-  // The story: as each step crosses the middle of the screen it lights up and the workspace opens its tab.
-  // A tap on a step does the same (on phones the steps sit under the workspace).
+  // The tour: while the section is on screen, each step stays on for a few seconds (a line fills under it), then the
+  // next one comes on and the workspace opens its tab; after the last it starts again. Pointing at the section pauses
+  // it; clicking a step stays on that step. With reduced motion nothing plays by itself: click to move through.
   document.querySelectorAll<HTMLElement>('[data-ws-story]').forEach((root) => {
     const app = root.querySelector<HTMLElement>('[data-ws]')!;
     const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
-    const pick = (el: HTMLElement) => {
-      steps.forEach((x) => x.classList.toggle('on', x === el));
-      app.dispatchEvent(new CustomEvent('ws:show', { detail: Number(el.dataset.step) }));
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let at = 0, manual = still, seen = false, hover = false;
+    const pick = (i: number) => {
+      at = i;
+      steps.forEach((x, j) => { x.classList.toggle('on', j === i); x.classList.remove('run'); });
+      app.dispatchEvent(new CustomEvent('ws:show', { detail: Number(steps[i].dataset.step) }));
+      if (!manual) { void steps[i].offsetWidth; steps[i].classList.add('run'); }
     };
-    steps.forEach((el) => el.querySelector('button')!.addEventListener('click', () => pick(el)));
-    const wide = matchMedia('(min-width: 1061px)');
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && wide.matches) pick(e.target as HTMLElement); }), { rootMargin: '-48% 0px -48% 0px' });
-    steps.forEach((el) => io.observe(el));
+    const sync = () => root.classList.toggle('paused', !seen || hover || document.hidden);
+    steps.forEach((el, i) => {
+      el.querySelector('button')!.addEventListener('click', () => { manual = true; root.classList.add('chosen'); pick(i); });
+      el.addEventListener('animationend', (e) => { if ((e as AnimationEvent).animationName.startsWith('tour') && !manual) pick((at + 1) % steps.length); });
+    });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: .4 }).observe(root);
+    if (matchMedia('(hover: hover)').matches) {
+      root.addEventListener('pointerenter', () => { hover = true; sync(); });
+      root.addEventListener('pointerleave', () => { hover = false; sync(); });
+    }
+    document.addEventListener('visibilitychange', sync);
+    sync();
+    pick(0);
   });
 </script>
 
@@ -184,32 +199,36 @@ const icons = [
 
   .ws-sec { overflow-x: clip; border-top: 1px solid var(--hair); }
 
-  /* The story: numbered steps on thin lines; the one in view is black, the others wait in grey. On wide screens each
-     step gets room to scroll past while the workspace holds still beside it. */
+  /* The tour: five steps on thin lines. The one that is on shows its sentence and the pink marker, and a black line
+     fills along its bottom edge while it plays; the others show their title only, so the list stays short. */
   .steps { list-style: none; margin: 8px 0 4px; padding: 0; display: grid; width: 100%; border-top: 1px solid var(--hair); }
-  .steps li { border-bottom: 1px solid var(--hair); }
-  .st-b { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; width: 100%; padding: 18px 0; border: 0; background: none; color: var(--fg); font: inherit; text-align: left; cursor: pointer; }
-  .sn { font-weight: 700; font-size: 14px; padding-top: 4px; font-variant-numeric: tabular-nums; color: var(--fg-3); transition: color 300ms var(--ease); }
-  .sb { display: grid; gap: 6px; }
-  .sb b { font-size: clamp(22px, 2vw, 30px); line-height: 1.05; letter-spacing: -0.035em; transition: color 300ms var(--ease); }
-  .sb span { font-size: 16px; line-height: 1.45; color: var(--fg-2); max-width: 30rem; }
-  .steps li:not(.on) .sb b, .steps li:not(.on) .sb span { color: var(--fg-3); }
-  .steps li.on .sn { color: var(--fg); }
+  .steps li { position: relative; border-bottom: 1px solid var(--hair); }
+  .steps li::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
+  .steps li.run::after { animation: tour-fill 4.6s linear forwards; }
+  .paused .steps li.run::after { animation-play-state: paused; }
+  .chosen .steps li.on::after { transform: scaleX(1); }
+  @keyframes tour-fill { to { transform: scaleX(1); } }
+  .st-b { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 12px; width: 100%; padding: 16px 0; border: 0; background: none; color: var(--fg); font: inherit; text-align: left; cursor: pointer; }
+  .sn { font-weight: 700; font-size: 14px; padding-top: 4px; font-variant-numeric: tabular-nums; }
+  .sb { display: grid; grid-template-rows: auto 0fr; transition: grid-template-rows 420ms cubic-bezier(.22, 1, .36, 1); }
+  .steps li.on .sb { grid-template-rows: auto 1fr; }
+  .sb b { justify-self: start; font-size: clamp(22px, 2vw, 30px); line-height: 1.05; letter-spacing: -0.035em; }
+  .sd { min-height: 0; overflow: hidden; }
+  .sd > span { display: block; padding-top: 8px; font-size: 16px; line-height: 1.45; max-width: 30rem; opacity: 0; transition: opacity 300ms var(--ease); }
+  .steps li.on .sd > span { opacity: 1; transition-delay: 120ms; }
+  /* Room for three lines whichever step is on, so the list keeps one height as the tour moves. */
+  .story .steps li.on .sd > span { min-height: calc(8px + 3 * 1.45em); }
   .steps li.on .sb b { background: linear-gradient(var(--pink), var(--pink)) 0 88% / 100% 30% no-repeat; }
+  .steps li:not(.on) .st-b:hover .sb b { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
   .st-b:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
-  /* Phones and tablets: the title, the workspace, then the steps under it to tap through. */
+  @media (prefers-reduced-motion: reduce) { .sb, .sd > span { transition: none; } }
+  /* Phones and tablets: the title, the workspace, then the steps under it. */
   @media (max-width: 1060px) {
     .ws.story { gap: 22px; }
     .story .ws-copy { display: contents; }
     .story .ws-copy .h2 { order: 1; } .story .ws-copy .text { order: 2; }
     .story .app-wrap { order: 3; margin-top: 18px; }
     .story .steps { order: 4; } .story .ws-copy .btn { order: 5; justify-self: start; }
-  }
-  @media (min-width: 1061px) {
-    .ws.story { align-items: start; }
-    .story .ws-copy { padding-bottom: 12vh; }
-    .story .steps li { min-height: 34vh; }
-    .story .app-wrap { position: sticky; top: calc(var(--header) + 8vh); }
   }
   .ws-copy .text { color: var(--fg-2); }
   .app-wrap { position: relative; }
@@ -281,7 +300,10 @@ const icons = [
   .adv { padding: 4px 10px; border-radius: 999px; background: var(--yellow-soft); color: var(--ink) !important; font-weight: 700; }
   .due { padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, .2); font-weight: 700; }
   .pv { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center; }
-  .pv-frame { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; display: grid; place-items: center; background: linear-gradient(160deg, var(--pink), var(--yellow)); }
+  .pv-frame { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; display: grid; place-items: center; background: #141414; }
+  .pv-frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pv-frame .wm { z-index: 1; color: rgba(255, 255, 255, .55); }
+  .pv-frame .play { position: relative; z-index: 1; }
   .wm { position: absolute; font-weight: 700; font-size: 13px; letter-spacing: .2em; color: rgba(0, 0, 0, .25); transform: rotate(-60deg); }
   .play { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11px; padding-left: 2px; }
   .cm { margin: 6px 0 0; padding: 10px 12px; border-radius: 12px 12px 12px 2px; background: var(--yellow-soft); line-height: 1.4; }
@@ -290,6 +312,10 @@ const icons = [
   .lock { margin: 0; font-size: 13px; color: var(--ink-2); }
   [data-ws-pane] { display: grid; gap: 16px; }
   [data-ws-pane][hidden] { display: none; }
+  /* In the tour, all four tabs share one cell, so the window keeps the height of the tallest one and never jumps
+     as the tour moves from tab to tab. Hidden tabs stay out of sight and out of the reading order. */
+  .story .main > [data-ws-pane] { grid-row: 2; grid-column: 1; }
+  .story .main > [data-ws-pane][hidden] { display: grid !important; visibility: hidden; }  /* beats the site-wide [hidden] rule */
   @media (max-width: 1060px) { .ws { grid-template-columns: 1fr; } }
   @media (max-width: 620px) {
     .toast { left: 8px; top: auto; bottom: -18px; }
