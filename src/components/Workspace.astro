@@ -196,7 +196,7 @@ const icons = [
     const acts: [() => Element | null, (el: Element) => void][] = [
       [() => q('[data-ws-pane="3"] .rows li:first-child em'), (el) => el.classList.add('pop')],
       [() => q('[data-approve]:not(.yes)'), (el) => (el as HTMLButtonElement).click()],
-      [() => q('[data-ws-pane="0"] .tile.y'), (el) => el.classList.add('pop')],
+      [() => q('[data-ws-pane="0"] .tl-steps .now i'), (el) => el.classList.add('pop')],
       [() => q('[data-ws-pv]'), (el) => { (el as HTMLElement).click(); later(500, () => cm?.classList.add('show')); }],
       [() => q('[data-dl]'), (el) => el.classList.add('got')],
     ];
@@ -352,7 +352,7 @@ const icons = [
   .cm b { color: var(--mat); margin-right: 4px; }
   .dl { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #F2F2EF; font-weight: 700; }
   .lock { margin: 0; font-size: 13px; color: var(--ink-2); }
-  [data-ws-pane] { display: grid; gap: 16px; }
+  [data-ws-pane] { display: grid; gap: 16px; align-content: start; }
   [data-ws-pane][hidden] { display: none; }
   /* In the tour, all four tabs share one cell, so the window keeps the height of the tallest one and never jumps
      as the tour moves from tab to tab. Hidden tabs stay out of sight and out of the reading order. */
@@ -366,7 +366,7 @@ const icons = [
   /* ---------- Home: the workspace as the hero ---------- */
   .ws-title { max-width: none !important; font-size: clamp(44px, 5.6vw, 92px); line-height: .95; letter-spacing: -0.05em; }
   .ws-title > span { display: block; }
-  .mk { background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 32% no-repeat; }
+  .mk { -webkit-box-decoration-break: clone; box-decoration-break: clone; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 32% no-repeat; }
   .story .ws-copy { gap: 22px; }
   .story .ws-copy .text { max-width: 26rem; }
   .story .eg { right: auto; left: 28px; }
@@ -374,6 +374,7 @@ const icons = [
   .story .cm.show { opacity: 1; transform: none; }
   .story .tile, .story .rows em { transition: transform 300ms cubic-bezier(.3, 1.6, .5, 1), box-shadow 300ms var(--ease); }
   .story .pop { transform: scale(1.06); box-shadow: 0 0 0 3px var(--ink); }
+  .story .tl-steps i.pop { transform: scale(1.35); box-shadow: 0 0 0 5px var(--pink); }
   .dl { transition: background 260ms var(--ease), color 260ms var(--ease); }
   .dl.got { background: var(--ink); color: #fff; font-size: 0; }
   .dl.got::after { content: '✓'; font-size: 13px; }
