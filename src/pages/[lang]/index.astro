@@ -171,13 +171,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
       m.setAttribute('aria-pressed', 'true');
       m.setAttribute('aria-label', m.dataset.off!);
       cards[j].classList.add('loud', 'live');
-      const start = () => { v.currentTime = 0; v.muted = false; v.volume = 0; v.play().then(() => fade(v, 1, 600)).catch(() => {}); };
-      if (v.getAttribute('src') !== m.dataset.full) {
-        v.preload = 'auto';
-        v.src = m.dataset.full!;
-        v.addEventListener('canplay', start, { once: true });
-        v.load();
-      } else start();
+      // Everything happens inside the click itself, so phones (iPhone above all) allow the sound.
+      if (v.getAttribute('src') !== m.dataset.full) { v.preload = 'auto'; v.src = m.dataset.full!; } else v.currentTime = 0;
+      v.muted = false;
+      v.volume = 0;
+      v.play().then(() => fade(v, 1, 600)).catch(() => { v.muted = true; quiet(j); });
     };
     media.forEach((m, j) => m.addEventListener('click', () => (loud === j ? quiet(j) : sound(j))));
     new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.15 }).observe(deck);
