@@ -35,7 +35,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 ---
 <Base lang={lang} page="home">
   <div class="intro" data-intro>
-    <script is:inline>document.currentScript.parentElement.classList.toggle('iris', !matchMedia('(prefers-reduced-motion: reduce)').matches);</script>
+    <script is:inline>document.currentScript.parentElement.classList.toggle('slide', !matchMedia('(prefers-reduced-motion: reduce)').matches);</script>
     <div class="stage">
       <section class="hero" data-hero aria-labelledby="h-title">
         <div class="wrap wide h-in">
@@ -63,7 +63,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         <button type="button" class="stop-hit" data-stop-hit aria-label={hx.dive}></button>
       </section>
 
-      <section class="work on-mat" id="work" data-work data-dark="0" aria-labelledby="w-title">
+      <section class="work on-mat" id="work" data-work data-dark="1" aria-labelledby="w-title">
         <div class="ruler" aria-hidden="true">{Array.from({ length: 20 }, (_, i) => <span>{i * 5}</span>)}</div>
         <div class="wrap wide w-in">
           <div class="w-head" data-w-head>
@@ -79,7 +79,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
           </div>
           <ol class="deck" data-deck>
             {clips.map((cl) => (
-              <li class="card">
+              <li class="card" style={`--k:${cl.i}`}>
                 <span class="c-tape" aria-hidden="true"></span>
                 <button type="button" class="c-media" data-cut={cl.i} aria-label={`${hx.sound}: ${cl.cap}`}>
                   <img src={cl.poster} alt="" width="540" height="960" decoding="async" />
@@ -94,7 +94,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         <span class="cursor" data-cursor aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M5 3.2v9.6L13 8z" /></svg>{hx.sound}</span>
       </section>
     </div>
-    <div class="pin" data-pin aria-hidden="true"></div>
   </div>
 
   <section class="section think-sec" id="method">
@@ -129,10 +128,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 
 <script>
   import '../../scripts/marquee';
-  // The landing is type only: the headline on white, its full stop drawn as a black dot, the formats we make running
-  // along the bottom. Scrolling opens that dot like a camera iris: it lifts off the line and grows until it fills the
-  // screen, and behind it is the work, the four case study reels fanning out of a stack. Scrolling back closes it.
-  // With reduced motion there is no iris and the work simply follows the landing.
+  // The landing is type only: the headline on white, its full stop drawn as a green dot, the formats we make running
+  // along the bottom. Scrolling brings the green mat up over it, one to one with the finger, with the four reels
+  // rising onto it and already playing. With reduced motion the work simply follows the landing.
   const intro = document.querySelector<HTMLElement>('[data-intro]');
   const work = document.querySelector<HTMLElement>('[data-work]');
   if (intro && work) {
@@ -141,7 +139,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const stops = [...hero.querySelectorAll<HTMLElement>('[data-stop]')];
     let stop = stops[0];
     const hit = hero.querySelector<HTMLButtonElement>('[data-stop-hit]')!;
-    const small = [...hero.querySelectorAll<HTMLElement>('.h-kick')];
     const head = work.querySelector<HTMLElement>('[data-w-head]')!;
     const title = head.querySelector<HTMLElement>('h2')!;
     const deck = work.querySelector<HTMLElement>('[data-deck]')!;
@@ -149,17 +146,16 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     const media = cards.map((el) => el.querySelector<HTMLButtonElement>('[data-cut]')!);
     const vids = media.map((m) => m.querySelector('video')!);
     const toggle = work.querySelector<HTMLButtonElement>('[data-toggle]')!;
-    const iris = intro.classList.contains('iris');
+    const slide = intro.classList.contains('slide');
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const save = !!(navigator as any).connection?.saveData;
     const clamp = (v: number) => Math.min(1, Math.max(0, v));
     const span = (a: number, b: number, v: number) => clamp((v - a) / (b - a));
     const ease = (v: number) => v * v * (3 - 2 * v);
-    if (!iris) work.dataset.dark = '1';
 
     // The reels play, silent and looping, while the work is in view. Nothing plays before the page has loaded, while a
     // dialog or the menu is open, with reduced motion, with data saver on or after the pause button.
-    let wanted = !still && !save, ready = false, seen = false, blocked = false, shown = !iris, warm = false;
+    let wanted = !still && !save, ready = false, seen = false, blocked = false, shown = true, warm = false;
     const load = (v: HTMLVideoElement) => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
     const go = () => {
       const on = ready && seen && shown && !blocked && !document.hidden && wanted;
@@ -206,7 +202,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
 
     // The dot is a button too: it takes you straight through to the work.
     const through = () => {
-      const to = iris ? intro.offsetTop + intro.querySelector<HTMLElement>('[data-pin]')!.offsetHeight : work.getBoundingClientRect().top + scrollY;
+      const to = work.getBoundingClientRect().top + scrollY;
       const done = () => title.focus({ preventScroll: true });
       const l = (window as any).lenis;
       if (l) l.scrollTo(to, { duration: 1.9, easing: (t: number) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), onComplete: done });
@@ -214,70 +210,38 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
     };
     hit.addEventListener('click', through);
 
-    if (iris) {
-      const pin = intro.querySelector<HTMLElement>('[data-pin]')!;
-      // How far each reel sits from the stack it fans out of, and how much it leans in the stack.
-      const lean = [-9, -3, 3.5, 10];
-      let W = 0, H = 0, D = 1, top = 0, ox = 0, oy = 0, r0 = 0, last = -1;
-      let off: { x: number; y: number }[] = [];
+    if (slide) {
+      // The green mat slides up over the landing, one to one with the scroll: no pinning and no waiting. The landing
+      // stays put underneath and steps back a little as it is covered, so the page reads as one table: the words on
+      // paper, then the work laid out on the mat.
+      let H = innerHeight, last = -1;
       const frame = () => {
-        const p = clamp((scrollY - top) / D);
+        const p = clamp(1 - work.getBoundingClientRect().top / H);
         if (p === last) return;
         last = p;
-        // The circle starts as the dot, drifts to the middle of the screen as it grows and ends past the far corner.
-        const m = ease(span(0, .8, p));
-        const cx = ox + (W / 2 - ox) * m, cy = oy + (H / 2 - oy) * m;
-        const far = Math.hypot(Math.max(cx, W - cx), Math.max(cy, H - cy)) + 4;
-        const r = p ? r0 + (far - r0) * p * p : 0;
-        work.style.clipPath = p >= 1 ? 'none' : `circle(${r.toFixed(1)}px at ${cx.toFixed(1)}px ${cy.toFixed(1)}px)`;
-        // The landing leans in towards the dot while it opens, and the small print and the buttons step back first,
-        // so only the headline and the opening dot are left.
-        hero.style.transform = p ? `scale(${(1 + p * p * .6).toFixed(4)})` : '';
-        const back = p ? (1 - ease(span(0, .2, p))).toFixed(3) : '';
-        small.forEach((el) => { el.style.opacity = back; });
-        intro.classList.toggle('moving', p > 0);
-        const q = ease(span(.45, .9, p));
-        head.style.opacity = q < 1 ? q.toFixed(3) : '';
-        head.style.transform = q < 1 ? `translate3d(0, ${((1 - q) * 40).toFixed(1)}px, 0)` : '';
-        deck.style.opacity = p < .3 ? ease(span(.06, .3, p)).toFixed(3) : '';
-        const f = ease(span(.3, 1, p));
-        cards.forEach((el, i) => {
-          el.style.transform = f < 1 ? `translate3d(${(off[i].x * (1 - f)).toFixed(1)}px, ${(off[i].y * (1 - f)).toFixed(1)}px, 0) rotate(${(lean[i % 4] * (1 - f)).toFixed(2)}deg) scale(${(.78 + .22 * f).toFixed(4)})` : '';
-        });
-        // The menu bar turns light on dark once the circle covers it.
-        work.dataset.dark = p >= 1 || Math.hypot(Math.max(cx, W - cx), cy - 40) <= r ? '1' : '0';
-        // The clips start loading as soon as the iris starts opening, and play once it is a third open.
+        hero.style.setProperty('--cover', p.toFixed(4));
+        intro.classList.toggle('moving', p > .02);
+        // The clips start loading as soon as the mat starts coming up.
         if (p > 0 && !warm && wanted) { warm = true; vids.forEach(load); }
-        const was = shown;
-        shown = p > .3;
-        if (shown !== was) go();
       };
+      // The dot is a button that goes straight to the work: keep the button on the dot.
       const measure = () => {
-        W = innerWidth; H = innerHeight;
-        D = pin.offsetHeight || 1;
-        top = intro.offsetTop;
-        // Offsets leave out transforms, so the dot is found where it rests.
+        H = innerHeight;
         stop = stops.find((el) => el.offsetWidth && el.closest('.on')) ?? stops.find((el) => el.offsetWidth) ?? stops[0];
         let x = stop.offsetWidth / 2, y = stop.offsetHeight / 2;
         for (let el: HTMLElement | null = stop; el && el !== hero; el = el.offsetParent as HTMLElement | null) { x += el.offsetLeft; y += el.offsetTop; }
-        ox = x; oy = y; r0 = stop.offsetWidth / 2;
-        hero.style.setProperty('--ox', `${ox}px`);
-        hero.style.setProperty('--oy', `${oy}px`);
-        hit.style.left = `${ox}px`;
-        hit.style.top = `${oy}px`;
-        // The reels stack in the middle of the screen, under the title.
-        const sx = W / 2, sy = (head.offsetTop + head.offsetHeight + Math.min(H, work.offsetHeight)) / 2;
-        off = cards.map((el) => ({ x: sx - (deck.offsetLeft + el.offsetLeft + el.offsetWidth / 2), y: sy - (deck.offsetTop + el.offsetTop + el.offsetHeight / 2) }));
+        hit.style.left = `${x}px`;
+        hit.style.top = `${y}px`;
         last = -1;
         frame();
       };
       addEventListener('scroll', frame, { passive: true });
-      // The changing last word moves the dot, so the iris follows it.
       hero.addEventListener('rot', measure);
-      // A phone's address bar showing or hiding only changes the height a little: keep the layout, follow the height.
-      addEventListener('resize', () => { if (innerWidth !== W) measure(); else { H = innerHeight; last = -1; frame(); } });
+      addEventListener('resize', measure);
       addEventListener('load', measure, { once: true });
       measure();
+      // The title and the reels rise onto the mat the first time it comes into view.
+      new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
 
       // With a mouse the dot leans towards the pointer and swells as it comes close, like a button waiting to be pressed.
       if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
@@ -292,7 +256,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
           tx = ty = 0; tz = 1;
           if (e && !intro.classList.contains('moving')) {
             const r = hero.getBoundingClientRect();
-            const dx = e.clientX - r.left - ox, dy = e.clientY - r.top - oy, d = Math.hypot(dx, dy), reach = 170;
+            const hx0 = parseFloat(hit.style.left), hy0 = parseFloat(hit.style.top);
+            const dx = e.clientX - r.left - hx0, dy = e.clientY - r.top - hy0, d = Math.hypot(dx, dy), reach = 170;
             const pull = d < reach ? 1 - d / reach : 0;
             tx = dx * .3 * pull; ty = dy * .3 * pull; tz = 1 + pull * .8;
           }
@@ -300,7 +265,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         };
         hero.addEventListener('pointermove', aim);
         hero.addEventListener('pointerleave', () => aim());
-        addEventListener('scroll', () => { if (tz !== 1 && intro.classList.contains('moving')) aim(); }, { passive: true });
       }
     }
 
@@ -458,8 +422,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .cutaway .ch, .cutaway .stop, .cutaway .mark::after { transition: none !important; }
   .stop-hit { position: absolute; z-index: 2; left: 0; top: 0; width: 72px; height: 72px; margin: -36px 0 0 -36px; padding: 0; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
   .stop-hit:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-  .moving .stop-hit, .moving .stop { visibility: hidden; }
-  .intro:not(.iris) .stop-hit { display: none; }
+  .moving .stop-hit { visibility: hidden; }
+  .intro:not(.slide) .stop-hit { display: none; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
 
@@ -470,13 +434,16 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
   .ticker li { display: flex; align-items: center; gap: 30px; white-space: nowrap; font-weight: 600; font-size: 16px; letter-spacing: -0.005em; padding-right: 30px; }
   .ticker svg { width: 13px; height: 13px; fill: none; stroke: var(--pink); stroke-width: 1.6; stroke-linecap: round; }
 
-  /* The iris. The stage holds still for one screen of scrolling while the work, on top, is cut to a growing circle;
-     the landing underneath leans in towards the dot. */
-  .iris .stage { position: sticky; top: 0; overflow: hidden; background: var(--bg); }
-  .iris .hero { position: absolute; z-index: 1; left: 0; right: 0; top: 0; transform-origin: var(--ox, 50%) var(--oy, 80%); }
-  .iris.moving .hero { will-change: transform; }
-  .iris .work { clip-path: circle(0 at 50% 50%); }
-  .iris .pin { height: 100svh; }
+  /* The mat slides up over the landing with the scroll. The landing is held in place underneath and steps back a
+     little (smaller, fainter) as it is covered; nothing is pinned, so the page always moves with the finger. */
+  .slide .hero { position: sticky; top: 0; z-index: 0; transform-origin: 50% 35%;
+    transform: scale(calc(1 - var(--cover, 0) * .06)); opacity: calc(1 - var(--cover, 0) * .6); }
+  .slide.moving .hero { will-change: transform, opacity; }
+  .slide .work { position: relative; z-index: 1; border-radius: clamp(18px, 2.2vw, 32px) clamp(18px, 2.2vw, 32px) 0 0; }
+  /* The title and the reels rise onto the mat the first time it comes into view, the reels one after another. */
+  .slide .w-head, .slide .card { opacity: 0; transform: translate3d(0, 56px, 0); transition: opacity 700ms var(--ease), transform 1000ms cubic-bezier(.22, 1, .36, 1); }
+  .slide .card { transition-delay: calc(120ms + var(--k, 0) * 80ms); }
+  .slide .work.in .w-head, .slide .work.in .card { opacity: 1; transform: none; }
 
   /* The work: the title, then the four reels side by side, sized to fit the screen with their captions. */
   .work { --wt: clamp(56px, min(9.4vw, 13.5svh), 176px); --gap: clamp(10px, 1.1vw, 18px); --cap: 46px; --pt: calc(var(--header) + clamp(0px, 1vh, 12px)); --pb: clamp(18px, 3.4vh, 38px);
