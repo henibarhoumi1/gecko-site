@@ -15,7 +15,7 @@ jobs:
       - run: npm ci && npm run build
       - run: npm i --no-save playwright@1.49.1 && npx playwright install --with-deps chromium
       - run: |
-          cat > /tmp/shots.mjs <<'JS'
+          cat > shots.mjs <<'JS'
           import { spawn } from 'node:child_process';
           import { mkdirSync, writeFileSync } from 'node:fs';
           import { chromium } from 'playwright';
@@ -41,7 +41,7 @@ jobs:
           await b.close(); srv.kill();
           writeFileSync('/tmp/out/notes.json', JSON.stringify(notes, null, 2));
           JS
-          node /tmp/shots.mjs
+          node shots.mjs
       - if: always()
         run: |
           cd /tmp/out && git init -q && git checkout -q -b ws-shots
