@@ -7,7 +7,7 @@ for (const [label, opts] of [['desktop', { viewport: { width: 1440, height: 900 
   await page.goto(BASE + '/en/', { waitUntil: 'load' });
   await page.waitForTimeout(1500);
   await page.evaluate(() => { const s = document.querySelector('#workspace'); scrollTo(0, s.getBoundingClientRect().top + scrollY - 40); });
-  const st = () => page.evaluate(() => { const li = [...document.querySelectorAll('#workspace [data-step]')]; const tab = document.querySelector('#workspace [data-ws-tab][aria-selected="true"]'); return `on=${li.findIndex((l) => l.classList.contains('on'))} tab=${tab?.textContent.trim()} height=${Math.round(document.querySelector('#workspace').getBoundingClientRect().height)} screen=${innerHeight}`; });
+  const st = () => page.evaluate(() => { const li = [...document.querySelectorAll('#workspace [data-step]')]; const tab = document.querySelector('#workspace [data-ws-tab][aria-selected="true"]'); return `on=${li.findIndex((l) => l.classList.contains('on'))} tab=${tab?.textContent.trim()} height=${Math.round(document.querySelector('#workspace').getBoundingClientRect().height)} app=${Math.round(document.querySelector('#workspace .app').getBoundingClientRect().height)} hiddenPane=${getComputedStyle(document.querySelector('#workspace [data-ws-pane][hidden]')).display} screen=${innerHeight}`; });
   await page.waitForTimeout(800); console.log(`TOUR ${label} start`, await st());
   await page.screenshot({ path: `out/tour_${label}_a.jpg`, type: 'jpeg', quality: 60 });
   await page.waitForTimeout(5000); console.log(`TOUR ${label} +5s`, await st());
