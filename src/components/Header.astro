@@ -87,9 +87,10 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   const under = (el: HTMLElement) => { if (el.dataset.dark === '0') return false; const r = el.getBoundingClientRect(); return r.top < 40 && r.bottom > 40; };
   let last = scrollY, ticking = false;
   const update = () => {
-    const y = scrollY, d = y - last;
+    // Read everything first, then write, so the browser never has to lay the page out twice in one frame.
+    const y = scrollY, d = y - last, over = darks.length > 0 && darks.some(under);
     header.classList.toggle('solid', y > 24);
-    if (darks.length) header.classList.toggle('over', darks.some(under));
+    header.classList.toggle('over', over);
     if (y < 160 || header.classList.contains('open')) header.classList.remove('away');
     else if (d > 6) header.classList.add('away');
     else if (d < -6) header.classList.remove('away');
@@ -155,18 +156,17 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   /* At the top of a page the bar lines up with the wide sections, edge to edge; once you scroll it gathers into a pill. */
   .bar { pointer-events: auto; position: relative; z-index: 3; max-width: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0; color: var(--fg);
     border: var(--line) solid transparent; border-radius: 999px; background: transparent;
-    transition: background 400ms var(--ease), border-color 400ms var(--ease), box-shadow 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
-  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: rgba(255, 255, 255, .92); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-color: var(--hair); box-shadow: 0 14px 34px -22px rgba(0, 0, 0, .35); }
+    transition: background 400ms var(--ease), border-color 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
+  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: #FFFFFF; border-color: var(--hair); }
   .over .bar { --fg: #FFFFFF; --bg: #000000; --hair: rgba(255, 255, 255, .16); --hair-2: rgba(255, 255, 255, .42); --tint: rgba(255, 255, 255, .08); --tint-2: rgba(255, 255, 255, .14); color: #fff; }
-  .over.solid .bar { background: rgba(18, 18, 18, .55); border-color: rgba(255, 255, 255, .12); box-shadow: 0 14px 34px -22px rgba(0, 0, 0, .7); }
+  .over.solid .bar { background: #000000; border-color: rgba(255, 255, 255, .18); }
   .over .lang-m { --fg: #000000; --surface: #FFFFFF; --edge: #000000; --tint: rgba(0, 0, 0, .035); }
   .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
   .brand:hover { transform: rotate(-4deg) scale(1.04); }
   .links { position: relative; display: flex; gap: 2px; list-style: none; margin: 0 auto; padding: 0; transition: opacity 300ms var(--ease); }
   .open .links { opacity: 0; pointer-events: none; }
-  .links a { position: relative; z-index: 1; display: block; font-weight: 500; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 15px; border-radius: 999px; opacity: .72; transition: opacity 260ms var(--ease); }
-  .links a:hover, .links a[aria-current='page'] { opacity: 1; }
+  .links a { position: relative; z-index: 1; display: block; font-weight: 500; font-size: 15px; letter-spacing: -0.01em; text-decoration: none; padding: 9px 15px; border-radius: 999px; }
   .glide { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w, 0); transform: translateX(var(--x, 0)); border-radius: 999px; background: var(--tint-2); opacity: 0; pointer-events: none;
     transition: transform 560ms cubic-bezier(.22, 1, .36, 1), width 560ms cubic-bezier(.22, 1, .36, 1), opacity 300ms var(--ease), background 300ms var(--ease); }
   .glide.hot { opacity: 1; }

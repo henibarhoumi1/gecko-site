@@ -282,7 +282,7 @@ const recs: Record<string, string> = {
     // glides there; elsewhere the button leads to the offers page.
     const fitBox = $('[data-fit-done]'), fitGo = $<HTMLAnchorElement>('[data-fit-go]');
     const pricing = document.querySelector<HTMLElement>('#plans [data-picker]') ? document.querySelector<HTMLElement>('#plans') : null;
-    const glide = () => { if (!pricing) return; const l = (window as any).lenis; l ? l.scrollTo(pricing, { offset: -40, duration: 1.8, easing: (x: number) => 1 - Math.pow(1 - x, 4) }) : pricing.scrollIntoView({ behavior: still ? 'auto' : 'smooth' }); };
+    const glide = () => { if (!pricing) return; pricing.scrollIntoView({ behavior: still ? 'auto' : 'smooth' }); };
     if (pricing) fitGo.addEventListener('click', (e) => { e.preventDefault(); glide(); });
     let glideTimer = 0;
     const finish = (text: string) => {

@@ -11,8 +11,6 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; scroll-padding-top: var(--header); }
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-stopped { overflow: hidden; }
 .locked, .locked body { overflow: hidden; }
 body { margin: 0; font-size: var(--body); line-height: 1.5; }
 img, video, svg { display: block; max-width: 100%; }

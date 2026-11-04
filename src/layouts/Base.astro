@@ -63,7 +63,6 @@ const org = JSON.stringify({
     <main><slot /></main>
     <Footer lang={lang} cta={footerCta} />
     <script>
-      import Lenis from 'lenis';
       import { track } from '../scripts/intake';
       // Counts only: one page view, and each tap on a WhatsApp link (src/scripts/intake.ts).
       if ((document as any).prerendering) document.addEventListener('prerenderingchange', () => track('view'), { once: true });
@@ -86,20 +85,14 @@ const org = JSON.stringify({
       addEventListener('load', () => { if (!touched) toTop(); }, { once: true });
       addEventListener('pageshow', (e) => { if (!(e as PageTransitionEvent).persisted) toTop(); });
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      // Smooth, weighted scrolling. Paused while a dialog or the menu is open.
-      if (!still) {
-        const lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.9, touchMultiplier: 1 });
-        (window as any).lenis = lenis;
-        const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf); };
-        requestAnimationFrame(raf);
-        if (!location.hash) lenis.scrollTo(0, { immediate: true, force: true });
-        new MutationObserver(() => (document.documentElement.classList.contains('locked') ? lenis.stop() : lenis.start()))
-          .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-        document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
-          const el = document.querySelector(a.getAttribute('href')!); if (!el) return;
-          e.preventDefault(); lenis.scrollTo(el as HTMLElement, { offset: -88, duration: 1.2, easing: (t) => 1 - Math.pow(1 - t, 4) });
-        }));
-      }
+      // Native scrolling everywhere: it runs on the browser's own scrolling thread, so it never stutters while the page
+      // is busy, it can't lag behind the hand, and a trackpad or a phone keeps its own feel. Links to a section of the
+      // same page glide there (the header's height is kept clear by scroll-padding-top in site.css).
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href')!; if (id.length < 2) return;
+        const el = document.querySelector(id); if (!el) return;
+        e.preventDefault(); el.scrollIntoView({ behavior: still ? 'auto' : 'smooth', block: 'start' });
+      }));
       // Things marked .rv rise into place the first time they come into view.
       // A page loaded ahead of time (on hover) waits until it is actually shown before anything rises.
       const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });

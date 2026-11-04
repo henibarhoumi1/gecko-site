@@ -22,6 +22,12 @@ const hx = h.hero;
 const dot = (t: string[]) => t.map((l, i) => (i === t.length - 1 ? l.replace(/\.$/, '') : l));
 const scenes = h.scenes.slice(0, 1).map((sc) => [{ k: 'd', lines: dot(sc.d) }, { k: 'm', lines: dot(sc.m) }]);
 const said = h.scenes[0].d.join(' ');
+// The headline's widest line and its height, in ems, measured in Inter for each language and for the wide (d) and
+// phone (m) line breaks (tools/title-ratio.mjs, 4 Nov 2026). With them the stylesheet sets the final size from the first
+// frame, so nothing jumps when the script checks it. Re-measure if the headline's words change.
+const ratios: Record<string, [number, number, number, number]> = { en: [5.957, 2.7713, 3.7762, 4.6477], fr: [4.3161, 2.768, 4.3236, 3.7059] };
+const [kwd, khd, kwm, khm] = ratios[lang] ?? ratios.en!;
+const fit = `--kwd:${kwd};--khd:${khd};--kwm:${kwm};--khm:${khm}`;
 // Every letter is its own piece, so letters can rise one after another and change weight on their own.
 const split = (t: string) => [...t].map((ch, i) => ({ ch, i }));
 // The work stage plays a short silent loop of each reel; a click opens the full reel with sound.
@@ -40,7 +46,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
         <div class="wrap wide h-in">
           <p class="h-sub up" style="--d:900ms"><strong>{h.sub}</strong> <span>{h.line}</span></p>
           <div class="h-tbox">
-            <h1 class="h-title" id="h-title" aria-label={said} data-title>
+            <h1 class="h-title" id="h-title" aria-label={said} data-title style={fit}>
               {scenes.map((sets, n) => (
                 <span class={n ? 'scene' : 'scene on first'} aria-hidden="true" data-scene>
                   {sets.map(({ k: set, lines }) => lines.map((line, i) => (
@@ -190,38 +196,24 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     const through = () => {
       const to = work.getBoundingClientRect().top + scrollY;
       const done = () => title.focus({ preventScroll: true });
-      const l = (window as any).lenis;
-      if (l) l.scrollTo(to, { duration: 1.9, easing: (t: number) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2), onComplete: done });
-      else { scrollTo({ top: to, behavior: still ? 'auto' : 'smooth' }); setTimeout(done, still ? 0 : 900); }
+      scrollTo({ top: to, behavior: still ? 'auto' : 'smooth' }); setTimeout(done, still ? 0 : 900);
     };
     hit.addEventListener('click', through);
 
     if (slide) {
-      // The green mat slides up over the landing, one to one with the scroll: no pinning and no waiting. The landing
-      // stays put underneath and steps back a little as it is covered, so the page reads as one table: the words on
-      // paper, then the work laid out on the mat.
-      let H = innerHeight, last = -1;
-      const frame = () => {
-        const p = clamp(1 - work.getBoundingClientRect().top / H);
-        if (p === last) return;
-        last = p;
-        hero.style.setProperty('--cover', p.toFixed(4));
-        intro.classList.toggle('moving', p > .02);
-        // The clips start loading as soon as the mat starts coming up.
-        if (p > 0 && !warm && wanted) { warm = true; vids.forEach(load); }
-      };
+      // The black work section slides up over the landing with the scroll. The landing is simply held in place (sticky):
+      // no script runs while you scroll, so nothing can make the scroll stutter. The clips start loading as soon as the
+      // work comes within a screen of view.
+      new IntersectionObserver(([e]) => { if (e.isIntersecting && !warm && wanted) { warm = true; vids.forEach(load); } }, { rootMargin: '0px 0px 100% 0px' }).observe(work);
+      new IntersectionObserver(([e]) => { intro.classList.toggle('moving', e.isIntersecting); }).observe(work);
       // The dot is a button that goes straight to the work: keep the button on the dot.
       const measure = () => {
-        H = innerHeight;
         stop = stops.find((el) => el.offsetWidth && el.closest('.on')) ?? stops.find((el) => el.offsetWidth) ?? stops[0];
         let x = stop.offsetWidth / 2, y = stop.offsetHeight / 2;
         for (let el: HTMLElement | null = stop; el && el !== hero; el = el.offsetParent as HTMLElement | null) { x += el.offsetLeft; y += el.offsetTop; }
         hit.style.left = `${x}px`;
         hit.style.top = `${y}px`;
-        last = -1;
-        frame();
       };
-      addEventListener('scroll', frame, { passive: true });
       hero.addEventListener('rot', measure);
       addEventListener('resize', measure);
       addEventListener('load', measure, { once: true });
@@ -269,8 +261,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
         const wide = Math.max(...lines.map((l) => l.offsetWidth));
         const tall = Math.max(...beats.map((b) => b.offsetHeight));
         const bw = tbox.clientWidth, bh = tbox.clientHeight - parseFloat(getComputedStyle(tbox).paddingTop);
-        const k = Math.min(bw / wide, bh / tall);
-        htl.style.fontSize = `${(parseFloat(getComputedStyle(htl).fontSize) * k * .995).toFixed(2)}px`;
+        const css = parseFloat(getComputedStyle(htl).fontSize), want = css * Math.min(bw / wide, bh / tall) * .995;
+        // The stylesheet already sets the right size for Inter. Correct it only if this screen's letters really differ
+        // (more than 1.5%), and never before Inter has loaded, so the headline doesn't jump while the page opens.
+        const ready = !document.fonts || document.fonts.status === 'loaded';
+        if (ready && Math.abs(want / css - 1) > .015) htl.style.fontSize = `${want.toFixed(2)}px`;
         place();
       }
       htl.classList.remove('measure');
@@ -332,7 +327,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .h-tbox { grid-area: title; container-type: size; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; padding-top: clamp(12px, 2.4vh, 28px); }
   .h-title { display: grid; margin: 0; font-weight: 700; letter-spacing: -0.06em; line-height: .86;
     font-size: min(calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / 8), calc((100svh - 320px) / 2.3));
-    font-size: min(calc(100cqw / 8), calc(100cqh / 2.3)); }
+    font-size: calc(min(100cqw / var(--kwd, 8), 100cqh / var(--khd, 2.3)) * .995); }
   /* The three beats share one cell, set from the bottom, so the box never jumps when one hands over to the next. */
   .scene { grid-area: 1 / 1; align-self: end; display: block; pointer-events: none; }
   .ln { display: block; overflow: hidden; width: fit-content; white-space: nowrap; padding: .08em .1em .1em .06em; margin: -.05em 0 -.1em -.06em; }
@@ -369,9 +364,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 
   /* The mat slides up over the landing with the scroll. The landing is held in place underneath and steps back a
      little (smaller, fainter) as it is covered; nothing is pinned, so the page always moves with the finger. */
-  .slide .hero { position: sticky; top: 0; z-index: 0; transform-origin: 50% 35%; transform: scale(calc(1 - var(--cover, 0) * .06)); }
+  .slide .hero { position: sticky; top: 0; z-index: 0; }
 
-  .slide.moving .hero { will-change: transform; }
   .slide .work { position: relative; z-index: 1; border-radius: clamp(18px, 2.2vw, 32px) clamp(18px, 2.2vw, 32px) 0 0; }
   /* The title and the reels rise onto the mat the first time it comes into view, the reels one after another. */
   .slide .w-head, .slide .card { opacity: 0; transform: translate3d(0, 56px, 0); transition: opacity 700ms var(--ease), transform 1000ms cubic-bezier(.22, 1, .36, 1); }
@@ -417,7 +411,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   @media (max-width: 760px), (max-width: 960px) and (orientation: portrait) {
     .h-in { padding-bottom: 20px; }
     .h-tbox { padding-top: 18px; }
-    .h-title { font-size: min(17vw, 11svh); font-size: min(calc(100cqw / 5.4), calc(100cqh / 3.1)); }
+    .h-title { font-size: min(17vw, 11svh); font-size: calc(min(100cqw / var(--kwm, 5.4), 100cqh / var(--khm, 3.1)) * .995); }
     .ln.d { display: none; }
     .ln.m { display: block; }
       .ticker { padding-block: 14px; }
