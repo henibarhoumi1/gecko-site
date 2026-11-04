@@ -241,7 +241,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
       // The title and the reels rise onto the mat the first time it comes into view.
       new IntersectionObserver(([e], o) => { if (e.isIntersecting) { work.classList.add('in'); o.disconnect(); } }, { threshold: .12 }).observe(work);
       // A gentle catch: when one scroll reaches or crosses the start of the work and comes to rest nearly lined up
-      // (short of it by up to a third of the screen, or past it by up to a quarter), the page settles onto it, so a
+      // (short of it by up to almost half the screen, or past it by up to a quarter), the page settles onto it, so a
       // single flick never leaves the work half on screen. A scroll that started already inside the work is left
       // alone, so slow scrolling through it is never pulled back. Nothing happens while a finger is down or a dialog
       // or menu is open.
@@ -254,7 +254,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M16 10l4 4M20 
         const start = from; from = NaN;
         if (Math.abs(t) < 2 || !(start > 2 || start < -2)) return;
         // Coming down from the landing, or up from further down the page.
-        const down = start > 0 && t < H * .34 && t > -H * .25;
+        const down = start > 0 && t < H * .45 && t > -H * .25;
         const up = start < 0 && t > -H * .3 && t < H * .25 && start < -H * .02;
         if (!(down || up)) return;
         settling = true;
