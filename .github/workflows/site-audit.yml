@@ -12,14 +12,18 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     env:
-      BASE: https://hero-line-gecko-site.henibarhoumi1.workers.dev
+      BASE: https://final-polish-gecko-site.henibarhoumi1.workers.dev
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm i --no-save playwright@1.56.1 lighthouse@12.8.2 axe-core@4.10.3 && npx playwright install --with-deps chromium
       - run: curl -sI "$BASE/en/" | head -3
-      - run: node tools/hero.mjs
+      - run: node tools/final-check.mjs
+      - name: Phone speed, preview vs live (3 runs each)
+        run: |
+          export CHROME_PATH=$(node -e "console.log(require('playwright').chromium.executablePath())")
+          for u in "$BASE/en/" https://gecko-site.henibarhoumi1.workers.dev/en/; do for i in 1 2 3; do npx lighthouse "$u" --quiet --only-categories=performance --chrome-flags='--headless=new --no-sandbox' --output=json --output-path=lh.json >/dev/null 2>&1; node -e "const j=require('./lh.json');console.log('$u', Math.round(j.categories.performance.score*100), j.audits['largest-contentful-paint'].displayValue, j.audits['first-contentful-paint'].displayValue)"; done; done
       - name: Lighthouse (phone and desktop)
         if: false
         run: |
