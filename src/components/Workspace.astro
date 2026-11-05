@@ -370,6 +370,8 @@ const icons = [
   .story .ws-copy { gap: 22px; }
   .story .ws-copy .text { max-width: 26rem; }
   .story .eg { right: auto; left: 28px; }
+  /* The window is as tall as its fullest tab, no taller. */
+  .story .body { min-height: 0; }
   .story .cm { opacity: 0; transform: translateY(8px); transition: opacity 360ms var(--ease), transform 460ms cubic-bezier(.2, .9, .3, 1.2); }
   .story .cm.show { opacity: 1; transform: none; }
   .story .tile, .story .rows em { transition: transform 300ms cubic-bezier(.3, 1.6, .5, 1), box-shadow 300ms var(--ease); }
@@ -388,27 +390,29 @@ const icons = [
   .cur.tap svg { animation: cur-press 260ms ease-out; }
   @keyframes cur-tap { from { transform: scale(.3); opacity: 1; } to { transform: scale(2.2); opacity: 0; } }
   @keyframes cur-press { 50% { transform: scale(.82); } }
+  /* Desktop: an editorial grid on the page's own 12 columns. The headline and its line share the top row; under them
+     the steps (5 columns) sit beside the workspace (7 columns), both inside the page width, top-aligned. */
   @media (min-width: 1061px) {
-    .ws.story { grid-template-columns: minmax(0, .68fr) minmax(0, 1.32fr); gap: clamp(40px, 5vw, 88px); }
-    /* The workspace runs off the right edge of the page. */
-    .story .app-wrap { margin-right: calc(-1 * ((100vw - min(100vw, var(--max))) / 2 + var(--gutter))); }
-    .story .app { border-right: 0; border-radius: 22px 0 0 22px; font-size: 15px; }
-    .story .chrome { padding: 14px 18px; }
-    .story .body { grid-template-columns: 220px 1fr; min-height: 620px; }
-    .story .side { padding: 22px 14px; }
-    .story .mono { width: 76px; margin-bottom: 22px; }
-    .story .side button { font-size: 15px; padding: 11px 12px; }
-    .story .main { padding: 30px clamp(28px, 3vw, 48px) 34px; gap: 22px; }
-    .story .pn { font-size: 28px; }
+    .ws.story { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(20px, 2.4vw, 36px); row-gap: clamp(40px, 4.4vw, 72px); align-items: start; }
+    .story .ws-copy { display: contents; }
+    .story .ws-title { grid-column: 1 / 9; grid-row: 1; font-size: clamp(48px, 5.4vw, 84px); }
+    .story .ws-copy > .text { grid-column: 9 / 13; grid-row: 1; align-self: end; margin: 0 0 .4em; }
+    .story .steps { grid-column: 1 / 5; grid-row: 2; margin: 0; }
+    .story .ws-copy > .btn { grid-column: 1 / 5; grid-row: 3; align-self: start; }
+    .story .app-wrap { grid-column: 5 / 13; grid-row: 2 / span 2; margin-left: clamp(8px, 2vw, 32px); }
+    .story .app { font-size: 15px; border-radius: 20px; }
+    .story .chrome { padding: 13px 18px; }
+    .story .body { grid-template-columns: 196px 1fr; }
+    .story .side { padding: 20px 12px; }
+    .story .mono { width: 72px; margin-bottom: 20px; }
+    .story .side button { font-size: 15px; padding: 10px 12px; }
+    .story .main { padding: 26px clamp(24px, 2.6vw, 40px) 30px; gap: 20px; }
+    .story .pn { font-size: 26px; }
     .story .pm { font-size: 14px; }
-    .story .rows li { padding: 14px 0; }
-    .story .pv { grid-template-columns: 190px 1fr; gap: 22px; }
-    .story .cm { font-size: 16px; padding: 14px 16px; }
-    .story .tv { font-size: 18px; }
-  }
-  @media (max-width: 1060px) {
-    .story .app-wrap { margin-right: calc(-1 * var(--gutter)); }
-    .story .app { border-right: 0; border-radius: 18px 0 0 18px; }
+    .story .rows li { padding: 13px 0; }
+    .story .pv { grid-template-columns: 168px 1fr; gap: 20px; }
+    .story .cm { font-size: 15px; padding: 12px 14px; }
+    .story .tv { font-size: 17px; }
   }
   @media (max-width: 620px) {
     .story .body { grid-template-columns: 52px 1fr; min-height: 0; }
