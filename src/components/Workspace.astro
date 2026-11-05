@@ -370,6 +370,8 @@ const icons = [
   .story .ws-copy { gap: 22px; }
   .story .ws-copy .text { max-width: 26rem; }
   .story .eg { right: auto; left: 28px; }
+  /* The window is as tall as its fullest tab, no taller. */
+  .story .body { min-height: 0; }
   .story .cm { opacity: 0; transform: translateY(8px); transition: opacity 360ms var(--ease), transform 460ms cubic-bezier(.2, .9, .3, 1.2); }
   .story .cm.show { opacity: 1; transform: none; }
   .story .tile, .story .rows em { transition: transform 300ms cubic-bezier(.3, 1.6, .5, 1), box-shadow 300ms var(--ease); }
@@ -400,7 +402,7 @@ const icons = [
     .story .app-wrap { grid-column: 5 / 13; grid-row: 2 / span 2; margin-left: clamp(8px, 2vw, 32px); }
     .story .app { font-size: 15px; border-radius: 20px; }
     .story .chrome { padding: 13px 18px; }
-    .story .body { grid-template-columns: 196px 1fr; min-height: 560px; }
+    .story .body { grid-template-columns: 196px 1fr; }
     .story .side { padding: 20px 12px; }
     .story .mono { width: 72px; margin-bottom: 20px; }
     .story .side button { font-size: 15px; padding: 10px 12px; }
