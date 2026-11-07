@@ -68,10 +68,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
       <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
         <div class="wrap wide w-in">
           <div class="w-head" data-w-head>
-            <h2 class="w-title" id="w-title" tabindex="-1" style={`--n:${k.nav.work.length}`}>{k.nav.work}</h2>
+            <h2 class="w-title" id="w-title" tabindex="-1" style={`--n:${h.kicks.workTitle.length}`}>{h.kicks.workTitle}</h2>
             <div class="w-meta">
-              <p class="w-kick">{h.kicks.work} · 2026</p>
-              <a class="w-all" href={href(lang, 'work')}>{hx.cta} <span aria-hidden="true">→</span></a>
+              <a class="w-all" href={href(lang, 'work')}><span class="w-all-t">{hx.cta}</span><span class="w-all-a" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg></span></a>
             </div>
           </div>
           <ol class="deck" data-deck>
@@ -373,15 +372,18 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .slide .work.in .w-head, .slide .work.in .card { opacity: 1; transform: none; }
 
   /* The work: the title, then the four reels side by side, sized to fit the screen with their captions. */
-  .work { --wt: clamp(56px, min(9.4vw, 13.5svh), 176px); --gap: clamp(10px, 1.1vw, 18px); --cap: 46px; --pt: calc(var(--header) + clamp(0px, 1vh, 12px)); --pb: clamp(18px, 3.4vh, 38px);
+  .work { --btn: 250px; --wt: clamp(56px, min(9.4vw, 13.5svh), 176px); --gap: clamp(10px, 1.1vw, 18px); --cap: 46px; --pt: calc(var(--header) + clamp(0px, 1vh, 12px)); --pb: clamp(18px, 3.4vh, 38px);
     --hh: calc(var(--wt) * .86 + clamp(16px, 2.8vh, 30px)); position: relative; z-index: 2; min-height: 100lvh; }
   .w-in { display: flex; flex-direction: column; min-height: 100svh; padding-top: var(--pt); padding-bottom: var(--pb); }
   .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; min-height: var(--hh); padding-bottom: clamp(16px, 2.8vh, 30px); }
-  .w-title { margin: 0; font-weight: 700; font-size: min(var(--wt), calc((min(100vw, var(--wide)) - 2 * var(--gutter)) / (var(--n) * .48))); line-height: .86; letter-spacing: -0.06em; white-space: nowrap; outline: none; }
+  .w-title { margin: 0; font-weight: 700; font-size: min(var(--wt), calc((min(100vw, var(--wide)) - 2 * var(--gutter) - var(--btn, 0px)) / (var(--n) * .48))); line-height: .86; letter-spacing: -0.06em; white-space: nowrap; outline: none; }
   .w-meta { display: flex; align-items: center; gap: 14px; padding-bottom: .3em; }
-  .w-kick { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.005em; color: #fff; white-space: nowrap; }
-  .w-all { font-size: 14px; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .w-all:hover { background: #fff; color: var(--ink); }
+  .w-all { display: inline-flex; align-items: center; gap: 14px; padding: 7px 7px 7px 22px; border: 1px solid rgba(255, 255, 255, .5); border-radius: 999px; color: #fff; font-size: 15px; font-weight: 600; letter-spacing: -0.005em; text-decoration: none; white-space: nowrap;
+    transition: background 240ms var(--ease), color 240ms var(--ease), border-color 240ms var(--ease); }
+  .w-all-a { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #fff; color: var(--ink); transition: transform 240ms var(--ease), background 240ms var(--ease); }
+  .w-all-a svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .w-all:hover { background: #fff; color: var(--ink); border-color: #fff; }
+  .w-all:hover .w-all-a { background: var(--ink); color: #fff; transform: translateX(2px); }
   .w-all:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .deck { position: relative; display: flex; gap: var(--gap); margin: 0; padding: 0; list-style: none; }
   .card { position: relative; flex: 0 1 calc((100% - 3 * var(--gap)) / 4); min-width: 0; max-width: calc((100svh - var(--pt) - var(--pb) - var(--hh) - var(--cap)) * 9 / 16); transform-origin: 50% 60%; }
@@ -391,16 +393,12 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .c-media video { opacity: 0; transition: opacity 600ms var(--ease); }
   .live .c-media video { opacity: 1; }
   /* The sound switch: bottom centre of each reel. Muted shows a crossed speaker, sound on shows the waves. */
-  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 38px; height: 38px; margin-left: -19px; padding: 9px; border-radius: 50%; background: #000; fill: none; stroke: #fff; stroke-width: 1.8;
-    stroke-linecap: round; stroke-linejoin: round; transition: background 200ms var(--ease); }
-  .c-mute :global(path:first-child) { fill: #fff; }
+  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 40px; height: 40px; margin-left: -20px; padding: 10px; border-radius: 50%; background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .9); fill: none; stroke: #fff; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .55)); transition: box-shadow 200ms var(--ease), transform 200ms var(--ease); }
   .c-mute :global(.on) { display: none; }
-  .loud .c-mute { background: #fff; stroke: #000; }
-  .loud .c-mute :global(path:first-child) { fill: #000; }
   .loud .c-mute :global(.on) { display: inline; }
   .loud .c-mute :global(.off) { display: none; }
-  .c-media:hover .c-mute { background: #fff; stroke: #000; }
-  .c-media:hover .c-mute :global(path:first-child) { fill: #000; }
+  .c-media:hover .c-mute { box-shadow: inset 0 0 0 2px #fff; transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; height: var(--cap); margin: 0; padding-top: 13px; overflow: hidden; white-space: nowrap; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
   .c-cap b { flex: none; font-size: 11px; font-weight: 700; letter-spacing: .1em; font-variant-numeric: tabular-nums; color: #fff; }
@@ -421,7 +419,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   /* Upright screens: the title takes the full width, so the case study line and the pause button sit above it. */
   @media (max-width: 960px) and (orientation: portrait), (max-width: 640px) {
     .w-head { flex-direction: column-reverse; align-items: stretch; gap: 12px; min-height: 0; }
-    .w-meta { justify-content: space-between; padding-bottom: 0; }
+    .w-meta { justify-content: flex-end; padding-bottom: 0; }
+    .work { --btn: 0px; }
   }
   /* Upright screens: the reels go two by two. */
   @media (max-width: 960px) and (orientation: portrait), (max-width: 640px) {
@@ -430,11 +429,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .card { max-width: none; }
     .c-cap { gap: 8px; padding-top: 10px; font-size: 13px; }
     .c-cap i { display: none; }
-    .w-all { padding: 7px 12px; font-size: 13px; }
-    .w-kick { font-size: 13px; }
+    .w-all { padding: 5px 5px 5px 16px; gap: 10px; font-size: 14px; }
+    .w-all-a { width: 32px; height: 32px; }
   }
-  /* The narrowest phones keep the link and the pause button; the year line goes. */
-  @media (max-width: 374px) { .w-kick { display: none; } }
   @media (prefers-reduced-motion: reduce) {
     .first .ch, .up, .first .stop { animation: none; }
   }
