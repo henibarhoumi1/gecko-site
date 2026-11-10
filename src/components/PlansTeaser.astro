@@ -26,7 +26,7 @@ const offers = href(lang, 'offers');
             {m.for && <span class="pt-for">{m.for[lang]}</span>}
             <span class="pt-n"><b>{m.max ? `${m.reels}–${m.max}` : m.reels}</b> {m.once ? p.reelsOnce : p.reels}</span>
             <span class="pt-price">
-              {m.custom ? <b>{p.custom}</b> : <><b>{fmt(m.launch, lang)}</b> {o.currency} {m.once ? p.once : o.month}</>}
+              {m.custom ? <b>{p.custom}</b> : <><b>{fmt(m.launch, lang)}</b>{` ${o.currency} ${m.once ? p.once : o.month}`}</>}
             </span>
           </a>
         </li>
