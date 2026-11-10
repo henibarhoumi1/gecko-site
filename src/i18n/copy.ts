@@ -22,7 +22,7 @@ const en = {
     // The two crossing bands before the brief. Yellow: the launch offer (the Test, as on the plans). Pink: what we
     // believe, said bluntly.
     bands: { big: ['Launch offer: 3 reels + 1 static for 999 TND', 'First 5 brands only', 'Until 31 December', 'Try Gecko for 999 TND'], small: ['Your competitors are boring. Good.', 'We don’t make content. We make ads.', 'Stopping the scroll is the minimum.', 'If it doesn’t sell, it’s art.', 'Thumbs are ruthless. So are we.', 'No stock footage. No templates.', 'Nobody skips a good story.', 'Made in Tunis. Made for the feed.'] },
-    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'All the work' },
+    hero: { sound: 'Watch with sound', pause: 'Pause the reels', play: 'Play the reels', dive: 'Go to the work', cta: 'All the work', now: 'Now playing', next: 'Next', prev: 'Previous reel', nextReel: 'Next reel' },
     cta: 'Start a project',
     why: {
       title: 'What most studios skip.',
@@ -296,7 +296,7 @@ const fr: Copy = {
     marquee: 'Faisons votre prochaine pub',
     kicks: { work: 'Sélection', workTitle: 'Notre sélection', space: 'Espace client', why: 'La différence', plans: 'Tarifs', faq: 'Questions', apply: 'Commencer ici' },
     bands: { big: ['Offre de lancement\u00a0: 3 reels + 1 visuel pour 999 TND', 'Réservée aux 5 premières marques', 'Jusqu’au 31 décembre', 'Essayez Gecko pour 999 TND'], small: ['Vos concurrents sont ennuyeux. Tant mieux.', 'On ne fait pas du contenu. On fait des pubs.', 'Arrêter le scroll, c’est le minimum.', 'Si ça ne vend pas, c’est de l’art.', 'Les pouces sont impitoyables. Nous aussi.', 'Pas d’images d’archive. Pas de templates.', 'Personne ne zappe une bonne histoire.', 'Fait à Tunis. Pensé pour le feed.'] },
-    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Toutes les réalisations' },
+    hero: { sound: 'Voir avec le son', pause: 'Mettre les reels en pause', play: 'Lire les reels', dive: 'Aller aux réalisations', cta: 'Toutes les réalisations', now: 'En lecture', next: 'Ensuite', prev: 'Reel précédent', nextReel: 'Reel suivant' },
     cta: 'Lancer un projet',
     why: {
       title: 'Ce que la plupart des studios oublient.',

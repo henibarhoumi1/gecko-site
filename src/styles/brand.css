@@ -32,9 +32,10 @@
   --surface: #FFFFFF;
   --surface-2: #FAF9F6;
   --fg: #000000;
-  /* No grey text: hierarchy comes from size and weight, not from fading the ink. */
-  --fg-2: var(--fg);
-  --fg-3: var(--fg);
+  /* Two text tones: ink for what you read first, a warm grey for what supports it (captions, notes, answers).
+     Both pass 4.5:1 on white. */
+  --fg-2: #55514D;
+  --fg-3: #55514D;
   --hair: rgba(0, 0, 0, .12);
   --hair-2: var(--ink);
   --edge: var(--ink);
@@ -97,8 +98,8 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 .on-mat::after, .mat::after { display: none; content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background: linear-gradient(135deg, transparent calc(50% - .5px), rgba(255, 255, 255, .08) 50%, transparent calc(50% + .5px)), radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, .07), transparent 60%); }
 .mat { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--ink); }
-.on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: #fff; }
-.on-mat { overflow-x: clip; --bg: var(--mat); --fg: #FFFFFF; --fg-2: #fff; --fg-3: #fff; --hair: rgba(255, 255, 255, .2); --hair-2: rgba(255, 255, 255, .45); --edge: rgba(255, 255, 255, .3); }
+.on-mat .label, .on-mat .soft, .mat .label, .mat .soft { color: var(--fg-2); }
+.on-mat { overflow-x: clip; --bg: var(--mat); --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .72); --fg-3: rgba(255, 255, 255, .72); --hair: rgba(255, 255, 255, .2); --hair-2: rgba(255, 255, 255, .45); --edge: rgba(255, 255, 255, .3); }
 /* The ruler printed along the top of the mat: a number every five squares. */
 .ruler { display: none; position: absolute; z-index: -1; left: 0; top: 16px; display: flex; pointer-events: none; font: 600 10px/1 var(--font); letter-spacing: .04em; color: rgba(255, 255, 255, .5); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ruler span { flex: none; width: 120px; padding-left: 4px; }
@@ -117,11 +118,16 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 22px; font: 700 15px/1 var(--font); letter-spacing: -0.01em; border: 1px solid var(--hair-2); border-radius: 999px; background: transparent; color: var(--fg); text-decoration: none; transition: background 180ms var(--ease), color 180ms var(--ease), border-color 180ms var(--ease), transform 220ms var(--ease); }
 .btn.primary { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 .btn.ghost { background: transparent; }
+/* Pink for the one action that matters on a dark band; big for the first screen of a page. */
+.btn.pink { background: var(--pink); border-color: var(--pink); color: var(--ink); }
+.btn.pink:hover { background: #FFFFFF; border-color: #FFFFFF; color: var(--ink); }
+.btn.lg { padding: 18px 28px; font-size: 17px; }
+@media (max-width: 560px) { .btn.lg { padding: 16px 22px; font-size: 16px; } }
 .rule { border: 0; border-top: 1px solid var(--hair); margin: 0; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 
-.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: #fff; --fg-3: #fff;
+.on-black { --bg: #000000; --surface: #111111; --surface-2: #1A1A1A; --fg: #FFFFFF; --fg-2: rgba(255, 255, 255, .72); --fg-3: rgba(255, 255, 255, .72);
   --hair: rgba(255, 255, 255, .14); --hair-2: rgba(255, 255, 255, .34); --edge: rgba(255, 255, 255, .2);
   --tint: rgba(255, 255, 255, .05); --tint-2: rgba(255, 255, 255, .08); --tint-3: rgba(255, 255, 255, .12);
   background: var(--bg); color: var(--fg); }

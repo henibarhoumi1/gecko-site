@@ -1,0 +1,137 @@
+---
+// The reel beside the home headline. It plays the reels one after another, silent, with a bar that fills as each one
+// runs, what's on now and what comes next. Tapping the reel or "Watch with sound" opens the full reel with sound in
+// the viewer. Nothing plays with reduced motion or data saver: the first reel's picture stays, and the arrows still
+// step through them.
+import { c } from '../i18n/copy';
+import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const hx = c(lang).home.hero;
+const reels = ads.slice(0, 4).map((a) => ({ clip: a.clip ?? a.src!, poster: a.poster!, t: a.angle[lang], f: a.format?.[lang] ?? '' }));
+const first = reels[0];
+const pad = (n: number) => String(n).padStart(2, '0');
+const arrow = (d: string) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" /></svg>`;
+const sound = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" /></svg>';
+---
+{first && (
+  <figure class="np" data-np data-reels={JSON.stringify(reels)}>
+    <button type="button" class="np-frame" data-np-open aria-label={`${hx.sound}: ${first.t}`} data-label={hx.sound}>
+      <img src={first.poster} alt="" width="540" height="960" data-np-poster fetchpriority="high" />
+      <video muted playsinline preload="none" tabindex="-1" aria-hidden="true" data-np-video></video>
+      <span class="np-tag"><i aria-hidden="true"></i>{hx.now}</span>
+      <span class="np-sound" aria-hidden="true" set:html={sound} />
+    </button>
+    <figcaption class="np-cap">
+      <div class="np-bar" aria-hidden="true"><i data-np-fill></i></div>
+      <p class="np-now" aria-live="polite">
+        <b data-np-n>{pad(1)} / {pad(reels.length)}</b>
+        <span data-np-t>{first.t}</span>
+        <em data-np-f>{first.f}</em>
+      </p>
+      <div class="np-row">
+        <p class="np-next"><span>{hx.next}:</span> <span data-np-next>{reels[1]?.t}</span></p>
+        <div class="np-arrows">
+          <button type="button" data-np-prev aria-label={hx.prev} set:html={arrow('M15 5l-7 7 7 7')} />
+          <button type="button" data-np-step aria-label={hx.nextReel} set:html={arrow('M9 5l7 7-7 7')} />
+        </div>
+      </div>
+    </figcaption>
+  </figure>
+)}
+
+<script>
+  const np = document.querySelector<HTMLElement>('[data-np]');
+  if (np) {
+    const reels: { clip: string; poster: string; t: string; f: string }[] = JSON.parse(np.dataset.reels || '[]');
+    const frame = np.querySelector<HTMLButtonElement>('[data-np-open]')!;
+    const video = np.querySelector<HTMLVideoElement>('[data-np-video]')!;
+    const poster = np.querySelector<HTMLImageElement>('[data-np-poster]')!;
+    const fill = np.querySelector<HTMLElement>('[data-np-fill]')!;
+    const n = np.querySelector<HTMLElement>('[data-np-n]')!;
+    const t = np.querySelector<HTMLElement>('[data-np-t]')!;
+    const f = np.querySelector<HTMLElement>('[data-np-f]')!;
+    const next = np.querySelector<HTMLElement>('[data-np-next]')!;
+    const pad = (k: number) => String(k).padStart(2, '0');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const save = !!(navigator as any).connection?.saveData;
+    let i = 0, ready = false, seen = true, raf = 0;
+    const allowed = () => !still && !save && ready && seen && !document.hidden && !document.documentElement.classList.contains('locked');
+
+    const tick = () => {
+      fill.style.transform = `scaleX(${video.duration ? Math.min(1, video.currentTime / video.duration) : 0})`;
+      raf = video.paused ? 0 : requestAnimationFrame(tick);
+    };
+    const run = () => {
+      if (allowed()) {
+        if (video.getAttribute('src') !== reels[i].clip) { video.src = reels[i].clip; }
+        video.play().then(() => { np.classList.add('live'); if (!raf) raf = requestAnimationFrame(tick); }).catch(() => {});
+      } else video.pause();
+    };
+    const show = (k: number) => {
+      i = (k + reels.length) % reels.length;
+      const r = reels[i];
+      n.textContent = `${pad(i + 1)} / ${pad(reels.length)}`;
+      t.textContent = r.t;
+      f.textContent = r.f;
+      next.textContent = reels[(i + 1) % reels.length].t;
+      frame.setAttribute('aria-label', `${frame.dataset.label}: ${r.t}`);
+      poster.src = r.poster;
+      fill.style.transform = 'scaleX(0)';
+      np.classList.remove('live');
+      video.removeAttribute('src');
+      video.load();
+      np.animate?.([{ opacity: .55 }, { opacity: 1 }], { duration: still ? 0 : 280, easing: 'ease-out' });
+      run();
+    };
+    video.addEventListener('ended', () => show(i + 1));
+    np.querySelector('[data-np-prev]')!.addEventListener('click', () => show(i - 1));
+    np.querySelector('[data-np-step]')!.addEventListener('click', () => show(i + 1));
+    // The full reel with sound, in the viewer, growing out of this frame.
+    frame.addEventListener('click', () => {
+      video.pause();
+      document.dispatchEvent(new CustomEvent('reel:play', { detail: { i, from: frame, grow: frame } }));
+    });
+    document.addEventListener('reel:close', () => setTimeout(run, 400));
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(); }, { threshold: 0.2 }).observe(np);
+    new MutationObserver(run).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('visibilitychange', run);
+    const start = () => { ready = true; run(); };
+    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 1500 }) : setTimeout(start, 400));
+    if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+  }
+</script>
+
+<style>
+  .np { --r: clamp(14px, 1.2vw, 20px); margin: 0; display: grid; gap: 14px; width: 100%; }
+  .np-frame { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; padding: 0; border: 0; border-radius: var(--r); overflow: hidden; background: #141414; color: #fff; cursor: pointer;
+    box-shadow: 0 0 0 1px var(--ink); transition: transform 500ms var(--ease); }
+  .np-frame:hover { transform: translateY(-3px); }
+  .np-frame:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+  .np-frame img, .np-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .np-frame video { opacity: 0; transition: opacity 500ms var(--ease); }
+  .live .np-frame video { opacity: 1; }
+  .np-tag { position: absolute; z-index: 1; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border-radius: 8px; background: var(--yellow); color: var(--ink); font: 700 12.5px/1 var(--font); letter-spacing: .01em; }
+  .np-tag i { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+  .live .np-tag i { animation: np-blink 1.4s ease-in-out infinite; }
+  @keyframes np-blink { 50% { opacity: .2; } }
+  .np-sound { position: absolute; z-index: 1; right: 12px; bottom: 12px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #fff; color: var(--ink); transition: transform 240ms var(--ease), background 240ms var(--ease); }
+  .np-sound :global(svg) { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .np-frame:hover .np-sound { transform: scale(1.08); background: var(--pink); }
+  .np-cap { display: grid; gap: 10px; }
+  .np-bar { height: 3px; border-radius: 3px; background: var(--hair); overflow: hidden; }
+  .np-bar i { display: block; height: 100%; background: var(--ink); transform: scaleX(0); transform-origin: 0 50%; }
+  .np-now { display: flex; align-items: baseline; gap: 10px; margin: 0; font-weight: 700; font-size: 16px; letter-spacing: -0.015em; min-width: 0; }
+  .np-now b { flex: none; font-size: 12px; letter-spacing: .06em; font-variant-numeric: tabular-nums; }
+  .np-now span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .np-now em { flex: none; margin-left: auto; font-style: normal; font-weight: 500; font-size: 14px; color: var(--fg-2); }
+  .np-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .np-next { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--fg-2); }
+  .np-next span:first-child { font-weight: 700; color: var(--fg); }
+  .np-arrows { display: flex; gap: 6px; flex: none; }
+  .np-arrows button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--hair-2); border-radius: 50%; background: transparent; color: var(--fg); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease), border-color 200ms var(--ease); }
+  .np-arrows button:hover { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+  .np-arrows :global(svg) { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  @media (prefers-reduced-motion: reduce) { .np-frame, .np-frame:hover { transform: none; } .live .np-tag i { animation: none; } }
+</style>

@@ -237,6 +237,15 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
     .cta { padding: 11px 14px; font-size: 13px; white-space: nowrap; }
     .burger { height: 40px; padding: 0 6px 0 14px; }
   }
-  @media (max-width: 379px) { .cta { display: none; } }
+  /* Phones keep "Start a project" in the bar: the menu button folds down to its icon to make room (its label stays
+     for screen readers). */
+  @media (max-width: 560px) {
+    .brand { width: 56px; }
+    .burger { width: 44px; height: 44px; padding: 0; justify-content: center; }
+    .bl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .cta { margin-left: auto; height: 44px; }
+    .right { flex: 1; justify-content: flex-end; }
+  }
+  @media (max-width: 340px) { .cta { padding: 11px 12px; font-size: 12.5px; } }
   @media (prefers-reduced-motion: reduce) { .site-header, .bar, .menu, .m-links li, .m-side, .glide { transition: none; } }
 </style>
