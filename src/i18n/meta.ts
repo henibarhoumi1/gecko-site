@@ -14,6 +14,7 @@ const meta = {
       contact: 'Write to Gecko on WhatsApp, by email or on Instagram. Based in Tunis.',
       apply: 'Answer a few quick questions about your brand and we’ll suggest where to start.',
       join: 'Talent, creators, camera and editors: show us your work and make ads with Gecko.',
+      brandworld: 'You bring the product, we build the world around it: market study, brand, 15 reels, product photos and a website with its own back office. Quoted for your brand.',
     },
   },
   fr: {
@@ -28,6 +29,7 @@ const meta = {
       contact: 'Écrivez à Gecko sur WhatsApp, par e-mail ou sur Instagram. Basés à Tunis.',
       apply: 'Répondez à quelques questions sur votre marque et on vous dit par où commencer.',
       join: 'Talents, créateurs, image et montage\u00a0: montrez-nous votre travail et faites des pubs avec Gecko.',
+      brandworld: 'Vous apportez le produit, on construit l’univers autour\u00a0: étude de marché, marque, 15 reels, photos produit et un site avec son propre back-office. Sur devis.',
     },
   },
 } as const;

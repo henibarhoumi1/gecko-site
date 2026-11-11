@@ -17,6 +17,8 @@ const en = {
   bw: {
     label: 'New',
     name: 'The Brand World',
+    nav: 'Brand World',
+    metaTitle: 'The Brand World',
     title: 'You bring the product. We build the world around it.',
     lead: 'For brands launching or starting over. One team studies your market, builds the brand, shoots the campaign and opens the store.',
     startTitle: 'How it starts',
@@ -87,6 +89,8 @@ const fr: typeof en = {
   bw: {
     label: 'Nouveau',
     name: 'L’Univers de marque',
+    nav: 'Univers de marque',
+    metaTitle: 'L’Univers de marque',
     title: 'Vous apportez le produit. On construit l’univers autour.',
     lead: 'Pour les marques qui se lancent ou repartent de zéro. Une seule équipe étudie votre marché, construit la marque, tourne la campagne et ouvre la boutique.',
     startTitle: 'Comment ça commence',
