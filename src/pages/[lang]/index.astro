@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
-import NowPlaying from '../../components/NowPlaying.astro';
+import FeedIcons from '../../components/FeedIcons.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
 import WhatWeDo from '../../components/WhatWeDo.astro';
@@ -43,20 +43,24 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
       <div class="h-copy">
-        <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
-          {lines.map((line, i) => (
-            <span class="ln" style={`--l:${i}`} aria-hidden="true">
-              <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
-            </span>
-          ))}
-        </h1>
-        <p class="h-sub up" style="--d:420ms">{L.hero.line}</p>
-        <div class="h-act up" style="--d:520ms">
-          <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn lg" href="#work">{s.hero.work}</a>
+        <div class="h-stage">
+          <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
+            {lines.map((line, i) => (
+              <span class="ln" style={`--l:${i}`} aria-hidden="true">
+                <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
+              </span>
+            ))}
+          </h1>
+          <FeedIcons />
+        </div>
+        <div class="h-foot">
+          <p class="h-sub up" style="--d:420ms">{L.hero.line}</p>
+          <div class="h-act up" style="--d:520ms">
+            <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn lg" href="#work">{s.hero.work}</a>
+          </div>
         </div>
       </div>
-      <div class="h-reel up" style="--d:300ms"><NowPlaying lang={lang} /></div>
     </div>
   </section>
 
@@ -166,16 +170,17 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 </script>
 
 <style>
-  /* The first screen: what Gecko makes, the headline on the pink marker and the two ways in on the left; the reels
-     playing one after another on the right. The formats we make run along the foot. */
+  /* The first screen: the headline across the full width with the feed's pieces floating around its lines, then the
+     line and the two ways in. The reels live in Selected work, just below. */
   .hero { display: flex; flex-direction: column; min-height: min(100svh, 1040px); background: var(--bg); }
-  .h-in { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) var(--reel); align-items: center; gap: clamp(32px, 5vw, 96px);
-    --reel: clamp(260px, min(28vw, calc((100svh - 300px) * 9 / 16)), 420px);
+  .h-in { flex: 1; display: grid; align-items: center;
     padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
-  .h-copy { container-type: inline-size; display: grid; gap: clamp(24px, 3.4vh, 40px); align-content: center; min-width: 0; }
+  .h-copy { container-type: inline-size; display: grid; gap: clamp(28px, 4.4vh, 56px); align-content: center; min-width: 0; }
+  .h-stage { position: relative; }
+  .h-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px 48px; }
   .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
   .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
-    font-size: min(calc(100cqw / var(--kw) * .97), 190px, 21svh); }
+    font-size: min(calc(100cqw / var(--kw) * .97), 210px, 21svh); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
   @keyframes rise { from { transform: translateY(110%); } }
@@ -187,7 +192,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .cut :global(.bands) { padding-block: clamp(72px, 8.5vw, 128px); }
   .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
   .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
-  .h-reel { min-width: 0; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
 
@@ -195,7 +199,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   @media (max-width: 860px) {
     .hero { min-height: 0; }
     .h-in { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: calc(var(--header) + 20px); padding-bottom: 40px; }
-    .h-reel { width: min(100%, 320px); justify-self: center; }
     .h-act .btn { flex: 1 1 auto; }
   }
 
@@ -218,7 +221,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
-  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: var(--pink); }
+  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
   @media (max-width: 960px) {

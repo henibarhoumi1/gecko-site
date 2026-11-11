@@ -20,15 +20,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const low = (x: string) => x.toLowerCase();
 const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWith(low(a.format[lang])));
 ---
-<Base lang={lang} title={w.title} page="work" theme="#000000">
-  <section class="page-head lit on-black" data-dark="1">
+<Base lang={lang} title={w.title} page="work">
+  <section class="page-head lit">
     <div class="wrap wide">
       <h1 class="h1 w-h rv"><span class="hl">{w.title}</span>.</h1>
       <p class="text-l lede rv" style="--d:80ms">{w.lead}</p>
     </div>
   </section>
 
-  <section class="on-black wall-sec" data-dark="1">
+  <section class="wall-sec">
     <div class="wrap wide">
       <p class="hint rv">{w.hint}</p>
       <ol class={`wall n${ads.length}`}>
@@ -43,13 +43,13 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
     </div>
   </section>
 
-  <section class="section method-sec on-black" data-dark="1">
+  <section class="section method-sec">
     <div class="wrap wide">
       <Choices title={h.method.title} items={h.method.items} links={[{ href: href(lang, 'process'), label: h.method.process }]} />
     </div>
   </section>
 
-  <section class="section formats-sec on-black" data-dark="1">
+  <section class="section formats-sec">
     <div class="wrap wide">
       <div class="head rv"><h2 class="h2">{w.formatsTitle}</h2><p class="sub">{w.formatsSub}</p></div>
       <ul class="formats">
@@ -69,17 +69,18 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   <ReelViewer lang={lang} />
 </Base>
 <style>
-  .w-h { font-size: clamp(64px, 12vw, 200px); line-height: .9; letter-spacing: -0.04em; }
+  .w-h { font-size: clamp(64px, 12vw, 200px); line-height: .92; letter-spacing: -0.05em; padding-bottom: .04em; }
   .page-head .lede { margin: clamp(18px, 2vw, 28px) 0 0; }
 
-  .wall-sec { padding-block: clamp(56px, 7vw, 104px) clamp(64px, 8vw, 120px); }
+  .wall-sec { padding-block: clamp(8px, 2vw, 32px) clamp(64px, 8vw, 120px); }
+  .method-sec, .formats-sec { border-top: 0; }
   .hint { margin: 0 0 clamp(28px, 3vw, 44px); font-size: 15px; font-weight: 700; }
   .wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 36px); }
   .wall li { position: relative; scroll-margin-top: calc(var(--header) + 24px); }
   .wall li:nth-child(odd) { transform-origin: 50% 0; }
   .tp { display: none; }
   .cap { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0; font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.015em; }
-  .cap b { flex: none; font-size: 13px; color: var(--pink); font-variant-numeric: tabular-nums; }
+  .cap b { flex: none; font-size: 13px; color: #000; font-variant-numeric: tabular-nums; }
   .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
 

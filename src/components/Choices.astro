@@ -1,5 +1,5 @@
 ---
-// A numbered list of short ideas as four filled blocks (yellow, pink, blue, white): how an ad gets made, on the Work
+// A numbered list of short ideas as four blue blocks: how an ad gets made, on the Work
 // page under the reels. It can end on text links.
 interface Props { title: string; items: { t: string; d: string }[]; links?: { href: string; label: string }[] }
 const { title, items, links = [] } = Astro.props;
@@ -27,8 +27,7 @@ const tail = words.slice(-2).join(' ');
 <style>
   .ch-h { max-width: 18ch; margin-bottom: clamp(28px, 3.6vw, 56px); }
   .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
-  .choices li { display: grid; gap: 14px; align-content: start; min-height: 240px; padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: var(--yellow); color: #000; }
-  .choices li:nth-child(2) { background: var(--pink); } .choices li:nth-child(3) { background: var(--blue); } .choices li:nth-child(4) { background: #fff; }
+  .choices li { display: grid; gap: 14px; align-content: start; min-height: 240px; padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: var(--blue); color: #000; }
   .n { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
   .t { margin: 0; font-weight: 800; font-size: clamp(28px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.03em; max-width: 16ch; }
   .text { margin: 0; max-width: 30rem; font-weight: 500; font-size: 18px; color: #000; }

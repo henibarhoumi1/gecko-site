@@ -179,7 +179,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .scene > * { transform: translateY(calc((var(--q, .5) - .5) * -28px)); transition: transform 120ms linear; }
 
   /* The stage: one filled block that changes colour with the scene. */
-  .stage { position: relative; aspect-ratio: 1 / 1.02; height: min(700px, calc(100svh - var(--header, 84px) - 64px)); width: auto; max-width: 100%; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 520ms var(--ease); }
+  .stage { position: relative; aspect-ratio: 1 / 1.02; width: min(100%, calc(min(700px, 100svh - var(--header, 84px) - 64px) / 1.02)); height: auto; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 520ms var(--ease); }
   .count { position: absolute; z-index: 2; right: 18px; top: 18px; margin: 0; display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 14px; border-radius: 999px; background: #fff; color: #000; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
   .count b { font-weight: 800; font-size: 15px; }
   .stage[data-tone='pink'] { background: var(--pink); }
@@ -276,7 +276,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
     .what-sec { height: auto; padding-block: var(--section); }
     .pin { position: static; height: auto; padding-top: 0; overflow: visible; }
     .what { grid-template-columns: 1fr; }
-    .stage { width: 100%; height: auto; }
+    .stage { width: 100%; }
     .stage { justify-self: stretch; aspect-ratio: 1 / 1.1; }
     .w { font-size: clamp(44px, 13vw, 84px); -webkit-text-stroke-width: 1.5px; }
   }

@@ -1,0 +1,59 @@
+---
+// The first screen's floating pieces: the things a feed is made of (play, like, comment, send, sound, a 9:16 frame),
+// drawn as Gecko's own shapes in black, white, pink and blue. They sit around the headline lines, pop in after the
+// headline rises, bob slowly, and lean away from the mouse a little. Decoration only. With reduced motion they stay
+// still.
+const play = '<svg viewBox="0 0 100 100"><rect x="3" y="3" width="94" height="94" rx="28" fill="#000"/><path d="M40 30v40l32-20z" fill="#fff"/></svg>';
+const heart = '<svg viewBox="0 0 100 100"><path d="M50 86C21 66 7 51 7 33 7 20 17 11 29 11c9 0 16 5 21 13 5-8 12-13 21-13 12 0 22 9 22 22 0 18-14 33-43 53z" fill="var(--pink)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/></svg>';
+const comment = '<svg viewBox="0 0 100 100"><path d="M20 12h60a14 14 0 0 1 14 14v34a14 14 0 0 1-14 14H46L26 90V74h-6A14 14 0 0 1 6 60V26a14 14 0 0 1 14-14z" fill="var(--blue)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="43" r="5.5"/><circle cx="50" cy="43" r="5.5"/><circle cx="68" cy="43" r="5.5"/></svg>';
+const send = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#000" stroke-width="4.5"/><path d="M27 49l46-21-17 46-8-19z" fill="#000" stroke="#000" stroke-width="4" stroke-linejoin="round"/><path d="M48 55l25-27" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>';
+const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height="107" rx="12" fill="#fff" stroke="#000" stroke-width="4"/><rect x="22" y="9" width="20" height="4" rx="2"/><text x="32" y="64" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="17">9:16</text></svg>';
+---
+<div class="feed" aria-hidden="true" data-feed>
+  <span class="fi fi-play" style="--x:62%;--y:1%;--s:clamp(84px, 8.6vw, 138px);--r:-9deg;--t:7s;--o:0;--k:1.2" set:html={play} />
+  <span class="fi fi-send" style="--x:87%;--y:-8%;--s:clamp(56px, 5.4vw, 86px);--r:12deg;--t:8s;--o:1;--k:.8" set:html={send} />
+  <span class="fi fi-sound" style="--x:85%;--y:40%;--r:-4deg;--t:6s;--o:2;--k:1">
+    <span class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+  </span>
+  <span class="fi fi-heart" style="--x:41%;--y:68%;--s:clamp(70px, 6.8vw, 110px);--r:11deg;--t:6.5s;--o:3;--k:1.4" set:html={heart} />
+  <span class="fi fi-comment" style="--x:55%;--y:64%;--s:clamp(76px, 7.4vw, 120px);--r:-7deg;--t:7.5s;--o:4;--k:.9" set:html={comment} />
+  <span class="fi fi-frame" style="--x:72%;--y:66%;--s:clamp(46px, 4.4vw, 70px);--r:8deg;--t:9s;--o:5;--k:1.1" set:html={frame} />
+</div>
+
+<script>
+  const feed = document.querySelector<HTMLElement>('[data-feed]');
+  if (feed && !matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(pointer: fine)').matches) {
+    let raf = 0, tx = 0, ty = 0;
+    addEventListener('pointermove', (e) => {
+      tx = (e.clientX / innerWidth - 0.5) * -2;
+      ty = (e.clientY / innerHeight - 0.5) * -2;
+      if (!raf) raf = requestAnimationFrame(() => { raf = 0; feed.style.setProperty('--mx', tx.toFixed(3)); feed.style.setProperty('--my', ty.toFixed(3)); });
+    }, { passive: true });
+  }
+</script>
+
+<style>
+  .feed { position: absolute; inset: 0; pointer-events: none; --mx: 0; --my: 0; }
+  .fi { position: absolute; left: var(--x); top: var(--y); width: var(--s); display: block;
+    translate: calc(var(--mx) * var(--k) * 14px) calc(var(--my) * var(--k) * 10px); transition: translate 600ms cubic-bezier(.2, .8, .2, 1);
+    animation: fi-in 700ms cubic-bezier(.34, 1.56, .64, 1) both, fi-bob var(--t) ease-in-out infinite; animation-delay: calc(900ms + var(--o) * 110ms), calc(var(--o) * -1.3s); }
+  .fi :global(svg) { display: block; width: 100%; height: auto; overflow: visible; transform: rotate(var(--r)); }
+  @keyframes fi-in { from { opacity: 0; scale: .4; } }
+  @keyframes fi-bob { 50% { transform: translateY(-12px) rotate(3deg); } }
+
+  /* Sound: a white pill with a black edge and an equaliser that never stops. */
+  .fi-sound { width: auto; }
+  .bars { display: flex; align-items: center; gap: 5px; height: clamp(46px, 4.4vw, 66px); padding: 0 clamp(18px, 1.6vw, 26px); border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 4px #000; transform: rotate(var(--r)); }
+  .bars i { display: block; width: 6px; height: 60%; border-radius: 6px; background: #000; transform-origin: 50% 50%; animation: eq 900ms ease-in-out infinite alternate; }
+  .bars i:nth-child(2) { animation-delay: -300ms; height: 80%; } .bars i:nth-child(3) { animation-delay: -600ms; height: 45%; }
+  .bars i:nth-child(4) { animation-delay: -150ms; height: 70%; } .bars i:nth-child(5) { animation-delay: -450ms; height: 55%; } .bars i:nth-child(6) { animation-delay: -750ms; height: 40%; }
+  @keyframes eq { from { transform: scaleY(.3); } }
+
+  @media (max-width: 860px) {
+    .fi-send, .fi-frame, .fi-sound { display: none; }
+    .fi-play { --x: 72% !important; --y: -4% !important; }
+    .fi-heart { --x: 58% !important; --y: 70% !important; }
+    .fi-comment { --x: 78% !important; --y: 64% !important; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fi, .bars i { animation: none; } }
+</style>
