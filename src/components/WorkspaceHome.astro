@@ -1,47 +1,265 @@
 ---
-// Home 3.6: the workspace section, in pink. It has to sell: three outcome blocks, the project as one row, and the
-// working model of the workspace, bigger, its tabs changing on their own.
-import Workspace from './Workspace.astro';
+// Home: the client workspace, shown properly. White section, black type. Three promises sit above one blue block; on
+// the block, a clean model of the workspace (white, black, one blue, pink only for "needs you") plays the screen that
+// keeps each promise: a script approved with one click, a cut with your notes under it, results going back to the
+// hooks. It moves on by itself; hovering or clicking a promise holds it. With reduced motion the first screen stays.
+import Logo from './Logo.astro';
 import { launch } from '../i18n/launch';
+import { c } from '../i18n/copy';
 import { href } from '../i18n/paths';
 import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const L = launch(lang).ws;
+const why = c(lang).home.why;
+const reel = ads[3] ?? ads[0];
+const T = {
+  en: { ex: 'Example workspace', project: 'Spring launch', nav: ['Home', 'Ideas', 'Scripts', 'Shoot', 'Review', 'Files', 'Results', 'Money'], script: 'Script 06 · Reel 04', wait: 'Waiting for your yes', ok: 'Approved', see: 'We see', hear: 'We hear', note: 'Add a note…', approve: 'Approve script',
+    cut: 'Cut 2 · Reel 04', cuts: ['Cut 1', 'Cut 2'], notes: 'Your notes', n1: 'Logo one second earlier.', done: 'Done in cut 2', n2: 'Perfect. Approved.', approveCut: 'Approve cut', round: 'Round 1' },
+  fr: { ex: 'Exemple d’espace client', project: 'Lancement de printemps', nav: ['Accueil', 'Idées', 'Scripts', 'Tournage', 'Révision', 'Fichiers', 'Résultats', 'Paiements'], script: 'Script 06 · Reel 04', wait: 'En attente de votre feu vert', ok: 'Validé', see: 'On voit', hear: 'On entend', note: 'Ajouter une note…', approve: 'Valider le script',
+    cut: 'Montage 2 · Reel 04', cuts: ['Montage 1', 'Montage 2'], notes: 'Vos notes', n1: 'Le logo une seconde plus tôt.', done: 'Fait dans le montage 2', n2: 'Parfait. Validé.', approveCut: 'Valider le montage', round: 'Série 1' },
+}[lang];
+const active = [2, 4, 6];
+const words = L.title.split(' ');
+const lead = words.slice(0, -2).join(' '), tail = words.slice(-2).join(' ');
+const cursor = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6.2 1.6L10 19z" /></svg>';
+const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
 ---
-<section class="section ws-home on-pink" id="workspace" aria-labelledby="wsh-t">
-  <div class="wrap wide">
-    <p class="label rv">{L.label}</p>
-    <h2 class="h1 wsh-h rv" id="wsh-t" style="--d:60ms">{L.title}</h2>
-    <p class="text-l lead rv" style="--d:100ms">{L.lead}</p>
+<section class="section portal" id="workspace" aria-labelledby="wsh-t">
+  <div class="wrap wide" data-portal>
+    <div class="head">
+      <div class="rv">
+        <p class="label">{L.label}</p>
+        <h2 class="h1" id="wsh-t">{lead} <span class="hl">{tail}</span></h2>
+      </div>
+      <p class="lead rv" style="--d:80ms">{L.lead}</p>
+    </div>
 
-    <ul class="outcomes">
+    <div class="tabs" role="tablist" aria-label={L.title}>
       {L.blocks.map(([t, d], i) => (
-        <li class="rv" style={`--d:${i * 70}ms`}><h3>{t}</h3><p>{d}</p></li>
+        <button type="button" role="tab" class:list={['tab', { on: i === 0 }]} aria-selected={String(i === 0)} aria-controls={`ws-s${i}`} id={`ws-t${i}`} data-tab={i}>
+          <span class="n">0{i + 1}</span>
+          <span class="tt"><span>{t}</span></span>
+          <span class="td">{d}</span>
+        </button>
       ))}
-    </ul>
+    </div>
 
-    <ol class="flow rv" aria-label={L.row.join(' → ')}>
-      {L.row.map((x, i) => <li><span>{x}</span>{i < L.row.length - 1 && <i aria-hidden="true">→</i>}</li>)}
-    </ol>
+    <div class="stage">
+      <p class="tape flat ex">{T.ex}</p>
+      <div class="win">
+        <div class="bar"><i></i><i></i><i></i><span>gecko / {T.project}</span></div>
+        <div class="body">
+          <nav class="side" aria-hidden="true">
+            <span class="logo"><Logo /></span>
+            {T.nav.map((x, i) => <span class="it" data-nav={i}>{x}</span>)}
+          </nav>
+          <div class="screens">
+            <!-- 1 The script, approved with one click. -->
+            <div class="screen on" id="ws-s0" role="tabpanel" aria-labelledby="ws-t0" data-screen="0">
+              <header><h3>{T.script}</h3><p class="state"><span class="a">{T.wait}</span><span class="b">{T.ok}</span></p></header>
+              <div class="page">
+                <p class="part"><b>{why.script.scenes[0]}</b><span class="hookline">{why.hooks.lines[0]}</span></p>
+                <div class="cols"><p><b>{T.see}</b><i style="--w:86%"></i><i style="--w:62%"></i></p><p><b>{T.hear}</b><i style="--w:92%"></i><i style="--w:48%"></i></p></div>
+                {why.script.scenes.slice(1, 4).map((x, i) => <p class="part row"><b>{x}</b><i style={`--w:${[78, 64, 88][i]}%`}></i></p>)}
+              </div>
+              <footer><span class="field">{T.note}</span><span class="go"><span class="a">{T.approve}</span><span class="b"><Fragment set:html={tick} />{T.ok}</span></span></footer>
+              <span class="cursor" set:html={cursor} />
+            </div>
 
-    <div class="mock"><Workspace lang={lang} mock cta={false} /></div>
+            <!-- 2 The cut, with your notes under it. -->
+            <div class="screen" id="ws-s1" role="tabpanel" aria-labelledby="ws-t1" data-screen="1" hidden>
+              <div class="review">
+                <div class="frame">
+                  <img src={reel.poster} alt="" width="540" height="960" loading="lazy" decoding="async" />
+                  <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={reel.clip ?? reel.src}></video>
+                </div>
+                <div class="side2">
+                  <h3>{T.cut}</h3>
+                  <p class="cuts"><span>{T.cuts[0]}</span><span class="cur">{T.cuts[1]}</span></p>
+                  <p class="k">{T.notes}</p>
+                  <p class="bubble" style="--i:0">{T.n1}<em>{T.done}</em></p>
+                  <p class="bubble mine" style="--i:1"><span class="typed">{T.n2}</span></p>
+                  <span class="go solid">{T.approveCut}</span>
+                </div>
+              </div>
+            </div>
 
-    <a class="btn primary lg" href={href(lang, 'process')}>{L.cta} <span class="arr" aria-hidden="true">→</span></a>
+            <!-- 3 The results, back on the hooks. -->
+            <div class="screen" id="ws-s2" role="tabpanel" aria-labelledby="ws-t2" data-screen="2" hidden>
+              <header><h3>{why.review.title}</h3><p class="state still"><span>{T.round}</span></p></header>
+              <ul class="res">
+                <li style="--i:0;--w:88%"><b>{why.review.rows[0][0]}</b><i></i><em class="keep">{why.review.rows[0][1]}</em></li>
+                <li style="--i:1;--w:36%"><b>{why.review.rows[1][0]}</b><i></i><em>{why.review.rows[1][1]}</em></li>
+              </ul>
+              <p class="next"><b>{why.review.rows[2][0]}</b><span>{why.review.rows[2][1]}</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot rv">
+      <ol class="flow" aria-label={L.row.join(' → ')}>
+        {L.row.map((x, i) => <li><span>{x}</span>{i < L.row.length - 1 && <i aria-hidden="true">→</i>}</li>)}
+      </ol>
+      <a class="btn primary lg" href={href(lang, 'process')}>{L.cta} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
+<script>
+  const root = document.querySelector<HTMLElement>('[data-portal]');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-screen]')];
+    const nav = [...root.querySelectorAll<HTMLElement>('[data-nav]')];
+    const active = [2, 4, 6];
+    const video = root.querySelector<HTMLVideoElement>('video')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let at = 0, timer = 0, held = false, seen = false;
+    const show = (i: number) => {
+      at = (i + tabs.length) % tabs.length;
+      tabs.forEach((t, j) => { t.classList.toggle('on', j === at); t.setAttribute('aria-selected', String(j === at)); });
+      nav.forEach((n, j) => n.classList.toggle('cur', j === active[at]));
+      screens.forEach((s, j) => { s.hidden = j !== at; s.classList.remove('on'); });
+      requestAnimationFrame(() => requestAnimationFrame(() => screens[at].classList.add('on')));
+      if (at === 1 && !still) { if (!video.getAttribute('src')) video.src = video.dataset.src!; video.play().then(() => video.classList.add('live')).catch(() => {}); }
+      else video.pause();
+    };
+    nav[active[0]].classList.add('cur');
+    const tick = () => { clearTimeout(timer); if (!still && seen && !held && !document.hidden) timer = window.setTimeout(() => { show(at + 1); tick(); }, 5600); };
+    tabs.forEach((t, j) => {
+      t.addEventListener('click', () => { show(j); tick(); });
+      t.addEventListener('pointerenter', (e) => { if ((e as PointerEvent).pointerType === 'mouse' && j !== at) show(j); });
+    });
+    root.addEventListener('pointerenter', () => { held = true; clearTimeout(timer); });
+    root.addEventListener('pointerleave', () => { held = false; tick(); });
+    root.addEventListener('focusin', () => { held = true; clearTimeout(timer); });
+    root.addEventListener('focusout', () => { held = false; tick(); });
+    document.addEventListener('visibilitychange', tick);
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) tick(); else { clearTimeout(timer); video.pause(); } }, { threshold: 0.3 }).observe(root.querySelector('.stage')!);
+  }
+</script>
+
 <style>
-  .ws-home { overflow-x: clip; }
-  .wsh-h { max-width: 12ch; margin-top: 14px; }
-  .lead { margin: 22px 0 0; max-width: 42rem; font-weight: 500; }
-  .outcomes { list-style: none; margin: clamp(36px, 4.4vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
-  .outcomes li { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 2.4vw, 36px); border-radius: var(--r-lg); background: var(--white); }
-  .outcomes h3 { margin: 0; font-weight: 800; font-size: clamp(24px, 2.3vw, 36px); line-height: 1.02; letter-spacing: -0.025em; }
-  .outcomes p { margin: 0; font-weight: 500; font-size: 18px; line-height: 1.4; }
-  .flow { list-style: none; margin: clamp(28px, 3.4vw, 48px) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; font-weight: 800; font-size: clamp(22px, 2.6vw, 40px); letter-spacing: -0.02em; }
+  .head { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 24px clamp(32px, 6vw, 120px); align-items: end; margin-bottom: clamp(36px, 4.4vw, 64px); }
+  .head .label { margin: 0 0 16px; }
+  .head .h1 { max-width: 11ch; }
+  .lead { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; }
+
+  /* The three promises. The one that is on carries the marker. */
+  .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 40px); margin-bottom: clamp(24px, 2.8vw, 40px); }
+  .tab { display: grid; align-content: start; gap: 10px; margin: 0; padding: 0; border: 0; background: none; color: #000; font: inherit; text-align: left; cursor: pointer; }
+  .n { font-weight: 700; font-size: 13px; }
+  .tt { font-weight: 800; font-size: clamp(22px, 2.3vw, 36px); line-height: 1.05; letter-spacing: -0.04em; font-stretch: 92%; }
+  .tt span { padding-inline: .05em; margin-inline: -.05em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 0 36% no-repeat; transition: background-size 620ms cubic-bezier(.65, 0, .35, 1); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .tab.on .tt span { background-size: 100% 36%; }
+  .td { max-width: 30rem; font-weight: 500; font-size: 17px; line-height: 1.4; }
+  .tab:focus-visible { outline: 3px solid #000; outline-offset: 6px; border-radius: 8px; }
+
+  /* The blue block, and the window on it. Inside: white, black, one blue. Pink only where something waits for you. */
+  .stage { position: relative; padding: clamp(20px, 4vw, 72px) clamp(16px, 5vw, 96px); border-radius: 32px; background: var(--blue); }
+  .ex { position: absolute; z-index: 2; left: clamp(16px, 5vw, 96px); top: clamp(6px, 2.4vw, 44px); background: #fff; transform: rotate(-2deg); }
+  .win { max-width: 1180px; margin-inline: auto; border-radius: 20px; overflow: hidden; background: #fff; color: #000; font-size: 15px; }
+  .bar { display: flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px; background: #000; color: #fff; font-size: 13px; font-weight: 500; }
+  .bar i { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+  .bar span { margin-left: 10px; }
+  .body { display: grid; grid-template-columns: 200px minmax(0, 1fr); height: clamp(460px, 40vw, 560px); }
+  .side { display: grid; align-content: start; gap: 2px; padding: 20px 14px; }
+  .logo { display: block; width: 62px; margin: 0 0 16px 10px; }
+  .it { display: flex; align-items: center; height: 38px; padding: 0 14px; border-radius: 999px; font-weight: 600; font-size: 14.5px; transition: background 260ms var(--ease), color 260ms var(--ease); }
+  .side :global(.cur) { background: #000; color: #fff; }
+  .screens { position: relative; min-width: 0; }
+  .screen { position: absolute; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 18px; padding: clamp(18px, 2.2vw, 32px); }
+  .screen.on { animation: s-in 460ms cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes s-in { from { opacity: 0; transform: translateY(14px); } }
+  .screen header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .screen h3 { margin: 0; font-weight: 800; font-size: clamp(20px, 1.9vw, 28px); letter-spacing: -0.04em; }
+  .state { position: relative; margin: 0; display: grid; font-weight: 700; font-size: 13px; }
+  .state span { grid-area: 1 / 1; justify-self: end; padding: 7px 13px; border-radius: 999px; white-space: nowrap; }
+  .state .a { background: var(--pink); }
+  .state .b { background: var(--blue); opacity: 0; }
+  .state.still span { background: #000; color: #fff; }
+  .screen.on .state .a { animation: out 240ms ease both 2500ms; }
+  .screen.on .state .b { animation: in 300ms ease both 2600ms; }
+  @keyframes out { to { opacity: 0; } }
+  @keyframes in { to { opacity: 1; } }
+
+  /* 1 Script */
+  .page { display: grid; align-content: start; gap: 14px; padding: clamp(16px, 1.8vw, 26px); border-radius: 16px; box-shadow: inset 0 0 0 1.5px #000; overflow: hidden; }
+  .part { margin: 0; display: grid; gap: 6px; }
+  .part b, .cols b { font-weight: 700; font-size: 12.5px; }
+  .hookline { width: fit-content; font-weight: 800; font-size: clamp(18px, 1.7vw, 25px); letter-spacing: -0.03em; line-height: 1.15; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cols p { margin: 0; display: grid; gap: 7px; }
+  .page i { display: block; width: var(--w); height: 9px; border-radius: 9px; background: var(--blue); transform-origin: 0 50%; }
+  .part.row { grid-template-columns: 150px 1fr; align-items: center; }
+  .screen.on .hookline { animation: type 800ms steps(26) both 200ms; }
+  .screen.on .page i { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both 700ms; }
+  @keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .screen footer { display: flex; align-items: center; gap: 12px; }
+  .field { flex: 1; padding: 13px 16px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; font-weight: 500; }
+  .go { position: relative; display: inline-grid; font-weight: 700; font-size: 15px; }
+  .go > span { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 999px; white-space: nowrap; }
+  .go .a { background: #000; color: #fff; }
+  .go .b { background: var(--blue); color: #000; opacity: 0; }
+  .go :global(svg) { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .go.solid { padding: 13px 22px; border-radius: 999px; background: #000; color: #fff; justify-self: start; }
+  .screen.on .go .a { animation: press 300ms ease both 2250ms, out 240ms ease both 2500ms; }
+  .screen.on .go .b { animation: in 300ms ease both 2600ms; }
+  @keyframes press { 50% { transform: scale(.94); } }
+  .cursor { position: absolute; right: 70px; bottom: 26px; width: 26px; height: 26px; }
+  .cursor :global(svg) { width: 100%; height: 100%; fill: #000; stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; }
+  .screen.on .cursor { animation: point 1500ms cubic-bezier(.3, .7, .2, 1) both 800ms; }
+  @keyframes point { from { transform: translate(-260px, -210px); opacity: 0; } 20% { opacity: 1; } }
+
+  /* 2 Review */
+  .review { grid-row: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 2.4vw, 36px); min-height: 0; }
+  .frame { position: relative; height: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #000; }
+  .frame img, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .frame video { opacity: 0; transition: opacity 400ms var(--ease); }
+  .frame :global(video.live) { opacity: 1; }
+  .side2 { display: grid; align-content: start; gap: 14px; min-width: 0; }
+  .cuts { margin: 0; display: flex; gap: 6px; font-weight: 700; font-size: 13px; }
+  .cuts span { padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
+  .cuts .cur { background: #000; color: #fff; }
+  .k { margin: 6px 0 0; font-weight: 700; font-size: 12.5px; }
+  .bubble { margin: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; max-width: 26rem; padding: 13px 16px; border-radius: 16px 16px 16px 4px; background: var(--blue); font-weight: 500; font-size: 16px; line-height: 1.35; }
+  .bubble em { font-style: normal; font-weight: 700; font-size: 12.5px; padding: 5px 10px; border-radius: 999px; background: #fff; }
+  .bubble.mine { justify-self: end; border-radius: 16px 16px 4px 16px; background: #000; color: #fff; }
+  .screen.on .bubble { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(400ms + var(--i) * 1300ms); }
+  .screen.on .typed { display: inline-block; animation: type 700ms steps(18) both 1900ms; }
+  .screen.on .go.solid { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both 2900ms; }
+
+  /* 3 Results */
+  .res { list-style: none; margin: 0; padding: 0; display: grid; align-content: center; gap: clamp(14px, 1.6vw, 22px); }
+  .res li { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+  .res b { font-weight: 800; font-size: clamp(17px, 1.5vw, 21px); letter-spacing: -0.02em; }
+  .res i { display: block; width: var(--w); height: clamp(30px, 3vw, 44px); border-radius: 10px; background: var(--blue); transform-origin: 0 50%; }
+  .res li:first-child i { background: #000; }
+  .res em { font-style: normal; font-weight: 700; font-size: 13px; padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
+  .res .keep { box-shadow: none; background: var(--pink); }
+  .screen.on .res i { animation: grow 900ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(300ms + var(--i) * 250ms); }
+  .screen.on .res em { animation: from0 300ms ease both; animation-delay: calc(1300ms + var(--i) * 250ms); }
+  @keyframes from0 { from { opacity: 0; } }
+  .next { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: clamp(16px, 1.8vw, 24px); border-radius: 16px; background: #000; color: #fff; }
+  .next b { font-weight: 700; font-size: 13px; }
+  .next span { font-weight: 800; font-size: clamp(22px, 2.4vw, 36px); letter-spacing: -0.04em; }
+  .screen.on .next { animation: s-in 460ms cubic-bezier(.2, .8, .2, 1) both 2200ms; }
+
+  .foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px 40px; margin-top: clamp(28px, 3.4vw, 48px); }
+  .flow { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; font-weight: 800; font-size: clamp(20px, 2.2vw, 34px); }
   .flow li { display: inline-flex; gap: 14px; align-items: center; }
   .flow i { font-style: normal; }
-  .mock { margin: clamp(36px, 4.4vw, 64px) 0; }
-  @media (max-width: 900px) { .outcomes { grid-template-columns: 1fr; } }
+
+  @media (max-width: 980px) {
+    .head, .tabs { grid-template-columns: 1fr; }
+    .body { grid-template-columns: 1fr; height: 520px; }
+    .side { display: none; }
+    .part.row { grid-template-columns: 1fr; }
+    .cursor { display: none; }
+  }
 </style>

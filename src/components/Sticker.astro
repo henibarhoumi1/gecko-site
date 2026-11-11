@@ -1,0 +1,41 @@
+---
+// Gecko's Arabic touch: stickers in the spirit of old Cairo film posters. Fat hand-lettered words with a hard black
+// shadow, on clean shapes: a blue scalloped seal, a blue pointed arch, a pink starburst, and small black sparkles.
+// They float gently where they're placed (see .float in brand.css) and are decoration only.
+// Words: ريلز (reels), محتوى (content), ستديو جيكو الممتاز (the excellent Gecko studio).
+interface Props { kind: 'seal' | 'arch' | 'burst' | 'spark'; class?: string; style?: string }
+const { kind, class: cls = '', style } = Astro.props;
+const ring = Array.from({ length: 14 }, (_, i) => { const a = (i / 14) * Math.PI * 2; return [100 + 76 * Math.cos(a), 100 + 76 * Math.sin(a)]; });
+const burst = Array.from({ length: 36 }, (_, i) => { const a = (i / 36) * Math.PI * 2 - Math.PI / 2, r = i % 2 ? 80 : 97; return `${(100 + r * Math.cos(a)).toFixed(1)},${(100 + r * Math.sin(a)).toFixed(1)}`; }).join(' ');
+const spark = 'M0-10C1.5-3 3-1.5 10 0 3 1.5 1.5 3 0 10-1.5 3-3 1.5-10 0-3-1.5-1.5-3 0-10Z';
+// One lettered word: a black copy pushed down and right, then the white word with a black edge on top.
+const word = (t: string, x: number, y: number, size: number) =>
+  `<g font-family="Rakkas, 'Aref Ruqaa', serif" font-size="${size}" text-anchor="middle" direction="rtl" lang="ar">` +
+  `<text x="${x + 3.5}" y="${y + 4.5}" fill="#000" stroke="#000" stroke-width="2.6" stroke-linejoin="round">${t}</text>` +
+  `<text x="${x}" y="${y}" fill="#fff" stroke="#000" stroke-width="2.6" stroke-linejoin="round" paint-order="stroke">${t}</text></g>`;
+---
+{kind === 'seal' && (
+  <svg class={`sticker float ${cls}`} style={style} viewBox="0 0 200 200" aria-hidden="true">
+    <g fill="var(--blue)"><circle cx="100" cy="100" r="78" />{ring.map(([x, y]) => <circle cx={x.toFixed(1)} cy={y.toFixed(1)} r="19" />)}</g>
+    <circle cx="100" cy="100" r="66" fill="none" stroke="#000" stroke-width="1.6" stroke-dasharray="1 6" stroke-linecap="round" />
+    <path d={spark} transform="translate(100 50) scale(.9)" /><path d={spark} transform="translate(100 152) scale(.9)" />
+    <Fragment set:html={word('ريلز', 100, 122, 66)} />
+  </svg>
+)}
+{kind === 'arch' && (
+  <svg class={`sticker float ${cls}`} style={style} viewBox="0 0 200 244" aria-hidden="true">
+    <path d="M12 236V104C12 52 58 20 100 6c42 14 88 46 88 98v132z" fill="var(--blue)" />
+    <path d="M26 224V106c0-44 38-70 74-84 36 14 74 40 74 84v118z" fill="none" stroke="#000" stroke-width="1.6" />
+    <path d={spark} transform="translate(100 58) scale(1.1)" />
+    <Fragment set:html={word('ستديو', 100, 112, 46) + word('جيكو', 100, 160, 50) + word('الممتاز', 100, 204, 36)} />
+  </svg>
+)}
+{kind === 'burst' && (
+  <svg class={`sticker float ${cls}`} style={style} viewBox="0 0 200 200" aria-hidden="true">
+    <polygon points={burst} fill="var(--pink)" />
+    <Fragment set:html={word('محتوى', 100, 118, 56)} />
+  </svg>
+)}
+{kind === 'spark' && (
+  <svg class={`sticker float ${cls}`} style={style} viewBox="-12 -12 24 24" aria-hidden="true"><path d={spark} /></svg>
+)}

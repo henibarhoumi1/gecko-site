@@ -17,7 +17,7 @@ const T = {
   en: { study: 'Market study', rows: ['Your business', 'Your market', 'Your strongest competitors'], angle: 'One written angle', rec: 'Shooting', edit: 'Edit', deck: 'Brand deck', bo: 'Back office', ex: 'Example', tabs: ['Orders', 'Products', 'Stock', 'Payments'], order: 'New order', st: ['Paid', 'Packed', 'Sent'] },
   fr: { study: 'Étude de marché', rows: ['Votre activité', 'Votre marché', 'Vos concurrents les plus forts'], angle: 'Un angle écrit', rec: 'Tournage', edit: 'Montage', deck: 'Brand deck', bo: 'Back-office', ex: 'Exemple', tabs: ['Commandes', 'Produits', 'Stock', 'Paiements'], order: 'Nouvelle commande', st: ['Payé', 'Emballé', 'Envoyé'] },
 }[lang];
-const tones = ['blue', 'pink', 'black', 'yellow'];
+const tones = ['blue', 'pink', 'black', 'blue'];
 const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
 ---
 <section class="section what-sec" id="what" aria-labelledby="what-t">
@@ -101,7 +101,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
     const words = [...root.querySelectorAll<HTMLElement>('[data-word]')];
     const scenes = [...root.querySelectorAll<HTMLElement>('[data-scene]')];
     const stage = root.querySelector<HTMLElement>('[data-stage]')!;
-    const tones = ['blue', 'pink', 'black', 'yellow'];
+    const tones = ['blue', 'pink', 'black', 'blue'];
     const video = root.querySelector<HTMLVideoElement>('video')!;
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     let at = 0, timer = 0, held = false, seen = false;
@@ -150,7 +150,6 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .stage { position: relative; aspect-ratio: 1 / 1.02; max-height: 680px; width: 100%; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 420ms var(--ease); }
   .stage[data-tone='pink'] { background: var(--pink); }
   .stage[data-tone='black'] { background: #000; color: #fff; }
-  .stage[data-tone='yellow'] { background: var(--yellow); }
   .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(20px, 3vw, 48px); }
   .k { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
   .sheet { width: min(100%, 440px); display: grid; gap: 18px; padding: clamp(22px, 2.4vw, 34px); border-radius: 24px; background: #fff; color: #000; }
@@ -186,7 +185,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .script ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
   .script ol li { padding: 8px 14px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 14px; }
   .scene.on .script ol li { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(1500ms + var(--i) * 110ms); }
-  .stamp { position: absolute; right: -10px; bottom: -16px; margin: 0; padding: 10px 18px; border-radius: 12px; background: var(--yellow); font-weight: 800; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -0.02em; transform: rotate(-7deg); }
+  .stamp { position: absolute; right: -10px; bottom: -16px; margin: 0; padding: 10px 18px; border-radius: 12px; background: var(--blue); font-weight: 800; font-size: clamp(22px, 2.2vw, 30px); letter-spacing: -0.02em; transform: rotate(-7deg); }
   .scene.on .stamp { animation: stamp 420ms cubic-bezier(.2, 1.4, .4, 1) both 2700ms; }
   @keyframes stamp { from { opacity: 0; transform: rotate(-7deg) scale(2.2); } }
 
@@ -203,7 +202,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .tl-k { font-weight: 700; font-size: 13px; }
   .track { position: relative; display: flex; gap: 4px; height: 22px; }
   .track i { flex: 0 0 var(--w); border-radius: 6px; background: var(--pink); transform-origin: 0 50%; }
-  .track i:nth-child(even) { background: var(--yellow); }
+  .track i:nth-child(even) { background: #fff; }
   .track.two i { background: var(--blue); }
   .track.two { height: 12px; }
   .scene.on .track i { animation: grow 520ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(200ms + var(--n, 0) * 90ms); }
@@ -218,7 +217,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .aa { margin: 0; font-weight: 800; font-size: clamp(64px, 7vw, 120px); line-height: .9; letter-spacing: -0.05em; }
   .sw { display: flex; gap: 8px; }
   .sw i { width: 26px; height: 26px; border-radius: 50%; background: var(--pink); }
-  .sw i:nth-child(2) { background: var(--yellow); } .sw i:nth-child(3) { background: var(--blue); } .sw i:nth-child(4) { background: #fff; }
+  .sw i:nth-child(2) { background: var(--blue); } .sw i:nth-child(3) { background: #fff; } .sw i:nth-child(4) { background: none; box-shadow: inset 0 0 0 2px #fff; }
   .scene.on .sw i { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(500ms + var(--n, 0) * 100ms); }
   .sw i:nth-child(2) { --n: 1; } .sw i:nth-child(3) { --n: 2; } .sw i:nth-child(4) { --n: 3; }
   .office { position: relative; }
@@ -231,7 +230,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .orders .bar { flex: 1; height: 12px; border-radius: 12px; background: #000; transform-origin: 0 50%; }
   .orders li:nth-child(2) .bar { flex: .7; } .orders li:nth-child(3) .bar { flex: .85; }
   .orders .chip { flex: none; padding: 6px 12px; border-radius: 999px; background: var(--blue); font-weight: 700; font-size: 13px; }
-  .orders li:nth-child(2) .chip { background: var(--yellow); } .orders li:nth-child(3) .chip { background: var(--pink); }
+  .orders li:nth-child(2) .chip { background: #000; color: #fff; } .orders li:nth-child(3) .chip { background: var(--pink); }
   .scene.on .orders .bar { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(500ms + var(--i) * 260ms); }
   .scene.on .orders .chip { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(900ms + var(--i) * 260ms); }
   .toast { position: absolute; right: -8px; top: -18px; margin: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 14px; }

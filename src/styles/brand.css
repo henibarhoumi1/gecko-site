@@ -92,8 +92,10 @@ h1, h2, h3, .h1, .h2, .h3, .display, .strip, .bands .front, .pp .price b, .words
 /* Blocks sitting on a colour read in black, with black outlines on the buttons inside. */
 .on-pink, .on-yellow, .on-blue { --fg: #000000; --fg-2: #000000; --fg-3: #000000; --hair-2: #000000;  }
 
-/* Yellow tape: labels things. Used instead of badges. */
-.tape { display: inline-block; padding: .5em .9em .45em; background: var(--yellow); color: var(--ink); font: 700 13px/1.1 var(--font); letter-spacing: 0; white-space: nowrap;
+/* Tape labels: blue on white, white on a colour. Yellow is never an accent: it is only ever a whole block, with
+   nothing but black on it. */
+.on-blue .tape, .on-pink .tape, .on-yellow .tape { background: #fff; }
+.tape { display: inline-block; padding: .5em .9em .45em; background: var(--blue); color: var(--ink); font: 700 13px/1.1 var(--font); letter-spacing: 0; white-space: nowrap;
   clip-path: polygon(0 6%, 3% 0, 6% 8%, 9% 1%, 91% 0, 94% 7%, 97% 1%, 100% 6%, 100% 94%, 97% 100%, 94% 92%, 91% 99%, 9% 100%, 6% 93%, 3% 100%, 0 94%); transform: rotate(-1.6deg); }
 .tape.flat { transform: none; }
 
@@ -128,3 +130,7 @@ html.js .roll.live .w.on { animation: roll-in 520ms cubic-bezier(.65, 0, .35, 1)
   * { transition: none !important; animation: none !important; }
   .hl { background-size: 100% 34%; }
 }
+
+/* Stickers (Sticker.astro): they sit where they're put, tilted by --rot, and bob slowly. */
+.sticker { display: block; overflow: visible; pointer-events: none; transform: rotate(var(--rot, 0deg)); animation: float var(--t, 7s) ease-in-out var(--d, 0s) infinite; }
+@keyframes float { 50% { transform: translateY(-12px) rotate(calc(var(--rot, 0deg) + 2.5deg)); } }

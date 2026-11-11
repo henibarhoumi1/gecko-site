@@ -296,18 +296,18 @@ const icons = [
   .app { position: relative; z-index: 1; border-radius: 18px; background: var(--white); color: var(--ink); overflow: hidden; font-size: 14px; --fill: 70%; }
   .act li.new { animation: ws-in 600ms cubic-bezier(.2, .9, .3, 1.1) both; }
   .act li.new > span:first-child::before { content: ''; display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: var(--pink); vertical-align: 1px; }
-  @keyframes ws-in { from { opacity: 0; transform: translateY(-10px); background: var(--yellow-soft); } }
-  .chrome { display: flex; align-items: center; gap: 6px; padding: 11px 14px; background: var(--blue); }
+  @keyframes ws-in { from { opacity: 0; transform: translateY(-10px); background: var(--blue); } }
+  .chrome { display: flex; align-items: center; gap: 6px; padding: 11px 14px; background: #000; color: #fff; }
   .chrome i { width: 10px; height: 10px; border-radius: 50%; background: #000; }
   .chrome span { margin-left: 10px; padding: 4px 12px; border-radius: 999px; background: var(--white); font-size: 12px; font-weight: 700; color: var(--ink); }
   .body { display: grid; grid-template-columns: 168px 1fr; min-height: 420px; }
   .act li { padding: 9px 0; }
   .act li:last-child { border-bottom: 0; }
-  .side { display: grid; align-content: start; gap: 2px; padding: 16px 10px; background: var(--yellow); color: var(--ink); }
+  .side { display: grid; align-content: start; gap: 2px; padding: 16px 10px; background: #fff; color: var(--ink); }
   .mono { display: block; width: 64px; margin: 2px 12px 16px; }
   .side button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; border-radius: 999px; background: transparent; color: var(--ink); font: 700 14px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
   .side button:hover { color: var(--ink); background: var(--white); }
-  .side button[aria-selected='true'] { background: var(--pink); color: var(--ink); font-weight: 600; }
+  .side button[aria-selected='true'] { background: #000; color: #fff; font-weight: 600; }
   .side button[aria-selected='true'] em { background: var(--white); }
   .side em { margin-left: auto; min-width: 20px; height: 20px; display: grid; place-items: center; border-radius: 999px; background: var(--pink); color: var(--ink); font-style: normal; font-size: 11px; font-weight: 700; }
   .ic { width: 18px; height: 18px; flex: none; }
@@ -329,7 +329,7 @@ const icons = [
   .tl-steps .done, .tl-steps .now { color: var(--ink); }
   .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .tile { padding: 14px; border-radius: 16px; background: var(--blue); }
-  .tile.y { background: var(--yellow); }
+  .tile.y { background: #000; color: #fff; }
   .tk { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
   .tv { margin: 6px 0 0; font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
   .bar-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
@@ -352,7 +352,7 @@ const icons = [
   .ok:hover { background: var(--ink); color: #fff; }
   .ok.yes { background: var(--ink); border-color: var(--ink); color: #fff; }
   .done-chip, .paid { padding: 4px 10px; border-radius: 999px; background: var(--blue); color: var(--ink) !important; font-weight: 700; }
-  .adv { padding: 4px 10px; border-radius: 999px; background: var(--yellow-soft); color: var(--ink) !important; font-weight: 700; }
+  .adv { padding: 4px 10px; border-radius: 999px; background: #000; color: #fff !important; font-weight: 700; }
   .due { padding: 4px 10px; border-radius: 999px; background: var(--pink); color: var(--ink) !important; font-weight: 700; }
   .pv { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center; }
   .pv-frame { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; display: grid; place-items: center; background: #000; }
@@ -364,7 +364,7 @@ const icons = [
   .pv-frame .play { position: relative; z-index: 1; }
   .wm { position: absolute; font-weight: 700; font-size: 13px; letter-spacing: .2em; color: var(--ink); transform: rotate(-60deg); }
   .play { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: #fff; font-size: 11px; padding-left: 2px; }
-  .cm { margin: 6px 0 0; padding: 10px 12px; border-radius: 12px 12px 12px 2px; background: var(--yellow-soft); line-height: 1.4; }
+  .cm { margin: 6px 0 0; padding: 10px 12px; border-radius: 12px 12px 12px 2px; background: var(--blue); line-height: 1.4; }
   .cm b { color: var(--ink); margin-right: 4px; }
   .dl { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: var(--blue); font-weight: 700; }
   .lock { margin: 0; font-size: 13px; color: var(--ink-2); }
