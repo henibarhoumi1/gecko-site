@@ -72,7 +72,7 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 
 /* One family, Bricolage Grotesque, in two voices. Headlines: Extrabold, narrow (the width axis at 80%), tight, so
    they stand tall like the logo. Text: regular width, Medium. Labels and buttons: Bold. */
-h1, h2, .h1, .h2, .display { font-stretch: 80%; font-variation-settings: 'opsz' 96; }
+h1, h2, h3, .h1, .h2, .h3, .display, .strip, .bands .front, .pp .price b, .words .w, .flow, .value, .site-footer .big, .m-t { font-stretch: 80%; font-variation-settings: 'opsz' 96; }
 .h1, .h2, .h3 { font-family: var(--font); font-weight: 800; line-height: .94; letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
 .h1 { font-size: var(--h1); } .h2 { font-size: var(--h2); } .h3 { font-size: var(--h3); letter-spacing: -0.015em; line-height: 1.12; }
 .text { font-weight: 500; font-size: var(--body); line-height: 1.5; }
@@ -108,7 +108,7 @@ h1, h2, .h1, .h2, .display { font-stretch: 80%; font-variation-settings: 'opsz' 
    width, and without the script the first word simply shows with its marker drawn.
    Markup: <span class="roll" data-roll><span class="w on">making</span><span class="w">launching</span>…</span> */
 .roll { display: inline-grid; vertical-align: bottom; }
-.roll .w { grid-area: 1 / 1; visibility: hidden; padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 34% no-repeat; }
+.roll .w { grid-area: 1 / 1; justify-self: start; white-space: nowrap; visibility: hidden; padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 34% no-repeat; }
 .roll .w.on { visibility: visible; }
 html.js .roll.live .w.on { animation: roll-in 520ms cubic-bezier(.65, 0, .35, 1) both, roll-mark 700ms cubic-bezier(.65, 0, .35, 1) 160ms both; }
 @keyframes roll-in { from { clip-path: inset(0 0 100% 0); transform: translateY(.35em); } to { clip-path: inset(-10% 0 -10% 0); transform: none; } }

@@ -1,10 +1,10 @@
 ---
 // The rolling last word of a title: <Roll words={['making', 'launching', 'rebranding', 'selling']} />. The first word
 // shows by itself without the script or with reduced motion. See .roll in brand.css and scripts/roll.ts.
-interface Props { words: readonly string[] }
-const { words } = Astro.props;
+interface Props { words: readonly string[]; end?: string }
+const { words, end = '' } = Astro.props;
 ---
-<span class="roll" data-roll>{words.map((w, i) => <span class={i === 0 ? 'w on' : 'w'} aria-hidden={i === 0 ? undefined : 'true'}>{w}</span>)}</span>
+<span class="roll" data-roll>{words.map((w, i) => <span class={i === 0 ? 'w on' : 'w'} aria-hidden={i === 0 ? undefined : 'true'}>{w}{end}</span>)}</span>
 <script>
   import '../scripts/roll';
 </script>
