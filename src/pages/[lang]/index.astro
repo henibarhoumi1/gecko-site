@@ -30,8 +30,8 @@ const last = lines[lines.length - 1].replace(/\.$/, '');
 const said = lines.join(' ');
 // Width ratios measured for Inter; Cabinet Grotesk is not measured yet, so these are set a little wide (smaller type)
 // so no line is ever cut. Re-measure with the real font and tighten (step 5 review).
-// Measured on the live preview with Bricolage Grotesque narrow Extrabold (11 Nov 2026): 4.48 em for the widest line.
-const widest: Record<string, number> = { en: 6.3, fr: 4.9 };
+// Measured on the live preview with Archivo Extrabold (11 Nov 2026): 5.86 em for the widest English line.
+const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
 const kw = widest[lang] ?? widest.en;
 // The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
