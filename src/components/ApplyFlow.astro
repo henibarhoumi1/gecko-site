@@ -6,6 +6,8 @@ import { mark } from '../i18n/mark';
 // the page glides down to pricing with that plan open (on the home page), or links to it.
 // Numbers 1 to 9 answer from the keyboard.
 import Wa from './Wa.astro';
+import Roll from './Roll.astro';
+import { launch } from '../i18n/launch';
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { site } from '../data/site';
@@ -18,6 +20,7 @@ const s = t(lang).apply;
 const ct = t(lang).contact;
 const H = heading;
 const [t0, t1] = mark(a.title);
+const LA = launch(lang).apply;
 const qs = a.qs as { key: string; q: string; row: string; multi?: boolean; hint?: string; when?: Record<string, number[]>; opts: string[][] }[];
 const fields = [
   { name: 'name', label: s.name, auto: 'name' },
@@ -32,6 +35,7 @@ const plans = Object.fromEntries([
   ...monthly.map((m) => [m.key, [m.name, { type: [0], make: [0], rhythm: [1] }]]),
   ['test', [test.name, { type: [0], make: [0], rhythm: [0] }]],
   ['bespoke', [a.bespoke, { rhythm: [0] }]],
+  ['brandworld', [launch(lang).bw.name, { make: [8] }]],
 ]);
 const meta = qs.map(({ key, row, multi, when }) => ({ key, row, multi: !!multi, when: when ?? null }));
 // The plan each brief points to, as the brief card and the end screen name it.
@@ -41,12 +45,13 @@ const recs: Record<string, string> = {
   test: `${test.name} · ${test.reels} reels · ${fmt(test.launch, lang)} ${cur}`,
   ...Object.fromEntries(monthly.map((m) => [m.key, m.custom ? `${m.name} · ${m.reels}–${m.max} ${p.reels}` : `${m.name} · ${m.reels} ${p.reels} · ${fmt(m.launch, lang)} ${cur}`])),
   bespoke: a.bespoke,
+  brandworld: LA.bw,
 };
 ---
 <div class="apply">
   <div class="lead stack" style="--gap:22px">
     <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
-    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{t0}<span class="hl">{t1}</span></H>
+    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{heading === 'h2' ? <>{LA.titleStart}<Roll words={LA.roll} />{lang === 'fr' ? ' ?' : '.'}</> : <>{t0}<span class="hl">{t1}</span></>}</H>
     <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
 
     <div class="brief rv" style="--d:180ms" data-brief aria-live="polite">
@@ -66,7 +71,7 @@ const recs: Record<string, string> = {
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
+  <form class="flow rv" style="--d:120ms" data-bw={href(lang, 'brand-world')} data-offers={href(lang, 'offers')} data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
     data-meta={JSON.stringify(meta)} data-plans={JSON.stringify(plans)} data-recs={JSON.stringify(recs)} data-cheers={JSON.stringify(a.cheers)} data-contact-row={a.contactRow}
     action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
@@ -200,6 +205,7 @@ const recs: Record<string, string> = {
     // Where we'd start. Films, events and shoots are quoted; monthly ads follow the budget (or the ad spend when
     // the budget is open); one project, or not sure yet, starts with the Test.
     const rec = () => {
+      if (has('make', 8)) return 'brandworld';
       if (!ans.make && !ans.rhythm) return '';
       const bigger = has('make', 2, 4, 5, 6) || has('type', 4);
       const ads = has('make', 0, 1, 7);
@@ -290,6 +296,7 @@ const recs: Record<string, string> = {
       msg.textContent = text; done.hidden = false; fill.style.transform = 'scaleX(1)'; form.dataset.at = 'done';
       const key = rec() || 'test';
       $('[data-fit-name]').textContent = recs[key]; fitBox.hidden = false;
+      fitGo.href = key === 'brandworld' ? form.dataset.bw! : form.dataset.offers!;
       dispatchEvent(new CustomEvent('gecko:plan', { detail: key }));
       anim(done, [{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.34,1.4,.64,1)' });
       if (pricing) glideTimer = window.setTimeout(glide, 1800);
@@ -352,72 +359,72 @@ const recs: Record<string, string> = {
   .apply { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
   .lead .h1, .lead .h2 { max-width: 12ch; }
   .lead .h1 { font-size: clamp(44px, 5.4vw, 84px); }
-  .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-weight: 600; font-size: 14px; color: var(--fg-2); }
-  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); box-shadow: 0 0 0 0 rgba(244, 193, 196, .5); animation: pulse 1.8s infinite; }
-  @keyframes pulse { 70% { box-shadow: 0 0 0 9px rgba(244, 193, 196, 0); } 100% { box-shadow: 0 0 0 0 rgba(244, 193, 196, 0); } }
+  .lead :global(.roll) { white-space: nowrap; }
+  .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-weight: 700; font-size: 14px; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 50% { opacity: .35; } }
 
-  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--surface); border: 1px solid var(--edge); border-radius: var(--r-lg); }
+  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--blue); border-radius: var(--r-lg); }
   .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
-  .brief :global(li + li) { border-top: 1px solid var(--hair); }
   .brief :global(li button) { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-  .brief :global(.k) { font-weight: 600; font-size: 14px; flex: none; color: var(--fg-2); }
+  .brief :global(.k) { font-weight: 700; font-size: 14px; flex: none; }
   .brief :global(.v) { font-size: 15px; text-align: right; font-weight: 700; }
   .brief :global(li button:hover .k) { text-decoration: underline; text-underline-offset: 3px; }
-  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: 12px; background: var(--pink-soft); border: 1px solid var(--pink); }
+  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: var(--pink); }
   .sugg[hidden] { display: none; }
   .sugg .pick { margin: 0; font-weight: 700; }
   .direct { display: grid; gap: 6px; }
   .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-  .flow { position: relative; display: grid; gap: 26px; padding: clamp(26px, 3.2vw, 48px); min-height: 500px; align-content: start; background: var(--surface); color: var(--fg); border: 1px solid var(--edge); border-radius: 24px; box-shadow: var(--lift-l); }
+  .flow { position: relative; display: grid; gap: 26px; padding: clamp(26px, 3.2vw, 48px); min-height: 500px; align-content: start; background: var(--yellow); color: #000; --fg: #000; --hair-2: #000; border-radius: var(--r-lg); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
-  .count { margin: 0; font-weight: 600; font-size: 14px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+  .count { margin: 0; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
   .count b { font-size: 28px; letter-spacing: -0.04em; color: var(--fg); }
-  .bar { width: clamp(110px, 16vw, 200px); height: 4px; border-radius: 999px; overflow: hidden; background: var(--pink-soft); }
+  .bar { display: none; width: clamp(110px, 16vw, 200px); height: 4px; border-radius: 999px; overflow: hidden; background: var(--pink-soft); }
   .bar i { display: block; height: 100%; border-radius: inherit; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform 620ms cubic-bezier(.22, 1, .36, 1); }
-  .cheer { margin: 0 auto 0 0; font-weight: 600; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--yellow); color: var(--ink); opacity: 0; }
+  .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--pink); color: var(--ink); opacity: 0; }
   .cheer.show { animation: cheer 1600ms var(--ease) both; }
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
-  .hint { margin: -12px 0 0; font-size: 15px; color: var(--fg-2); }
+  .hint { margin: -12px 0 0; font-size: 15px; font-weight: 500; }
   .next { justify-self: start; }
   .next:disabled { opacity: .35; pointer-events: none; }
-  .empty { margin: 0; font-size: 15px; color: var(--fg-3); }
+  .empty { margin: 0; font-size: 15px; font-weight: 500; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
-  .step legend { padding: 0; margin-bottom: 22px; font-weight: 700; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.04em; line-height: 1.05; }
-  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--yellow-soft); border: 1px solid var(--yellow); font-size: 15px; }
+  .step legend { padding: 0; margin-bottom: 22px; font-weight: 800; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.03em; line-height: 1.05; }
+  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--white); font-size: 15px; }
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1.15 var(--font); padding: 14px 18px 14px 12px; border-radius: 12px; border: 1px solid var(--hair-2); background: var(--surface); color: var(--fg); text-align: left; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 160ms var(--ease); }
-  .chip .flag { width: 24px; height: 16px; border-radius: 3px; box-shadow: 0 0 0 1px var(--hair); }
-  .chip:hover { border-color: var(--ink); background: var(--pink-soft); }
+  .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1.15 var(--font); padding: 14px 18px 14px 12px; border-radius: 999px; border: 0; background: #fff; color: #000; text-align: left; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 160ms var(--ease); }
+  .chip .flag { width: 24px; height: 16px; border-radius: 3px; }
+  .chip:hover { background: var(--pink); }
   .chip:active { transform: scale(.98); }
-  .chip.picked { background: var(--mat); border-color: var(--mat); color: #fff; }
-  .chip kbd { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--ink); font: 600 11px/1 var(--font); color: var(--ink); transition: inherit; }
-  .chip.picked kbd { border-color: #fff; color: #fff; }
+  .chip.picked { background: #000; color: #fff; }
+  .chip kbd { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--yellow); font: 700 11px/1 var(--font); color: var(--ink); transition: inherit; }
+  .chip.picked kbd { background: #fff; color: #000; }
   .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; }
   @media (hover: none), (max-width: 860px) { .chip kbd { display: none; } .chip { padding-left: 16px; } }
-  .fit-done { display: grid; gap: 10px; justify-items: start; width: 100%; padding: 20px 22px; border-radius: var(--r-lg); background: linear-gradient(135deg, var(--pink-soft), var(--yellow-soft)); border: 1px solid var(--ink); }
+  .fit-done { display: grid; gap: 10px; justify-items: start; width: 100%; padding: 20px 22px; border-radius: var(--r-lg); background: var(--pink); }
   .fit-done[hidden] { display: none; }
   .fit-name { margin: 0 0 6px; font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -0.02em; line-height: 1.15; }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .fields .wide { grid-column: 1 / -1; }
   .field textarea { resize: vertical; min-height: 92px; }
-  .field .opt { font-weight: 500; color: var(--fg-3); }
+  .field .opt { font-weight: 500; }
   .reach { display: grid; gap: 10px; }
-  .rl { margin: 0; font: 700 13px/1.2 var(--font); color: var(--fg-2); }
-  .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border: 1px solid var(--ink); border-radius: 999px; background: var(--surface); }
+  .rl { margin: 0; font: 700 13px/1.2 var(--font); }
+  .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border-radius: 999px; background: #fff; }
   .seg button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 10px; border: 0; border-radius: 999px; background: none; color: var(--fg); font: 700 15px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .seg button:hover { background: var(--pink-soft); }
+  .seg button:hover { background: var(--pink); }
   .seg [aria-checked='true'], .seg [aria-checked='true']:hover { background: var(--fg); color: var(--bg); }
   .send { justify-self: start; }
-  .back { justify-self: start; background: none; border: 0; padding: 6px 0; color: var(--fg-2); cursor: pointer; font: 700 14px var(--font); }
+  .back { justify-self: start; background: none; border: 0; padding: 6px 0; cursor: pointer; font: 700 14px var(--font); }
   .back:hover { color: var(--fg); }
   .done { justify-items: start; align-content: center; min-height: 320px; }
   .fallback { margin: 0; font-size: 15px; }
   .fallback a { font-weight: 700; }
   .ok { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M6 10.4l2.6 2.6L14 7.6' fill='none' stroke='%23FFFFFF' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 44px no-repeat; }
-  .again { background: none; border: 0; padding: 0; cursor: pointer; font: 700 15px var(--font); color: var(--fg-2); text-decoration: underline; text-underline-offset: 4px; }
+  .again { background: none; border: 0; padding: 0; cursor: pointer; font: 700 15px var(--font); text-decoration: underline; text-underline-offset: 4px; }
   @media (max-width: 860px) {
     .apply { grid-template-columns: 1fr; gap: 28px; }
     .flow { min-height: 0; }

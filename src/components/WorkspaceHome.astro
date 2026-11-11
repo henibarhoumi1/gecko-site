@@ -1,0 +1,47 @@
+---
+// Home 3.6: the workspace section, in pink. It has to sell: three outcome blocks, the project as one row, and the
+// working model of the workspace, bigger, its tabs changing on their own.
+import Workspace from './Workspace.astro';
+import { launch } from '../i18n/launch';
+import { href } from '../i18n/paths';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const L = launch(lang).ws;
+---
+<section class="section ws-home on-pink" id="workspace" aria-labelledby="wsh-t">
+  <div class="wrap wide">
+    <p class="label rv">{L.label}</p>
+    <h2 class="h1 wsh-h rv" id="wsh-t" style="--d:60ms">{L.title}</h2>
+    <p class="text-l lead rv" style="--d:100ms">{L.lead}</p>
+
+    <ul class="outcomes">
+      {L.blocks.map(([t, d], i) => (
+        <li class="rv" style={`--d:${i * 70}ms`}><h3>{t}</h3><p>{d}</p></li>
+      ))}
+    </ul>
+
+    <ol class="flow rv" aria-label={L.row.join(' → ')}>
+      {L.row.map((x, i) => <li><span>{x}</span>{i < L.row.length - 1 && <i aria-hidden="true">→</i>}</li>)}
+    </ol>
+
+    <div class="mock"><Workspace lang={lang} mock cta={false} /></div>
+
+    <a class="btn primary lg" href={href(lang, 'process')}>{L.cta} <span class="arr" aria-hidden="true">→</span></a>
+  </div>
+</section>
+
+<style>
+  .ws-home { overflow-x: clip; }
+  .wsh-h { max-width: 12ch; margin-top: 14px; }
+  .lead { margin: 22px 0 0; max-width: 42rem; font-weight: 500; }
+  .outcomes { list-style: none; margin: clamp(36px, 4.4vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .outcomes li { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 2.4vw, 36px); border-radius: var(--r-lg); background: var(--white); }
+  .outcomes h3 { margin: 0; font-weight: 800; font-size: clamp(24px, 2.3vw, 36px); line-height: 1.02; letter-spacing: -0.025em; }
+  .outcomes p { margin: 0; font-weight: 500; font-size: 18px; line-height: 1.4; }
+  .flow { list-style: none; margin: clamp(28px, 3.4vw, 48px) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; font-weight: 800; font-size: clamp(22px, 2.6vw, 40px); letter-spacing: -0.02em; }
+  .flow li { display: inline-flex; gap: 14px; align-items: center; }
+  .flow i { font-style: normal; }
+  .mock { margin: clamp(36px, 4.4vw, 64px) 0; }
+  @media (max-width: 900px) { .outcomes { grid-template-columns: 1fr; } }
+</style>
