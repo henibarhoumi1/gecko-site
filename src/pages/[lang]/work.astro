@@ -3,6 +3,8 @@
 // Why each reel works sits inside the full-screen viewer, for whoever wants it.
 import Base from '../../layouts/Base.astro';
 import ReelCard from '../../components/ReelCard.astro';
+import Choices from '../../components/Choices.astro';
+import { href } from '../../i18n/paths';
 import ReelViewer from '../../components/ReelViewer.astro';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -11,21 +13,22 @@ import { ads } from '../../data/work';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const w = c(lang).work;
+const h = c(lang).home;
 const formats = t(lang).home.formats;
 const pad = (n: number) => String(n).padStart(2, '0');
 // A format with a reel on this page carries the pink marker and jumps to that reel.
 const low = (x: string) => x.toLowerCase();
 const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWith(low(a.format[lang])));
 ---
-<Base lang={lang} title={w.title} page="work">
-  <section class="page-head lit">
+<Base lang={lang} title={w.title} page="work" theme="#000000">
+  <section class="page-head lit on-black" data-dark="1">
     <div class="wrap wide">
       <h1 class="h1 w-h rv"><span class="hl">{w.title}</span>.</h1>
       <p class="text-l lede rv" style="--d:80ms">{w.lead}</p>
     </div>
   </section>
 
-  <section class="on-mat wall-sec">
+  <section class="on-black wall-sec" data-dark="1">
     <div class="wrap wide">
       <p class="hint rv">{w.hint}</p>
       <ol class={`wall n${ads.length}`}>
@@ -40,7 +43,13 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
     </div>
   </section>
 
-  <section class="section formats-sec">
+  <section class="section method-sec on-black" data-dark="1">
+    <div class="wrap wide">
+      <Choices title={h.method.title} items={h.method.items} links={[{ href: href(lang, 'process'), label: h.method.process }]} />
+    </div>
+  </section>
+
+  <section class="section formats-sec on-black" data-dark="1">
     <div class="wrap wide">
       <div class="head rv"><h2 class="h2">{w.formatsTitle}</h2><p class="sub">{w.formatsSub}</p></div>
       <ul class="formats">
@@ -60,22 +69,22 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   <ReelViewer lang={lang} />
 </Base>
 <style>
-  .w-h { font-size: clamp(64px, 12vw, 200px); line-height: .9; letter-spacing: -0.06em; }
+  .w-h { font-size: clamp(64px, 12vw, 200px); line-height: .9; letter-spacing: -0.04em; }
   .page-head .lede { margin: clamp(18px, 2vw, 28px) 0 0; }
 
   .wall-sec { padding-block: clamp(56px, 7vw, 104px) clamp(64px, 8vw, 120px); }
-  .hint { margin: 0 0 clamp(28px, 3vw, 44px); font-size: 14px; font-weight: 600; color: var(--fg-2); }
+  .hint { margin: 0 0 clamp(28px, 3vw, 44px); font-size: 15px; font-weight: 700; }
   .wall { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(16px, 2.2vw, 36px); }
   .wall li { position: relative; scroll-margin-top: calc(var(--header) + 24px); }
   .wall li:nth-child(odd) { transform-origin: 50% 0; }
   .tp { display: none; }
   .cap { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0; font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.015em; }
-  .cap b { flex: none; font-size: 11px; letter-spacing: .1em; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+  .cap b { flex: none; font-size: 13px; color: var(--pink); font-variant-numeric: tabular-nums; }
   .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 13px; font-weight: 600; color: var(--fg-2); }
+  .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
 
-  .formats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-2); }
-  .formats li { padding: clamp(12px, 1.2vw, 18px) 0; border-bottom: 1px solid var(--hair); font-weight: 700; font-size: clamp(24px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.045em; }
+  .formats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .formats li { padding: clamp(12px, 1.2vw, 18px) 0; font-weight: 700; font-size: clamp(24px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.045em; }
   .formats a { color: var(--fg); text-decoration: none; }
   .formats a:hover sup { color: var(--fg); }
   .formats sup { font-size: 12px; letter-spacing: .06em; color: var(--fg-3); vertical-align: super; }

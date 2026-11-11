@@ -1,5 +1,5 @@
 ---
-// Why brands switch: for each place where ads usually go wrong, the usual way crossed out in pink and the Gecko way
+// Why brands switch: for each place where ads usually go wrong, the usual way crossed out and the Gecko way
 // in bold underneath. Two columns on wide screens, one on phones.
 import { c } from '../i18n/copy';
 import type { Locale } from '../i18n/strings';
@@ -23,17 +23,18 @@ const k = c(lang).home.compare;
 </section>
 
 <style>
-  .cmp-sec { border-top: 1px solid var(--hair); }
+  .cmp-sec { }
   .cmp-title { max-width: 12ch; margin-bottom: clamp(32px, 4vw, 64px); }
-  .cmp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(32px, 5vw, 96px); border-top: 1px solid var(--hair-2); }
-  .row { display: grid; gap: 14px; align-content: start; padding-block: clamp(24px, 2.8vw, 40px); border-bottom: 1px solid var(--hair); }
-  .topic { margin: 0; display: flex; gap: 12px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--fg-3); }
+  .cmp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .row { display: grid; gap: 14px; align-content: start; padding: clamp(22px, 2.6vw, 38px); border-radius: var(--r-lg); background: var(--yellow); color: #000; }
+  .row:nth-child(3n+2) { background: var(--pink); } .row:nth-child(3n) { background: var(--blue); }
+  .topic { margin: 0; display: flex; gap: 12px; align-items: baseline; font-size: 13px; font-weight: 700; }
   .topic .i { font-variant-numeric: tabular-nums; }
-  .usual { margin: 0; max-width: 34rem; font-size: 16px; line-height: 1.5; color: var(--fg-3); }
+  .usual { margin: 0; max-width: 34rem; font-size: 16px; line-height: 1.5; font-weight: 500; }
   /* The usual way gets struck through in pink as the row comes into view. */
-  .usual s { text-decoration: none; background: linear-gradient(var(--pink), var(--pink)) 0 60% / 0 .16em no-repeat; transition: background-size 900ms var(--ease) 300ms; }
-  .row.in .usual s { background-size: 100% .16em; }
+  .usual s { text-decoration: none; background: linear-gradient(#000, #000) 0 60% / 0 .12em no-repeat; transition: background-size 900ms var(--ease) 300ms; }
+  .row.in .usual s { background-size: 100% .12em; }
   .gecko { margin: 0; max-width: 28ch; font-weight: 700; font-size: clamp(21px, 1.9vw, 30px); line-height: 1.2; letter-spacing: -0.025em; text-wrap: pretty; }
   @media (max-width: 860px) { .cmp { grid-template-columns: 1fr; } }
-  @media (prefers-reduced-motion: reduce) { .usual s { background-size: 100% .16em; } }
+  @media (prefers-reduced-motion: reduce) { .usual s { background-size: 100% .12em; } }
 </style>

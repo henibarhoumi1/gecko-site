@@ -118,29 +118,29 @@ const icon = {
 </script>
 <style>
   .viewer { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; grid-template-rows: 1fr auto; padding: 24px 16px; color: #fff; }
-  .veil { position: absolute; inset: 0; background: rgba(10, 10, 12, .62); -webkit-backdrop-filter: blur(28px) saturate(140%); backdrop-filter: blur(28px) saturate(140%); opacity: 0; transition: opacity 360ms var(--ease); }
+  .veil { position: absolute; inset: 0; background: rgba(0, 0, 0, .88); opacity: 0; transition: opacity 360ms var(--ease); }
   .viewer.in .veil { opacity: 1; }
   .stage { position: relative; display: flex; align-items: center; gap: clamp(12px, 3vw, 40px); opacity: 0; transition: opacity 260ms var(--ease); }
   .viewer.in .stage, .viewer.in .dock, .viewer.in .close { opacity: 1; }
-  .player { position: relative; height: min(80svh, 860px); aspect-ratio: 9 / 16; max-width: calc(100vw - 32px); background: #000; border-radius: 28px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08), 0 50px 120px -20px rgba(0, 0, 0, .7); transform-origin: top left; cursor: pointer; overflow: hidden; }
+  .player { position: relative; height: min(80svh, 860px); aspect-ratio: 9 / 16; max-width: calc(100vw - 32px); background: #000; border-radius: 28px;  transform-origin: top left; cursor: pointer; overflow: hidden; }
   .player video { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .bar { position: absolute; left: 16px; right: 16px; bottom: 14px; height: 3px; border-radius: 3px; overflow: hidden; background: rgba(255, 255, 255, .3); }
+  .bar { position: absolute; left: 16px; right: 16px; bottom: 14px; height: 3px; border-radius: 3px; overflow: hidden; background: #000; }
   .bar i { display: block; height: 100%; background: #fff; transform: scaleX(0); transform-origin: left; }
-  .ctl { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: #fff; cursor: pointer; background: rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border: 1px solid rgba(255, 255, 255, .16); transition: background 200ms var(--ease), transform 300ms var(--spring); }
-  .ctl:hover { background: rgba(255, 255, 255, .26); transform: scale(1.06); }
+  .ctl { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; color: #000; cursor: pointer; background: #fff; border: 0; transition: background 200ms var(--ease), transform 300ms var(--spring); }
+  .ctl:hover { background: var(--pink); transform: scale(1.06); }
   .ctl:active { transform: scale(.94); }
   .close { position: absolute; top: 20px; right: 20px; z-index: 2; opacity: 0; transition: opacity 260ms var(--ease), background 200ms var(--ease); }
-  .dock { position: relative; display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 6px 6px 6px 20px; border-radius: 999px; background: rgba(255, 255, 255, .1); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, .12); opacity: 0; transition: opacity 260ms var(--ease); }
+  .dock { position: relative; display: flex; align-items: center; gap: 14px; margin-top: 16px; padding: 6px 6px 6px 20px; border-radius: 999px; background: #000; opacity: 0; transition: opacity 260ms var(--ease); }
   .dock .ctl { width: 40px; height: 40px; border: 0; }
   .count { margin: 0; font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums; }
-  .why-b { height: 40px; padding: 0 16px; border: 1px solid rgba(255, 255, 255, .4); border-radius: 999px; background: transparent; color: #fff; font: 700 14px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .why-b { height: 40px; padding: 0 16px; border: 1px solid #fff; border-radius: 999px; background: transparent; color: #fff; font: 700 14px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
   .why-b:hover, .why-b[aria-expanded='true'] { background: #fff; color: var(--ink); }
   .why-b:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   /* The note sits over the bottom of the reel: white paper, black type, a strip of tape as its label. */
   .why { position: absolute; z-index: 2; left: 12px; right: 12px; bottom: 30px; padding: 22px 18px 18px; background: #fff; color: var(--ink); cursor: auto; }
   .why-k { position: absolute; top: -12px; left: 14px; margin: 0; }
   .why-t { margin: 0 0 6px; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
-  .why-d { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+  .why-d { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink); }
   .ctl :global(.i-off) { display: none; }
   .muted .ctl :global(.i-off) { display: block; }
   .muted .ctl :global(.i-on) { display: none; }
