@@ -27,7 +27,7 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
       {m.for && <p class="for">{m.for[lang]}</p>}
     </header>
     <p class="price">
-      {m.custom ? <b>{L.custom}</b> : <><b>{fmt(m.launch, lang)}</b> <span>{o.currency} {m.once ? p.once : p.month}</span></>}
+      {m.custom ? <b>{L.custom}</b> : <><b>{fmt(m.launch, lang)}</b>{' '}<span>{o.currency}{' '}{m.once ? p.once : p.month}</span></>}
     </p>
     <p class="works">
       {m.key === 'test' ? L.testWorks : m.custom ? p.customNote : L.perReel(perReel(m))}
@@ -37,7 +37,7 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
       <ul>
         {m.custom ? L.partnerGives.map((x) => <li>{x}</li>) : (
           <>
-            <li>{m.max ? `${m.reels}–${m.max}` : m.reels} {m.once ? p.reelsOnce : p.reels}{hooks(m) ? ` · ${L.openings(hooks(m))}` : ''}</li>
+            <li>{m.max ? `${m.reels}–${m.max}` : m.reels}{' '}{m.once ? p.reelsOnce : p.reels}{hooks(m) ? ` · ${L.openings(hooks(m))}` : ''}</li>
             {m.shoot && m.once && <li>{m.shoot[lang]}</li>}
             {m.items[lang].map((x) => <li>{x}</li>)}
             {m.review && <li>{m.review[lang]}</li>}
@@ -45,7 +45,7 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
         )}
       </ul>
     </div>
-    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : L.choose} {m.name} <span class="arr" aria-hidden="true">→</span></a>
+    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : L.choose}{' '}{m.name} <span class="arr" aria-hidden="true">→</span></a>
   </article>
 ))}
 
