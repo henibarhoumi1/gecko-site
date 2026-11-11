@@ -161,7 +161,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
 
   /* The blue block, and the window on it. Inside: white, black, one blue. Pink only where something waits for you. */
   .stage { position: relative; padding: clamp(20px, 4vw, 72px) clamp(16px, 5vw, 96px); border-radius: 32px; background: var(--blue); }
-  .ex { position: absolute; z-index: 2; left: clamp(16px, 5vw, 96px); top: clamp(6px, 2.4vw, 44px); background: #fff; transform: rotate(-2deg); }
+  .ex { position: absolute; z-index: 2; left: clamp(16px, 5vw, 96px); top: clamp(2px, 1.3vw, 20px); background: #fff; transform: rotate(-2deg); }
   .win { max-width: 1180px; margin-inline: auto; border-radius: 20px; overflow: hidden; background: #fff; color: #000; font-size: 15px; }
   .bar { display: flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px; background: #000; color: #fff; font-size: 13px; font-weight: 500; }
   .bar i { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
@@ -217,8 +217,8 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   @keyframes point { from { transform: translate(-260px, -210px); opacity: 0; } 20% { opacity: 1; } }
 
   /* 2 Review */
-  .review { grid-row: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(18px, 2.4vw, 36px); min-height: 0; }
-  .frame { position: relative; height: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #000; }
+  .review { grid-row: 1 / -1; display: grid; grid-template-columns: clamp(170px, 16.5vw, 246px) minmax(0, 1fr); gap: clamp(18px, 2.4vw, 36px); min-height: 0; align-items: start; }
+  .frame { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #000; }
   .frame img, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .frame video { opacity: 0; transition: opacity 400ms var(--ease); }
   .frame :global(video.live) { opacity: 1; }
