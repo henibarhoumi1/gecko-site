@@ -45,7 +45,7 @@ const p = c(lang).plans;
   .every li::before { content: ''; position: absolute; left: 0; top: .5em; width: 9px; height: 9px; border-radius: 50%; background: var(--pink); }
   /* Four panels, one row. Each panel borrows the row's five tracks, so prices, lists and buttons line up across them. */
   .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); column-gap: clamp(12px, 1.2vw, 20px); }
-  .row :global(.pp) { grid-row: span 5; grid-template-rows: subgrid; grid-template-columns: 1fr; align-content: stretch; }
+  .row :global(.pp) { grid-row: span 5; grid-template-rows: subgrid; grid-template-columns: 1fr !important; align-content: stretch; }
   .row :global(.pp > *) { grid-column: 1 !important; grid-row: auto !important; }
   .row :global(.pp > header) { align-self: end; }
   .row :global(.pp .go) { justify-self: stretch; }
@@ -58,7 +58,7 @@ const p = c(lang).plans;
   @media (max-width: 1100px) {
     .top { grid-template-columns: 1fr; align-items: start; }
     .row { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; row-gap: 12px; }
-    .row :global(.pp) { grid-row: auto; grid-template-rows: none; }
+    .row :global(.pp) { grid-row: auto; grid-template-rows: none; align-content: start; }
     .bw { grid-template-columns: 1fr; justify-items: start; }
     .bw-n { white-space: normal; }
   }
