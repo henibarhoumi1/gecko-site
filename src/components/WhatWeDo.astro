@@ -20,7 +20,8 @@ const T = {
 const tones = ['blue', 'pink', 'black', 'blue'];
 const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
 ---
-<section class="section what-sec" id="what" aria-labelledby="what-t">
+<section class="what-sec" id="what" aria-labelledby="what-t" data-what-wrap>
+  <div class="pin">
   <div class="wrap wide what" data-what>
     <div class="left">
       <h2 class="h2 rv" id="what-t">{L.title}</h2>
@@ -35,6 +36,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
     </div>
 
     <div class="stage" data-tone={tones[0]} data-stage>
+      <p class="count" aria-hidden="true"><b data-count>01</b><span>/ 0{L.items.length}</span></p>
       <!-- 1 Strategy: the study ticks itself off, then the angle is written. -->
       <div class="scene on" id="what-s0" role="tabpanel" aria-labelledby="what-w0" data-scene="0">
         <div class="sheet study">
@@ -93,58 +95,83 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
       </div>
     </div>
   </div>
+  </div>
 </section>
 
 <script>
-  const root = document.querySelector<HTMLElement>('[data-what]');
-  if (root) {
+  const wrap = document.querySelector<HTMLElement>('[data-what-wrap]');
+  const root = wrap?.querySelector<HTMLElement>('[data-what]');
+  if (wrap && root) {
     const words = [...root.querySelectorAll<HTMLElement>('[data-word]')];
     const scenes = [...root.querySelectorAll<HTMLElement>('[data-scene]')];
     const stage = root.querySelector<HTMLElement>('[data-stage]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
     const tones = ['blue', 'pink', 'black', 'blue'];
     const video = root.querySelector<HTMLVideoElement>('video')!;
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const wide = matchMedia('(min-width: 981px)');
     let at = 0, timer = 0, seen = false;
     const show = (i: number) => {
-      at = (i + words.length) % words.length;
-      words.forEach((w, j) => { w.classList.toggle('on', j === at); w.querySelector('button')!.setAttribute('aria-selected', String(j === at)); });
+      at = Math.max(0, Math.min(words.length - 1, i));
+      words.forEach((w, j) => { w.classList.toggle('on', j === at); w.classList.toggle('was', j < at); w.querySelector('button')!.setAttribute('aria-selected', String(j === at)); });
       scenes.forEach((s, j) => { s.hidden = j !== at; s.classList.remove('on'); });
       // The class goes on a frame later, so the scene's animations start from the top every time it comes up.
       requestAnimationFrame(() => requestAnimationFrame(() => scenes[at].classList.add('on')));
       stage.dataset.tone = tones[at];
-      if (at === 2 && !still) { if (!video.getAttribute('src')) video.src = video.dataset.src!; video.play().then(() => video.classList.add('live')).catch(() => {}); }
+      count.textContent = String(at + 1).padStart(2, '0');
+      if (at === 2 && !still && seen) { if (!video.getAttribute('src')) video.src = video.dataset.src!; video.play().then(() => video.classList.add('live')).catch(() => {}); }
       else video.pause();
     };
-    // It keeps moving on its own. A click or a hover picks a word and gives it longer before the show moves on.
-    const tick = (wait = 4200) => { clearTimeout(timer); if (!still && seen && !document.hidden) timer = window.setTimeout(() => { show(at + 1); tick(); }, wait); };
-    words.forEach((w, j) => {
-      const b = w.querySelector('button')!;
-      b.addEventListener('click', () => { show(j); tick(9000); });
-      b.addEventListener('pointerenter', (e) => { if ((e as PointerEvent).pointerType === 'mouse' && j !== at) { show(j); tick(7000); } });
-    });
+    // Wide screens: the section pins and the scroll turns the page. Each word owns an equal share of the scroll.
+    const span = () => wrap.offsetHeight - innerHeight;
+    const onScroll = () => {
+      if (!wide.matches) return;
+      const p = Math.max(0, Math.min(0.999, -wrap.getBoundingClientRect().top / Math.max(1, span())));
+      wrap.style.setProperty('--p', p.toFixed(4));
+      const i = Math.floor(p * words.length);
+      if (i !== at) show(i);
+    };
+    let queued = false;
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; onScroll(); }); } }, { passive: true });
+    addEventListener('resize', onScroll);
+    // Narrow screens: no pin; it moves on by itself and a tap picks a word.
+    const tick = (wait = 4200) => { clearTimeout(timer); if (!wide.matches && !still && seen && !document.hidden) timer = window.setTimeout(() => { show((at + 1) % words.length); tick(); }, wait); };
+    words.forEach((w, j) => w.querySelector('button')!.addEventListener('click', () => {
+      if (wide.matches) scrollTo({ top: wrap.getBoundingClientRect().top + scrollY + ((j + 0.5) / words.length) * span(), behavior: still ? 'auto' : 'smooth' });
+      else { show(j); tick(9000); }
+    }));
     document.addEventListener('visibilitychange', () => tick());
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) tick(); else { clearTimeout(timer); video.pause(); } }, { threshold: 0.35 }).observe(root);
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) { tick(); if (at === 2) show(2); } else { clearTimeout(timer); video.pause(); } }, { threshold: 0.2 }).observe(root);
+    onScroll();
   }
 </script>
 
 <style>
+  /* Wide screens: the section is four screens tall and its content stays pinned while you scroll through it. */
+  .what-sec { height: 360svh; }
+  .pin { position: sticky; top: 0; height: 100svh; display: grid; align-items: center; padding-top: var(--header, 84px); overflow: hidden; }
   .what { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
   .left { display: grid; gap: clamp(28px, 3.4vw, 56px); min-width: 0; }
-  .left .h2 { max-width: 15ch; font-size: clamp(30px, 3.2vw, 52px); }
+  .left { gap: clamp(18px, 3.2svh, 44px); }
+  .left .h2 { max-width: 16ch; font-size: clamp(24px, min(2.8vw, 5.2svh), 46px); }
 
   /* The words: outline until they're on, then ink on the pink marker. */
   .words { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(2px, .5vw, 8px); }
   .words button { display: block; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-  .w { display: inline-block; font-weight: 800; font-size: clamp(52px, 7.6vw, 132px); line-height: .98; white-space: nowrap; padding-inline: .04em; margin-inline: -.04em;
+  .w { display: inline-block; font-weight: 800; font-size: clamp(48px, min(7.6vw, 12.6svh), 132px); line-height: .98; white-space: nowrap; padding-inline: .04em; margin-inline: -.04em;
     color: transparent; -webkit-text-stroke: 2px #000; background: linear-gradient(var(--pink), var(--pink)) 0 84% / 0 36% no-repeat;
     transition: color 260ms var(--ease), background-size 620ms cubic-bezier(.65, 0, .35, 1); }
   .on .w { color: #000; -webkit-text-stroke-width: 0; background-size: 100% 36%; }
+  .words li { transition: transform 520ms cubic-bezier(.2, .8, .2, 1); transform-origin: 0 50%; }
+  .words li.on { transform: translateX(clamp(0px, 1vw, 16px)); }
   .words button:focus-visible .w { outline: 3px solid #000; outline-offset: 4px; }
   .words p { margin: 0; max-width: 34rem; max-height: 0; overflow: hidden; opacity: 0; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; transition: max-height 420ms var(--ease), opacity 300ms var(--ease), padding 420ms var(--ease); }
   .on p { max-height: 7em; opacity: 1; padding: 6px 0 14px; }
 
   /* The stage: one filled block that changes colour with the scene. */
-  .stage { position: relative; aspect-ratio: 1 / 1.02; max-height: 680px; width: 100%; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 420ms var(--ease); }
+  .stage { position: relative; aspect-ratio: 1 / 1.02; max-height: min(700px, calc(100svh - var(--header, 84px) - 56px)); width: auto; max-width: 100%; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 520ms var(--ease); }
+  .count { position: absolute; z-index: 2; right: 18px; top: 18px; margin: 0; display: inline-flex; align-items: baseline; gap: 6px; padding: 8px 14px; border-radius: 999px; background: #fff; color: #000; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .count b { font-weight: 800; font-size: 15px; }
   .stage[data-tone='pink'] { background: var(--pink); }
   .stage[data-tone='black'] { background: #000; color: #fff; }
   .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(20px, 3vw, 48px); }
@@ -236,7 +263,10 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   @keyframes toast { from { opacity: 0; transform: translateY(-16px) scale(.9); } }
 
   @media (max-width: 980px) {
+    .what-sec { height: auto; padding-block: var(--section); }
+    .pin { position: static; height: auto; padding-top: 0; overflow: visible; }
     .what { grid-template-columns: 1fr; }
+    .stage { width: 100%; max-height: none; }
     .stage { justify-self: stretch; aspect-ratio: 1 / 1.1; }
     .w { font-size: clamp(44px, 13vw, 84px); -webkit-text-stroke-width: 1.5px; }
   }
