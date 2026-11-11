@@ -98,6 +98,8 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 /* The pink marker under the words that matter, drawn once, left to right, when they come into view. */
 .hl { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 0 34% no-repeat; transition: background-size 900ms cubic-bezier(.65, 0, .35, 1) 250ms; }
 .in .hl, .hl.in, .no-rv .hl { background-size: 100% 34%; }
+/* Marked words stay black even on a black section, so they read on the pink. */
+.on-black .hl, .on-mat .hl, .on-black .roll .w { color: #000; }
 
 /* The word roll: the last word of a title cuts through a list of words about every 2 seconds, each landing on the
    marker as it draws (src/scripts/roll.ts). All the words sit stacked in one grid cell, so the title never changes
