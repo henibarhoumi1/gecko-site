@@ -3,13 +3,15 @@
 // drawn as Gecko's own shapes in black, white, pink and blue. They sit around the headline lines, pop in after the
 // headline rises, bob slowly, and lean away from the mouse a little. Decoration only. With reduced motion they stay
 // still.
+interface Props { lang?: string }
+const { lang = 'en' } = Astro.props;
 const play = '<svg viewBox="0 0 100 100"><rect x="3" y="3" width="94" height="94" rx="28" fill="#000"/><path d="M40 30v40l32-20z" fill="#fff"/></svg>';
 const heart = '<svg viewBox="0 0 100 100"><path d="M50 86C21 66 7 51 7 33 7 20 17 11 29 11c9 0 16 5 21 13 5-8 12-13 21-13 12 0 22 9 22 22 0 18-14 33-43 53z" fill="var(--pink)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/></svg>';
 const comment = '<svg viewBox="0 0 100 100"><path d="M20 12h60a14 14 0 0 1 14 14v34a14 14 0 0 1-14 14H46L26 90V74h-6A14 14 0 0 1 6 60V26a14 14 0 0 1 14-14z" fill="var(--blue)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="43" r="5.5"/><circle cx="50" cy="43" r="5.5"/><circle cx="68" cy="43" r="5.5"/></svg>';
 const send = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#fff" stroke="#000" stroke-width="4.5"/><path d="M27 49l46-21-17 46-8-19z" fill="#000" stroke="#000" stroke-width="4" stroke-linejoin="round"/><path d="M48 55l25-27" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>';
 const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height="107" rx="12" fill="#fff" stroke="#000" stroke-width="4"/><rect x="22" y="9" width="20" height="4" rx="2"/><text x="32" y="64" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="17">9:16</text></svg>';
 ---
-<div class="feed" aria-hidden="true" data-feed>
+<div class="feed" aria-hidden="true" data-feed data-lang={lang}>
   <span class="fi fi-play" style="--x:62%;--y:1%;--s:clamp(84px, 8.6vw, 138px);--r:-9deg;--t:7s;--o:0;--k:1.2" set:html={play} />
   <span class="fi fi-send" style="--x:87%;--y:-8%;--s:clamp(56px, 5.4vw, 86px);--r:12deg;--t:8s;--o:1;--k:.8" set:html={send} />
   <span class="fi fi-sound" style="--x:88%;--y:41%;--r:-4deg;--t:6s;--o:2;--k:1">
@@ -48,6 +50,11 @@ const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height
   .bars i:nth-child(2) { animation-delay: -300ms; height: 80%; } .bars i:nth-child(3) { animation-delay: -600ms; height: 45%; }
   .bars i:nth-child(4) { animation-delay: -150ms; height: 70%; } .bars i:nth-child(5) { animation-delay: -450ms; height: 55%; } .bars i:nth-child(6) { animation-delay: -750ms; height: 40%; }
   @keyframes eq { from { transform: scaleY(.3); } }
+
+  /* French: the last line is longer, so the lower pieces sit further right. */
+  .feed[data-lang='fr'] .fi-heart { --x: 63% !important; }
+  .feed[data-lang='fr'] .fi-comment { --x: 74% !important; }
+  .feed[data-lang='fr'] .fi-frame { --x: 86% !important; --y: 70% !important; }
 
   @media (max-width: 860px) {
     .fi-send, .fi-frame, .fi-sound { display: none; }
