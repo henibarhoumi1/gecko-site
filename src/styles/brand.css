@@ -42,7 +42,7 @@
   /* older names still used by components */
   --black: var(--ink);
 
-  --font: 'Cabinet Grotesk', 'Gecko Fallback', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font: 'Bricolage Grotesque', 'Gecko Fallback', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --type: var(--font);
 
   --h1: clamp(46px, 7.6vw, 120px);
@@ -70,8 +70,10 @@
 html { color-scheme: light; background: var(--bg); }
 body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }
 
-/* Headlines are Extrabold, text Medium, labels and buttons Bold. Tracking is tuned for Cabinet Grotesk. */
-.h1, .h2, .h3 { font-family: var(--font); font-weight: 800; line-height: .98; letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+/* One family, Bricolage Grotesque, in two voices. Headlines: Extrabold, narrow (the width axis at 80%), tight, so
+   they stand tall like the logo. Text: regular width, Medium. Labels and buttons: Bold. */
+h1, h2, .h1, .h2, .display { font-stretch: 80%; font-variation-settings: 'opsz' 96; }
+.h1, .h2, .h3 { font-family: var(--font); font-weight: 800; line-height: .94; letter-spacing: -0.025em; margin: 0; text-wrap: balance; }
 .h1 { font-size: var(--h1); } .h2 { font-size: var(--h2); } .h3 { font-size: var(--h3); letter-spacing: -0.015em; line-height: 1.12; }
 .text { font-weight: 500; font-size: var(--body); line-height: 1.5; }
 .label { font-weight: 700; font-size: var(--label); letter-spacing: 0; }
