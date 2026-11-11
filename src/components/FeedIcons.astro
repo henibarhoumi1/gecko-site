@@ -3,8 +3,24 @@
 // drawn as Gecko's own shapes in black, white, pink and blue. They sit around the headline lines, pop in after the
 // headline rises, bob slowly, and lean away from the mouse a little. Decoration only. With reduced motion they stay
 // still.
+//
+// Platform logos: put the official files from each platform's brand page in public/platforms/ as tiktok, instagram,
+// meta, youtube and shopify (.svg or .png). Any that are there take the places below at the next build; the feed
+// pieces fill the rest. Nothing to change in the code.
+import fs from 'node:fs';
+import path from 'node:path';
 interface Props { lang?: string }
 const { lang = 'en' } = Astro.props;
+const dir = path.join(process.cwd(), 'public', 'platforms');
+const find = (n: string) => ['svg', 'png', 'webp'].map((e) => `${n}.${e}`).find((f) => fs.existsSync(path.join(dir, f)));
+const spots = [
+  { n: 'tiktok', x: '62%', y: '1%', s: 'clamp(84px, 8.6vw, 132px)', r: '-9deg', o: 0, k: 1.2 },
+  { n: 'instagram', x: '87%', y: '-8%', s: 'clamp(64px, 6vw, 96px)', r: '12deg', o: 1, k: .8 },
+  { n: 'youtube', x: '86%', y: '38%', s: 'clamp(76px, 7vw, 112px)', r: '-5deg', o: 2, k: 1 },
+  { n: 'meta', x: '55%', y: '71%', s: 'clamp(76px, 7.2vw, 116px)', r: '-7deg', o: 4, k: .9 },
+  { n: 'shopify', x: '71%', y: '72%', s: 'clamp(64px, 6vw, 96px)', r: '8deg', o: 5, k: 1.1 },
+].map((p) => ({ ...p, file: find(p.n) })).filter((p) => p.file);
+const has = (n: string) => spots.some((p) => p.n === n);
 const play = '<svg viewBox="0 0 100 100"><rect x="3" y="3" width="94" height="94" rx="28" fill="#000"/><path d="M40 30v40l32-20z" fill="#fff"/></svg>';
 const heart = '<svg viewBox="0 0 100 100"><path d="M50 86C21 66 7 51 7 33 7 20 17 11 29 11c9 0 16 5 21 13 5-8 12-13 21-13 12 0 22 9 22 22 0 18-14 33-43 53z" fill="var(--pink)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/></svg>';
 const comment = '<svg viewBox="0 0 100 100"><path d="M20 12h60a14 14 0 0 1 14 14v34a14 14 0 0 1-14 14H46L26 90V74h-6A14 14 0 0 1 6 60V26a14 14 0 0 1 14-14z" fill="var(--blue)" stroke="#000" stroke-width="4.5" stroke-linejoin="round"/><circle cx="32" cy="43" r="5.5"/><circle cx="50" cy="43" r="5.5"/><circle cx="68" cy="43" r="5.5"/></svg>';
@@ -12,14 +28,19 @@ const send = '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="#f
 const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height="107" rx="12" fill="#fff" stroke="#000" stroke-width="4"/><rect x="22" y="9" width="20" height="4" rx="2"/><text x="32" y="64" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="800" font-size="17">9:16</text></svg>';
 ---
 <div class="feed" aria-hidden="true" data-feed data-lang={lang}>
-  <span class="fi fi-play" style="--x:62%;--y:1%;--s:clamp(84px, 8.6vw, 138px);--r:-9deg;--t:7s;--o:0;--k:1.2" set:html={play} />
-  <span class="fi fi-send" style="--x:87%;--y:-8%;--s:clamp(56px, 5.4vw, 86px);--r:12deg;--t:8s;--o:1;--k:.8" set:html={send} />
-  <span class="fi fi-sound" style="--x:88%;--y:41%;--r:-4deg;--t:6s;--o:2;--k:1">
+  {spots.map((p) => (
+    <span class={`fi fi-logo fi-${p.n}`} style={`--x:${p.x};--y:${p.y};--s:${p.s};--r:${p.r};--t:${7 + p.o * .5}s;--o:${p.o};--k:${p.k}`}>
+      <img src={`/platforms/${p.file}`} alt="" decoding="async" />
+    </span>
+  ))}
+  {!has('tiktok') && <span class="fi fi-play" style="--x:62%;--y:1%;--s:clamp(84px, 8.6vw, 138px);--r:-9deg;--t:7s;--o:0;--k:1.2" set:html={play} />}
+  {!has('instagram') && <span class="fi fi-send" style="--x:87%;--y:-8%;--s:clamp(56px, 5.4vw, 86px);--r:12deg;--t:8s;--o:1;--k:.8" set:html={send} />}
+  {!has('youtube') && <span class="fi fi-sound" style="--x:88%;--y:41%;--r:-4deg;--t:6s;--o:2;--k:1">
     <span class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></span>
-  </span>
+  </span>}
   <span class="fi fi-heart" style="--x:41%;--y:74%;--s:clamp(70px, 6.8vw, 110px);--r:11deg;--t:6.5s;--o:3;--k:1.4" set:html={heart} />
-  <span class="fi fi-comment" style="--x:55%;--y:71%;--s:clamp(76px, 7.4vw, 120px);--r:-7deg;--t:7.5s;--o:4;--k:.9" set:html={comment} />
-  <span class="fi fi-frame" style="--x:71%;--y:73%;--s:clamp(46px, 4.4vw, 70px);--r:8deg;--t:9s;--o:5;--k:1.1" set:html={frame} />
+  {!has('meta') && <span class="fi fi-comment" style="--x:55%;--y:71%;--s:clamp(76px, 7.4vw, 120px);--r:-7deg;--t:7.5s;--o:4;--k:.9" set:html={comment} />}
+  {!has('shopify') && <span class="fi fi-frame" style="--x:71%;--y:73%;--s:clamp(46px, 4.4vw, 70px);--r:8deg;--t:9s;--o:5;--k:1.1" set:html={frame} />}
 </div>
 
 <script>
@@ -39,6 +60,8 @@ const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height
   .fi { position: absolute; left: var(--x); top: var(--y); width: var(--s); display: block;
     translate: calc(var(--mx) * var(--k) * 14px) calc(var(--my) * var(--k) * 10px); transition: translate 600ms cubic-bezier(.2, .8, .2, 1);
     animation: fi-in 700ms cubic-bezier(.34, 1.56, .64, 1) both, fi-bob var(--t) ease-in-out infinite; animation-delay: calc(900ms + var(--o) * 110ms), calc(var(--o) * -1.3s); }
+  /* A platform's own logo file, shown as it is, at its own proportions. */
+  .fi-logo img { display: block; width: 100%; height: auto; transform: rotate(var(--r)); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .14)); }
   .fi :global(svg) { display: block; width: 100%; height: auto; overflow: visible; transform: rotate(var(--r)); }
   @keyframes fi-in { from { opacity: 0; scale: .4; } }
   @keyframes fi-bob { 50% { transform: translateY(-12px) rotate(3deg); } }
