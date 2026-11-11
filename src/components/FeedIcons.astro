@@ -61,7 +61,7 @@ const frame = '<svg viewBox="0 0 64 112"><rect x="2.5" y="2.5" width="59" height
     translate: calc(var(--mx) * var(--k) * 14px) calc(var(--my) * var(--k) * 10px); transition: translate 600ms cubic-bezier(.2, .8, .2, 1);
     animation: fi-in 700ms cubic-bezier(.34, 1.56, .64, 1) both, fi-bob var(--t) ease-in-out infinite; animation-delay: calc(900ms + var(--o) * 110ms), calc(var(--o) * -1.3s); }
   /* A platform's own logo file, shown as it is, at its own proportions. */
-  .fi-logo img { display: block; width: 100%; height: auto; transform: rotate(var(--r)); filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .14)); }
+  .fi-logo img { display: block; width: 100%; height: auto; transform: rotate(var(--r)); }
   .fi :global(svg) { display: block; width: 100%; height: auto; overflow: visible; transform: rotate(var(--r)); }
   @keyframes fi-in { from { opacity: 0; scale: .4; } }
   @keyframes fi-bob { 50% { transform: translateY(-12px) rotate(3deg); } }
