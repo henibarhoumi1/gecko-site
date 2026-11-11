@@ -1,0 +1,30 @@
+---
+// One straight running strip, full width: blue (formats) or pink ("Let's make your next ad" before the footer). Same
+// motion as the crossed pair in Bands.astro: it drifts sideways at a steady speed and never reacts to scrolling.
+// With `href` the whole strip is a link.
+interface Props { tone: 'blue' | 'pink'; items: readonly string[]; href?: string; label?: string; speed?: number; rev?: boolean }
+const { tone, items, href, label, speed = 55, rev = false } = Astro.props;
+const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
+const Tag = href ? 'a' : 'div';
+---
+<Tag class={`strip ${tone}`} href={href} aria-label={href ? label : undefined} aria-hidden={href ? undefined : 'true'}>
+  <div class="run" data-marquee={speed} data-rev={rev ? '' : undefined} aria-hidden="true">
+    {[0, 1, 2, 3].map(() => <ul>{items.map((x) => <li>{x}<svg viewBox="0 0 16 16" set:html={star} /></li>)}</ul>)}
+  </div>
+</Tag>
+
+<script>
+  import '../scripts/marquee';
+</script>
+
+<style>
+  .strip { display: block; overflow: hidden; color: var(--ink); text-decoration: none; font-weight: 800; font-size: clamp(30px, 4.6vw, 72px); line-height: 1; letter-spacing: -0.035em; }
+  .blue { background: var(--blue); }
+  .pink { background: var(--pink); }
+  .run { display: flex; width: max-content; will-change: transform; }
+  .run ul { display: flex; list-style: none; margin: 0; padding: 0; }
+  .run li { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 36px); padding: clamp(18px, 2vw, 28px) clamp(20px, 2.4vw, 36px) clamp(18px, 2vw, 28px) 0; white-space: nowrap; }
+  .run svg { flex: none; width: .5em; height: .5em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; animation: strip-spin 6s linear infinite; }
+  @keyframes strip-spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .run svg { animation: none; } }
+</style>
