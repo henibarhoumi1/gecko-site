@@ -6,7 +6,6 @@ import NowPlaying from '../../components/NowPlaying.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
 import WhatWeDo from '../../components/WhatWeDo.astro';
-import BrandWorldHome from '../../components/BrandWorldHome.astro';
 import PlansHome from '../../components/PlansHome.astro';
 import WorkspaceHome from '../../components/WorkspaceHome.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
@@ -85,10 +84,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   </section>
 
   <WhatWeDo lang={lang} />
-
-  <Strip tone="blue" items={L.strip.formats} href={href(lang, 'brand-world')} label={L.bw.name} />
-
-  <BrandWorldHome lang={lang} />
 
   <PlansHome lang={lang} />
 
