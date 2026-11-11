@@ -47,7 +47,12 @@ const p = c(lang).plans;
   .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); column-gap: clamp(12px, 1.2vw, 20px); }
   .row :global(.pp) { grid-row: span 5; grid-template-rows: subgrid; grid-template-columns: 1fr !important; align-content: stretch; }
   .row :global(.pp > *) { grid-column: 1 !important; grid-row: auto !important; }
-  .row :global(.pp > header) { align-self: end; }
+  /* Every panel keeps a line for a flag, with or without one, so the four names sit on the same line. */
+  .row :global(.pp > header) { align-self: start; }
+  .row :global(.pp > header:not(:has(.flag))::before) { content: ''; display: block; height: 42px; }
+  .row :global(.pp .flag) { display: flex; align-items: center; width: fit-content; height: 30px; margin: 0 0 12px; }
+  .row :global(.pp .name) { min-height: 1.9em; }
+  .row :global(.k-partner .price b) { font-size: clamp(30px, 3.1vw, 48px); line-height: 1; }
   .row :global(.pp .go) { justify-self: stretch; }
   .bw { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px clamp(24px, 4vw, 72px); margin-top: clamp(12px, 1.2vw, 20px); padding: clamp(28px, 3vw, 48px); border-radius: var(--r-lg); background: #000; color: #fff; text-decoration: none; }
   .bw-k { grid-column: 1 / -1; font-weight: 700; font-size: 13px; color: var(--blue); }
