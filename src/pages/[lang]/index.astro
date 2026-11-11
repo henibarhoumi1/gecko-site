@@ -39,7 +39,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
 const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 ---
-<Base lang={lang} page="home">
+<Base lang={lang} page="home" footerCta={false}>
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
       <div class="h-copy">

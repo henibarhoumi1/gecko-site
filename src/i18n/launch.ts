@@ -72,6 +72,16 @@ const en = {
     world: ['🌍', 'The whole brand world'], bw: 'The Brand World, quoted for your brand',
   },
   faqAll: 'See all questions',
+  privacy: {
+    nav: 'Privacy', title: 'Privacy.', lede: 'What our forms collect, why, and what you can ask us to do with it.',
+    blocks: [
+      ['What we collect', 'Only what you type into our forms: your answers in the brief, your name, brand, link, phone number, email and any note. On the hiring page, also the links and files you attach. We also count page views and taps on WhatsApp, without any detail about you.'],
+      ['Why', 'To reply to you, to suggest where to start and prepare a quote, and, on the hiring page, to look at your work.'],
+      ['Where it goes', 'To the Gecko team, by email and into our team workspace. If you choose WhatsApp, your message goes through WhatsApp.'],
+      ['Your choices', 'Write to us at the address below to see, correct or delete what you sent. We will answer you.'],
+    ],
+    contact: 'Write to us',
+  },
 };
 
 const fr: typeof en = {
@@ -143,6 +153,16 @@ const fr: typeof en = {
     world: ['🌍', 'Tout l’univers de marque'], bw: 'L’Univers de marque, sur devis',
   },
   faqAll: 'Voir toutes les questions',
+  privacy: {
+    nav: 'Confidentialité', title: 'Confidentialité.', lede: 'Ce que collectent nos formulaires, pourquoi, et ce que vous pouvez nous demander d’en faire.',
+    blocks: [
+      ['Ce que nous collectons', 'Seulement ce que vous saisissez dans nos formulaires : vos réponses au brief, votre nom, votre marque, un lien, votre numéro, votre e-mail et une note. Sur la page de recrutement, aussi les liens et fichiers que vous joignez. Nous comptons aussi les visites de pages et les appuis sur WhatsApp, sans aucune information sur vous.'],
+      ['Pourquoi', 'Pour vous répondre, vous suggérer par où commencer et préparer un devis, et, sur la page de recrutement, regarder votre travail.'],
+      ['Où cela va', 'À l’équipe Gecko, par e-mail et dans notre espace de travail d’équipe. Si vous choisissez WhatsApp, votre message passe par WhatsApp.'],
+      ['Vos choix', 'Écrivez-nous à l’adresse ci-dessous pour voir, corriger ou supprimer ce que vous avez envoyé. Nous vous répondrons.'],
+    ],
+    contact: 'Écrivez-nous',
+  },
 };
 
 export const launch = (lang: Locale) => (lang === 'fr' ? fr : en);

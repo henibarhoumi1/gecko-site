@@ -4,6 +4,7 @@ import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
+import { launch } from '../i18n/launch';
 interface Props { lang: Locale; cta?: boolean }
 const { lang, cta = true } = Astro.props;
 const s = t(lang);
@@ -20,6 +21,7 @@ const n = k.nav;
       <p class="h">{k.footer.pages}</p>
       <div class="pages">
         <a href={href(lang, 'work')}>{n.work}</a>
+        <a href={href(lang, 'brand-world')}>{launch(lang).bw.nav}</a>
         <a href={href(lang, 'offers')}>{n.offers}</a>
         <a href={href(lang, 'process')}>{n.process}</a>
         <a href={href(lang, 'about')}>{n.about}</a>
@@ -40,7 +42,7 @@ const n = k.nav;
     </div>
   </div>
   <div class="wrap wide"><div class="base">
-    <p>© {new Date().getFullYear()} Gecko</p>
+    <p>© {new Date().getFullYear()} Gecko · <a href={href(lang, 'privacy')}>{launch(lang).privacy.nav}</a></p>
     <span class="links">
       <a href={site.portal} rel="noopener">{s.footer.portal}</a>
     </span>
