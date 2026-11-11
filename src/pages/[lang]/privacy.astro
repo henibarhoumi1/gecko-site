@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { type Locale } from '../../i18n/strings';
+import { launch } from '../../i18n/launch';
+import { langPaths } from '../../i18n/static';
+import { site } from '../../data/site';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const P = launch(lang).privacy;
+---
+<Base lang={lang} title={P.nav} page="privacy">
+  <section class="page-head lit">
+    <div class="wrap wide">
+      <h1 class="h1 rv">{P.title}</h1>
+      <p class="text-l lede rv" style="--d:60ms">{P.lede}</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="wrap wide">
+      <div class="blocks">
+        {P.blocks.map(([t, d], i) => (
+          <article class={`rv b${i % 3}`} style={`--d:${i * 60}ms`}><h2 class="h3">{t}</h2><p class="text">{d}</p></article>
+        ))}
+      </div>
+      <p class="mail rv"><a class="btn primary lg" href={`mailto:${site.email}`}>{P.contact}: {site.email}</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .blocks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .blocks article { display: grid; align-content: start; gap: 12px; padding: clamp(22px, 2.4vw, 36px); border-radius: var(--r-lg); color: #000; }
+  .b0 { background: var(--yellow); } .b1 { background: var(--pink); } .b2 { background: var(--blue); }
+  .blocks .text { margin: 0; }
+  .mail { margin: clamp(28px, 3vw, 44px) 0 0; }
+  @media (max-width: 860px) { .blocks { grid-template-columns: 1fr; } }
+</style>
