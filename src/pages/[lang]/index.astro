@@ -31,7 +31,7 @@ const said = lines.join(' ');
 // Width ratios measured for Inter; Cabinet Grotesk is not measured yet, so these are set a little wide (smaller type)
 // so no line is ever cut. Re-measure with the real font and tighten (step 5 review).
 // Measured on the live preview with Bricolage Grotesque narrow Extrabold (11 Nov 2026): 4.48 em for the widest line.
-const widest: Record<string, number> = { en: 4.6, fr: 4.2 };
+const widest: Record<string, number> = { en: 6.3, fr: 4.9 };
 const kw = widest[lang] ?? widest.en;
 // The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
@@ -179,7 +179,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
   .h-copy { container-type: inline-size; display: grid; gap: clamp(24px, 3.4vh, 40px); align-content: center; min-width: 0; }
   .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
-  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.03em; line-height: .88;
+  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
     font-size: min(calc(100cqw / var(--kw) * .97), 190px, 21svh); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }

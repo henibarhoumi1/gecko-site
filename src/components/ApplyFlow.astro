@@ -361,29 +361,29 @@ const recs: Record<string, string> = {
   .lead .h1 { font-size: clamp(44px, 5.4vw, 84px); }
   .lead :global(.roll) { white-space: nowrap; }
   .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-weight: 700; font-size: 14px; }
-  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); animation: pulse 1.8s infinite; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: #000; animation: pulse 1.8s infinite; }
   @keyframes pulse { 50% { opacity: .35; } }
 
-  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: var(--blue); border-radius: var(--r-lg); }
+  .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: #fff; border: 1.5px solid #000; border-radius: var(--r-lg); }
   .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
   .brief :global(li button) { width: 100%; display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
   .brief :global(.k) { font-weight: 700; font-size: 14px; flex: none; }
   .brief :global(.v) { font-size: 15px; text-align: right; font-weight: 700; }
   .brief :global(li button:hover .k) { text-decoration: underline; text-underline-offset: 3px; }
-  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: var(--pink); }
+  .sugg { display: grid; gap: 4px; padding: 14px 16px; border-radius: 16px; background: #000; color: #fff; }
   .sugg[hidden] { display: none; }
   .sugg .pick { margin: 0; font-weight: 700; }
   .direct { display: grid; gap: 6px; }
   .direct a { text-decoration: none; font-weight: 700; }
   .direct a:hover { text-decoration: underline; text-underline-offset: 4px; }
 
-  .flow { position: relative; display: grid; gap: 26px; padding: clamp(26px, 3.2vw, 48px); min-height: 500px; align-content: start; background: var(--yellow); color: #000; --fg: #000; --hair-2: #000; border-radius: var(--r-lg); }
+  .flow { position: relative; display: grid; gap: 26px; padding: clamp(26px, 3.2vw, 48px); min-height: 500px; align-content: start; background: #fff; border: 1.5px solid #000; color: #000; --fg: #000; --hair-2: #000; border-radius: var(--r-lg); }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
   .count { margin: 0; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
   .count b { font-size: 28px; letter-spacing: -0.04em; color: var(--fg); }
-  .bar { display: none; width: clamp(110px, 16vw, 200px); height: 4px; border-radius: 999px; overflow: hidden; background: var(--pink-soft); }
+  .bar { display: none; width: clamp(110px, 16vw, 200px); height: 4px; border-radius: 999px; overflow: hidden; background: #fff; box-shadow: inset 0 0 0 1px #000; }
   .bar i { display: block; height: 100%; border-radius: inherit; background: var(--ink); transform-origin: left; transform: scaleX(0); transition: transform 620ms cubic-bezier(.22, 1, .36, 1); }
-  .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: var(--pink); color: var(--ink); opacity: 0; }
+  .cheer { margin: 0 auto 0 0; font-weight: 700; font-size: 14px; padding: 5px 11px; border-radius: 999px; background: #000; color: #fff; opacity: 0; }
   .cheer.show { animation: cheer 1600ms var(--ease) both; }
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
   .hint { margin: -12px 0 0; font-size: 15px; font-weight: 500; }
@@ -392,19 +392,20 @@ const recs: Record<string, string> = {
   .empty { margin: 0; font-size: 15px; font-weight: 500; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 800; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.03em; line-height: 1.05; }
-  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: var(--white); font-size: 15px; }
+  .plan-pill { margin: 0; justify-self: start; display: inline-flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px #000; font-size: 15px; }
   .plan-pill button { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--ink); background: var(--surface); color: var(--ink); cursor: pointer; font-size: 16px; line-height: 1; }
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1.15 var(--font); padding: 14px 18px 14px 12px; border-radius: 999px; border: 0; background: #fff; color: #000; text-align: left; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 160ms var(--ease); }
+  .chip { display: inline-flex; align-items: center; gap: 10px; font: 600 16px/1.15 var(--font); padding: 14px 18px 14px 12px; border-radius: 999px; border: 0; box-shadow: inset 0 0 0 1.5px #000; background: #fff; color: #000; text-align: left; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), color 200ms var(--ease), transform 160ms var(--ease); }
   .chip .flag { width: 24px; height: 16px; border-radius: 3px; }
-  .chip:hover { background: var(--pink); }
+  .chip:hover { background: #000; color: #fff; }
+  .chip:hover kbd { background: #fff; color: #000; }
   .chip:active { transform: scale(.98); }
   .chip.picked { background: #000; color: #fff; }
-  .chip kbd { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: var(--yellow); font: 700 11px/1 var(--font); color: var(--ink); transition: inherit; }
+  .chip kbd { flex: none; display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; background: #000; color: #fff; font: 700 11px/1 var(--font); transition: inherit; }
   .chip.picked kbd { background: #fff; color: #000; }
   .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: auto; }
   @media (hover: none), (max-width: 860px) { .chip kbd { display: none; } .chip { padding-left: 16px; } }
-  .fit-done { display: grid; gap: 10px; justify-items: start; width: 100%; padding: 20px 22px; border-radius: var(--r-lg); background: var(--pink); }
+  .fit-done { display: grid; gap: 10px; justify-items: start; width: 100%; padding: 20px 22px; border-radius: var(--r-lg); background: #000; color: #fff; --fg: #fff; --bg: #000; --hair-2: #fff; }
   .fit-done[hidden] { display: none; }
   .fit-name { margin: 0 0 6px; font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -0.02em; line-height: 1.15; }
   .fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
@@ -413,9 +414,9 @@ const recs: Record<string, string> = {
   .field .opt { font-weight: 500; }
   .reach { display: grid; gap: 10px; }
   .rl { margin: 0; font: 700 13px/1.2 var(--font); }
-  .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border-radius: 999px; background: #fff; }
+  .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 4px; gap: 4px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
   .seg button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 10px; border: 0; border-radius: 999px; background: none; color: var(--fg); font: 700 15px/1 var(--font); cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .seg button:hover { background: var(--pink); }
+  .seg button:hover { background: #000; color: #fff; }
   .seg [aria-checked='true'], .seg [aria-checked='true']:hover { background: var(--fg); color: var(--bg); }
   .send { justify-self: start; }
   .back { justify-self: start; background: none; border: 0; padding: 6px 0; cursor: pointer; font: 700 14px var(--font); }
