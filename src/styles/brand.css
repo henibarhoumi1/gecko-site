@@ -130,7 +130,3 @@ html.js .roll.live .w.on { animation: roll-in 520ms cubic-bezier(.65, 0, .35, 1)
   * { transition: none !important; animation: none !important; }
   .hl { background-size: 100% 34%; }
 }
-
-/* Stickers (Sticker.astro): they sit where they're put, tilted by --rot, and bob slowly. */
-.sticker { display: block; overflow: visible; pointer-events: none; transform: rotate(var(--rot, 0deg)); animation: float var(--t, 7s) ease-in-out var(--d, 0s) infinite; }
-@keyframes float { 50% { transform: translateY(-12px) rotate(calc(var(--rot, 0deg) + 2.5deg)); } }

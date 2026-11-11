@@ -10,7 +10,6 @@ import BrandWorldHome from '../../components/BrandWorldHome.astro';
 import PlansHome from '../../components/PlansHome.astro';
 import WorkspaceHome from '../../components/WorkspaceHome.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
-import Sticker from '../../components/Sticker.astro';
 import { launch } from '../../i18n/launch';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -58,17 +57,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
           <a class="btn lg" href="#work">{s.hero.work}</a>
         </div>
       </div>
-      <div class="h-reel up" style="--d:300ms"><NowPlaying lang={lang} /><Sticker kind="arch" class="st-arch" style="--rot:-10deg;--t:8s" /><Sticker kind="spark" class="st-sp0" style="--t:5s;--d:-2s" /></div>
+      <div class="h-reel up" style="--d:300ms"><NowPlaying lang={lang} /></div>
     </div>
   </section>
 
-  <div class="cut">
-    <Bands lang={lang} />
-    <Sticker kind="seal" class="st-seal" style="--rot:-8deg;--t:7s" />
-    <Sticker kind="burst" class="st-burst" style="--rot:9deg;--t:9s;--d:-3s" />
-    <Sticker kind="spark" class="st-sp1" style="--t:6s;--d:-1s" />
-    <Sticker kind="spark" class="st-sp2" style="--t:5s;--d:-4s" />
-  </div>
+  <div class="cut"><Bands lang={lang} /></div>
 
   <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
     <div class="wrap wide w-in">
@@ -196,15 +189,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   @keyframes mark { from { transform: scaleX(0); } }
   /* The crossed strips sit on the cut between the white first screen and the black work section. */
   .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
-  .cut :global(.sticker), .h-reel :global(.sticker) { position: absolute; z-index: 3; }
-  .cut :global(.st-seal) { left: 5%; top: -64px; width: clamp(120px, 13vw, 200px); }
-  .cut :global(.st-burst) { right: 7%; top: 14%; width: clamp(110px, 12vw, 180px); }
-  .cut :global(.st-sp1) { left: 22%; top: 6%; width: 34px; }
-  .cut :global(.st-sp2) { right: 24%; top: -18px; width: 24px; }
-  .h-reel { position: relative; }
-  .h-reel :global(.st-arch) { left: clamp(-84px, -5vw, -40px); top: 7%; width: clamp(104px, 9.5vw, 150px); }
-  .h-reel :global(.st-sp0) { right: -10px; top: -14px; width: 30px; }
-  .cut :global(.bands) { padding-block: clamp(56px, 6.5vw, 100px); }
+  .cut :global(.bands) { padding-block: clamp(72px, 8.5vw, 128px); }
   .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
   .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
   .h-reel { min-width: 0; }
