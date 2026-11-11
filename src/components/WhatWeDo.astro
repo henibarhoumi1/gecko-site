@@ -36,6 +36,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
     </div>
 
     <div class="stage" data-tone={tones[0]} data-stage>
+      <ol class="steps" aria-hidden="true">{L.items.map((_, i) => <li><i style={`--n:${i}`}></i></li>)}</ol>
       <p class="count" aria-hidden="true"><b data-count>01</b><span>/ 0{L.items.length}</span></p>
       <!-- 1 Strategy: the study ticks itself off, then the angle is written. -->
       <div class="scene on" id="what-s0" role="tabpanel" aria-labelledby="what-w0" data-scene="0">
@@ -128,6 +129,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
       if (!wide.matches) return;
       const p = Math.max(0, Math.min(0.999, -wrap.getBoundingClientRect().top / Math.max(1, span())));
       wrap.style.setProperty('--p', p.toFixed(4));
+      wrap.style.setProperty('--q', ((p * words.length) % 1).toFixed(4));
       const i = Math.floor(p * words.length);
       if (i !== at) show(i);
     };
@@ -152,13 +154,13 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .pin { position: sticky; top: 0; height: 100svh; display: grid; align-items: center; padding-top: var(--header, 84px); overflow: hidden; }
   .what { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
   .left { display: grid; gap: clamp(28px, 3.4vw, 56px); min-width: 0; }
-  .left { gap: clamp(18px, 3.2svh, 44px); }
-  .left .h2 { max-width: 16ch; font-size: clamp(24px, min(2.8vw, 5.2svh), 46px); }
+  .left { gap: clamp(14px, 2.6svh, 40px); container-type: inline-size; }
+  .left .h2 { max-width: 16ch; font-size: clamp(22px, min(2.6vw, 4.6svh), 44px); }
 
   /* The words: outline until they're on, then ink on the pink marker. */
   .words { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(2px, .5vw, 8px); }
   .words button { display: block; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-  .w { display: inline-block; font-weight: 800; font-size: clamp(48px, min(7.6vw, 12.6svh), 132px); line-height: .98; white-space: nowrap; padding-inline: .04em; margin-inline: -.04em;
+  .w { display: inline-block; font-weight: 800; font-size: min(clamp(44px, min(7.2vw, 11svh), 128px), calc(100cqw / 6.6)); line-height: .98; white-space: nowrap; padding-inline: .04em; margin-inline: -.04em;
     color: transparent; -webkit-text-stroke: 2px #000; background: linear-gradient(var(--pink), var(--pink)) 0 84% / 0 36% no-repeat;
     transition: color 260ms var(--ease), background-size 620ms cubic-bezier(.65, 0, .35, 1); }
   .on .w { color: #000; -webkit-text-stroke-width: 0; background-size: 100% 36%; }
@@ -167,6 +169,16 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .words button:focus-visible .w { outline: 3px solid #000; outline-offset: 4px; }
   .words p { margin: 0; max-width: 34rem; max-height: 0; overflow: hidden; opacity: 0; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; transition: max-height 420ms var(--ease), opacity 300ms var(--ease), padding 420ms var(--ease); }
   .on p { max-height: 7em; opacity: 1; padding: 6px 0 14px; }
+  /* Words already passed stay inked, a step quieter than the one on. */
+  .was .w { color: #000; -webkit-text-stroke-width: 0; opacity: .32; }
+  /* Under the stage: where you are in the scroll, as four segments that fill. */
+  .steps { position: absolute; z-index: 2; left: 22px; right: 22px; bottom: 20px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .steps li { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .5); overflow: hidden; }
+  .steps li i { display: block; height: 100%; background: #000; transform-origin: 0 50%; transform: scaleX(clamp(0, calc(var(--p, 0) * 4 - var(--n)), 1)); }
+  .stage[data-tone='black'] .steps li i { background: #fff; }
+  .stage[data-tone='black'] .steps li { background: rgba(255, 255, 255, .28); }
+  /* The scene drifts a little as you scroll through it. */
+  .scene > * { transform: translateY(calc((var(--q, .5) - .5) * -28px)); transition: transform 120ms linear; }
 
   /* The stage: one filled block that changes colour with the scene. */
   .stage { position: relative; aspect-ratio: 1 / 1.02; max-height: min(700px, calc(100svh - var(--header, 84px) - 56px)); width: auto; max-width: 100%; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 520ms var(--ease); }
