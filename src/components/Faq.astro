@@ -1,5 +1,5 @@
 ---
-// Questions on thin lines. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
+// Questions as plain large rows. With `scroll` the list scrolls inside itself until it reaches an end, then the page scrolls on,
 // fades out at the bottom while there is more, and shows `hint` until the visitor reaches the end.
 // With `limit` only the first questions show, as a plain list, and `more` adds a link to all of them underneath.
 interface Props { items: readonly { q: string; a: string }[]; scroll?: boolean; hint?: string; limit?: number; more?: { href: string; label: string } }
@@ -35,7 +35,7 @@ const items = limit ? all.slice(0, limit) : all;
   </script>
 )}
 <style>
-  .faq.scroll { max-height: min(62vh, 560px); overflow-y: auto; overscroll-behavior: contain; padding: 4px 10px 64px 2px; margin-right: -10px; scrollbar-width: thin; scrollbar-color: var(--hair-2) transparent;
+  .faq.scroll { max-height: min(62vh, 560px); overflow-y: auto; overscroll-behavior: contain; padding: 4px 10px 64px 2px; margin-right: -10px; scrollbar-width: thin; scrollbar-color: var(--fg) transparent;
     -webkit-mask-image: linear-gradient(#000 calc(100% - 72px), transparent); mask-image: linear-gradient(#000 calc(100% - 72px), transparent); }
   .faq.scroll::-webkit-scrollbar { width: 6px; }
   .faq.scroll::-webkit-scrollbar-thumb { background: var(--hair-2); border-radius: 6px; }
