@@ -2,12 +2,15 @@
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
-import Workspace from '../../components/Workspace.astro';
-import Choices from '../../components/Choices.astro';
 import NowPlaying from '../../components/NowPlaying.astro';
-import PlansTeaser from '../../components/PlansTeaser.astro';
-import OfferBand from '../../components/OfferBand.astro';
+import Bands from '../../components/Bands.astro';
+import Strip from '../../components/Strip.astro';
+import WhatWeDo from '../../components/WhatWeDo.astro';
+import BrandWorldHome from '../../components/BrandWorldHome.astro';
+import PlansHome from '../../components/PlansHome.astro';
+import WorkspaceHome from '../../components/WorkspaceHome.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
+import { launch } from '../../i18n/launch';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
@@ -19,25 +22,27 @@ const s = t(lang);
 const k = c(lang);
 const h = k.home;
 const hx = h.hero;
+const L = launch(lang);
 // The headline: three lines, the last one on the pink marker. Its widest line, in ems of Inter at full weight
 // (tools/title-ratio.mjs, 4 Nov 2026), lets the stylesheet set it as big as its column allows from the first frame.
 const lines = h.scenes[0].d;
 const last = lines[lines.length - 1].replace(/\.$/, '');
 const said = lines.join(' ');
-const widest: Record<string, number> = { en: 5.957, fr: 4.3161 };
+// Width ratios measured for Inter; Cabinet Grotesk is not measured yet, so these are set a little wide (smaller type)
+// so no line is ever cut. Re-measure with the real font and tighten (step 5 review).
+const widest: Record<string, number> = { en: 6.4, fr: 4.7 };
 const kw = widest[lang] ?? widest.en;
 // The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
 const pad = (n: number) => String(n).padStart(2, '0');
 // Right under the prices, the questions a first-time client is really asking.
-const faqs = [1, 10, 3, 5, 4, 14].map((i) => s.faq[i]);
+const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
 const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 ---
 <Base lang={lang} page="home">
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
       <div class="h-copy">
-        <p class="h-sub up" style="--d:120ms"><strong>{h.sub}</strong> <span>{h.line}</span></p>
         <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
           {lines.map((line, i) => (
             <span class="ln" style={`--l:${i}`} aria-hidden="true">
@@ -45,6 +50,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
             </span>
           ))}
         </h1>
+        <p class="h-sub up" style="--d:420ms">{L.hero.line}</p>
         <div class="h-act up" style="--d:520ms">
           <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
           <a class="btn lg" href="#work">{s.hero.work}</a>
@@ -52,12 +58,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
       </div>
       <div class="h-reel up" style="--d:300ms"><NowPlaying lang={lang} /></div>
     </div>
-    <div class="ticker" aria-hidden="true">
-      <div class="track" data-marquee="45">
-        {[0, 1, 2].map(() => <ul>{s.home.formats.map((f) => <li>{f}<svg viewBox="0 0 16 16"><path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" /></svg></li>)}</ul>)}
-      </div>
-    </div>
   </section>
+
+  <Bands lang={lang} />
 
   <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
     <div class="wrap wide w-in">
@@ -80,15 +83,15 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     </div>
   </section>
 
-  <section class="section think-sec" id="method">
-    <div class="wrap"><Choices title={h.method.title} items={h.method.items} links={[{ href: href(lang, 'work'), label: hx.cta }, { href: href(lang, 'process'), label: h.method.process }]} /></div>
-  </section>
+  <WhatWeDo lang={lang} />
 
-  <OfferBand lang={lang} />
+  <Strip tone="blue" items={L.strip.formats} href={href(lang, 'brand-world')} label={L.bw.name} />
 
-  <PlansTeaser lang={lang} />
+  <BrandWorldHome lang={lang} />
 
-  <Workspace lang={lang} story />
+  <PlansHome lang={lang} />
+
+  <WorkspaceHome lang={lang} />
 
   <section class="section apply-sec" id="apply">
     <div class="wrap"><ApplyFlow lang={lang} /></div>
@@ -99,9 +102,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
       <div class="faq-lead rv">
         <h2 class="h1 faq-h">{h.faqTitle}</h2>
       </div>
-      <div class="rv"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: h.faqAll }} /></div>
+      <div class="rv"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: L.faqAll }} /></div>
     </div>
   </section>
+
+  <Strip tone="pink" items={[L.strip.next]} href={href(lang, 'apply')} label={L.strip.next} speed={60} rev />
 
   <ReelViewer lang={lang} />
 </Base>
@@ -172,10 +177,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     --reel: clamp(260px, min(28vw, calc((100svh - 300px) * 9 / 16)), 420px);
     padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
   .h-copy { container-type: inline-size; display: grid; gap: clamp(24px, 3.4vh, 40px); align-content: center; min-width: 0; }
-  .h-sub { margin: 0; max-width: 30ch; font-size: clamp(17px, 1.35vw, 21px); line-height: 1.35; letter-spacing: -0.015em; text-wrap: balance; }
-  .h-sub strong { font-weight: 650; }
-  .h-sub span { color: var(--fg-2); }
-  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.062em; line-height: .88;
+  .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
+  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.04em; line-height: .9;
     font-size: min(calc(100cqw / var(--kw) * .97), 168px); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
@@ -188,45 +191,36 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
 
-  .ticker { flex: none; overflow: hidden; padding-block: 17px; background: var(--ink); color: #fff; }
-  .ticker .track { display: flex; width: max-content; will-change: transform; }
-  .ticker ul { display: flex; list-style: none; margin: 0; padding: 0; }
-  .ticker li { display: flex; align-items: center; gap: 30px; white-space: nowrap; font-weight: 600; font-size: 16px; letter-spacing: -0.005em; padding-right: 30px; }
-  .ticker svg { width: 13px; height: 13px; fill: none; stroke: var(--pink); stroke-width: 1.6; stroke-linecap: round; }
-
   /* Phones and upright tablets: the line, the headline, the buttons, then the reel. */
   @media (max-width: 860px) {
     .hero { min-height: 0; }
     .h-in { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: calc(var(--header) + 20px); padding-bottom: 40px; }
     .h-reel { width: min(100%, 320px); justify-self: center; }
     .h-act .btn { flex: 1 1 auto; }
-    .ticker { padding-block: 14px; }
-    .ticker li { font-size: 15px; gap: 24px; padding-right: 24px; }
   }
 
   /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
   .work { padding-block: var(--section); }
   .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; margin-bottom: clamp(28px, 3.6vw, 52px); }
-  .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.06em; outline: none; }
+  .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
   .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
   .card { position: relative; min-width: 0; }
-  .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: clamp(10px, 1vw, 16px); overflow: hidden; background: #141414; color: #fff; cursor: pointer;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .16); transition: transform 500ms var(--ease); }
+  .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: 24px; overflow: hidden; background: #000; color: #fff; cursor: pointer; transition: transform 500ms var(--ease); }
   .c-media:hover { transform: translateY(-4px); }
   .c-media img, .c-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .c-media video { opacity: 0; transition: opacity 600ms var(--ease); }
   .live .c-media video { opacity: 1; }
-  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 44px; height: 44px; margin-left: -22px; padding: 11px; border-radius: 50%; background: rgba(0, 0, 0, .25); box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .9); fill: none; stroke: #fff; stroke-width: 1.8;
+  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 44px; height: 44px; margin-left: -22px; padding: 11px; border-radius: 50%; background: #000; fill: none; stroke: #fff; stroke-width: 1.8;
     stroke-linecap: round; stroke-linejoin: round; transition: background 200ms var(--ease), transform 200ms var(--ease); }
   .c-mute :global(.on) { display: none; }
   .loud .c-mute :global(.on) { display: inline; }
   .loud .c-mute :global(.off) { display: none; }
-  .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); box-shadow: none; transform: scale(1.06); }
+  .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-  .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: -0.015em; color: #fff; }
+  .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
   .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: var(--pink); }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; color: var(--fg-2); }
+  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
   @media (max-width: 960px) {
     .deck { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
     .c-cap { font-size: 15px; }
@@ -242,5 +236,4 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .faq-h { font-size: clamp(48px, 6.4vw, 104px); max-width: 8ch; }
   @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } .faq-lead { position: static; } }
 
-  .apply-sec { border-top: 1px solid var(--hair); }
 </style>

@@ -3,6 +3,7 @@
 // hides while you read down and slides back as soon as you scroll up. A soft pill glides under the links as the
 // pointer moves across them and rests on the current page. The globe opens the language choice.
 // "Menu" opens a full panel that drops from the top: numbered pages on the left, contacts and language on the right.
+import { launch } from '../i18n/launch';
 import Logo from './Logo.astro';
 import { type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
@@ -13,10 +14,10 @@ const { lang } = Astro.props;
 const n = c(lang).nav;
 const path = Astro.url.pathname;
 const links = [
-  [href(lang, 'work'), n.work], [href(lang, 'offers'), n.offers], [href(lang, 'process'), n.process], [href(lang, 'about'), n.about], [href(lang, 'contact'), n.contact],
+  [href(lang, 'work'), n.work], [href(lang, 'brand-world'), launch(lang).bw.nav], [href(lang, 'offers'), n.offers], [href(lang, 'process'), n.process], [href(lang, 'about'), n.about],
 ] as const;
 const panel = [
-  [href(lang, 'work'), n.work], [href(lang, 'offers'), n.offers], [href(lang, 'process'), n.process],
+  [href(lang, 'work'), n.work], [href(lang, 'brand-world'), launch(lang).bw.nav], [href(lang, 'offers'), n.offers], [href(lang, 'process'), n.process],
   [href(lang, 'about'), n.about], [href(lang, 'faq'), n.faq], [href(lang, 'contact'), n.contact],
 ] as const;
 const langs = [

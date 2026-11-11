@@ -1,0 +1,27 @@
+---
+// Home 3.3: four big words in headline type, each with one line beside it. No lines between them, only space.
+import { launch } from '../i18n/launch';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const L = launch(lang).what;
+---
+<section class="section what-sec" id="what">
+  <div class="wrap wide">
+    <h2 class="h2 rv">{L.title}</h2>
+    <ul class="words">
+      {L.items.map(([w, d], i) => (
+        <li class="rv" style={`--d:${i * 70}ms`}><b class="w">{w}</b><p>{d}</p></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .what-sec .h2 { max-width: 16ch; margin-bottom: clamp(36px, 5vw, 80px); }
+  .words { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 2.8vw, 44px); }
+  .words li { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px clamp(24px, 4vw, 80px); align-items: center; }
+  .w { font-weight: 800; font-size: clamp(56px, 9vw, 150px); line-height: .9; letter-spacing: -0.035em; }
+  .words p { margin: 0; max-width: 30rem; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; }
+  @media (max-width: 860px) { .words li { grid-template-columns: 1fr; } .w { font-size: clamp(44px, 13vw, 80px); } }
+</style>
