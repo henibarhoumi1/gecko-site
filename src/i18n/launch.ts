@@ -13,6 +13,21 @@ const en = {
       ['Brand and web', 'Identity, brand deck and a store with its own back office.'],
     ],
   },
+  // Right after the work: one reel taken apart, so a visitor sees the thinking, not just the result. The times are
+  // read off the reel itself (Sad vs happy, 23 seconds): the cut to colour at 0:03, the first bite at 0:06, the second
+  // room at 0:08.
+  watch: {
+    title: ['Now watch it', 'again.'],
+    sub: 'One of our reels, taken apart: four moments, and why each one is there.',
+    beats: [
+      [0, 'A face everyone knows.', 'Black and white, a plain plate. The problem, with no words.'],
+      [3, 'The logo is a switch.', 'Flick it on and the colour comes back, with the food.'],
+      [6, 'The bite.', 'The product in use, up close. The face changes. That change is the ad.'],
+      [8, 'Twice more.', 'New room, same switch. By the third time, you’re waiting for it.'],
+    ] as [number, string, string][],
+    note: '23 seconds, no voiceover. Made in 2026, before Gecko opened.',
+    pause: 'Pause the reel', play: 'Play the reel', jump: 'Go to',
+  },
   formats: 'Formats',
   bw: {
     label: 'New',
@@ -94,6 +109,18 @@ const fr: typeof en = {
       ['Production', 'Tournages, montages et photos produit. Une seule équipe.'],
       ['Marque et web', 'Identité, brand deck et une boutique avec son propre back-office.'],
     ],
+  },
+  watch: {
+    title: ['Maintenant, regardez-la', 'encore.'],
+    sub: 'Un de nos reels, démonté\u00a0: quatre moments, et pourquoi chacun est là.',
+    beats: [
+      [0, 'Un visage que tout le monde connaît.', 'Noir et blanc, une assiette fade. Le problème, sans un mot.'],
+      [3, 'Le logo est un interrupteur.', 'On l’allume, et la couleur revient, avec la nourriture.'],
+      [6, 'La bouchée.', 'Le produit en main, en gros plan. Le visage change. Ce changement, c’est la pub.'],
+      [8, 'Encore deux fois.', 'Autre pièce, même interrupteur. À la troisième, on l’attend.'],
+    ],
+    note: '23\u00a0secondes, sans voix off. Réalisé en 2026, avant l’ouverture de Gecko.',
+    pause: 'Mettre le reel en pause', play: 'Lire le reel', jump: 'Aller à',
   },
   formats: 'Formats',
   bw: {

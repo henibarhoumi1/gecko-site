@@ -1,0 +1,139 @@
+---
+// "Now watch it again": one real reel, taken apart. The reel plays on the left, silent, while it is in view; on the
+// right, four moments with their time in the reel and one line on why each is there. The moment on screen sits on
+// the pink block; clicking one jumps the reel to it. Evidence of the thinking, right after the work: specific, shown
+// on the product in use, and true (the times are read off the reel). With reduced motion or data saver the reel waits
+// for a click; a button pauses it at any time.
+import { launch } from '../i18n/launch';
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const W = launch(lang).watch;
+const k = c(lang);
+const reel = ads[0];
+const end = 23;
+const tc = (s: number) => `0:${String(s).padStart(2, '0')}`;
+---
+<section class="sw" id="watch" aria-labelledby="sw-t" data-sw>
+  <div class="wrap wide sw-in">
+    <div class="sw-media rv">
+      <video muted playsinline loop preload="none" poster={reel.poster} data-src={reel.src} aria-hidden="true" tabindex="-1"></video>
+      <div class="sw-bar">
+        <span class="sw-tc" aria-hidden="true"><b data-tc>0:00</b>&nbsp;/ {tc(end)}</span>
+        <button type="button" class="sw-pp" data-pp aria-pressed="false" aria-label={W.play} data-play={W.play} data-pause={W.pause}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-play" d="M8 5.5v13l10.5-6.5z" /><path class="i-pause" d="M7.5 5.5h3v13h-3zM13.5 5.5h3v13h-3z" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="sw-copy">
+      <h2 class="h2 sw-h rv" id="sw-t">{W.title[0]} <span class="hl">{W.title[1]}</span></h2>
+      <p class="sw-sub rv">{W.sub}</p>
+      <ol class="sw-beats">
+        {W.beats.map(([at, t, d], i) => (
+          <li class="rv" style={`--d:${i * 70}ms`}>
+            <button type="button" class:list={['sw-beat', { on: i === 0 }]} data-at={at} aria-current={i === 0 ? 'true' : 'false'} aria-label={`${W.jump} ${tc(at)}: ${t} ${d}`}>
+              <span class="sw-time" aria-hidden="true">{tc(at)}</span>
+              <span class="sw-n" aria-hidden="true">{t}</span>
+              <span class="sw-d" aria-hidden="true">{d}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+      <div class="sw-foot rv">
+        <a class="btn primary" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+        <p class="sw-note">{W.note}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-sw]');
+  if (root) {
+    const v = root.querySelector('video')!;
+    const pp = root.querySelector<HTMLButtonElement>('[data-pp]')!;
+    const out = root.querySelector<HTMLElement>('[data-tc]')!;
+    const beats = [...root.querySelectorAll<HTMLButtonElement>('[data-at]')];
+    const at = beats.map((b) => Number(b.dataset.at));
+    const auto = !matchMedia('(prefers-reduced-motion: reduce)').matches && !(navigator as any).connection?.saveData;
+    let seen = false, held = !auto;
+    const load = () => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
+    // The moment on screen is the last one whose time has passed.
+    const mark = (t: number) => {
+      let k = 0;
+      at.forEach((a, i) => { if (t >= a - 0.05) k = i; });
+      beats.forEach((b, i) => { b.classList.toggle('on', i === k); b.setAttribute('aria-current', String(i === k)); });
+      out.textContent = `0:${String(Math.floor(t)).padStart(2, '0')}`;
+    };
+    const state = () => {
+      const on = !v.paused;
+      pp.setAttribute('aria-pressed', String(on));
+      pp.setAttribute('aria-label', on ? pp.dataset.pause! : pp.dataset.play!);
+      root.classList.toggle('live', on);
+    };
+    const go = () => {
+      const blocked = document.documentElement.classList.contains('locked');
+      if (seen && !held && !document.hidden && !blocked) { load(); v.play().catch(() => {}); } else v.pause();
+    };
+    v.addEventListener('timeupdate', () => mark(v.currentTime));
+    v.addEventListener('play', state);
+    v.addEventListener('pause', state);
+    // A moment clicked: the reel jumps there and plays, even with reduced motion, because it was asked for.
+    beats.forEach((b, i) => b.addEventListener('click', () => {
+      held = false;
+      load();
+      const jump = () => { v.currentTime = at[i]; mark(at[i]); v.play().catch(() => {}); };
+      if (v.readyState >= 1) jump(); else v.addEventListener('loadedmetadata', jump, { once: true });
+    }));
+    pp.addEventListener('click', () => { if (v.paused) { held = false; load(); v.play().catch(() => {}); } else { held = true; v.pause(); } });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.35 }).observe(v);
+    document.addEventListener('visibilitychange', go);
+    new MutationObserver(go).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
+</script>
+
+<style>
+  .sw { padding-block: var(--section); background: #fff; color: #000; }
+  .sw-in { display: grid; grid-template-columns: clamp(260px, 26vw, 420px) minmax(0, 1fr); gap: clamp(36px, 6vw, 112px); align-items: center; }
+
+  .sw-media { position: relative; aspect-ratio: 9 / 16; border-radius: var(--r); overflow: hidden; background: #000; }
+  .sw-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .sw-bar { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .sw-tc { display: inline-flex; align-items: center; height: 44px; padding-inline: 16px; border-radius: var(--pill); background: #000; color: #fff; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .sw-tc b { font-weight: 800; }
+  .sw-pp { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 50%; background: #000; color: #fff; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .sw-pp svg { width: 20px; height: 20px; fill: currentColor; }
+  .sw-pp .i-pause { display: none; }
+  .live .sw-pp .i-pause { display: inline; }
+  .live .sw-pp .i-play { display: none; }
+  .sw-pp:hover { background: var(--pink); color: #000; }
+  .sw-pp:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+
+  .sw-h { margin: 0 0 16px; max-width: 13ch; }
+  .sw-sub { margin: 0 0 clamp(24px, 3vw, 40px); max-width: 34rem; font-size: var(--body-l); font-weight: 500; line-height: 1.4; }
+
+  .sw-beats { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .sw-beat { display: grid; grid-template-columns: 4.4ch minmax(0, 1fr); column-gap: clamp(16px, 2vw, 32px); row-gap: 6px; align-items: baseline; width: 100%;
+    padding: clamp(16px, 1.5vw, 22px) clamp(18px, 2vw, 28px); border: 0; border-radius: var(--r); background: #fff; color: #000; font: inherit; text-align: left; cursor: pointer;
+    transition: background 320ms var(--ease); }
+  .sw-beat.on { background: var(--pink); }
+  .sw-time { grid-row: span 2; font-weight: 800; font-size: clamp(28px, 2.6vw, 42px); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .sw-n { font-weight: 800; font-size: clamp(22px, 1.9vw, 30px); line-height: 1.1; letter-spacing: -0.03em; }
+  .sw-d { grid-column: 2; font-weight: 500; font-size: 17px; line-height: 1.4; }
+  .sw-beat:not(.on):hover .sw-n { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .sw-beat:focus-visible { outline: 3px solid #000; outline-offset: 2px; }
+
+  .sw-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px; margin-top: clamp(24px, 3vw, 40px); }
+  .sw-note { margin: 0; font-size: var(--small); font-weight: 500; }
+
+  @media (max-width: 860px) {
+    .sw-in { grid-template-columns: minmax(0, 1fr); }
+    .sw-media { width: min(100%, 340px); margin-inline: auto; }
+    .sw-beat { padding: 16px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sw-beat { transition: none; } }
+</style>
