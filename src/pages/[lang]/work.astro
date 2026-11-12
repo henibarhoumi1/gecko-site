@@ -84,7 +84,7 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
 
-  .formats-sec .head { display: grid; justify-items: center; gap: 12px; margin-bottom: clamp(28px, 3vw, 44px); text-align: center; }
+  .formats-sec .head { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 12px; margin-bottom: clamp(28px, 3vw, 44px); text-align: center; }
   .formats-sec .head :is(.h2, .sub) { margin: 0; }
   .formats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); text-align: center; }
   .formats li { padding: clamp(12px, 1.2vw, 18px) 0; font-weight: 700; font-size: clamp(24px, 2.6vw, 44px); line-height: 1.05; letter-spacing: -0.045em; }

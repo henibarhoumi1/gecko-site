@@ -30,7 +30,7 @@ const p = c(lang).plans;
 
 <style>
   /* The title centred, and what every plan has as one centred row under it. */
-  .top { display: grid; justify-items: center; gap: clamp(22px, 2.6vw, 34px); margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
+  .top { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(22px, 2.6vw, 34px); margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
   .top .h2 { margin: 0; }
   .every { display: grid; justify-items: center; gap: 14px; }
   .every-t { margin: 0; font-weight: 800; font-size: 15px; letter-spacing: .02em; text-transform: uppercase; }

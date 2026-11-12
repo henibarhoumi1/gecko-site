@@ -192,7 +192,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
 
 <style>
   /* The head, centred: the label, the title, one line. */
-  .head { display: grid; justify-items: center; gap: 22px; margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
+  .head { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 22px; margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
   .head .label { margin: 0 0 16px; }
   .head .h1 { margin: 0; }
   .lead { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; text-wrap: balance; }
