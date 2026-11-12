@@ -1,0 +1,168 @@
+// Copy added for the launch edition (plan rev 2, 11 Nov 2026). English is from the plan. The French is written in the
+// same voice with the site's own terms (Réalisations, Offres, reels, visuels): Heni to check every French line.
+import type { Locale } from './strings';
+
+const en = {
+  hero: { line: 'A creative studio in Tunis. Short video ads, and the brand around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
+  what: {
+    title: 'One studio. Everything your brand needs to sell.',
+    items: [
+      ['Strategy', 'Your market and your strongest competitors, studied first.'],
+      ['Creative', 'Angles, hooks and scripts. You approve each one.'],
+      ['Production', 'Shoots, edits and product photos. One crew.'],
+      ['Brand and web', 'Identity, brand deck and a store with its own back office.'],
+    ],
+  },
+  formats: 'Formats',
+  bw: {
+    label: 'New',
+    name: 'The Brand World',
+    nav: 'Brand World',
+    metaTitle: 'The Brand World',
+    title: 'You bring the product. We build the world around it.',
+    lead: 'For brands launching or starting over. One team studies your market, builds the brand, shoots the campaign and opens the store.',
+    startTitle: 'How it starts',
+    start: ['Send us the product.', 'Fill in one onboarding form.', 'We study your business, your market and the best competitors.', 'We launch or rebrand, then sell and track every order.'],
+    insideTitle: 'What’s inside',
+    inside: [
+      'Market study and strategy.',
+      'Brand identity or rebrand, with a brand deck.',
+      'First campaign: 15 reels, built to find your winning formats early.',
+      'Product photography.',
+      'A website with its own back office: orders, products, stock, payments and your Meta ads results in one place.',
+      'Creative support from the team throughout.',
+    ],
+    value: 'Bought separately, that is a strategist, a designer, a photographer, a video crew and a web developer. Here it is one team, one brief and one look.',
+    price: 'Quoted for your brand: a clear scope, timeline and price.',
+    quote: 'Ask for a quote', see: 'See what’s inside',
+    // Page /brand-world
+    holdTitle: 'What you hold at the end',
+    hold: ['Brand deck and identity files', '15 reels', 'Product photos', 'The website live, with its custom back office', 'Workspace access'],
+    forTitle: 'Who it’s for',
+    who: [['Launching', 'You have a product and no brand around it yet.'], ['Rebranding', 'You have a brand that no longer sells what you make.']],
+    priceTitle: 'Price',
+  },
+  plans: {
+    title: 'Choose how we work together.',
+    ways: ['Try', 'Every month', 'The whole brand'],
+    everyTitle: 'In every plan',
+    every: ['One written angle per ad', 'Scripts you approve first', 'Shoot and edit by one team', 'Subtitles and licensed music', 'First draft 7 days after the shoot', 'Your private workspace'],
+    start: 'Start here', lowest: 'Lowest price per reel',
+    forWho: 'Who it’s for', gives: 'What you get', perReel: (n: number) => `About ${n} TND per reel`,
+    testWorks: 'One payment, once', openings: (n: number) => `${n} openings to test`,
+    custom: 'Custom price', talk: 'Talk to us', choose: 'Choose', quoteBW: 'Ask for a quote',
+    bwText: 'Strategy, brand, 15 reels, product photos and a website with its own back office. One team.',
+    partnerGives: ['20–100 reels a month, 3 hooks each', 'Market analysis for your category', 'Weekly review', 'Priority shoot dates'],
+  },
+  ws: {
+    label: 'One link. The whole project.',
+    title: 'Watch your ads get made.',
+    lead: 'Ideas, scripts, shoots, cuts and invoices in one private workspace. In every plan.',
+    blocks: [
+      ['Nothing is filmed without your yes.', 'Read every script. Approve it in one click.'],
+      ['No more “which version?”', 'Each cut, with your notes under it.'],
+      ['Every round gets smarter.', 'The next scripts start from what sold.'],
+    ],
+    row: ['Idea', 'Script', 'Shoot', 'Cut', 'Results', 'next idea'],
+    cta: 'See how a project runs',
+  },
+  strip: { formats: ['Reels', 'Statics', 'Carousels', 'Recut ads', '9:16', '4:5'], next: 'Let’s make your next ad' },
+  apply: {
+    titleStart: 'Tell us what you’re ', roll: ['making', 'launching', 'rebranding', 'selling'],
+    world: ['🌍', 'The whole brand world'], bw: 'The Brand World, quoted for your brand',
+  },
+  faqAll: 'See all questions',
+  privacy: {
+    nav: 'Privacy', title: 'Privacy.', lede: 'What our forms collect, why, and what you can ask us to do with it.',
+    blocks: [
+      ['What we collect', 'Only what you type into our forms: your answers in the brief, your name, brand, link, phone number, email and any note. On the hiring page, also the links and files you attach. We also count page views and taps on WhatsApp, without any detail about you.'],
+      ['Why', 'To reply to you, to suggest where to start and prepare a quote, and, on the hiring page, to look at your work.'],
+      ['Where it goes', 'To the Gecko team, by email and into our team workspace. If you choose WhatsApp, your message goes through WhatsApp.'],
+      ['Your choices', 'Write to us at the address below to see, correct or delete what you sent. We will answer you.'],
+    ],
+    contact: 'Write to us',
+  },
+};
+
+const fr: typeof en = {
+  hero: { line: 'Un studio créatif à Tunis. Des pubs vidéo courtes, et la marque autour.', caption: en.hero.caption },
+  what: {
+    title: 'Un studio. Tout ce dont votre marque a besoin pour vendre.',
+    items: [
+      ['Stratégie', 'Votre marché et vos concurrents les plus forts, étudiés d’abord.'],
+      ['Création', 'Angles, accroches et scripts. Vous validez chacun.'],
+      ['Production', 'Tournages, montages et photos produit. Une seule équipe.'],
+      ['Marque et web', 'Identité, brand deck et une boutique avec son propre back-office.'],
+    ],
+  },
+  formats: 'Formats',
+  bw: {
+    label: 'Nouveau',
+    name: 'L’Univers de marque',
+    nav: 'Univers de marque',
+    metaTitle: 'L’Univers de marque',
+    title: 'Vous apportez le produit. On construit l’univers autour.',
+    lead: 'Pour les marques qui se lancent ou repartent de zéro. Une seule équipe étudie votre marché, construit la marque, tourne la campagne et ouvre la boutique.',
+    startTitle: 'Comment ça commence',
+    start: ['Envoyez-nous le produit.', 'Remplissez un seul formulaire d’accueil.', 'On étudie votre activité, votre marché et les meilleurs concurrents.', 'On lance ou on refait la marque, puis on vend et on suit chaque commande.'],
+    insideTitle: 'Ce qu’il y a dedans',
+    inside: [
+      'Étude de marché et stratégie.',
+      'Identité de marque ou refonte, avec un brand deck.',
+      'Première campagne : 15 reels, pensés pour trouver tôt vos formats gagnants.',
+      'Photo produit.',
+      'Un site avec son propre back-office : commandes, produits, stock, paiements et résultats de vos pubs Meta au même endroit.',
+      'Le soutien créatif de l’équipe tout au long du projet.',
+    ],
+    value: 'Achetés séparément, c’est un stratège, un designer, un photographe, une équipe vidéo et un développeur web. Ici, c’est une équipe, un brief et un style.',
+    price: 'Sur devis pour votre marque : un périmètre, un calendrier et un prix clairs.',
+    quote: 'Demander un devis', see: 'Voir ce qu’il y a dedans',
+    holdTitle: 'Ce que vous avez à la fin',
+    hold: ['Le brand deck et les fichiers d’identité', '15 reels', 'Les photos produit', 'Le site en ligne, avec son back-office sur mesure', 'L’accès à l’espace de travail'],
+    forTitle: 'Pour qui',
+    who: [['Se lancer', 'Vous avez un produit et pas encore de marque autour.'], ['Repartir de zéro', 'Votre marque ne vend plus ce que vous faites.']],
+    priceTitle: 'Prix',
+  },
+  plans: {
+    title: 'Choisissez comment on travaille ensemble.',
+    ways: ['Essayer', 'Chaque mois', 'Toute la marque'],
+    everyTitle: 'Dans chaque plan',
+    every: ['Un angle écrit par pub', 'Des scripts validés par vous', 'Tournage et montage par une seule équipe', 'Sous-titres et musique sous licence', 'Premier montage 7 jours après le tournage', 'Votre espace privé'],
+    start: 'Commencez ici', lowest: 'Prix par reel le plus bas',
+    forWho: 'Pour qui', gives: 'Ce que vous recevez', perReel: (n: number) => `Environ ${n} TND par reel`,
+    testWorks: 'Un seul paiement', openings: (n: number) => `${n} ouvertures à tester`,
+    custom: 'Prix sur mesure', talk: 'Parlons-en', choose: 'Choisir', quoteBW: 'Demander un devis',
+    bwText: 'Stratégie, marque, 15 reels, photos produit et un site avec son propre back-office. Une seule équipe.',
+    partnerGives: ['20 à 100 reels par mois, 3 accroches chacun', 'Analyse de marché de votre secteur', 'Revue hebdomadaire', 'Dates de tournage prioritaires'],
+  },
+  ws: {
+    label: 'Un lien. Tout le projet.',
+    title: 'Regardez vos pubs se fabriquer.',
+    lead: 'Idées, scripts, tournages, montages et factures dans un seul espace privé. Dans chaque plan.',
+    blocks: [
+      ['Rien n’est tourné sans votre feu vert.', 'Lisez chaque script. Validez en un clic.'],
+      ['Fini le « quelle version ? »', 'Chaque montage, avec vos notes en dessous.'],
+      ['Chaque tour est plus malin.', 'Les scripts suivants partent de ce qui a vendu.'],
+    ],
+    row: ['Idée', 'Script', 'Tournage', 'Montage', 'Résultats', 'prochaine idée'],
+    cta: 'Voir comment un projet se déroule',
+  },
+  strip: { formats: ['Reels', 'Visuels fixes', 'Carrousels', 'Pubs remontées', '9:16', '4:5'], next: 'Faisons votre prochaine pub' },
+  apply: {
+    titleStart: 'Dites-nous ce que vous ', roll: ['préparez', 'lancez', 'refondez', 'vendez'],
+    world: ['🌍', 'Tout l’univers de marque'], bw: 'L’Univers de marque, sur devis',
+  },
+  faqAll: 'Voir toutes les questions',
+  privacy: {
+    nav: 'Confidentialité', title: 'Confidentialité.', lede: 'Ce que collectent nos formulaires, pourquoi, et ce que vous pouvez nous demander d’en faire.',
+    blocks: [
+      ['Ce que nous collectons', 'Seulement ce que vous saisissez dans nos formulaires : vos réponses au brief, votre nom, votre marque, un lien, votre numéro, votre e-mail et une note. Sur la page de recrutement, aussi les liens et fichiers que vous joignez. Nous comptons aussi les visites de pages et les appuis sur WhatsApp, sans aucune information sur vous.'],
+      ['Pourquoi', 'Pour vous répondre, vous suggérer par où commencer et préparer un devis, et, sur la page de recrutement, regarder votre travail.'],
+      ['Où cela va', 'À l’équipe Gecko, par e-mail et dans notre espace de travail d’équipe. Si vous choisissez WhatsApp, votre message passe par WhatsApp.'],
+      ['Vos choix', 'Écrivez-nous à l’adresse ci-dessous pour voir, corriger ou supprimer ce que vous avez envoyé. Nous vous répondrons.'],
+    ],
+    contact: 'Écrivez-nous',
+  },
+};
+
+export const launch = (lang: Locale) => (lang === 'fr' ? fr : en);

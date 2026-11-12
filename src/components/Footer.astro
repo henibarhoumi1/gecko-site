@@ -4,6 +4,7 @@ import { c } from '../i18n/copy';
 import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
+import { launch } from '../i18n/launch';
 interface Props { lang: Locale; cta?: boolean }
 const { lang, cta = true } = Astro.props;
 const s = t(lang);
@@ -20,6 +21,7 @@ const n = k.nav;
       <p class="h">{k.footer.pages}</p>
       <div class="pages">
         <a href={href(lang, 'work')}>{n.work}</a>
+        <a href={href(lang, 'brand-world')}>{launch(lang).bw.nav}</a>
         <a href={href(lang, 'offers')}>{n.offers}</a>
         <a href={href(lang, 'process')}>{n.process}</a>
         <a href={href(lang, 'about')}>{n.about}</a>
@@ -40,19 +42,19 @@ const n = k.nav;
     </div>
   </div>
   <div class="wrap wide"><div class="base">
-    <p>© {new Date().getFullYear()} Gecko</p>
+    <p>© {new Date().getFullYear()} Gecko · <a href={href(lang, 'privacy')}>{launch(lang).privacy.nav}</a></p>
     <span class="links">
       <a href={site.portal} rel="noopener">{s.footer.portal}</a>
     </span>
   </div></div>
 </footer>
 <style>
-  .site-footer { padding-block: clamp(44px, 5vw, 72px) 22px; background: var(--bg); color: var(--fg); }
-  .big { display: block; font-weight: 700; font-size: clamp(36px, 6vw, 96px); letter-spacing: -0.05em; line-height: .95; text-decoration: none; color: var(--fg); padding-bottom: clamp(24px, 3vw, 40px); margin-bottom: clamp(28px, 3.5vw, 48px); }
+  .site-footer { padding-block: clamp(56px, 7vw, 112px) 22px; background: var(--bg); color: var(--fg); }
+  .big { display: block; font-weight: 800; font-size: clamp(48px, 11vw, 190px); letter-spacing: -0.03em; line-height: .9; text-decoration: none; color: var(--fg); padding-bottom: clamp(24px, 3vw, 40px); margin-bottom: clamp(28px, 3.5vw, 48px); }
   .big span { display: inline-block; color: var(--pink); transition: transform 360ms var(--ease); }
   .big:hover span { transform: translateX(16px); }
   .inner { display: grid; grid-template-columns: 1fr auto auto auto; gap: 28px clamp(36px, 5vw, 96px); align-items: start; }
-  .mark { display: block; width: clamp(34px, 3vw, 44px); }
+  .mark { display: block; width: clamp(44px, 6vw, 96px); }
   .mark img { width: 100%; height: auto; }
   .h { margin: 0 0 4px; font-weight: 700; font-size: 13px; }
   .col { display: grid; align-content: start; gap: 10px; font-size: 15px; }

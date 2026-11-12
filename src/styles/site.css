@@ -25,6 +25,9 @@ strong, b { font-weight: 800; }
 .page-head { padding-top: calc(var(--header) + clamp(48px, 7vw, 104px)); padding-bottom: clamp(40px, 5vw, 72px); }
 .page-head .h1 { max-width: 16ch; }
 .page-head .lede { max-width: 38rem; }
+/* Centred page heads: the title and its one line sit in the middle. */
+.page-head.mid :is(.h1, .lede) { margin-left: auto; margin-right: auto; text-align: center; }
+.page-head.mid .lede { text-wrap: balance; }
 .lede, .text-l { text-wrap: pretty; }
 .center { text-align: center; justify-items: center; margin-inline: auto; }
 .center .h1, .center .h2 { margin-inline: auto; }

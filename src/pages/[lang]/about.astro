@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Compare from '../../components/Compare.astro';
+import WhatWeDo from '../../components/WhatWeDo.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -14,7 +15,7 @@ const n = c(lang).nav;
 const [t0, t1] = mark(a.title);
 ---
 <Base lang={lang} title={n.about} page="about">
-  <section class="page-head lit">
+  <section class="page-head lit mid">
     <div class="wrap wide">
       <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text-l lede rv" style="--d:60ms">{a.lede}</p>
@@ -28,6 +29,8 @@ const [t0, t1] = mark(a.title);
       </dl>
     </div>
   </section>
+
+  <WhatWeDo lang={lang} />
 
   <Compare lang={lang} />
 
@@ -48,11 +51,11 @@ const [t0, t1] = mark(a.title);
 </Base>
 
 <style>
-  .page-head .lede { margin: clamp(20px, 2.4vw, 32px) 0 0; max-width: 40rem; }
-  .shots-sec .h2 { margin-bottom: clamp(28px, 3vw, 44px); }
+  .page-head .lede { margin: clamp(20px, 2.4vw, 32px) auto 0; max-width: 40rem; }
+  .shots-sec .h2 { margin: 0 0 clamp(28px, 3vw, 44px); text-align: center; }
   .shots { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); }
   .shots img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-  .hire-sec { border-top: 1px solid var(--hair); }
+  .hire-sec .wrap { display: flex; justify-content: center; }
   .hire { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(26px, 3.4vw, 52px); line-height: 1.05; letter-spacing: -0.045em; color: var(--fg); text-decoration: none; }
   .lb { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 80% / 0 38% no-repeat; transition: background-size 520ms var(--ease); }
   .ar { transition: transform 360ms var(--ease); }
@@ -60,14 +63,13 @@ const [t0, t1] = mark(a.title);
   .hire:hover .ar { transform: translateX(12px); }
   @media (max-width: 760px) { .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .page-head .h1 { max-width: 13ch; }
-  .facts { margin: clamp(40px, 5vw, 72px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--hair-2); }
-  .fact { padding: 24px clamp(16px, 2.4vw, 32px) 0 0; }
-  .fact + .fact { padding-left: clamp(16px, 2.4vw, 32px); border-left: 1px solid var(--hair); }
+  .facts { margin: clamp(40px, 5vw, 72px) 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
+  .fact { padding: clamp(22px, 2.4vw, 36px); border-radius: var(--r-lg); background: var(--blue); color: #000; }
   .fact dd { margin: 12px 0 0; display: grid; gap: 10px; }
   .fact .v { font-weight: 700; font-size: clamp(28px, 3vw, 44px); letter-spacing: -0.04em; line-height: 1; }
   .fact .d { font-size: 17px; line-height: 1.45; max-width: 24rem; color: var(--fg-2); }
   @media (max-width: 860px) {
     .facts { grid-template-columns: 1fr; }
-    .fact, .fact + .fact { padding: 22px 0; border-left: 0; border-bottom: 1px solid var(--hair); }
+    .fact, .fact + .fact { padding: 22px 0; border-left: 0; }
   }
 </style>

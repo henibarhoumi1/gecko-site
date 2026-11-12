@@ -42,7 +42,7 @@
   /* older names still used by components */
   --black: var(--ink);
 
-  --font: 'Cabinet Grotesk', 'Gecko Fallback', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font: 'Archivo', 'Gecko Fallback', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --type: var(--font);
 
   --h1: clamp(46px, 7.6vw, 120px);
@@ -70,8 +70,10 @@
 html { color-scheme: light; background: var(--bg); }
 body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }
 
-/* Headlines are Extrabold, text Medium, labels and buttons Bold. Tracking is tuned for Cabinet Grotesk. */
-.h1, .h2, .h3 { font-family: var(--font); font-weight: 800; line-height: .98; letter-spacing: -0.03em; margin: 0; text-wrap: balance; }
+/* One family, Archivo, a plain strong grotesque. Headlines: Extrabold, a touch narrow, tight. Text: Medium at
+   normal width. Labels and buttons: Bold. Nothing quirky. */
+h1, h2, h3, .h1, .h2, .h3, .display, .strip, .bands .front, .pp .price b, .words .w, .flow, .value, .site-footer .big, .m-t { font-stretch: 92%; letter-spacing: -0.045em; }
+.h1, .h2, .h3 { font-family: var(--font); font-weight: 800; line-height: .94; letter-spacing: -0.045em; margin: 0; text-wrap: balance; }
 .h1 { font-size: var(--h1); } .h2 { font-size: var(--h2); } .h3 { font-size: var(--h3); letter-spacing: -0.015em; line-height: 1.12; }
 .text { font-weight: 500; font-size: var(--body); line-height: 1.5; }
 .label { font-weight: 700; font-size: var(--label); letter-spacing: 0; }
@@ -90,21 +92,25 @@ body { font-family: var(--font); font-optical-sizing: auto; background: var(--bg
 /* Blocks sitting on a colour read in black, with black outlines on the buttons inside. */
 .on-pink, .on-yellow, .on-blue { --fg: #000000; --fg-2: #000000; --fg-3: #000000; --hair-2: #000000;  }
 
-/* Yellow tape: labels things. Used instead of badges. */
-.tape { display: inline-block; padding: .5em .9em .45em; background: var(--yellow); color: var(--ink); font: 700 13px/1.1 var(--font); letter-spacing: 0; white-space: nowrap;
+/* Tape labels: blue on white, white on a colour. Yellow is never an accent: it is only ever a whole block, with
+   nothing but black on it. */
+.on-blue .tape, .on-pink .tape, .on-yellow .tape { background: #fff; }
+.tape { display: inline-block; padding: .5em .9em .45em; background: var(--blue); color: var(--ink); font: 700 13px/1.1 var(--font); letter-spacing: 0; white-space: nowrap;
   clip-path: polygon(0 6%, 3% 0, 6% 8%, 9% 1%, 91% 0, 94% 7%, 97% 1%, 100% 6%, 100% 94%, 97% 100%, 94% 92%, 91% 99%, 9% 100%, 6% 93%, 3% 100%, 0 94%); transform: rotate(-1.6deg); }
 .tape.flat { transform: none; }
 
 /* The pink marker under the words that matter, drawn once, left to right, when they come into view. */
 .hl { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 0 34% no-repeat; transition: background-size 900ms cubic-bezier(.65, 0, .35, 1) 250ms; }
 .in .hl, .hl.in, .no-rv .hl { background-size: 100% 34%; }
+/* Marked words stay black even on a black section, so they read on the pink. */
+.on-black .hl, .on-mat .hl, .on-black .roll .w { color: #000; }
 
 /* The word roll: the last word of a title cuts through a list of words about every 2 seconds, each landing on the
    marker as it draws (src/scripts/roll.ts). All the words sit stacked in one grid cell, so the title never changes
    width, and without the script the first word simply shows with its marker drawn.
    Markup: <span class="roll" data-roll><span class="w on">making</span><span class="w">launching</span>…</span> */
 .roll { display: inline-grid; vertical-align: bottom; }
-.roll .w { grid-area: 1 / 1; visibility: hidden; padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 34% no-repeat; }
+.roll .w { grid-area: 1 / 1; justify-self: start; white-space: nowrap; visibility: hidden; padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 100% 34% no-repeat; }
 .roll .w.on { visibility: visible; }
 html.js .roll.live .w.on { animation: roll-in 520ms cubic-bezier(.65, 0, .35, 1) both, roll-mark 700ms cubic-bezier(.65, 0, .35, 1) 160ms both; }
 @keyframes roll-in { from { clip-path: inset(0 0 100% 0); transform: translateY(.35em); } to { clip-path: inset(-10% 0 -10% 0); transform: none; } }

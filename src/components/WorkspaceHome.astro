@@ -1,0 +1,349 @@
+---
+// Home: the client workspace, shown properly. White section, black type. Three promises sit above one blue block; on
+// the block, a clean model of the workspace (white, black, one blue, pink only for "needs you") plays the screen that
+// keeps each promise: a script approved with one click, a cut with your notes under it, results going back to the
+// hooks. It moves on by itself; hovering or clicking a promise holds it. With reduced motion the first screen stays.
+import Logo from './Logo.astro';
+import { launch } from '../i18n/launch';
+import { c } from '../i18n/copy';
+import { href } from '../i18n/paths';
+import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const L = launch(lang).ws;
+const why = c(lang).home.why;
+const reel = ads[3] ?? ads[0];
+const T = {
+  en: { ex: 'Example workspace', project: 'Spring launch', nav: ['Home', 'Ideas', 'Scripts', 'Shoot', 'Review', 'Files', 'Results', 'Money'], script: 'Script 06 · Reel 04', wait: 'Waiting for your yes', ok: 'Approved', see: 'We see', hear: 'We hear', note: 'Add a note…', approve: 'Approve script',
+    cut: 'Cut 2 · Reel 04', cuts: ['Cut 1', 'Cut 2'], notes: 'Your notes', n1: 'Logo one second earlier.', done: 'Done in cut 2', n2: 'Perfect. Approved.', approveCut: 'Approve cut', round: 'Round 1',
+    status: 'In edit', steps: ['Brief', 'Scripts', 'Shoot', 'Edit', 'Delivery'], next: 'Next', nextV: 'First draft on Thursday', you: 'From you', youV: 'Approve 2 scripts',
+    ideas: 'Ideas', okF: 'Approved', neu: 'New', write: 'Write the script',
+    shoot: 'Shoot day', shootRows: [['Scripts approved', 'Done', 'b'], ['Talent and location', 'Booked', 'b'], ['Product on set', 'From you', 'p']],
+    files: 'Final files', dl: 'Download',
+    money: 'Payments', moneyRows: [['Deposit · 50%', 'Paid', 'b'], ['Studio rental · advanced', 'Added to balance', 'o'], ['Balance · 50%', 'Due on approval', 'p']] },
+  fr: { ex: 'Exemple d’espace client', project: 'Lancement de printemps', nav: ['Accueil', 'Idées', 'Scripts', 'Tournage', 'Révision', 'Fichiers', 'Résultats', 'Paiements'], script: 'Script 06 · Reel 04', wait: 'En attente de votre feu vert', ok: 'Validé', see: 'On voit', hear: 'On entend', note: 'Ajouter une note…', approve: 'Valider le script',
+    cut: 'Montage 2 · Reel 04', cuts: ['Montage 1', 'Montage 2'], notes: 'Vos notes', n1: 'Le logo une seconde plus tôt.', done: 'Fait dans le montage 2', n2: 'Parfait. Validé.', approveCut: 'Valider le montage', round: 'Série 1',
+    status: 'En montage', steps: ['Brief', 'Scripts', 'Tournage', 'Montage', 'Livraison'], next: 'Ensuite', nextV: 'Premier montage jeudi', you: 'De votre côté', youV: 'Valider 2 scripts',
+    ideas: 'Idées', okF: 'Validée', neu: 'Nouvelle', write: 'Écrire le script',
+    shoot: 'Jour de tournage', shootRows: [['Scripts validés', 'Fait', 'b'], ['Talent et lieu', 'Réservés', 'b'], ['Produit sur le plateau', 'De votre côté', 'p']],
+    files: 'Fichiers finaux', dl: 'Télécharger',
+    money: 'Paiements', moneyRows: [['Acompte · 50 %', 'Payé', 'b'], ['Location studio · avancée', 'Ajoutée au solde', 'o'], ['Solde · 50 %', 'À la validation', 'p']] },
+}[lang];
+const active = [2, 4, 6];
+const four = ads.slice(0, 4);
+const down = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v9M6 9.5l4 4 4-4M5 16h10" /></svg>';
+const words = L.title.split(' ');
+const lead = words.slice(0, -2).join(' '), tail = words.slice(-2).join(' ');
+const cursor = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6.2 1.6L10 19z" /></svg>';
+const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
+---
+<section class="section portal" id="workspace" aria-labelledby="wsh-t">
+  <div class="wrap wide" data-portal>
+    <div class="head">
+      <div class="rv">
+        <p class="label">{L.label}</p>
+        <h2 class="h1" id="wsh-t">{lead} <span class="hl">{tail}</span></h2>
+      </div>
+      <p class="lead rv" style="--d:80ms">{L.lead}</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label={L.title}>
+      {L.blocks.map(([t, d], i) => (
+        <button type="button" role="tab" class:list={['tab', { on: i === 0 }]} aria-selected={String(i === 0)} aria-controls={`ws-s${active[i]}`} id={`ws-t${i}`} data-tab={i}>
+          <span class="n">0{i + 1}</span>
+          <span class="tt"><span>{t}</span></span>
+          <span class="td">{d}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="stage">
+      <p class="tape flat ex">{T.ex}</p>
+      <div class="win">
+        <div class="bar"><i></i><i></i><i></i><span>gecko / {T.project}</span></div>
+        <div class="body">
+          <div class="side">
+            <span class="logo"><Logo /></span>
+            {T.nav.map((x, i) => <button type="button" class="it" data-nav={i}>{x}</button>)}
+          </div>
+          <div class="screens">
+            <!-- 1 The script, approved with one click. -->
+            <div class="screen on" id="ws-s2" role="tabpanel" aria-labelledby="ws-t0" data-screen="2">
+              <header><h3>{T.script}</h3><p class="state"><span class="a">{T.wait}</span><span class="b">{T.ok}</span></p></header>
+              <div class="page">
+                <p class="part"><b>{why.script.scenes[0]}</b><span class="hookline">{why.hooks.lines[0]}</span></p>
+                <div class="cols"><p><b>{T.see}</b><i style="--w:86%"></i><i style="--w:62%"></i></p><p><b>{T.hear}</b><i style="--w:92%"></i><i style="--w:48%"></i></p></div>
+                {why.script.scenes.slice(1, 4).map((x, i) => <p class="part row"><b>{x}</b><i style={`--w:${[78, 64, 88][i]}%`}></i></p>)}
+              </div>
+              <footer><span class="field">{T.note}</span><button type="button" class="go" data-approve><span class="a">{T.approve}</span><span class="b"><Fragment set:html={tick} />{T.ok}</span></button></footer>
+              <span class="cursor" set:html={cursor} />
+            </div>
+
+            <!-- 2 The cut, with your notes under it. -->
+            <div class="screen" id="ws-s4" role="tabpanel" aria-labelledby="ws-t1" data-screen="4" hidden>
+              <div class="review">
+                <div class="frame">
+                  <img src={reel.poster} alt="" width="540" height="960" loading="lazy" decoding="async" />
+                  <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={reel.clip ?? reel.src}></video>
+                </div>
+                <div class="side2">
+                  <h3>{T.cut}</h3>
+                  <p class="cuts"><span>{T.cuts[0]}</span><span class="cur">{T.cuts[1]}</span></p>
+                  <p class="k">{T.notes}</p>
+                  <p class="bubble" style="--i:0">{T.n1}<em>{T.done}</em></p>
+                  <p class="bubble mine" style="--i:1"><span class="typed">{T.n2}</span></p>
+                  <button type="button" class="go solid" data-approve-cut data-done={T.ok}>{T.approveCut}</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 The results, back on the hooks. -->
+            <div class="screen" id="ws-s6" role="tabpanel" aria-labelledby="ws-t2" data-screen="6" hidden>
+              <header><h3>{why.review.title}</h3><p class="state still"><span>{T.round}</span></p></header>
+              <ul class="res">
+                <li style="--i:0;--w:88%"><b>{why.review.rows[0][0]}</b><i></i><em class="keep">{why.review.rows[0][1]}</em></li>
+                <li style="--i:1;--w:36%"><b>{why.review.rows[1][0]}</b><i></i><em>{why.review.rows[1][1]}</em></li>
+              </ul>
+              <p class="next"><b>{why.review.rows[2][0]}</b><span>{why.review.rows[2][1]}</span></p>
+            </div>
+            <!-- Home -->
+            <div class="screen" id="ws-s0" data-screen="0" hidden>
+              <header><h3>{T.project}</h3><p class="state still"><span>{T.status}</span></p></header>
+              <div class="homeb">
+                <ol class="steps">{T.steps.map((x, i) => <li class={i < 3 ? 'done' : i === 3 ? 'now' : ''} style={`--i:${i}`}><i></i><b>{x}</b></li>)}</ol>
+                <div class="tiles">
+                  <button type="button" class="tile b" data-go="4"><span>{T.next}</span><b>{T.nextV}</b></button>
+                  <button type="button" class="tile p" data-go="2"><span>{T.you}</span><b>{T.youV}</b></button>
+                </div>
+              </div>
+            </div>
+            <!-- Ideas -->
+            <div class="screen" id="ws-s1" data-screen="1" hidden>
+              <header><h3>{T.ideas}</h3></header>
+              <ul class="rows">
+                {four.slice(0, 3).map((a, i) => <li style={`--i:${i}`}><b>{a.angle[lang]}</b><span class="fmt">{a.format?.[lang]}</span>{i < 2 ? <em class="b">{T.okF}</em> : <em class="k">{T.neu}</em>}{i === 0 && <button type="button" class="mini" data-go="2">{T.write} →</button>}</li>)}
+              </ul>
+            </div>
+            <!-- Shoot -->
+            <div class="screen" id="ws-s3" data-screen="3" hidden>
+              <header><h3>{T.shoot}</h3></header>
+              <ul class="rows">{T.shootRows.map(([a, b, k], i) => <li style={`--i:${i}`}><b>{a}</b><em class={k}>{b}</em></li>)}</ul>
+            </div>
+            <!-- Files -->
+            <div class="screen" id="ws-s5" data-screen="5" hidden>
+              <header><h3>{T.files}</h3></header>
+              <ul class="files">
+                {four.map((a, i) => <li style={`--i:${i}`}><img src={a.poster} alt="" width="540" height="960" loading="lazy" decoding="async" /><b>{a.angle[lang]}</b><button type="button" class="dl" aria-label={`${T.dl}: ${a.angle[lang]}`} set:html={down} /></li>)}
+              </ul>
+            </div>
+            <!-- Money -->
+            <div class="screen" id="ws-s7" data-screen="7" hidden>
+              <header><h3>{T.money}</h3></header>
+              <ul class="rows">{T.moneyRows.map(([a, b, k], i) => <li style={`--i:${i}`}><b>{a}</b><em class={k}>{b}</em></li>)}</ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot rv">
+      <a class="btn primary lg" href={href(lang, 'process')}>{L.cta} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-portal]');
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLElement>('[data-tab]')];
+    const screens = [...root.querySelectorAll<HTMLElement>('[data-screen]')];
+    const nav = [...root.querySelectorAll<HTMLElement>('[data-nav]')];
+    const tour = [2, 4, 6];
+    const video = root.querySelector<HTMLVideoElement>('video')!;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let at = 2, timer = 0, seen = false;
+    const show = (id: number) => {
+      at = id;
+      tabs.forEach((t, j) => { const on = tour[j] === at; t.classList.toggle('on', on); t.setAttribute('aria-selected', String(on)); });
+      nav.forEach((n, j) => n.classList.toggle('cur', j === at));
+      screens.forEach((s) => { s.hidden = Number(s.dataset.screen) !== at; s.classList.remove('on', 'done'); });
+      const cur = screens.find((s) => Number(s.dataset.screen) === at)!;
+      // The class goes on a frame later, so the screen's animations start from the top every time it comes up.
+      requestAnimationFrame(() => requestAnimationFrame(() => cur.classList.add('on')));
+      if (at === 4 && !still) { if (!video.getAttribute('src')) video.src = video.dataset.src!; video.play().then(() => video.classList.add('live')).catch(() => {}); }
+      else video.pause();
+    };
+    // It plays the three promises in turn, by itself, whenever it is on screen. Anything you click is shown at once
+    // and stays a little longer before the tour carries on from there.
+    const next = () => tour[(tour.indexOf(at) + 1) % tour.length] ?? tour[0];
+    const tick = (wait = 5600) => { clearTimeout(timer); if (!still && seen && !document.hidden) timer = window.setTimeout(() => { show(next()); tick(); }, wait); };
+    const pick = (id: number) => { show(id); tick(10000); };
+    nav[at].classList.add('cur');
+    tabs.forEach((t, j) => t.addEventListener('click', () => pick(tour[j])));
+    nav.forEach((n, j) => n.addEventListener('click', () => pick(j)));
+    root.querySelectorAll<HTMLElement>('[data-go]').forEach((el) => el.addEventListener('click', () => pick(Number(el.dataset.go))));
+    root.querySelector('[data-approve]')?.addEventListener('click', (e) => { (e.currentTarget as HTMLElement).closest('.screen')!.classList.add('done'); tick(10000); });
+    root.querySelector<HTMLElement>('[data-approve-cut]')?.addEventListener('click', (e) => { const b = e.currentTarget as HTMLElement; b.textContent = b.dataset.done!; b.classList.add('ok'); tick(10000); });
+    document.addEventListener('visibilitychange', () => tick());
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) tick(); else { clearTimeout(timer); video.pause(); } }, { threshold: 0.3 }).observe(root.querySelector('.stage')!);
+  }
+</script>
+
+<style>
+  /* The head, centred: the label, the title, one line. */
+  .head { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 22px; margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
+  .head .label { margin: 0 0 16px; }
+  .head .h1 { margin: 0; }
+  .lead { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.4; text-wrap: balance; }
+
+  /* The three promises. The one that is on carries the marker. */
+  .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2.4vw, 40px); margin-bottom: clamp(24px, 2.8vw, 40px); }
+  .tab { display: grid; align-content: start; justify-items: center; gap: 10px; margin: 0; padding: 0; border: 0; background: none; color: #000; font: inherit; text-align: center; cursor: pointer; }
+  .n { font-weight: 700; font-size: 13px; }
+  .tt { font-weight: 800; font-size: clamp(22px, 2.3vw, 36px); line-height: 1.05; letter-spacing: -0.04em; font-stretch: 92%; }
+  .tt span { padding-inline: .05em; margin-inline: -.05em; background: linear-gradient(var(--pink), var(--pink)) 0 86% / 0 36% no-repeat; transition: background-size 620ms cubic-bezier(.65, 0, .35, 1); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  .tab.on .tt span { background-size: 100% 36%; }
+  .td { max-width: 30rem; font-weight: 500; font-size: 17px; line-height: 1.4; }
+  .tab:focus-visible { outline: 3px solid #000; outline-offset: 6px; border-radius: 8px; }
+
+  /* The blue block, and the window on it. Inside: white, black, one blue. Pink only where something waits for you. */
+  .stage { position: relative; padding: clamp(20px, 4vw, 72px) clamp(16px, 5vw, 96px); border-radius: 32px; background: var(--blue); }
+  .ex { position: absolute; z-index: 2; left: clamp(16px, 5vw, 96px); top: clamp(2px, 1.3vw, 20px); background: #fff; transform: rotate(-2deg); }
+  .win { max-width: 1180px; margin-inline: auto; border-radius: 20px; overflow: hidden; background: #fff; color: #000; font-size: 15px; }
+  .bar { display: flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px; background: #000; color: #fff; font-size: 13px; font-weight: 500; }
+  .bar i { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+  .bar span { margin-left: 10px; }
+  .body { display: grid; grid-template-columns: 200px minmax(0, 1fr); height: clamp(460px, 40vw, 560px); }
+  .side { display: grid; align-content: start; gap: 2px; padding: 20px 14px; }
+  .logo { display: block; width: 62px; margin: 0 0 16px 10px; }
+  .it { display: flex; align-items: center; width: 100%; height: 38px; margin: 0; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: #000; font: 600 14.5px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .it:hover { background: var(--blue); }
+  .it:focus-visible, .win button:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
+  .side :global(.cur) { background: #000; color: #fff; }
+  .screens { position: relative; min-width: 0; }
+  .screen { position: absolute; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 18px; padding: clamp(18px, 2.2vw, 32px); }
+  .screen.on { animation: s-in 460ms cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes s-in { from { opacity: 0; transform: translateY(14px); } }
+  .screen header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .screen h3 { margin: 0; font-weight: 800; font-size: clamp(20px, 1.9vw, 28px); letter-spacing: -0.04em; }
+  .state { position: relative; margin: 0; display: grid; font-weight: 700; font-size: 13px; }
+  .state span { grid-area: 1 / 1; justify-self: end; padding: 7px 13px; border-radius: 999px; white-space: nowrap; }
+  .state .a { background: var(--pink); }
+  .state .b { background: var(--blue); opacity: 0; }
+  .state.still span { background: #000; color: #fff; }
+  .screen.on .state .a { animation: out 240ms ease both 2500ms; }
+  .screen.on .state .b { animation: in 300ms ease both 2600ms; }
+  @keyframes out { to { opacity: 0; } }
+  @keyframes in { to { opacity: 1; } }
+
+  /* 1 Script */
+  .page { display: grid; align-content: start; gap: 14px; padding: clamp(16px, 1.8vw, 26px); border-radius: 16px; box-shadow: inset 0 0 0 1.5px #000; overflow: hidden; }
+  .part { margin: 0; display: grid; gap: 6px; }
+  .part b, .cols b { font-weight: 700; font-size: 12.5px; }
+  .hookline { width: fit-content; font-weight: 800; font-size: clamp(18px, 1.7vw, 25px); letter-spacing: -0.03em; line-height: 1.15; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cols p { margin: 0; display: grid; gap: 7px; }
+  .page i { display: block; width: var(--w); height: 9px; border-radius: 9px; background: var(--blue); transform-origin: 0 50%; }
+  .part.row { grid-template-columns: 150px 1fr; align-items: center; }
+  .screen.on .hookline { animation: type 800ms steps(26) both 200ms; }
+  .screen.on .page i { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both 700ms; }
+  @keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes grow { from { transform: scaleX(0); } }
+  .screen footer { display: flex; align-items: center; gap: 12px; }
+  .field { flex: 1; padding: 13px 16px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; font-weight: 500; }
+  .go { position: relative; display: inline-grid; margin: 0; padding: 0; border: 0; background: none; color: inherit; font: 700 15px/1 var(--font); cursor: pointer; }
+  .go > span { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 22px; border-radius: 999px; white-space: nowrap; }
+  .go .a { background: #000; color: #fff; }
+  .go .b { background: var(--blue); color: #000; opacity: 0; }
+  .go :global(svg) { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .go.solid { padding: 13px 22px; border-radius: 999px; background: #000; color: #fff; justify-self: start; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .go.solid:hover, .go.solid:global(.ok) { background: var(--blue); color: #000; }
+  /* Pressed by hand: the script is approved at once. */
+  .screen:global(.done) .state .a, .screen:global(.done) .go .a { opacity: 0 !important; animation: none !important; }
+  .screen:global(.done) .state .b, .screen:global(.done) .go .b { opacity: 1 !important; animation: none !important; }
+  .screen:global(.done) .cursor { display: none; }
+  .screen.on .go .a { animation: press 300ms ease both 2250ms, out 240ms ease both 2500ms; }
+  .screen.on .go .b { animation: in 300ms ease both 2600ms; }
+  @keyframes press { 50% { transform: scale(.94); } }
+  .cursor { position: absolute; right: 70px; bottom: 26px; width: 26px; height: 26px; }
+  .cursor :global(svg) { width: 100%; height: 100%; fill: #000; stroke: #fff; stroke-width: 1.5; stroke-linejoin: round; }
+  .screen.on .cursor { animation: point 1500ms cubic-bezier(.3, .7, .2, 1) both 800ms; }
+  @keyframes point { from { transform: translate(-260px, -210px); opacity: 0; } 20% { opacity: 1; } }
+
+  /* 2 Review */
+  .review { grid-row: 1 / -1; display: grid; grid-template-columns: clamp(170px, 16.5vw, 246px) minmax(0, 1fr); gap: clamp(18px, 2.4vw, 36px); min-height: 0; align-items: start; }
+  .frame { position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; background: #000; }
+  .frame img, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .frame video { opacity: 0; transition: opacity 400ms var(--ease); }
+  .frame :global(video.live) { opacity: 1; }
+  .side2 { display: grid; align-content: start; gap: 14px; min-width: 0; }
+  .cuts { margin: 0; display: flex; gap: 6px; font-weight: 700; font-size: 13px; }
+  .cuts span { padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
+  .cuts .cur { background: #000; color: #fff; }
+  .k { margin: 6px 0 0; font-weight: 700; font-size: 12.5px; }
+  .bubble { margin: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; max-width: 26rem; padding: 13px 16px; border-radius: 16px 16px 16px 4px; background: var(--blue); font-weight: 500; font-size: 16px; line-height: 1.35; }
+  .bubble em { font-style: normal; font-weight: 700; font-size: 12.5px; padding: 5px 10px; border-radius: 999px; background: #fff; }
+  .bubble.mine { justify-self: end; border-radius: 16px 16px 4px 16px; background: #000; color: #fff; }
+  .screen.on .bubble { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(400ms + var(--i) * 1300ms); }
+  .screen.on .typed { display: inline-block; animation: type 700ms steps(18) both 1900ms; }
+  .screen.on .go.solid { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both 2900ms; }
+
+  /* 3 Results */
+  .res { list-style: none; margin: 0; padding: 8px 0 0; display: grid; align-content: start; gap: clamp(14px, 1.6vw, 22px); }
+  .res li { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+  .res b { font-weight: 800; font-size: clamp(17px, 1.5vw, 21px); letter-spacing: -0.02em; }
+  .res i { display: block; width: var(--w); height: clamp(30px, 3vw, 44px); border-radius: 10px; background: var(--blue); transform-origin: 0 50%; }
+  .res li:first-child i { background: #000; }
+  .res em { font-style: normal; font-weight: 700; font-size: 13px; padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
+  .res .keep { box-shadow: none; background: var(--pink); }
+  .screen.on .res i { animation: grow 900ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(300ms + var(--i) * 250ms); }
+  .screen.on .res em { animation: from0 300ms ease both; animation-delay: calc(1300ms + var(--i) * 250ms); }
+  @keyframes from0 { from { opacity: 0; } }
+  .next { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; padding: clamp(16px, 1.8vw, 24px); border-radius: 16px; background: #000; color: #fff; }
+  .next b { font-weight: 700; font-size: 13px; }
+  .next span { font-weight: 800; font-size: clamp(22px, 2.4vw, 36px); letter-spacing: -0.04em; }
+  .screen.on .next { animation: s-in 460ms cubic-bezier(.2, .8, .2, 1) both 2200ms; }
+
+  /* The other screens: plain rows and blocks, same three colours. */
+  .rows { list-style: none; margin: 0; padding: 0; display: grid; align-content: start; gap: 10px; }
+  .rows li { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; padding: 16px 18px; border-radius: 16px; box-shadow: inset 0 0 0 1.5px #000; }
+  .rows b { margin-right: auto; font-weight: 800; font-size: clamp(17px, 1.5vw, 21px); letter-spacing: -0.02em; }
+  .rows em, .fmt { font-style: normal; font-weight: 700; font-size: 13px; padding: 7px 13px; border-radius: 999px; white-space: nowrap; }
+  .fmt { padding-inline: 0; }
+  .rows em:global(.b) { background: var(--blue); } .rows em:global(.p) { background: var(--pink); } .rows em:global(.o) { box-shadow: inset 0 0 0 1.5px #000; } .rows em:global(.k) { background: #000; color: #fff; }
+  .mini { margin: 0; padding: 9px 15px; border: 0; border-radius: 999px; background: #000; color: #fff; font: 700 13px/1 var(--font); cursor: pointer; }
+  .mini:hover { background: var(--blue); color: #000; }
+  .screen.on .rows li, .screen.on .files li { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(120ms + var(--i) * 110ms); }
+  .homeb { display: grid; align-content: space-between; gap: 20px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .steps li { display: grid; gap: 10px; font-size: 14px; }
+  .steps i { height: 12px; border-radius: 12px; box-shadow: inset 0 0 0 1.5px #000; transform-origin: 0 50%; }
+  .steps :global(.done) i { background: #000; } .steps :global(.now) i { background: var(--blue); box-shadow: none; }
+  .steps b { font-weight: 700; }
+  .screen.on .steps i { animation: grow 520ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(150ms + var(--i) * 120ms); }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tile { display: grid; gap: 10px; margin: 0; padding: clamp(18px, 2vw, 28px); border: 0; border-radius: 18px; color: #000; font: inherit; text-align: left; cursor: pointer; transition: transform 240ms var(--ease); }
+  .tile:global(.b) { background: var(--blue); } .tile:global(.p) { background: var(--pink); }
+  .tile:hover { transform: translateY(-3px); }
+  .tile span { font-weight: 700; font-size: 13px; }
+  .tile b { font-weight: 800; font-size: clamp(20px, 2vw, 30px); letter-spacing: -0.035em; line-height: 1.05; }
+  .files { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-content: start; }
+  .files li { position: relative; display: grid; gap: 8px; min-width: 0; }
+  .files img { width: 100%; height: auto; aspect-ratio: 9 / 13; object-fit: cover; border-radius: 14px; }
+  .files b { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dl { position: absolute; right: 8px; top: 8px; display: grid; place-items: center; width: 38px; height: 38px; margin: 0; padding: 0; border: 0; border-radius: 50%; background: #fff; color: #000; cursor: pointer; }
+  .dl:hover { background: var(--blue); }
+  .dl :global(svg) { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .foot { display: flex; justify-content: center; margin-top: clamp(32px, 3.6vw, 52px); }
+
+  @media (max-width: 980px) {
+    .tabs { grid-template-columns: 1fr; }
+    .body { grid-template-columns: 1fr; height: 520px; }
+    .side { display: none; }
+    .part.row { grid-template-columns: 1fr; }
+    .cursor { display: none; }
+    .files { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
