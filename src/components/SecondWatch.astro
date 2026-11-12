@@ -16,6 +16,8 @@ const k = c(lang);
 const reel = ads[0];
 const end = 23;
 const tc = (s: number) => `0:${String(s).padStart(2, '0')}`;
+// "regardez-la" must not break at its hyphen: a non-breaking hyphen keeps it on one line.
+const keep = (t: string) => t.replace(/-/g, '\u2011');
 ---
 <section class="sw" id="watch" aria-labelledby="sw-t" data-sw>
   <div class="wrap wide sw-in">
@@ -30,7 +32,7 @@ const tc = (s: number) => `0:${String(s).padStart(2, '0')}`;
     </div>
 
     <div class="sw-copy">
-      <h2 class="h2 sw-h rv" id="sw-t">{W.title[0]} <span class="hl">{W.title[1]}</span></h2>
+      <h2 class="h2 sw-h rv" id="sw-t">{keep(W.title[0])} <span class="hl">{W.title[1]}</span></h2>
       <p class="sw-sub rv">{W.sub}</p>
       <ol class="sw-beats">
         {W.beats.map(([at, t, d], i) => (
