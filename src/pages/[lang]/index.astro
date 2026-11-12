@@ -2,7 +2,6 @@
 import Base from '../../layouts/Base.astro';
 import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
-import FeedIcons from '../../components/FeedIcons.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
 import WhatWeDo from '../../components/WhatWeDo.astro';
@@ -43,16 +42,13 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
       <div class="h-copy">
-        <div class="h-stage">
-          <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
-            {lines.map((line, i) => (
-              <span class="ln" style={`--l:${i}`} aria-hidden="true">
-                <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
-              </span>
-            ))}
-          </h1>
-          <FeedIcons lang={lang} />
-        </div>
+        <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
+          {lines.map((line, i) => (
+            <span class="ln" style={`--l:${i}`} aria-hidden="true">
+              <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
+            </span>
+          ))}
+        </h1>
         <div class="h-foot">
           <p class="h-sub up" style="--d:420ms">{L.hero.line}</p>
           <div class="h-act up" style="--d:520ms">
@@ -68,10 +64,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 
   <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
     <div class="wrap wide w-in">
-      <div class="w-head rv">
-        <h2 class="w-title" id="w-title" tabindex="-1">{h.kicks.workTitle}</h2>
-        <a class="btn" href={href(lang, 'work')}>{hx.cta} <span class="arr" aria-hidden="true">→</span></a>
-      </div>
+      <h2 class="w-title rv" id="w-title" tabindex="-1">{h.kicks.workTitle}</h2>
       <ol class="deck" data-deck>
         {clips.map((cl) => (
           <li class="card rv" style={`--d:${cl.i * 80}ms`}>
@@ -84,6 +77,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
           </li>
         ))}
       </ol>
+      <p class="w-more rv"><a class="btn lg" href={href(lang, 'work')}>{hx.cta} <span class="arr" aria-hidden="true">→</span></a></p>
     </div>
   </section>
 
@@ -98,10 +92,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   </section>
 
   <section class="section faq-sec" id="faq">
-    <div class="wrap faq-grid">
-      <div class="faq-lead rv">
-        <h2 class="h1 faq-h">{h.faqTitle}</h2>
-      </div>
+    <div class="wrap faq-col">
+      <h2 class="h1 faq-h rv">{h.faqTitle}</h2>
       <div class="rv"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: L.faqAll }} /></div>
     </div>
   </section>
@@ -170,18 +162,17 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 </script>
 
 <style>
-  /* The first screen: the headline across the full width with the feed's pieces floating around its lines, then the
-     line and the two ways in. The reels live in Selected work, just below. */
+  /* The first screen: the headline, centred across the full width, then the line and the two ways in, centred under it.
+     Text only. The reels live in Selected work, just below. */
   .hero { display: flex; flex-direction: column; min-height: min(100svh, 1040px); background: var(--bg); }
   .h-in { flex: 1; display: grid; align-items: center;
     padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
-  .h-copy { container-type: inline-size; display: grid; gap: clamp(28px, 4.4vh, 56px); align-content: center; min-width: 0; }
-  .h-stage { position: relative; }
-  .h-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px 48px; }
-  .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
-  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
+  .h-copy { container-type: inline-size; display: grid; justify-items: center; gap: clamp(32px, 5vh, 64px); align-content: center; min-width: 0; text-align: center; }
+  .h-foot { display: grid; justify-items: center; gap: clamp(22px, 3vh, 32px); }
+  .h-sub { margin: 0; max-width: 30rem; font-weight: 500; font-size: clamp(19px, 1.5vw, 23px); line-height: 1.4; text-wrap: balance; }
+  .h-title { display: grid; justify-items: center; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
     font-size: min(calc(100cqw / var(--kw) * .97), 210px, 21svh); }
-  .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
+  .ln { display: block; overflow: hidden; padding: .06em .06em .1em; margin: -.06em -.06em -.1em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
   @keyframes rise { from { transform: translateY(110%); } }
   .mk { position: relative; z-index: 0; }
@@ -191,7 +182,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
   .cut :global(.bands) { padding-block: clamp(72px, 8.5vw, 128px); }
   .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
-  .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
+  .h-act { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
 
@@ -202,10 +193,10 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .h-act .btn { flex: 1 1 auto; }
   }
 
-  /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
+  /* Selected work, on black: the title centred, the four reels side by side, then the way to all the work. */
   .work { padding-block: var(--section); }
-  .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; margin-bottom: clamp(28px, 3.6vw, 52px); }
-  .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
+  .w-title { margin: 0 0 clamp(32px, 4vw, 60px); text-align: center; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
+  .w-more { display: flex; justify-content: center; margin: clamp(36px, 4vw, 60px) 0 0; }
   .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
   .card { position: relative; min-width: 0; }
   .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: 24px; overflow: hidden; background: #000; color: #fff; cursor: pointer; transition: transform 500ms var(--ease); }
@@ -234,9 +225,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .c-media:hover { transform: none; }
   }
 
-  .faq-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .faq-lead { display: grid; gap: clamp(20px, 2.6vw, 34px); justify-items: start; position: sticky; top: 120px; }
-  .faq-h { font-size: clamp(48px, 6.4vw, 104px); max-width: 8ch; }
-  @media (max-width: 860px) { .faq-grid { grid-template-columns: 1fr; } .faq-lead { position: static; } }
+  /* Questions: the title centred, the answers in one column under it. */
+  .faq-col { display: grid; gap: clamp(32px, 4vw, 56px); max-width: 860px; }
+  .faq-h { margin: 0; text-align: center; font-size: clamp(48px, 6.4vw, 104px); }
+  .faq-col :global(.faq-more) { display: flex; width: fit-content; margin: 32px auto 0; }
 
 </style>

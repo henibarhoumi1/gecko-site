@@ -15,7 +15,7 @@ const n = c(lang).nav;
 const [t0, t1] = mark(a.title);
 ---
 <Base lang={lang} title={n.about} page="about">
-  <section class="page-head lit">
+  <section class="page-head lit mid">
     <div class="wrap wide">
       <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text-l lede rv" style="--d:60ms">{a.lede}</p>
@@ -51,11 +51,11 @@ const [t0, t1] = mark(a.title);
 </Base>
 
 <style>
-  .page-head .lede { margin: clamp(20px, 2.4vw, 32px) 0 0; max-width: 40rem; }
-  .shots-sec .h2 { margin-bottom: clamp(28px, 3vw, 44px); }
+  .page-head .lede { margin: clamp(20px, 2.4vw, 32px) auto 0; max-width: 40rem; }
+  .shots-sec .h2 { margin: 0 0 clamp(28px, 3vw, 44px); text-align: center; }
   .shots { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); }
   .shots img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
-  .hire-sec { }
+  .hire-sec .wrap { display: flex; justify-content: center; }
   .hire { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 700; font-size: clamp(26px, 3.4vw, 52px); line-height: 1.05; letter-spacing: -0.045em; color: var(--fg); text-decoration: none; }
   .lb { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 80% / 0 38% no-repeat; transition: background-size 520ms var(--ease); }
   .ar { transition: transform 360ms var(--ease); }

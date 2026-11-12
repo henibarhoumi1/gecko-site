@@ -25,13 +25,14 @@ const tail = words.slice(-2).join(' ');
 )}
 
 <style>
-  .ch-h { max-width: 18ch; margin-bottom: clamp(28px, 3.6vw, 56px); }
+  .head { justify-content: center; text-align: center; }
+  .ch-h { max-width: 18ch; margin: 0 auto clamp(28px, 3.6vw, 56px); text-wrap: balance; }
   .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
   .choices li { display: grid; gap: 14px; align-content: start; min-height: 240px; padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: var(--blue); color: #000; }
   .n { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
   .t { margin: 0; font-weight: 800; font-size: clamp(28px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.03em; max-width: 16ch; }
   .text { margin: 0; max-width: 30rem; font-weight: 500; font-size: 18px; color: #000; }
-  .more-row { display: flex; flex-wrap: wrap; gap: 12px clamp(28px, 4vw, 64px); margin: clamp(32px, 4vw, 56px) 0 0; }
+  .more-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px clamp(28px, 4vw, 64px); margin: clamp(32px, 4vw, 56px) 0 0; }
   .more { display: inline-flex; align-items: baseline; gap: .35em; font-weight: 800; font-size: clamp(24px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.03em; color: var(--fg); text-decoration: none; }
   .lb { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--pink), var(--pink)) 0 80% / 0 38% no-repeat; transition: background-size 520ms var(--ease); }
   .ar { transition: transform 360ms var(--ease); }

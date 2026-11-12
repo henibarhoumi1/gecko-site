@@ -19,7 +19,7 @@ const [t0, t1] = mark(k.title);
 const L = launch(lang);
 ---
 <Base lang={lang} title={o.title} page="offers">
-  <section class="page-head lit">
+  <section class="page-head lit mid">
     <div class="wrap wide stack" style="--gap:22px">
       <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text text-l lede rv" style="--d:80ms">{k.sub}</p>
@@ -121,24 +121,26 @@ const L = launch(lang);
 <style>
   .lede { max-width: 44rem; }
   .plans-sec { padding-top: clamp(40px, 5vw, 72px); }
-  .note { margin: 24px 0 0; max-width: 56rem; font-size: 15px; font-weight: 500; line-height: 1.5; }
+  .note { margin: 24px auto 0; max-width: 56rem; text-align: center; font-size: 15px; font-weight: 500; line-height: 1.5; }
   .bw-block { padding-block: clamp(40px, 5vw, 72px); }
   .bwo { padding: clamp(28px, 3.4vw, 56px); border-radius: 32px; background: var(--blue); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 96px); align-items: end; }
   .bw-t { margin-top: 14px; }
   .bw-l { margin: 12px 0 0; max-width: 34rem; font-weight: 700; }
   .bw-r { display: grid; gap: 20px; }
   .bw-r .text { margin: 0; font-weight: 500; }
-  .every-p { display: grid; grid-template-columns: minmax(0, .4fr) minmax(0, 1fr); gap: 16px clamp(24px, 4vw, 64px); margin-bottom: clamp(28px, 3.4vw, 48px); }
-  .every-t { margin: 0; font-weight: 800; font-size: clamp(22px, 2vw, 30px); letter-spacing: -0.02em; }
-  .every-p ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 40px; font-weight: 500; font-size: 19px; }
+  .every-p { display: grid; justify-items: center; gap: 14px; margin-bottom: clamp(32px, 3.6vw, 52px); text-align: center; }
+  .every-t { margin: 0; font-weight: 800; font-size: 15px; letter-spacing: .02em; text-transform: uppercase; }
+  .every-p ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 30px; max-width: 64rem; font-weight: 600; font-size: clamp(16px, 1.2vw, 19px); }
+  .every-p li { position: relative; padding-left: 18px; }
+  .every-p li::before { content: ''; position: absolute; left: 0; top: .45em; width: 8px; height: 8px; border-radius: 50%; background: #000; }
   .panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(16px, 1.6vw, 24px); align-items: stretch; }
   .panels :global(.pp.k-test) { height: 100%; }
   .m { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 1.6vw, 24px); }
   .m :global(.k-partner) { grid-column: 1 / -1; }
-  @media (max-width: 1000px) { .panels, .m, .bwo, .every-p { grid-template-columns: 1fr; } .every-p ul { grid-template-columns: 1fr; } }
+  @media (max-width: 1000px) { .panels, .m, .bwo { grid-template-columns: 1fr; } }
 
   /* What the fee covers: three filled blocks. */
-  .pay-sec .h2 { max-width: 12ch; margin-bottom: clamp(32px, 4vw, 56px); }
+  .pay-sec .h2 { max-width: 14ch; margin: 0 auto clamp(32px, 4vw, 56px); text-align: center; text-wrap: balance; }
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
   .part { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); background: var(--blue); }
   .part .text { margin: 0; font-weight: 500; }

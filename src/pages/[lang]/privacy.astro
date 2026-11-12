@@ -9,7 +9,7 @@ const lang = Astro.params.lang as Locale;
 const P = launch(lang).privacy;
 ---
 <Base lang={lang} title={P.nav} page="privacy">
-  <section class="page-head lit">
+  <section class="page-head lit mid">
     <div class="wrap wide">
       <h1 class="h1 rv">{P.title}</h1>
       <p class="text-l lede rv" style="--d:60ms">{P.lede}</p>

@@ -3,14 +3,14 @@
 import type { Locale } from './strings';
 
 const en = {
-  hero: { line: 'Gecko is a creative studio in Tunis. Short video ads for brands that sell online, and the whole brand world around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
+  hero: { line: 'A creative studio in Tunis. Short video ads, and the brand around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
   what: {
     title: 'One studio. Everything your brand needs to sell.',
     items: [
-      ['Strategy', 'We study your business, your market and your strongest competitors before we write a word.'],
-      ['Creative', 'Angles, hooks and scripts. You approve every one before a camera turns on.'],
-      ['Production', 'Shoots, edits and product photography. One crew, start to finish.'],
-      ['Brand and web', 'Identity, brand deck, website assets, and a store with its own back office.'],
+      ['Strategy', 'Your market and your strongest competitors, studied first.'],
+      ['Creative', 'Angles, hooks and scripts. You approve each one.'],
+      ['Production', 'Shoots, edits and product photos. One crew.'],
+      ['Brand and web', 'Identity, brand deck and a store with its own back office.'],
     ],
   },
   formats: 'Formats',
@@ -27,13 +27,13 @@ const en = {
     inside: [
       'Market study and strategy.',
       'Brand identity or rebrand, with a brand deck.',
-      'First campaign: 15 reels, built to test many variations and find your winning formats early.',
+      'First campaign: 15 reels, built to find your winning formats early.',
       'Product photography.',
-      'Website assets and a website with its own custom back office: orders, products, stock and payments in one place, with your Meta ads results beside them.',
+      'A website with its own back office: orders, products, stock, payments and your Meta ads results in one place.',
       'Creative support from the team throughout.',
     ],
     value: 'Bought separately, that is a strategist, a designer, a photographer, a video crew and a web developer. Here it is one team, one brief and one look.',
-    price: 'Quoted for your brand. Ask for a quote and you get a clear scope, timeline and price.',
+    price: 'Quoted for your brand: a clear scope, timeline and price.',
     quote: 'Ask for a quote', see: 'See what’s inside',
     // Page /brand-world
     holdTitle: 'What you hold at the end',
@@ -46,7 +46,7 @@ const en = {
     title: 'Choose how we work together.',
     ways: ['Try', 'Every month', 'The whole brand'],
     everyTitle: 'In every plan',
-    every: ['Research and one written angle per ad', 'Scripts you approve before the shoot', 'The shoot and the edit by one team', 'Subtitles, licensed music, 9:16 and 4:5', 'First draft 7 days after the shoot', 'Your private workspace'],
+    every: ['One written angle per ad', 'Scripts you approve first', 'Shoot and edit by one team', 'Subtitles and licensed music', 'First draft 7 days after the shoot', 'Your private workspace'],
     start: 'Start here', lowest: 'Lowest price per reel',
     forWho: 'Who it’s for', gives: 'What you get', perReel: (n: number) => `About ${n} TND per reel`,
     testWorks: 'One payment, once', openings: (n: number) => `${n} openings to test`,
@@ -57,11 +57,11 @@ const en = {
   ws: {
     label: 'One link. The whole project.',
     title: 'Watch your ads get made.',
-    lead: 'Every idea, script, shoot date, cut and invoice lives in one private workspace. Included with every plan, the Test too.',
+    lead: 'Ideas, scripts, shoots, cuts and invoices in one private workspace. In every plan.',
     blocks: [
-      ['Nothing is filmed without your yes.', 'Scripts, hooks and calls to action are written where you can read them. You approve with one click.'],
-      ['No more “which version?”', 'Each cut sits with your notes under it. Final files stay in one place.'],
-      ['Every round gets smarter.', 'Your results go back to the hooks that earned them, and the next scripts start from what worked.'],
+      ['Nothing is filmed without your yes.', 'Read every script. Approve it in one click.'],
+      ['No more “which version?”', 'Each cut, with your notes under it.'],
+      ['Every round gets smarter.', 'The next scripts start from what sold.'],
     ],
     row: ['Idea', 'Script', 'Shoot', 'Cut', 'Results', 'next idea'],
     cta: 'See how a project runs',
@@ -85,14 +85,14 @@ const en = {
 };
 
 const fr: typeof en = {
-  hero: { line: 'Gecko est un studio créatif à Tunis. Des pubs vidéo courtes pour les marques qui vendent en ligne, et tout l’univers de marque autour.', caption: en.hero.caption },
+  hero: { line: 'Un studio créatif à Tunis. Des pubs vidéo courtes, et la marque autour.', caption: en.hero.caption },
   what: {
     title: 'Un studio. Tout ce dont votre marque a besoin pour vendre.',
     items: [
-      ['Stratégie', 'On étudie votre activité, votre marché et vos concurrents les plus forts avant d’écrire un mot.'],
-      ['Création', 'Angles, accroches et scripts. Vous validez chacun avant qu’une caméra ne tourne.'],
-      ['Production', 'Tournages, montages et photo produit. Une seule équipe, du début à la fin.'],
-      ['Marque et web', 'Identité, brand deck, visuels de site, et une boutique avec son propre back-office.'],
+      ['Stratégie', 'Votre marché et vos concurrents les plus forts, étudiés d’abord.'],
+      ['Création', 'Angles, accroches et scripts. Vous validez chacun.'],
+      ['Production', 'Tournages, montages et photos produit. Une seule équipe.'],
+      ['Marque et web', 'Identité, brand deck et une boutique avec son propre back-office.'],
     ],
   },
   formats: 'Formats',
@@ -109,13 +109,13 @@ const fr: typeof en = {
     inside: [
       'Étude de marché et stratégie.',
       'Identité de marque ou refonte, avec un brand deck.',
-      'Première campagne : 15 reels, pensés pour tester de nombreuses variations et trouver tôt vos formats gagnants.',
+      'Première campagne : 15 reels, pensés pour trouver tôt vos formats gagnants.',
       'Photo produit.',
-      'Visuels de site et un site avec son propre back-office sur mesure : commandes, produits, stock et paiements au même endroit, avec les résultats de vos pubs Meta à côté.',
+      'Un site avec son propre back-office : commandes, produits, stock, paiements et résultats de vos pubs Meta au même endroit.',
       'Le soutien créatif de l’équipe tout au long du projet.',
     ],
     value: 'Achetés séparément, c’est un stratège, un designer, un photographe, une équipe vidéo et un développeur web. Ici, c’est une équipe, un brief et un style.',
-    price: 'Sur devis pour votre marque. Demandez un devis : vous recevez un périmètre, un calendrier et un prix clairs.',
+    price: 'Sur devis pour votre marque : un périmètre, un calendrier et un prix clairs.',
     quote: 'Demander un devis', see: 'Voir ce qu’il y a dedans',
     holdTitle: 'Ce que vous avez à la fin',
     hold: ['Le brand deck et les fichiers d’identité', '15 reels', 'Les photos produit', 'Le site en ligne, avec son back-office sur mesure', 'L’accès à l’espace de travail'],
@@ -127,7 +127,7 @@ const fr: typeof en = {
     title: 'Choisissez comment on travaille ensemble.',
     ways: ['Essayer', 'Chaque mois', 'Toute la marque'],
     everyTitle: 'Dans chaque plan',
-    every: ['Recherche et un angle écrit par pub', 'Des scripts que vous validez avant le tournage', 'Le tournage et le montage par une seule équipe', 'Sous-titres, musique sous licence, 9:16 et 4:5', 'Premier montage 7 jours après le tournage', 'Votre espace de travail privé'],
+    every: ['Un angle écrit par pub', 'Des scripts validés par vous', 'Tournage et montage par une seule équipe', 'Sous-titres et musique sous licence', 'Premier montage 7 jours après le tournage', 'Votre espace privé'],
     start: 'Commencez ici', lowest: 'Prix par reel le plus bas',
     forWho: 'Pour qui', gives: 'Ce que vous recevez', perReel: (n: number) => `Environ ${n} TND par reel`,
     testWorks: 'Un seul paiement', openings: (n: number) => `${n} ouvertures à tester`,
@@ -138,11 +138,11 @@ const fr: typeof en = {
   ws: {
     label: 'Un lien. Tout le projet.',
     title: 'Regardez vos pubs se fabriquer.',
-    lead: 'Chaque idée, script, date de tournage, montage et facture vit dans un seul espace de travail privé. Inclus dans tous les plans, le Test aussi.',
+    lead: 'Idées, scripts, tournages, montages et factures dans un seul espace privé. Dans chaque plan.',
     blocks: [
-      ['Rien n’est tourné sans votre feu vert.', 'Scripts, accroches et appels à l’action sont écrits là où vous pouvez les lire. Vous validez en un clic.'],
-      ['Fini le « quelle version ? »', 'Chaque montage a vos notes juste en dessous. Les fichiers finaux restent au même endroit.'],
-      ['Chaque tour est plus malin.', 'Vos résultats remontent aux accroches qui les ont obtenus, et les scripts suivants partent de ce qui a marché.'],
+      ['Rien n’est tourné sans votre feu vert.', 'Lisez chaque script. Validez en un clic.'],
+      ['Fini le « quelle version ? »', 'Chaque montage, avec vos notes en dessous.'],
+      ['Chaque tour est plus malin.', 'Les scripts suivants partent de ce qui a vendu.'],
     ],
     row: ['Idée', 'Script', 'Tournage', 'Montage', 'Résultats', 'prochaine idée'],
     cta: 'Voir comment un projet se déroule',

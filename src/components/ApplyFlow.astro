@@ -49,11 +49,13 @@ const recs: Record<string, string> = {
 };
 ---
 <div class="apply">
-  <div class="lead stack" style="--gap:22px">
+  <div class="a-head">
     <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
     <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{heading === 'h2' ? <>{LA.titleStart}<Roll words={LA.roll} end={lang === 'fr' ? '\u00a0?' : '.'} /></> : <>{t0}<span class="hl">{t1}</span></>}</H>
-    <p class="text text-l soft rv" style="--d:120ms">{a.sub}</p>
+    <p class="text text-l rv" style="--d:120ms">{a.sub}</p>
+  </div>
 
+  <div class="lead stack" style="--gap:22px">
     <div class="brief rv" style="--d:180ms" data-brief aria-live="polite">
       <p class="label">{a.brief}</p>
       <p class="empty" data-brief-empty>{a.briefEmpty}</p>
@@ -356,13 +358,18 @@ const recs: Record<string, string> = {
 </script>
 
 <style>
-  .apply { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
-  .lead .h1, .lead .h2 { max-width: 12ch; }
-  .lead .h1 { font-size: clamp(44px, 5.4vw, 84px); }
-  .lead :global(.roll) { white-space: nowrap; }
+  /* The title centred on top; under it the live brief on the left and the questions on the right. */
+  .apply { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(28px, 3.4vw, 52px) clamp(32px, 5vw, 80px); align-items: start; }
+  .a-head { grid-column: 1 / -1; display: grid; justify-items: center; gap: 18px; margin-bottom: clamp(4px, 1.2vw, 20px); text-align: center; }
+  .a-head .h1, .a-head .h2 { margin: 0; max-width: 16ch; text-wrap: balance; }
+  .a-head .h1 { font-size: clamp(44px, 5.4vw, 84px); }
+  .a-head .text { margin: 0; max-width: 32rem; }
+  .a-head :global(.roll) { white-space: nowrap; }
+  .a-head :global(.roll .w) { justify-self: center; }
+  .lead { padding-top: 8px; }
   .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-weight: 700; font-size: 14px; }
   .pulse { width: 8px; height: 8px; border-radius: 50%; background: #000; animation: pulse 1.8s infinite; }
-  @keyframes pulse { 50% { opacity: .35; } }
+  @keyframes pulse { 50% { transform: scale(.55); } }
 
   .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: #fff; border: 1.5px solid #000; border-radius: var(--r-lg); }
   .brief ul { list-style: none; margin: 0; padding: 0; display: grid; }
@@ -388,7 +395,7 @@ const recs: Record<string, string> = {
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
   .hint { margin: -12px 0 0; font-size: 15px; font-weight: 500; }
   .next { justify-self: start; }
-  .next:disabled { opacity: .35; pointer-events: none; }
+  .next:disabled { background: #fff; color: #000; border-color: #000; pointer-events: none; }
   .empty { margin: 0; font-size: 15px; font-weight: 500; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }
   .step legend { padding: 0; margin-bottom: 22px; font-weight: 800; font-size: clamp(28px, 3vw, 42px); letter-spacing: -0.03em; line-height: 1.05; }

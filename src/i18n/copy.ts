@@ -72,7 +72,7 @@ const en = {
   },
   apply: {
     title: 'Tell us what you’re making.',
-    sub: 'A few quick questions. You’ll see which plan fits, and your brief will be ready to send on WhatsApp.',
+    sub: 'A few quick questions. We’ll point you to the plan that fits.',
     direct: 'Rather talk now?',
     // Each question: key, question, row label for the brief, options as [emoji, label] (flag:xx shows the flag image from /flags). `when` shows it only after certain answers (by option number).
     qs: [
@@ -121,7 +121,7 @@ const en = {
     hint: 'Open a reel to watch it full screen with sound.',
     why: 'Why it works', whyHide: 'Hide',
     formatsTitle: 'What we make.',
-    formatsSub: 'The formats we write, shoot and edit. The marked ones are in the reels above.',
+    formatsSub: 'The marked ones are in the reels above.',
     credit: 'Made for Glucélia in 2026, before Gecko.',
     credits: 'Credits',
     people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
@@ -175,7 +175,7 @@ const en = {
   },
   about: {
     title: 'A studio for ideas that have to sell.',
-    lede: 'Gecko is a creative and production studio in Tunis. We make short video ads for brands that sell online, and bigger films when the idea needs it.',
+    lede: 'A creative and production studio in Tunis. Short video ads for brands that sell online, and bigger films when the idea needs it.',
     photos: 'On set.',
     hire: 'We’re hiring: talent, creators, camera and editors',
     facts: [
@@ -197,7 +197,7 @@ const en = {
   },
   offers: {
     title: 'Plans and projects.',
-    sub: 'Monthly plans keep fresh ads coming. Bespoke projects are for the moments that need more.',
+    sub: 'Fresh ads every month, or a bespoke project when you need more.',
     splitTitle: 'What you’re paying for.',
     make: { t: 'Creative production', tag: 'Every plan', d: 'Research, scripts, the shoot and the edit, all by one team.' },
     run: { t: 'Performance review', tag: 'Every monthly plan', d: 'You share your results, we read them with you and write the next round from them.' },
@@ -344,7 +344,7 @@ const fr: Copy = {
   },
   apply: {
     title: 'Dites-nous ce que vous préparez.',
-    sub: 'Quelques questions rapides. Vous verrez quel plan vous correspond, et votre brief sera prêt à envoyer sur WhatsApp.',
+    sub: 'Quelques questions rapides. On vous indique le plan qui vous correspond.',
     direct: 'Vous préférez parler tout de suite ?',
     qs: [
       { key: 'type', q: 'D’abord, qui êtes-vous ?', row: 'Vous', opts: [['🛍️', 'Une marque qui vend en ligne'], ['🏪', 'Une boutique, un café ou un commerce local'], ['🙋', 'Une marque personnelle ou un créateur'], ['🏢', 'Une entreprise ou une startup'], ['🎤', 'Un événement, un artiste ou un projet culturel'], ['✨', 'Autre chose']] },
@@ -392,7 +392,7 @@ const fr: Copy = {
     hint: 'Ouvrez un reel pour le voir en plein écran avec le son.',
     why: 'Pourquoi ça marche', whyHide: 'Masquer',
     formatsTitle: 'Ce qu’on fait.',
-    formatsSub: 'Les formats qu’on écrit, tourne et monte. Ceux qui sont marqués sont dans les reels ci-dessus.',
+    formatsSub: 'Ceux qui sont marqués sont dans les reels ci-dessus.',
     credit: 'Réalisés pour Glucélia en 2026, avant Gecko.',
     credits: 'Crédits',
     people: ['Heni Barhoumi', 'Firas Fradi', 'Anis Hmemma', 'Mariem Ksibi'],
@@ -444,7 +444,7 @@ const fr: Copy = {
   },
   about: {
     title: 'Un studio pour les idées qui doivent vendre.',
-    lede: 'Gecko est un studio de création et de production à Tunis. On fait des pubs vidéo courtes pour les marques qui vendent en ligne, et des films plus ambitieux quand l’idée le demande.',
+    lede: 'Un studio de création et de production à Tunis. Des pubs vidéo courtes pour les marques qui vendent en ligne, et des films plus ambitieux quand l’idée le demande.',
     photos: 'Sur le tournage.',
     hire: 'On recrute\u00a0: talents, créateurs, image et montage',
     facts: [
@@ -466,7 +466,7 @@ const fr: Copy = {
   },
   offers: {
     title: 'Plans et projets.',
-    sub: 'Les plans mensuels vous fournissent de nouvelles pubs chaque mois. Les projets sur mesure, c’est pour les moments qui demandent plus.',
+    sub: 'De nouvelles pubs chaque mois, ou un projet sur mesure quand il en faut plus.',
     splitTitle: 'Ce que vous payez.',
     make: { t: 'Production créative', tag: 'Dans chaque plan', d: 'Recherche, scripts, tournage et montage, par une seule équipe.' },
     run: { t: 'Revue des performances', tag: 'Chaque plan mensuel', d: 'Vous partagez vos résultats, on les lit avec vous et on écrit la suite à partir d’eux.' },
