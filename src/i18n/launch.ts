@@ -3,14 +3,14 @@
 import type { Locale } from './strings';
 
 const en = {
-  hero: { line: 'A creative studio in Tunis. Short video ads, and the brand around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
+  hero: { line: 'A creative studio in Tunis. Ads that get better every month, and the brands around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
   what: {
-    title: 'One studio. Everything your brand needs to sell.',
+    title: 'One studio. Three ways to work with us.',
+    // The three Gecko divisions (Heni, 14 Nov): [word, division · rhythm, one line].
     items: [
-      ['Strategy', 'Your market and your strongest competitors, studied first.'],
-      ['Creative', 'Angles, hooks and scripts. You approve each one.'],
-      ['Production', 'Shoots, edits and product photos. One crew.'],
-      ['Brand and web', 'Identity, brand deck and a store with its own back office.'],
+      ['Ads', 'Gecko Ads · every month', 'Ad creative made, tested and improved month after month. Each round starts from what the last one taught us.'],
+      ['Campaigns', 'Gecko Campaigns · per project', 'Launches, brand films and campaign shoots. Studio, crew and talent through one Gecko contact.'],
+      ['Brand World', 'Gecko Brand World · custom', 'Strategy, identity, product photos and a store with its own back office.'],
     ],
   },
   formats: 'Formats',
@@ -52,24 +52,25 @@ const en = {
     testWorks: 'One payment, once', openings: (n: number) => `${n} openings to test`,
     custom: 'Custom price', talk: 'Talk to us', choose: 'Choose', quoteBW: 'Ask for a quote',
     bwText: 'Strategy, brand, 15 reels, product photos and a website with its own back office. One team.',
-    partnerGives: ['20–100 reels a month, 3 hooks each', 'Market analysis for your category', 'Weekly review', 'Priority shoot dates'],
+    partnerGives: ['Volume set with you: campaigns, rhythm and production capacity', 'Creative planning across the months', 'Weekly review of production and results', 'Market analysis for your category', 'Priority shoot dates'],
+    openingsNote: 'Openings are alternate first seconds of the same reel, to test which hook holds attention. They are not extra finished videos.',
   },
   ws: {
     label: 'One link. The whole project.',
-    title: 'Watch your ads get made.',
-    lead: 'Ideas, scripts, shoots, cuts and invoices in one private workspace. In every plan.',
+    title: 'Every campaign makes the next one smarter.',
+    lead: 'Scripts, approvals, cuts and invoices in one private workspace, with your results next to the ads that earned them. In every plan.',
     blocks: [
       ['Nothing is filmed without your yes.', 'Read every script. Approve it in one click.'],
       ['No more “which version?”', 'Each cut, with your notes under it.'],
-      ['Every round gets smarter.', 'The next scripts start from what sold.'],
+      ['Results go back to each hook.', 'Imported from your ad and store exports. The next scripts start from what sold.'],
     ],
-    row: ['Idea', 'Script', 'Shoot', 'Cut', 'Results', 'next idea'],
+    row: ['Research', 'Create', 'Produce', 'Test', 'Analyse', 'Learn', 'Improve'],
     cta: 'See how a project runs',
   },
   strip: { formats: ['Reels', 'Statics', 'Carousels', 'Recut ads', '9:16', '4:5'], next: 'Let’s make your next ad' },
   apply: {
     titleStart: 'Tell us what you’re ', roll: ['making', 'launching', 'rebranding', 'selling'],
-    world: ['🌍', 'The whole brand world'], bw: 'The Brand World, quoted for your brand',
+    world: ['🌍', 'The whole brand world'], bw: 'The Brand World, quoted for your brand', partnerShort: 'scope and price set with you',
   },
   faqAll: 'See all questions',
   privacy: {
@@ -85,14 +86,13 @@ const en = {
 };
 
 const fr: typeof en = {
-  hero: { line: 'Un studio créatif à Tunis. Des pubs vidéo courtes, et la marque autour.', caption: en.hero.caption },
+  hero: { line: 'Un studio créatif à Tunis. Des pubs qui s’améliorent chaque mois, et les marques autour.', caption: en.hero.caption },
   what: {
-    title: 'Un studio. Tout ce dont votre marque a besoin pour vendre.',
+    title: 'Un studio. Trois façons de travailler avec nous.',
     items: [
-      ['Stratégie', 'Votre marché et vos concurrents les plus forts, étudiés d’abord.'],
-      ['Création', 'Angles, accroches et scripts. Vous validez chacun.'],
-      ['Production', 'Tournages, montages et photos produit. Une seule équipe.'],
-      ['Marque et web', 'Identité, brand deck et une boutique avec son propre back-office.'],
+      ['Ads', 'Gecko Ads · chaque mois', 'Des pubs créées, testées et améliorées mois après mois. Chaque tour part de ce que le précédent nous a appris.'],
+      ['Campagnes', 'Gecko Campaigns · par projet', 'Lancements, films de marque et tournages de campagne. Studio, équipe et talents via un seul contact Gecko.'],
+      ['Brand World', 'Gecko Brand World · sur mesure', 'Stratégie, identité, photos produit et une boutique avec son propre back-office.'],
     ],
   },
   formats: 'Formats',
@@ -133,24 +133,25 @@ const fr: typeof en = {
     testWorks: 'Un seul paiement', openings: (n: number) => `${n} ouvertures à tester`,
     custom: 'Prix sur mesure', talk: 'Parlons-en', choose: 'Choisir', quoteBW: 'Demander un devis',
     bwText: 'Stratégie, marque, 15 reels, photos produit et un site avec son propre back-office. Une seule équipe.',
-    partnerGives: ['20 à 100 reels par mois, 3 accroches chacun', 'Analyse de marché de votre secteur', 'Revue hebdomadaire', 'Dates de tournage prioritaires'],
+    partnerGives: ['Volume fixé avec vous : campagnes, rythme et capacité de production', 'Planification créative sur plusieurs mois', 'Revue hebdomadaire de la production et des résultats', 'Analyse de marché de votre secteur', 'Dates de tournage prioritaires'],
+    openingsNote: 'Les ouvertures sont des débuts alternatifs d’un même reel, pour tester quelle accroche retient l’attention. Ce ne sont pas des vidéos finies en plus.',
   },
   ws: {
     label: 'Un lien. Tout le projet.',
-    title: 'Regardez vos pubs se fabriquer.',
-    lead: 'Idées, scripts, tournages, montages et factures dans un seul espace privé. Dans chaque plan.',
+    title: 'Chaque campagne rend la suivante plus maline.',
+    lead: 'Scripts, validations, montages et factures dans un seul espace privé, avec vos résultats à côté des pubs qui les ont obtenus. Dans chaque plan.',
     blocks: [
       ['Rien n’est tourné sans votre feu vert.', 'Lisez chaque script. Validez en un clic.'],
       ['Fini le « quelle version ? »', 'Chaque montage, avec vos notes en dessous.'],
-      ['Chaque tour est plus malin.', 'Les scripts suivants partent de ce qui a vendu.'],
+      ['Les résultats remontent à chaque accroche.', 'Importés de vos exports pub et boutique. Les scripts suivants partent de ce qui a vendu.'],
     ],
-    row: ['Idée', 'Script', 'Tournage', 'Montage', 'Résultats', 'prochaine idée'],
+    row: ['Rechercher', 'Créer', 'Produire', 'Tester', 'Analyser', 'Apprendre', 'Améliorer'],
     cta: 'Voir comment un projet se déroule',
   },
   strip: { formats: ['Reels', 'Visuels fixes', 'Carrousels', 'Pubs remontées', '9:16', '4:5'], next: 'Faisons votre prochaine pub' },
   apply: {
     titleStart: 'Dites-nous ce que vous ', roll: ['préparez', 'lancez', 'refondez', 'vendez'],
-    world: ['🌍', 'Tout l’univers de marque'], bw: 'L’Univers de marque, sur devis',
+    world: ['🌍', 'Tout l’univers de marque'], bw: 'L’Univers de marque, sur devis', partnerShort: 'volume et prix fixés avec vous',
   },
   faqAll: 'Voir toutes les questions',
   privacy: {

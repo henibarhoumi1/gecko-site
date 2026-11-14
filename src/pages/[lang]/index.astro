@@ -80,6 +80,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
           </li>
         ))}
       </ol>
+      <p class="w-credit rv">{k.work.credit}</p>
     </div>
   </section>
 
@@ -213,6 +214,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .loud .c-mute :global(.off) { display: none; }
   .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+  .w-credit { margin: clamp(24px, 2.6vw, 36px) 0 0; font-size: 15px; font-weight: 600; color: #fff; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
   .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
