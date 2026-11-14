@@ -5,6 +5,7 @@ import ApplyFlow from '../../components/ApplyFlow.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
 import WhatWeDo from '../../components/WhatWeDo.astro';
+import SecondWatch from '../../components/SecondWatch.astro';
 import PlansHome from '../../components/PlansHome.astro';
 import WorkspaceHome from '../../components/WorkspaceHome.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
@@ -83,6 +84,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
       <p class="w-credit rv">{k.work.credit}</p>
     </div>
   </section>
+
+  <SecondWatch lang={lang} />
 
   <WhatWeDo lang={lang} />
 
