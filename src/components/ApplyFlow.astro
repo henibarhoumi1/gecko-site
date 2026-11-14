@@ -33,7 +33,8 @@ const wa = site.whatsapp.replace('https://wa.me/', '');
 // Plan links (?plan=pro) arrive with the matching answers filled in: [plan name, answers by question key].
 const plans = Object.fromEntries([
   ...monthly.map((m) => [m.key, [m.name, { type: [0], make: [0], rhythm: [1] }]]),
-  ['test', [test.name, { type: [0], make: [0], rhythm: [0] }]],
+  // The Test is a known price, so its path skips the budget question too: business, ads, market, timing, contact.
+  ['test', [test.name, { type: [0], make: [0], rhythm: [0], budget: [0] }]],
   ['bespoke', [a.bespoke, { rhythm: [0] }]],
   ['brandworld', [launch(lang).bw.name, { make: [8] }]],
 ]);
@@ -43,7 +44,7 @@ const p = c(lang).plans;
 const cur = t(lang).offers.currency;
 const recs: Record<string, string> = {
   test: `${test.name} · ${test.reels} reels · ${fmt(test.launch, lang)} ${cur}`,
-  ...Object.fromEntries(monthly.map((m) => [m.key, m.custom ? `${m.name} · ${m.reels}–${m.max} ${p.reels}` : `${m.name} · ${m.reels} ${p.reels} · ${fmt(m.launch, lang)} ${cur}`])),
+  ...Object.fromEntries(monthly.map((m) => [m.key, m.custom ? `${m.name} · ${LA.partnerShort}` : `${m.name} · ${m.reels} ${p.reels} · ${fmt(m.launch, lang)} ${cur}`])),
   bespoke: a.bespoke,
   brandworld: LA.bw,
 };
@@ -126,12 +127,12 @@ const recs: Record<string, string> = {
           <textarea id="flow-note" name="note" rows="3" placeholder={a.notePh} data-label={a.note}></textarea>
         </div>
       </div>
-      <button class="btn primary send" type="submit">{!site.formKey && <Wa />}{site.formKey ? a.send : a.wa} <span class="arr" aria-hidden="true">→</span></button>
+      <button class="btn primary send" type="submit">{site.formKey ? a.send : <><span class="sl" data-send-wa><Wa />{a.wa}</span><span class="sl" data-send-mail hidden>{a.send}</span></>} <span class="arr" aria-hidden="true">→</span></button>
     </fieldset>
 
     <div class="step done" data-done hidden>
       <span class="ok" aria-hidden="true"></span>
-      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-saved={a.savedDone} data-error={s.error}>{a.done}</p>
+      <p class="h3" data-msg data-sent={a.done} data-wa-done={a.waDone} data-saved={a.savedDone} data-mail-saved={a.mailSaved} data-mail-open={a.mailOpen} data-mail={site.email} data-error={s.error}>{a.done}</p>
       <div class="fit-done" data-fit-done hidden>
         <p class="label">{a.fitLead}</p>
         <p class="fit-name" data-fit-name></p>
@@ -263,7 +264,11 @@ const recs: Record<string, string> = {
     // WhatsApp or a call needs a number; email swaps the number for an address.
     const reachIn = $<HTMLInputElement>('[data-reach-input]');
     const phoneF = $('[data-f="phone"]'), mailF = $('[data-f="email"]');
+    let reachJ = 0;
     const setReach = (j: number) => {
+      reachJ = j;
+      form.querySelector<HTMLElement>('[data-send-wa]')?.toggleAttribute('hidden', j === 2);
+      form.querySelector<HTMLElement>('[data-send-mail]')?.toggleAttribute('hidden', j !== 2);
       form.querySelectorAll<HTMLButtonElement>('[data-reach]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.reach) === j)));
       reachIn.value = $<HTMLButtonElement>(`[data-reach="${j}"]`).textContent!.trim();
       const mail = j === 2;
@@ -326,6 +331,14 @@ const recs: Record<string, string> = {
       const saving = saveLead({ kind: 'brief', name: val('name'), brand: val('brand'), phone: val('phone'), email: val('email'),
         message: val('note'), plan: val('plan'), answers, website: form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '' });
       track('brief_done');
+      // They asked for an email reply: no WhatsApp. Saved in the Pipeline, or else their email app opens with the brief.
+      if (!form.dataset.key && reachJ === 2) {
+        if (await saving) { finish(msg.dataset.mailSaved!); return; }
+        const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
+        location.href = `mailto:${msg.dataset.mail}?subject=${encodeURIComponent(form.dataset.intro ?? 'Brief')}&body=${encodeURIComponent(lines.join('\n'))}`;
+        finish(msg.dataset.mailOpen!);
+        return;
+      }
       if (!form.dataset.key) {
         const lines = [...form.querySelectorAll<HTMLInputElement>('input[data-label], textarea[data-label]')].filter((el) => !el.disabled && el.value.trim()).map((el) => `${el.dataset.label}: ${el.value.trim()}`);
         const url = `https://wa.me/${form.dataset.wa}?text=${encodeURIComponent([form.dataset.intro, '', ...lines].join('\n'))}`;
@@ -395,6 +408,7 @@ const recs: Record<string, string> = {
   @keyframes cheer { 0% { opacity: 0; transform: translateY(6px) scale(.9); } 15%, 75% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-4px); } }
   .hint { margin: -12px 0 0; font-size: 15px; font-weight: 500; }
   .next { justify-self: start; }
+  .sl { display: inline-flex; align-items: center; gap: 8px; }
   .next:disabled { background: #fff; color: #000; border-color: #000; pointer-events: none; }
   .empty { margin: 0; font-size: 15px; font-weight: 500; }
   .step { border: 0; margin: 0; padding: 0; display: grid; gap: 22px; min-width: 0; }

@@ -37,8 +37,10 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
       <ul>
         {m.custom ? L.partnerGives.map((x) => <li>{x}</li>) : (
           <>
-            <li>{m.max ? `${m.reels}–${m.max}` : m.reels}{' '}{m.once ? p.reelsOnce : p.reels}{hooks(m) ? ` · ${L.openings(hooks(m))}` : ''}</li>
+            {m.campaigns && <li><b>{m.campaigns[lang]}</b></li>}
             {m.shoot && m.once && <li>{m.shoot[lang]}</li>}
+            <li>{m.reels}{' '}{m.once ? p.reelsOnce : p.reels}</li>
+            {hooks(m) > 0 && <li>{L.openings(hooks(m))}</li>}
             {m.items[lang].map((x) => <li>{x}</li>)}
             {m.review && <li>{m.review[lang]}</li>}
           </>
