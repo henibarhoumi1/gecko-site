@@ -243,7 +243,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   /* 1 Script */
   .page { display: grid; align-content: start; gap: 14px; padding: clamp(16px, 1.8vw, 26px); border-radius: 16px; box-shadow: inset 0 0 0 1.5px #000; overflow: hidden; }
   .part { margin: 0; display: grid; gap: 6px; }
-  .part b, .cols b { font-weight: 700; font-size: 12.5px; }
+  .part b, .cols b { font-weight: 700; font-size: 13px; }
   .hookline { width: fit-content; font-weight: 800; font-size: clamp(18px, 1.7vw, 25px); letter-spacing: -0.03em; line-height: 1.15; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .cols p { margin: 0; display: grid; gap: 7px; }
@@ -284,9 +284,9 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .cuts { margin: 0; display: flex; gap: 6px; font-weight: 700; font-size: 13px; }
   .cuts span { padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
   .cuts .cur { background: #000; color: #fff; }
-  .k { margin: 6px 0 0; font-weight: 700; font-size: 12.5px; }
+  .k { margin: 6px 0 0; font-weight: 700; font-size: 13px; }
   .bubble { margin: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; max-width: 26rem; padding: 13px 16px; border-radius: 16px 16px 16px 4px; background: var(--blue); font-weight: 500; font-size: 16px; line-height: 1.35; }
-  .bubble em { font-style: normal; font-weight: 700; font-size: 12.5px; padding: 5px 10px; border-radius: 999px; background: #fff; }
+  .bubble em { font-style: normal; font-weight: 700; font-size: 13px; padding: 5px 10px; border-radius: 999px; background: #fff; }
   .bubble.mine { justify-self: end; border-radius: 16px 16px 4px 16px; background: #000; color: #fff; }
   .screen.on .bubble { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(400ms + var(--i) * 1300ms); }
   .screen.on .typed { display: inline-block; animation: type 700ms steps(18) both 1900ms; }
@@ -353,5 +353,14 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
     .part.row { grid-template-columns: 1fr; }
     .cursor { display: none; }
     .files { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  /* Phones: the example label sits above the window instead of over its bar; titles stay on one line; the note
+     field takes its own row above the button. */
+  @media (max-width: 640px) {
+    .ex { position: relative; left: auto; top: auto; display: block; width: fit-content; margin: 0 0 12px; }
+    .screen header { flex-wrap: wrap; gap: 10px; }
+    .screen h3 { white-space: nowrap; font-size: 20px; }
+    .screen footer { flex-wrap: wrap; }
+    .screen footer .field { flex-basis: 100%; white-space: nowrap; }
   }
 </style>

@@ -129,6 +129,7 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
   .m { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 1.6vw, 24px); }
   .m :global(.k-partner) { grid-column: 1 / -1; }
   @media (max-width: 1000px) { .panels, .m, .bwo { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .every-p ul { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; text-align: left; gap: 10px; } }
 
   /* What the fee covers: three filled blocks. */
   .unused-pay .h2 { max-width: 14ch; margin: 0 auto clamp(32px, 4vw, 56px); text-align: center; text-wrap: balance; }

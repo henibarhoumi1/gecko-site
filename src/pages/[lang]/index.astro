@@ -223,6 +223,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .c-cap { font-size: 15px; }
     .c-cap i { display: none; }
   }
+  /* Phones: reel captions wrap instead of being cut off. */
+  @media (max-width: 640px) { .c-cap { flex-wrap: wrap; white-space: normal; gap: 4px 8px; } .c-cap span { overflow: visible; } .c-cap i { margin-left: 0; flex-basis: 100%; } }
   @media (prefers-reduced-motion: reduce) {
     .ln-in, .up, .mk::after { animation: none; }
     .c-media:hover { transform: none; }
