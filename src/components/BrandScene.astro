@@ -1,0 +1,62 @@
+---
+// The Brand World, shown: a brand deck beside the store's back office taking an order, on one blue block. The same
+// scene as the third step of "One studio" on home, here as a still picture that plays once when it comes into view.
+// Labelled as an example. With reduced motion it simply sits there.
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const T = {
+  en: { deck: 'Brand deck', bo: 'Back office', ex: 'Example', tabs: ['Orders', 'Products', 'Stock', 'Payments'], order: 'New order', st: ['Paid', 'Packed', 'Sent'] },
+  fr: { deck: 'Brand deck', bo: 'Back-office', ex: 'Exemple', tabs: ['Commandes', 'Produits', 'Stock', 'Paiements'], order: 'Nouvelle commande', st: ['Payé', 'Emballé', 'Envoyé'] },
+}[lang];
+---
+<div class="bscene rv" aria-hidden="true">
+  <div class="brand">
+    <div class="deck">
+      <p class="k">{T.deck}</p>
+      <p class="aa">Aa</p>
+      <div class="sw"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="office">
+      <p class="k">{T.bo} <span>· {T.ex}</span></p>
+      <ul class="tabs">{T.tabs.map((x, i) => <li class:list={[{ cur: i === 0 }]}>{x}</li>)}</ul>
+      <ul class="orders">
+        {T.st.map((x, i) => <li style={`--i:${i}`}><span class="bar"></span><span class="chip">{x}</span></li>)}
+      </ul>
+      <p class="toast"><i></i>{T.order}</p>
+    </div>
+  </div>
+</div>
+<style>
+  .bscene { display: grid; place-items: center; margin: 0 auto; max-width: 980px; padding: clamp(36px, 5vw, 72px) clamp(20px, 4vw, 64px); border-radius: 32px; background: var(--blue); }
+  .brand { width: 100%; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(12px, 1.6vw, 24px); align-items: center; text-align: left; }
+  .k { margin: 0; font-weight: 700; font-size: 14px; letter-spacing: .02em; }
+  .deck, .office { display: grid; gap: 16px; padding: clamp(20px, 2.2vw, 32px); border-radius: 22px; background: #fff; }
+  .deck { background: #000; color: #fff; transform: rotate(-4deg); }
+  .aa { margin: 0; font-weight: 800; font-size: clamp(72px, 8vw, 132px); line-height: .9; letter-spacing: -0.05em; }
+  .sw { display: flex; gap: 8px; }
+  .sw i { width: 28px; height: 28px; border-radius: 50%; background: var(--pink); }
+  .sw i:nth-child(2) { background: var(--blue); } .sw i:nth-child(3) { background: #fff; } .sw i:nth-child(4) { background: none; box-shadow: inset 0 0 0 2px #fff; }
+  .office { position: relative; }
+  .office .k span { font-weight: 500; }
+  .tabs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; font-weight: 700; font-size: 14px; }
+  .tabs li { padding: 8px 13px; border-radius: 999px; }
+  .tabs .cur { background: #000; color: #fff; }
+  .orders { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .orders li { display: flex; align-items: center; gap: 12px; }
+  .orders .bar { flex: 1; height: 12px; border-radius: 12px; background: #000; transform-origin: 0 50%; }
+  .orders li:nth-child(2) .bar { flex: .7; } .orders li:nth-child(3) .bar { flex: .85; }
+  .orders .chip { flex: none; padding: 7px 13px; border-radius: 999px; background: var(--blue); font-weight: 700; font-size: 14px; }
+  .orders li:nth-child(2) .chip { background: #000; color: #fff; } .orders li:nth-child(3) .chip { background: var(--pink); }
+  .toast { position: absolute; right: -8px; top: -20px; margin: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 14px; }
+  .toast i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); }
+  /* Plays once as it comes into view (site.css adds .in). */
+  .bscene.in .orders .bar { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(400ms + var(--i) * 240ms); }
+  .bscene.in .orders .chip, .bscene.in .sw i { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(800ms + var(--i, 0) * 240ms); }
+  .bscene.in .toast { animation: toast 520ms cubic-bezier(.2, 1.4, .4, 1) both 1700ms; }
+  @keyframes grow { from { transform: scaleX(0); } }
+  @keyframes pop { from { transform: scale(0); } }
+  @keyframes toast { from { opacity: 0; transform: translateY(-16px) scale(.9); } }
+  @media (prefers-reduced-motion: reduce) { .bscene * { animation: none !important; } }
+  @media (max-width: 700px) { .brand { grid-template-columns: 1fr; } .deck { justify-self: start; width: 70%; } .toast { right: 8px; } }
+</style>

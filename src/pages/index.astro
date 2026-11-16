@@ -1,19 +1,19 @@
 ---
-// Sends visitors to /fr/ or /en/ based on their browser language.
+// Sends visitors to French, the main language (Heni, 14 Nov), unless their browser asks for English.
 ---
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gecko</title>
-    <meta http-equiv="refresh" content="0; url=en/" />
+    <meta http-equiv="refresh" content="0; url=fr/" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script is:inline>
-      try { if ((navigator.language || '').toLowerCase().startsWith('fr')) location.replace('fr/'); else location.replace('en/'); } catch (e) {}
+      try { location.replace((navigator.language || '').toLowerCase().startsWith('en') ? 'en/' : 'fr/'); } catch (e) {}
     </script>
     <meta name="theme-color" content="#FFFFFF" />
     <style>html,body{margin:0;background:#fff}</style>
   </head>
-  <body><a href="en/" style="color:#000;font-family:Helvetica,Arial,sans-serif;display:block;padding:24px">Gecko</a></body>
+  <body><a href="fr/" style="color:#000;font-family:Helvetica,Arial,sans-serif;display:block;padding:24px">Gecko</a></body>
 </html>

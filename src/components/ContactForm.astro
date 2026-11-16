@@ -1,50 +1,81 @@
 ---
-// A plain contact form. With a Web3Forms key it emails Gecko; without one it opens the visitor's email app with the message filled in.
+// A plain contact form. The visitor picks how they want the reply, WhatsApp or email, and only that detail is asked
+// for (Heni, 14 Nov). The message is saved straight into Gecko's Pipeline; with a Web3Forms key it is also emailed.
+// If saving fails and there is no key, WhatsApp or the email app opens with the message filled in, as they chose.
 import { c } from '../i18n/copy';
 import { site } from '../data/site';
 import type { Locale } from '../i18n/strings';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const k = c(lang).contact;
+const wa = site.whatsapp.replace('https://wa.me/', '');
 ---
-<form class="cform" method="POST" action="https://api.web3forms.com/submit" data-cform data-key={site.formKey} data-mail={site.email} data-sent={k.sent} data-error={k.error} data-mail-done={k.mailDone} novalidate>
+<form class="cform" method="POST" action="https://api.web3forms.com/submit" data-cform data-key={site.formKey} data-mail={site.email} data-wa={wa} data-sent={k.sent} data-error={k.error} data-mail-done={k.mailDone} data-wa-done={k.waDone} novalidate>
   <input type="hidden" name="access_key" value={site.formKey} />
   <input type="hidden" name="subject" value="New message from the Gecko website" />
+  <input type="hidden" name="reach" value="WhatsApp" data-reach-in />
   <input type="checkbox" name="botcheck" class="sr" tabindex="-1" autocomplete="off" aria-hidden="true" />
   <h2 class="h3">{k.formTitle}</h2>
-  <div class="two">
-    <div class="field"><label for="cf-name">{k.name}</label><input id="cf-name" name="name" required autocomplete="name" /></div>
-    <div class="field"><label for="cf-mail">{k.mail}</label><input id="cf-mail" name="email" type="email" required autocomplete="email" /></div>
+  <div class="field"><label for="cf-name">{k.name}</label><input id="cf-name" name="name" required autocomplete="name" /></div>
+  <div class="field">
+    <p class="lab" id="cf-pref">{k.prefer}</p>
+    <div class="pick" role="radiogroup" aria-labelledby="cf-pref">
+      <button type="button" role="radio" aria-checked="true" data-pick="wa">{k.whatsapp}</button>
+      <button type="button" role="radio" aria-checked="false" data-pick="mail">{k.email}</button>
+    </div>
   </div>
-  <div class="field"><label for="cf-phone">{k.phone}</label><input id="cf-phone" name="phone" type="tel" autocomplete="tel" /></div>
+  <div class="field" data-for="wa"><label for="cf-phone">{k.phone}</label><input id="cf-phone" name="phone" type="tel" required autocomplete="tel" inputmode="tel" /></div>
+  <div class="field" data-for="mail" hidden><label for="cf-mail">{k.mail}</label><input id="cf-mail" name="email" type="email" autocomplete="email" disabled /></div>
   <div class="field"><label for="cf-msg">{k.message}</label><textarea id="cf-msg" name="message" rows="5" required></textarea></div>
-  <button class="btn primary" type="submit">{site.formKey ? k.send : k.mailSend} <span class="arr" aria-hidden="true">→</span></button>
-  {!site.formKey && <p class="note">{k.mailNote}</p>}
+  <button class="btn primary" type="submit">{k.send} <span class="arr" aria-hidden="true">→</span></button>
   <p class="text status" role="status" aria-live="polite"></p>
 </form>
 <script>
   import { saveLead, track } from '../scripts/intake';
   document.querySelectorAll<HTMLFormElement>('[data-cform]').forEach((form) => {
     const status = form.querySelector<HTMLElement>('.status')!;
+    const reachIn = form.querySelector<HTMLInputElement>('[data-reach-in]')!;
+    const picks = [...form.querySelectorAll<HTMLButtonElement>('[data-pick]')];
+    let way: 'wa' | 'mail' = 'wa';
+    // Only the chosen detail shows and is required; the other is switched off so it is never sent or checked.
+    const choose = (w: 'wa' | 'mail') => {
+      way = w;
+      picks.forEach((b) => b.setAttribute('aria-checked', String(b.dataset.pick === w)));
+      form.querySelectorAll<HTMLElement>('[data-for]').forEach((f) => {
+        const on = f.dataset.for === w; const i = f.querySelector('input')!;
+        f.hidden = !on; i.disabled = !on; i.required = on;
+      });
+      reachIn.value = picks.find((b) => b.dataset.pick === w)!.textContent!.trim();
+    };
+    picks.forEach((b) => b.addEventListener('click', () => choose(b.dataset.pick as 'wa' | 'mail')));
+    form.addEventListener('reset', () => setTimeout(() => choose('wa')));
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const name = form.querySelector<HTMLInputElement>('[name=name]')!;
+      const phone = form.querySelector<HTMLInputElement>('[name=phone]')!;
       const mail = form.querySelector<HTMLInputElement>('[name=email]')!;
       const msg = form.querySelector<HTMLTextAreaElement>('[name=message]')!;
-      const bad = [name, mail, msg].find((i) => !i.value.trim() || (i === mail && !mail.checkValidity()));
+      const contact = way === 'wa' ? phone : mail;
+      const okContact = way === 'wa' ? phone.value.replace(/\D/g, '').length >= 8 : mail.value.trim() !== '' && mail.checkValidity();
+      const bad = !name.value.trim() ? name : !okContact ? contact : !msg.value.trim() ? msg : null;
       if (bad) { bad.focus(); bad.closest('.field')!.animate([{ transform: 'translateX(-6px)' }, { transform: 'translateX(6px)' }, { transform: 'none' }], { duration: 260 }); return; }
-      const phone = form.querySelector<HTMLInputElement>('[name=phone]')!.value;
       const bot = form.querySelector<HTMLInputElement>('[name=botcheck]')!.checked ? 'bot' : '';
-      // Saved straight into Gecko's Pipeline. Only if that fails does the visitor's mail app open instead.
-      if (await saveLead({ kind: 'contact', name: name.value.trim(), email: mail.value.trim(), phone, message: msg.value.trim(), website: bot })) {
+      // Saved straight into Gecko's Pipeline. Only if that fails does WhatsApp or the mail app open instead.
+      if (await saveLead({ kind: 'contact', name: name.value.trim(), email: way === 'mail' ? mail.value.trim() : '', phone: way === 'wa' ? phone.value.trim() : '', message: msg.value.trim(), website: bot })) {
         track('contact_done');
         form.reset(); status.textContent = form.dataset.sent!;
         return;
       }
       if (!form.dataset.key) {
-        const body = `${msg.value}\n\n${name.value}\n${mail.value}\n${form.querySelector<HTMLInputElement>('[name=phone]')!.value}`;
-        location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(name.value)}&body=${encodeURIComponent(body)}`;
-        status.textContent = form.dataset.mailDone!;
+        const body = `${msg.value}\n\n${name.value}\n${contact.value}`;
+        if (way === 'wa') {
+          open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(body)}`, '_blank', 'noopener');
+          status.textContent = form.dataset.waDone!;
+        } else {
+          location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(name.value)}&body=${encodeURIComponent(body)}`;
+          status.textContent = form.dataset.mailDone!;
+        }
         return;
       }
       try {
@@ -57,11 +88,13 @@ const k = c(lang).contact;
 </script>
 <style>
   .cform { display: grid; gap: 20px; padding-top: clamp(20px, 2vw, 28px); }
-  .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .cform textarea { resize: vertical; min-height: 130px; }
   .cform .btn { justify-self: start; }
+  .lab { margin: 0; font: 700 13px/1.2 var(--font); }
+  /* WhatsApp or email: one choice, black when picked. */
+  .pick { display: inline-flex; gap: 8px; }
+  .pick button { height: 46px; padding: 0 22px; border: 0; border-radius: 999px; background: #fff; color: #000; box-shadow: inset 0 0 0 1.5px #000; font: 700 16px/1 var(--font); cursor: pointer; }
+  .pick button[aria-checked='true'] { background: #000; color: #fff; }
   .status:empty { display: none; }
-  .note { margin: -8px 0 0; font-size: 15px; color: var(--fg-3); }
   .status { margin: 0; font-weight: 600; }
-  @media (max-width: 520px) { .two { grid-template-columns: 1fr; } }
 </style>
