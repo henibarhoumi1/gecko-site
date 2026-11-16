@@ -38,8 +38,8 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
         {m.custom ? L.partnerGives.map((x) => <li>{x}</li>) : (
           <>
             {m.campaigns && <li><b>{m.campaigns[lang]}</b></li>}
-            {m.shoot && m.once && <li>{m.shoot[lang]}</li>}
             <li>{m.reels}{' '}{m.once ? p.reelsOnce : p.reels}</li>
+            {m.shoot && m.once && <li>{m.shoot[lang]}</li>}
             {hooks(m) > 0 && <li>{L.openings(hooks(m))}</li>}
             {m.items[lang].map((x) => <li>{x}</li>)}
             {m.review && <li>{m.review[lang]}</li>}
@@ -47,7 +47,7 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
         )}
       </ul>
     </div>
-    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : L.choose}{' '}{m.name} <span class="arr" aria-hidden="true">→</span></a>
+    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : `${L.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
   </article>
 ))}
 

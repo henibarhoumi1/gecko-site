@@ -3,15 +3,14 @@ export type Offer = { key: string; name: string; for?: { en: string; fr: string 
 
 export const test: Offer = {
   key: 'test', name: 'Test', reels: 3, launch: 999, once: true, monthly: false,
-  // Heni, 14 Nov: the Test is 2–3 ad campaigns made in one production day. Deliverables unchanged (3 reels, 1 static).
-  // The older offer said "a 3-hour shoot": flagged to Heni, the brief's "one production day" is used.
+  // Heni, 16 Nov: a Test is one campaign of 3 reels for one client, shot in a 3-hour block (Gecko fits 2–3 clients' Tests
+  // into one production day; that planning stays internal). One round of changes.
   for: { en: 'See our method on your product before any monthly plan.', fr: 'Voyez notre méthode sur votre produit, avant tout plan mensuel.' },
-  campaigns: { en: '2–3 ad campaigns, each with its own angle', fr: '2 à 3 campagnes pub, chacune avec son angle' },
   items: {
-    en: ['1 static', 'Ready to post or run as ads'],
-    fr: ['1 visuel fixe', 'Prêts à publier ou à lancer en pub'],
+    en: ['1 static', '1 round of changes', 'Ready to post or run as ads'],
+    fr: ['1 visuel fixe', '1 série de retouches', 'Prêts à publier ou à lancer en pub'],
   },
-  shoot: { en: 'Made in one production day', fr: 'Produites en une journée de production' },
+  shoot: { en: 'A 3-hour shoot', fr: 'Un tournage de 3 heures' },
   review: { en: 'Final files handed over', fr: 'Fichiers finaux livrés' },
 };
 

@@ -15,37 +15,35 @@ const n = c(lang).nav;
 const [t0, t1] = mark(f.title);
 ---
 <Base lang={lang} title={n.faq} page="faq">
-  <section class="page-head lit">
-    <div class="wrap wide qa">
-      <div class="lead rv">
-        <h1 class="h1">{t0}<span class="hl">{t1}</span></h1>
-        <div class="more">
-          <p class="text text-l lede">{f.more}</p>
-          <div class="actions">
-            <a class="btn primary" href={site.whatsapp} rel="noopener">{f.moreCta} <span class="arr" aria-hidden="true">→</span></a>
-            <a class="btn" href={href(lang, 'offers')}>{n.offers}</a>
-          </div>
+  <section class="page-head lit mid">
+    <div class="wrap wide">
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
+      <div class="more rv" style="--d:60ms">
+        <p class="text text-l">{f.more}</p>
+        <div class="actions">
+          <a class="btn primary" href={site.whatsapp} rel="noopener">{f.moreCta} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn" href={href(lang, 'offers')}>{n.offers}</a>
         </div>
       </div>
-      <div class="groups">
-        {f.groups.map((g, i) => (
-          <div class="group rv" style={`--d:${80 + i * 60}ms`}>
-            <h2 class="g-t">{g.t}</h2>
-            <Faq items={g.ids.map((x) => s.faq[x])} />
-          </div>
-        ))}
-      </div>
+    </div>
+  </section>
+  <section class="section qa-sec">
+    <div class="wrap groups">
+      {f.groups.map((g, i) => (
+        <div class="group rv" style={`--d:${i * 60}ms`}>
+          <h2 class="g-t">{g.t}</h2>
+          <Faq items={g.ids.map((x) => s.faq[x])} />
+        </div>
+      ))}
     </div>
   </section>
 </Base>
 <style>
-  .groups { display: grid; gap: clamp(36px, 4vw, 56px); }
-  .g-t { margin: 0 0 6px; font-weight: 700; font-size: 14px; letter-spacing: 0; color: var(--fg-3); }
-  .page-head { padding-bottom: var(--section); }
-  .qa { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-  .lead { position: sticky; top: 120px; display: grid; gap: clamp(28px, 4vw, 48px); }
-  .lead .h1 { max-width: 9ch; font-size: clamp(46px, 6vw, 96px); }
-  .more { display: grid; gap: 16px; }
+  /* The title, one line and the two ways to ask, centred; then the questions in one column under it. */
+  .more { display: grid; justify-items: center; gap: 16px; margin-top: clamp(24px, 3vw, 36px); }
   .more .text { margin: 0; }
-  @media (max-width: 860px) { .qa { grid-template-columns: 1fr; } .lead { position: static; } }
+  .more .actions { justify-content: center; }
+  .qa-sec { padding-top: 0; }
+  .groups { display: grid; gap: clamp(36px, 4vw, 56px); max-width: 860px; }
+  .g-t { margin: 0 0 6px; font-weight: 800; font-size: 15px; letter-spacing: .02em; text-transform: uppercase; }
 </style>

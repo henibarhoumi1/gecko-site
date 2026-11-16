@@ -234,11 +234,13 @@ const icon: Record<string, string> = {
 <style>
   /* Head: the roles float on the right like name tags. */
   .join-head { padding-bottom: clamp(56px, 7vw, 104px); }
-  .jh { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(32px, 6vw, 96px); align-items: end; }
-  .join-head .h1 { max-width: 11ch; }
-  .lede { margin: 0; max-width: 36rem; }
+  /* Centred like every other page head: the label, title and line, then the roles as a loose row under them. */
+  .jh { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(28px, 4vw, 48px); text-align: center; }
+  .jh .stack { justify-items: center; }
+  .join-head .h1 { max-width: 11ch; margin-inline: auto; }
+  .lede { margin: 0 auto; max-width: 36rem; text-wrap: balance; }
   .join-head .kick span { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); opacity: 1; font-size: 0; }
-  .role-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+  .role-cloud { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 52rem; }
   .role-cloud li { padding: 10px 16px; border-radius: 999px; background: #fff; box-shadow: inset 0 0 0 1.5px #000; color: #000; font-weight: 700; font-size: clamp(14px, 1.2vw, 17px);
     transform: rotate(calc((var(--i) - 4) * 1.4deg)); animation: jh-bob 4s ease-in-out calc(var(--i) * -.45s) infinite; }
   .role-cloud li:nth-child(3n) { background: var(--blue); box-shadow: none; }
@@ -285,7 +287,7 @@ const icon: Record<string, string> = {
   .seg button[aria-checked='true'] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
 
   .links { display: grid; gap: 12px; }
-  .add { justify-self: start; padding: 0; border: 0; background: none; color: var(--fg); font: 700 15px/1.4 var(--font); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .add { justify-self: start; padding: 10px 0; border: 0; background: none; color: var(--fg); font: 700 15px/1.4 var(--font); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .drop { position: relative; display: grid; justify-items: center; gap: 4px; padding: clamp(24px, 3vw, 40px) 20px; border: 1.5px dashed var(--hair-2); border-radius: 20px; background: transparent; text-align: center; cursor: pointer; transition: background 200ms var(--ease), border-color 200ms var(--ease), transform 300ms var(--ease); }
   .drop:hover, .drop.over { background: var(--blue); border-color: var(--fg); color: #000; }
   .drop.over { transform: scale(1.01); }
@@ -312,7 +314,7 @@ const icon: Record<string, string> = {
   .done { display: grid; gap: 12px; padding: clamp(24px, 3vw, 40px); border-radius: 24px; background: var(--blue); color: #000; }
   .done .text { margin: 0; color: var(--fg-2); }
 
-  @media (max-width: 960px) { .jh { grid-template-columns: 1fr; align-items: start; } .role-cloud { justify-content: flex-start; } }
+  @media (max-width: 960px) { .role-cloud { justify-content: center; } }
   @media (max-width: 860px) {
     .jgrid { grid-template-columns: 1fr; }
     .rail { position: static; grid-auto-flow: column; justify-content: start; gap: 18px; padding: 0; }

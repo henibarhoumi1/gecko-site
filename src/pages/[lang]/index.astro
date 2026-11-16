@@ -21,14 +21,13 @@ const k = c(lang);
 const h = k.home;
 const hx = h.hero;
 const L = launch(lang);
-// The headline: three lines, the last one on the pink marker. Its widest line, in ems of Inter at full weight
-// (tools/title-ratio.mjs, 4 Nov 2026), lets the stylesheet set it as big as its column allows from the first frame.
+// The headline: three lines, the last one on the pink marker. Its widest line, in ems of Archivo at the headline's
+// weight and width, lets the stylesheet set it as big as its column allows from the first frame.
 const lines = h.scenes[0].d;
 const last = lines[lines.length - 1].replace(/\.$/, '');
 const said = lines.join(' ');
-// Width ratios measured for Inter; Cabinet Grotesk is not measured yet, so these are set a little wide (smaller type)
-// so no line is ever cut. Re-measure with the real font and tighten (step 5 review).
-// Measured on the live preview with Archivo Extrabold (11 Nov 2026): 5.86 em for the widest English line.
+// Measured with Archivo Extrabold at 92% width (11 Nov 2026): 5.86 em for the widest English line, set a little wide
+// so no line is ever cut.
 const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
 const kw = widest[lang] ?? widest.en;
 // The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
@@ -224,6 +223,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .c-cap { font-size: 15px; }
     .c-cap i { display: none; }
   }
+  /* Phones: reel captions wrap instead of being cut off. */
+  @media (max-width: 640px) { .c-cap { flex-wrap: wrap; white-space: normal; gap: 4px 8px; } .c-cap span { overflow: visible; } .c-cap i { margin-left: 0; flex-basis: 100%; } }
   @media (prefers-reduced-motion: reduce) {
     .ln-in, .up, .mk::after { animation: none; }
     .c-media:hover { transform: none; }
