@@ -18,6 +18,10 @@ a { color: inherit; }
 strong, b { font-weight: 800; }
 ::selection { background: var(--pink); color: var(--ink); }
 :focus-visible { outline: 2px solid var(--fg); outline-offset: 3px; }
+/* Keyboard users can jump past the header: the link shows only when it has focus. */
+.skip { position: fixed; left: 16px; top: 12px; z-index: 1000; padding: 12px 18px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; text-decoration: none; transform: translateY(-200%); }
+.skip:focus-visible { transform: none; }
+main:focus { outline: none; }
 
 .wrap { width: 100%; max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
 .wrap.wide { max-width: var(--wide); }

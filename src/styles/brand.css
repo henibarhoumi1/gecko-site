@@ -3,9 +3,10 @@
    separated by space. The only outlines left are secondary buttons and form fields, in black. One type family.
    Black sections flip the theme with .on-black (.on-mat is the same thing under its old name). */
 
-/* One family everywhere: Cabinet Grotesk (Fontshare, ITF). Loaded from Fontshare's stylesheet in Base.astro for now;
-   self-host the woff2 files later and swap this block for @font-face rules. Weights: 800 headlines, 500 text, 700
-   labels and buttons. Until it loads, Arial stands in at a similar width so little moves when it arrives. */
+/* One family everywhere: Archivo (Omnibus-Type, SIL Open Font License, public/fonts/OFL.txt), served from this site.
+   One variable file cut to Latin and to the ranges the site uses (weights 400–900, widths 90–100%; headlines run at 92%).
+   Weights: 800 headlines, 500 text, 700 labels and buttons. Until it loads, Arial stands in at a similar width. */
+@font-face { font-family: 'Archivo'; src: url('/fonts/archivo-latin.woff') format('woff'); font-weight: 400 900; font-stretch: 90% 100%; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Gecko Fallback'; src: local('Arial'), local('Helvetica Neue'), local('Roboto'); size-adjust: 100%; ascent-override: 92%; descent-override: 24%; line-gap-override: 0%; }
 
 :root {

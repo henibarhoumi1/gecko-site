@@ -10,10 +10,12 @@ import { site } from '../data/site';
 interface Props { lang: Locale; title?: string; page?: Page; description?: string; noindex?: boolean; footerCta?: boolean; theme?: string }
 const { lang, title, page, description, noindex, footerCta = true, theme = '#FFFFFF' } = Astro.props;
 const s = t(lang);
-const fullTitle = title ? `${title.replace(/\.$/, '')} · Gecko` : `Gecko · ${m(lang).home}`;
+// Page titles say what Gecko is and where, so a search result makes sense on its own ("Offres et prix · Gecko, studio de pubs à Tunis").
+const where = lang === 'fr' ? 'Gecko, studio de pubs à Tunis' : 'Gecko, ad studio in Tunis';
+const fullTitle = title ? `${title.replace(/\.$/, '')} · ${noindex ? 'Gecko' : where}` : `Gecko · ${m(lang).home}`;
 const desc = description ?? (page ? m(lang).desc[page] : s.meta.description);
 const path = Astro.url.pathname;
-// Full addresses for Google: this page, and the same page in each language (English is the default).
+// Full addresses for Google: this page, and the same page in each language (French is the default).
 const abs = (p: string) => new URL(p, Astro.site).href;
 const localised = /^\/(en|fr)(\/|$)/.test(path);
 // Who we are, for search engines: the studio, its city and how to reach it.
@@ -32,10 +34,8 @@ const org = JSON.stringify({
     <meta name="description" content={desc} />
     <meta name="theme-color" content={theme} />
     {noindex && <meta name="robots" content="noindex" />}
-    <!-- Cabinet Grotesk from Fontshare: Medium (text), Bold (labels, buttons), Extrabold (headlines). Self-host later. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" />
+    <!-- Archivo, served from this site (src/styles/brand.css): fetched early so the headline doesn't wait for it. -->
+    <link rel="preload" href="/fonts/archivo-latin.woff" as="font" type="font/woff" crossorigin />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -44,7 +44,7 @@ const org = JSON.stringify({
       <>
         <link rel="alternate" hreflang="en" href={abs(swapLang(path, 'en'))} />
         <link rel="alternate" hreflang="fr" href={abs(swapLang(path, 'fr'))} />
-        <link rel="alternate" hreflang="x-default" href={abs(swapLang(path, 'en'))} />
+        <link rel="alternate" hreflang="x-default" href={abs(swapLang(path, 'fr'))} />
       </>
     )}
     <meta property="og:type" content="website" />
@@ -54,7 +54,7 @@ const org = JSON.stringify({
     <meta property="og:url" content={abs(path)} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
-    <meta property="og:image" content={abs(lang === 'fr' ? '/brand/og-fr.png' : '/brand/og.png')} />
+    <meta property="og:image" content={abs(lang === 'fr' ? '/brand/og-fr-v2.png' : '/brand/og-v2.png')} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -62,8 +62,9 @@ const org = JSON.stringify({
     <script is:inline>document.documentElement.classList.add('pre', 'js'); if ('scrollRestoration' in history) history.scrollRestoration = 'manual';</script>
   </head>
   <body>
+    <a class="skip" href="#main">{lang === 'fr' ? 'Aller au contenu' : 'Skip to content'}</a>
     <Header lang={lang} />
-    <main><slot /></main>
+    <main id="main" tabindex="-1"><slot /></main>
     <Footer lang={lang} cta={footerCta} />
     <script>
       import { track } from '../scripts/intake';
