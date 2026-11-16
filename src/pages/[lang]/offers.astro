@@ -17,6 +17,10 @@ const p = c(lang).plans;
 const h = c(lang).home;
 const [t0, t1] = mark(k.title);
 const L = launch(lang);
+// The three divisions, in the order home shows them: Gecko Ads (the plans), Gecko Campaigns, Gecko Brand World.
+const div = L.what.items;
+// Questions this page doesn't already answer above: timing, what you receive, revisions, ownership, media buying.
+const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
 ---
 <Base lang={lang} title={o.title} page="offers">
   <section class="page-head lit mid">
@@ -26,26 +30,13 @@ const L = launch(lang);
     </div>
   </section>
 
-  <section class="section bw-block" id="brand-world">
-    <div class="wrap wide bwo">
-      <div class="rv">
-        <p class="tape flat">{L.bw.label}</p>
-        <h2 class="h2 bw-t">{L.bw.name}</h2>
-        <p class="text-l bw-l">{L.bw.title}</p>
-      </div>
-      <div class="rv bw-r" style="--d:80ms">
-        <p class="text">{L.bw.price}</p>
-        <div class="actions">
-          <a class="btn primary lg" href={`${href(lang, 'apply')}?plan=brandworld`}>{L.bw.quote} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn lg" href={href(lang, 'brand-world')}>{L.bw.see} <span class="arr" aria-hidden="true">→</span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="section plans-sec">
     <div class="wrap wide">
-      <h2 class="sr">{h.plansTitle}</h2>
+      <div class="div-head rv">
+        <p class="tape flat">{div[0][1]}</p>
+        <h2 class="h2">Gecko Ads.</h2>
+        <p class="text text-l">{div[0][2]}</p>
+      </div>
       <div class="every-p rv">
         <h3 class="every-t">{L.plans.everyTitle}</h3>
         <ul>{L.plans.every.map((x) => <li>{x}</li>)}</ul>
@@ -54,28 +45,14 @@ const L = launch(lang);
         <PlanPanels lang={lang} part="test" />
         <div class="m"><PlanPanels lang={lang} part="monthly" /></div>
       </div>
-      <p class="note rv">{L.plans.openingsNote} {p.spec.out} {o.launchNote} {o.monthlyNote}</p>
-    </div>
-  </section>
-
-  <section class="section pay-sec">
-    <div class="wrap wide">
-      <h2 class="h2 rv">{k.splitTitle}</h2>
-      <div class="split">
-        {[k.make, k.run, k.costs].map((x, i) => (
-          <article class="part rv" style={`--d:${i * 70}ms`}>
-            <p class="tag-l"><span class="tape flat">{x.tag}</span></p>
-            <h3 class="h3">{x.t}</h3>
-            <p class="text">{x.d}</p>
-          </article>
-        ))}
-      </div>
+      <p class="note rv">{L.plans.openingsNote} {p.spec.out}</p>
     </div>
   </section>
 
   <section class="section beyond-sec">
     <div class="wrap wide beyond">
       <div class="stack rv" style="--gap:24px">
+        <p class="tape flat">{div[1][1]}</p>
         <h2 class="h2">{k.beyond.title}</h2>
         <p class="text text-l soft">{k.beyond.text}</p>
         <p class="quote">{k.beyond.quote}</p>
@@ -89,6 +66,23 @@ const L = launch(lang);
           </li>
         ))}
       </ol>
+    </div>
+  </section>
+
+  <section class="section bw-block" id="brand-world">
+    <div class="wrap wide bwo">
+      <div class="rv">
+        <p class="tape flat">{div[2][1]}</p>
+        <h2 class="h2 bw-t">{L.bw.name}</h2>
+        <p class="text-l bw-l">{L.bw.title}</p>
+      </div>
+      <div class="rv bw-r" style="--d:80ms">
+        <p class="text">{L.bw.price}</p>
+        <div class="actions">
+          <a class="btn primary lg" href={`${href(lang, 'apply')}?plan=brandworld`}>{L.bw.quote} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn lg" href={href(lang, 'brand-world')}>{L.bw.see} <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -106,14 +100,8 @@ const L = launch(lang);
       <div class="faq-lead rv">
         <h2 class="h2">{k.faqTitle}</h2>
       </div>
-      <div class="stack faq-col rv" style="--gap:0px">
-        <div class="faq lead-faq">
-          <details>
-            <summary><span>{k.terms}</span><span class="pm" aria-hidden="true"></span></summary>
-            <ul class="terms text">{o.terms.map((i) => <li>{i}</li>)}</ul>
-          </details>
-        </div>
-        <Faq items={s.faq} limit={6} more={{ href: href(lang, 'faq'), label: h.faqAll }} />
+      <div class="faq-col rv">
+        <Faq items={asked} limit={asked.length} more={{ href: href(lang, 'faq'), label: h.faqAll }} />
       </div>
     </div>
   </section>
@@ -121,6 +109,9 @@ const L = launch(lang);
 <style>
   .lede { max-width: 44rem; }
   .plans-sec { padding-top: clamp(40px, 5vw, 72px); }
+  .div-head { display: grid; justify-items: center; gap: 16px; margin: 0 auto clamp(28px, 3.4vw, 48px); max-width: 44rem; text-align: center; }
+  .div-head .h2, .div-head .text { margin: 0; }
+  .div-head .text { font-weight: 500; text-wrap: balance; }
   .note { margin: 24px auto 0; max-width: 56rem; text-align: center; font-size: 15px; font-weight: 500; line-height: 1.5; }
   .bw-block { padding-block: clamp(40px, 5vw, 72px); }
   .bwo { padding: clamp(28px, 3.4vw, 56px); border-radius: 32px; background: var(--blue); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 96px); align-items: end; }
@@ -140,7 +131,7 @@ const L = launch(lang);
   @media (max-width: 1000px) { .panels, .m, .bwo { grid-template-columns: 1fr; } }
 
   /* What the fee covers: three filled blocks. */
-  .pay-sec .h2 { max-width: 14ch; margin: 0 auto clamp(32px, 4vw, 56px); text-align: center; text-wrap: balance; }
+  .unused-pay .h2 { max-width: 14ch; margin: 0 auto clamp(32px, 4vw, 56px); text-align: center; text-wrap: balance; }
   .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 48px); }
   .part { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); background: var(--blue); }
   .part .text { margin: 0; font-weight: 500; }
