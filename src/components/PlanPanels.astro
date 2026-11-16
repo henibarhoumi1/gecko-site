@@ -47,7 +47,7 @@ const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.low
         )}
       </ul>
     </div>
-    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : L.choose}{' '}{m.name} <span class="arr" aria-hidden="true">→</span></a>
+    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : `${L.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
   </article>
 ))}
 

@@ -22,7 +22,7 @@ const en = {
     title: 'You bring the product. We build the world around it.',
     lead: 'For brands launching or starting over. One team studies your market, builds the brand, shoots the campaign and opens the store.',
     startTitle: 'How it starts',
-    start: ['Send us the product.', 'Fill in one onboarding form.', 'We study your business, your market and the best competitors.', 'We launch or rebrand, then sell and track every order.'],
+    start: ['Send us the product.', 'Fill in one onboarding form.', 'We study your business, your market and the best competitors.', 'We launch or rebrand, then your store opens, every order tracked in its back office.'],
     insideTitle: 'What’s inside',
     inside: [
       'Market study and strategy.',
@@ -30,7 +30,7 @@ const en = {
       'First campaign: 15 reels, built to find your winning formats early.',
       'Product photography.',
       'A website with its own back office: orders, products, stock, payments and your Meta ads results in one place.',
-      'Creative support from the team throughout.',
+      'Your private workspace, and the team’s creative support throughout.',
     ],
     value: 'Bought separately, that is a strategist, a designer, a photographer, a video crew and a web developer. Here it is one team, one brief and one look.',
     price: 'Quoted for your brand: a clear scope, timeline and price.',
@@ -90,7 +90,7 @@ const fr: typeof en = {
   what: {
     title: 'Un studio. Trois façons de travailler avec nous.',
     items: [
-      ['Ads', 'Gecko Ads · chaque mois', 'Des pubs créées, testées et améliorées mois après mois. Chaque tour part de ce que le précédent nous a appris.'],
+      ['Ads', 'Gecko Ads · chaque mois', 'Des pubs créées, testées et améliorées mois après mois. Chaque série part de ce que la précédente nous a appris.'],
       ['Campagnes', 'Gecko Campaigns · par projet', 'Lancements, films de marque et tournages de campagne. Studio, équipe et talents via un seul contact Gecko.'],
       ['Brand World', 'Gecko Brand World · sur mesure', 'Stratégie, identité, photos produit et une boutique avec son propre back-office.'],
     ],
@@ -104,7 +104,7 @@ const fr: typeof en = {
     title: 'Vous apportez le produit. On construit l’univers autour.',
     lead: 'Pour les marques qui se lancent ou repartent de zéro. Une seule équipe étudie votre marché, construit la marque, tourne la campagne et ouvre la boutique.',
     startTitle: 'Comment ça commence',
-    start: ['Envoyez-nous le produit.', 'Remplissez un seul formulaire d’accueil.', 'On étudie votre activité, votre marché et les meilleurs concurrents.', 'On lance ou on refait la marque, puis on vend et on suit chaque commande.'],
+    start: ['Envoyez-nous le produit.', 'Remplissez un seul formulaire d’accueil.', 'On étudie votre activité, votre marché et les meilleurs concurrents.', 'On lance ou on refait la marque, puis votre boutique ouvre, chaque commande suivie dans son back-office.'],
     insideTitle: 'Ce qu’il y a dedans',
     inside: [
       'Étude de marché et stratégie.',
@@ -112,7 +112,7 @@ const fr: typeof en = {
       'Première campagne : 15 reels, pensés pour trouver tôt vos formats gagnants.',
       'Photo produit.',
       'Un site avec son propre back-office : commandes, produits, stock, paiements et résultats de vos pubs Meta au même endroit.',
-      'Le soutien créatif de l’équipe tout au long du projet.',
+      'Votre espace de travail privé, et le soutien créatif de l’équipe tout au long du projet.',
     ],
     value: 'Achetés séparément, c’est un stratège, un designer, un photographe, une équipe vidéo et un développeur web. Ici, c’est une équipe, un brief et un style.',
     price: 'Sur devis pour votre marque : un périmètre, un calendrier et un prix clairs.',
@@ -138,7 +138,7 @@ const fr: typeof en = {
   },
   ws: {
     label: 'Un lien. Tout le projet.',
-    title: 'Chaque campagne rend la suivante plus maline.',
+    title: 'Chaque campagne rend la suivante plus intelligente.',
     lead: 'Scripts, validations, montages et factures dans un seul espace privé, avec vos résultats à côté des pubs qui les ont obtenus. Dans chaque plan.',
     blocks: [
       ['Rien n’est tourné sans votre feu vert.', 'Lisez chaque script. Validez en un clic.'],

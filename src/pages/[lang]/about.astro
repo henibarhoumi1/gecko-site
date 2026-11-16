@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Compare from '../../components/Compare.astro';
-import WhatWeDo from '../../components/WhatWeDo.astro';
 import { type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { langPaths } from '../../i18n/static';
@@ -53,8 +52,6 @@ const [t0, t1] = mark(a.title);
       </ol>
     </div>
   </section>
-
-  <WhatWeDo lang={lang} />
 
   <Compare lang={lang} />
 

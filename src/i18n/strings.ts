@@ -191,7 +191,7 @@ export const strings = {
       kicker: 'Publicités vidéo et contenu pour les marques',
       title: 'De la première idée au montage final.',
       sub: 'Nous sommes un petit studio à Tunis. Nous écrivons, tournons et montons des pubs courtes pour les marques qui vendent en ligne, puis nous regardons votre compte publicitaire avec vous pour voir lesquelles ont vendu.',
-      work: 'Voir les projets',
+      work: 'Voir les réalisations',
       caption: 'La campagne de Gecko',
       captionEmpty: 'Notre première campagne et son vrai coût par message seront ici.',
     },

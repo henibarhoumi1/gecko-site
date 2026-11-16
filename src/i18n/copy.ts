@@ -109,7 +109,7 @@ const en = {
   contact: {
     title: 'Talk to the team.',
     ways: 'Reach us directly',
-    whatsapp: 'WhatsApp', call: 'Call', email: 'Email', instagram: 'Instagram', based: 'Studio',
+    whatsapp: 'WhatsApp', call: 'Call', email: 'Email', instagram: 'Instagram', based: 'Based in',
     place: 'Tunis, Tunisia',
     formTitle: 'Write to us',
     name: 'Your name', prefer: 'Reply by', mail: 'Email', phone: 'WhatsApp number', message: 'What are you working on?', waDone: 'WhatsApp is open with your message. Press Send and we’ll reply.',
@@ -393,7 +393,7 @@ const fr: Copy = {
   contact: {
     title: 'Parlez à l’équipe.',
     ways: 'Nous joindre directement',
-    whatsapp: 'WhatsApp', call: 'Appeler', email: 'E-mail', instagram: 'Instagram', based: 'Studio',
+    whatsapp: 'WhatsApp', call: 'Appeler', email: 'E-mail', instagram: 'Instagram', based: 'Basés à',
     place: 'Tunis, Tunisie',
     formTitle: 'Écrivez-nous',
     name: 'Votre nom', prefer: 'Réponse par', mail: 'E-mail', phone: 'Numéro WhatsApp', message: 'Sur quoi travaillez-vous ?', waDone: 'WhatsApp est ouvert avec votre message. Appuyez sur Envoyer et on vous répond.',
@@ -477,7 +477,7 @@ const fr: Copy = {
     answers: [
       { t: 'Pourquoi Gecko', d: 'Trop de marques reçoivent du contenu joli qui ne vend rien. On a créé Gecko pour faire des pubs qui méritent leur place dans le fil, et apprendre de chacune.' },
       { t: 'Ce qu’on défend', d: 'L’idée avant la caméra. Une raison d’acheter dès les premières secondes. Des résultats lus honnêtement\u00a0: si ça ne vend pas, c’est de l’art.' },
-      { t: 'Ce qui change', d: 'On ne fait pas du contenu. On fait des pubs. Ceux qui écrivent votre pub la tournent, la montent et lisent les résultats avec vous, et chaque tour part du précédent.' },
+      { t: 'Ce qui change', d: 'On ne fait pas du contenu. On fait des pubs. Ceux qui écrivent votre pub la tournent, la montent et lisent les résultats avec vous, et chaque série part de la précédente.' },
       { t: 'Avec qui', d: 'Des marques qui vendent, en Tunisie et à l’étranger, e-commerce en tête, qui veulent un partenaire créatif dans la durée, pas un post à la fois.' },
       { t: 'Comment on produit', d: 'Une équipe resserrée et un réseau de studios, d’équipes, de talents et de spécialistes de confiance. Vous traitez avec Gecko\u00a0; on coordonne, on gère et on répond du résultat.' },
       { t: 'Où on va', d: 'Une entreprise créative indépendante reconnue pour des pubs qui marchent, avec des campagnes et des marques entières construites sur ce que ces pubs nous apprennent.' },

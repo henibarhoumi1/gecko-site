@@ -52,7 +52,7 @@ const recs: Record<string, string> = {
 <div class="apply">
   <div class="a-head">
     <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
-    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{heading === 'h2' ? <>{LA.titleStart}<Roll words={LA.roll} end={lang === 'fr' ? '\u00a0?' : '.'} /></> : <>{t0}<span class="hl">{t1}</span></>}</H>
+    <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{heading === 'h2' ? <>{LA.titleStart}<Roll words={LA.roll} end="." /></> : <>{t0}<span class="hl">{t1}</span></>}</H>
     <p class="text text-l rv" style="--d:120ms">{a.sub}</p>
   </div>
 
