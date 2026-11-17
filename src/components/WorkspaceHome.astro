@@ -15,14 +15,14 @@ const L = launch(lang).ws;
 const why = c(lang).home.why;
 const reel = ads[3] ?? ads[0];
 const T = {
-  en: { ex: 'Example workspace', project: 'Spring launch', nav: ['Home', 'Ideas', 'Scripts', 'Shoot', 'Review', 'Files', 'Results', 'Money'], script: 'Script 06 · Reel 04', wait: 'Waiting for your yes', ok: 'Approved', see: 'We see', hear: 'We hear', note: 'Add a note…', approve: 'Approve script',
+  en: { ex: 'Example workspace', project: 'Spring launch', nav: ['Home', 'Ideas', 'Scripts', 'Shoot', 'Review', 'Files', 'Results', 'Money'], script: 'Script 06 · Reel 04', wait: 'Waiting for your yes', ok: 'Approved', see: 'We see', hear: 'We hear', note: 'Add a note…', approve: 'Approve script', seeV: 'Close-up: a shelf of half-used serums.', hearV: '“I tried six. None of them lasted.”', rowsV: ['Dry patches back by noon.', 'One drop, worked in. The skin stays calm.', 'Same face, morning and evening.'],
     cut: 'Cut 2 · Reel 04', cuts: ['Cut 1', 'Cut 2'], notes: 'Your notes', n1: 'Logo one second earlier.', done: 'Done in cut 2', n2: 'Perfect. Approved.', approveCut: 'Approve cut', round: 'Round 1',
     status: 'In edit', steps: ['Brief', 'Scripts', 'Shoot', 'Edit', 'Delivery'], next: 'Next', nextV: 'First draft on Thursday', you: 'From you', youV: 'Approve 2 scripts',
     ideas: 'Ideas', okF: 'Approved', neu: 'New', write: 'Write the script',
     shoot: 'Shoot day', shootRows: [['Scripts approved', 'Done', 'b'], ['Talent and location', 'Booked', 'b'], ['Product on set', 'From you', 'p']],
     files: 'Final files', dl: 'Download',
     money: 'Payments', moneyRows: [['Deposit · 50%', 'Paid', 'b'], ['Studio rental · advanced', 'Added to balance', 'o'], ['Balance · 50%', 'Due on approval', 'p']] },
-  fr: { ex: 'Exemple d’espace client', project: 'Lancement de printemps', nav: ['Accueil', 'Idées', 'Scripts', 'Tournage', 'Révision', 'Fichiers', 'Résultats', 'Paiements'], script: 'Script 06 · Reel 04', wait: 'En attente de votre feu vert', ok: 'Validé', see: 'On voit', hear: 'On entend', note: 'Ajouter une note…', approve: 'Valider le script',
+  fr: { ex: 'Exemple d’espace client', project: 'Lancement de printemps', nav: ['Accueil', 'Idées', 'Scripts', 'Tournage', 'Révision', 'Fichiers', 'Résultats', 'Paiements'], script: 'Script 06 · Reel 04', wait: 'En attente de votre feu vert', ok: 'Validé', see: 'On voit', hear: 'On entend', note: 'Ajouter une note…', approve: 'Valider le script', seeV: 'Gros plan : une étagère de sérums à moitié vides.', hearV: '« J’en ai essayé six. Aucun n’a tenu. »', rowsV: ['Les plaques sèches reviennent avant midi.', 'Une goutte, bien appliquée. La peau reste calme.', 'Même visage, le matin et le soir.'],
     cut: 'Montage 2 · Reel 04', cuts: ['Montage 1', 'Montage 2'], notes: 'Vos notes', n1: 'Le logo une seconde plus tôt.', done: 'Fait dans le montage 2', n2: 'Parfait. Validé.', approveCut: 'Valider le montage', round: 'Série 1',
     status: 'En montage', steps: ['Brief', 'Scripts', 'Tournage', 'Montage', 'Livraison'], next: 'Ensuite', nextV: 'Premier montage jeudi', you: 'De votre côté', youV: 'Valider 2 scripts',
     ideas: 'Idées', okF: 'Validée', neu: 'Nouvelle', write: 'Écrire le script',
@@ -73,8 +73,8 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
               <header><h3>{T.script}</h3><p class="state"><span class="a">{T.wait}</span><span class="b">{T.ok}</span></p></header>
               <div class="page">
                 <p class="part"><b>{why.script.scenes[0]}</b><span class="hookline">{why.hooks.lines[0]}</span></p>
-                <div class="cols"><p><b>{T.see}</b><i style="--w:86%"></i><i style="--w:62%"></i></p><p><b>{T.hear}</b><i style="--w:92%"></i><i style="--w:48%"></i></p></div>
-                {why.script.scenes.slice(1, 4).map((x, i) => <p class="part row"><b>{x}</b><i style={`--w:${[78, 64, 88][i]}%`}></i></p>)}
+                <div class="cols"><p><b>{T.see}</b><span>{T.seeV}</span></p><p><b>{T.hear}</b><span>{T.hearV}</span></p></div>
+                {why.script.scenes.slice(1, 4).map((x, i) => <p class="part row"><b>{x}</b><span>{T.rowsV[i]}</span></p>)}
               </div>
               <footer><span class="field">{T.note}</span><button type="button" class="go" data-approve><span class="a">{T.approve}</span><span class="b"><Fragment set:html={tick} />{T.ok}</span></button></footer>
               <span class="cursor" set:html={cursor} />
@@ -211,7 +211,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .tab:focus-visible { outline: 3px solid #000; outline-offset: 6px; border-radius: 8px; }
 
   /* The blue block, and the window on it. Inside: white, black, one blue. Pink only where something waits for you. */
-  .stage { position: relative; padding: clamp(20px, 4vw, 72px) clamp(16px, 5vw, 96px); border-radius: 32px; background: var(--blue); }
+  .stage { position: relative; padding: clamp(20px, 4vw, 72px) clamp(16px, 5vw, 96px); border-radius: 32px; background: var(--yellow); }
   .ex { position: absolute; z-index: 2; left: clamp(16px, 5vw, 96px); top: clamp(2px, 1.3vw, 20px); background: #fff; transform: rotate(-2deg); }
   .win { max-width: 1180px; margin-inline: auto; border-radius: 20px; overflow: hidden; background: #fff; color: #000; font-size: 15px; }
   .bar { display: flex; align-items: center; gap: 7px; height: 44px; padding: 0 16px; background: #000; color: #fff; font-size: 13px; font-weight: 500; }
@@ -221,11 +221,11 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .side { display: grid; align-content: start; gap: 2px; padding: 20px 14px; }
   .logo { display: block; width: 62px; margin: 0 0 16px 10px; }
   .it { display: flex; align-items: center; width: 100%; height: 38px; margin: 0; padding: 0 14px; border: 0; border-radius: 999px; background: none; color: #000; font: 600 14.5px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
-  .it:hover { background: var(--blue); }
+  .it:hover { background: var(--yellow); }
   .it:focus-visible, .win button:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
   .side :global(.cur) { background: #000; color: #fff; }
   .screens { position: relative; min-width: 0; }
-  .screen { position: absolute; inset: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 18px; padding: clamp(18px, 2.2vw, 32px); }
+  .screen { position: absolute; inset: 0; min-height: 0; align-content: stretch; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 18px; padding: clamp(18px, 2.2vw, 32px); }
   .screen.on { animation: s-in 460ms cubic-bezier(.2, .8, .2, 1) both; }
   @keyframes s-in { from { opacity: 0; transform: translateY(14px); } }
   .screen header { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -247,10 +247,9 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .hookline { width: fit-content; font-weight: 800; font-size: clamp(18px, 1.7vw, 25px); letter-spacing: -0.03em; line-height: 1.15; }
   .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .cols p { margin: 0; display: grid; gap: 7px; }
-  .page i { display: block; width: var(--w); height: 9px; border-radius: 9px; background: var(--blue); transform-origin: 0 50%; }
+  .page span:not(.hookline) { font-weight: 500; font-size: 15px; line-height: 1.4; }
   .part.row { grid-template-columns: 150px 1fr; align-items: center; }
   .screen.on .hookline { animation: type 800ms steps(26) both 200ms; }
-  .screen.on .page i { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both 700ms; }
   @keyframes type { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
   @keyframes grow { from { transform: scaleX(0); } }
   .screen footer { display: flex; align-items: center; gap: 12px; }
@@ -285,7 +284,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .cuts span { padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
   .cuts .cur { background: #000; color: #fff; }
   .k { margin: 6px 0 0; font-weight: 700; font-size: 13px; }
-  .bubble { margin: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; max-width: 26rem; padding: 13px 16px; border-radius: 16px 16px 16px 4px; background: var(--blue); font-weight: 500; font-size: 16px; line-height: 1.35; }
+  .bubble { margin: 0; display: grid; gap: 8px; justify-items: start; width: fit-content; max-width: 26rem; padding: 13px 16px; border-radius: 16px 16px 16px 4px; background: var(--pink); font-weight: 500; font-size: 16px; line-height: 1.35; }
   .bubble em { font-style: normal; font-weight: 700; font-size: 13px; padding: 5px 10px; border-radius: 999px; background: #fff; }
   .bubble.mine { justify-self: end; border-radius: 16px 16px 4px 16px; background: #000; color: #fff; }
   .screen.on .bubble { animation: s-in 420ms cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(400ms + var(--i) * 1300ms); }
@@ -296,7 +295,7 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
   .res { list-style: none; margin: 0; padding: 8px 0 0; display: grid; align-content: start; gap: clamp(14px, 1.6vw, 22px); }
   .res li { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; align-items: center; gap: 16px; }
   .res b { font-weight: 800; font-size: clamp(17px, 1.5vw, 21px); letter-spacing: -0.02em; }
-  .res i { display: block; width: var(--w); height: clamp(30px, 3vw, 44px); border-radius: 10px; background: var(--blue); transform-origin: 0 50%; }
+  .res i { display: block; width: var(--w); height: clamp(30px, 3vw, 44px); border-radius: 10px; background: #000; transform-origin: 0 50%; }
   .res li:first-child i { background: #000; }
   .res em { font-style: normal; font-weight: 700; font-size: 13px; padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
   .res .keep { box-shadow: none; background: var(--pink); }

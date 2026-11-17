@@ -94,9 +94,9 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   </section>
 
   <section class="section faq-sec" id="faq">
-    <div class="wrap faq-col">
+    <div class="wrap wide faq-col">
       <h2 class="h1 faq-h rv">{h.faqTitle}</h2>
-      <div class="rv"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: L.faqAll }} /></div>
+      <div class="faq-list rv" style="--d:80ms"><Faq items={faqs} more={{ href: href(lang, 'faq'), label: L.faqAll }} /></div>
     </div>
   </section>
 
@@ -231,8 +231,11 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   }
 
   /* Questions: the title centred, the answers in one column under it. */
-  .faq-col { display: grid; gap: clamp(32px, 4vw, 56px); max-width: 860px; }
-  .faq-h { margin: 0; text-align: center; font-size: clamp(48px, 6.4vw, 104px); }
-  .faq-col :global(.faq-more) { display: flex; width: fit-content; margin: 32px auto 0; }
+  /* Questions: the title on the left, held in place while the questions scroll past on the right. */
+  .faq-col { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 120px); align-items: start; }
+  .faq-h { position: sticky; top: calc(var(--header) + 32px); margin: 0; max-width: 7ch; font-size: clamp(48px, 6vw, 104px); }
+  .faq-list { min-width: 0; }
+  .faq-col :global(.faq-more) { display: inline-flex; width: fit-content; margin: 32px 0 0; }
+  @media (max-width: 860px) { .faq-col { grid-template-columns: 1fr; } .faq-h { position: static; max-width: none; } }
 
 </style>
