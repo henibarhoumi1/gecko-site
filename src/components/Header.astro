@@ -157,9 +157,13 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   .bar { pointer-events: auto; position: relative; z-index: 3; max-width: calc(var(--wide) - 2 * var(--gutter)); margin-inline: auto; height: 60px; display: flex; align-items: center; gap: 20px; padding: 0; color: var(--fg);
     border: var(--line) solid transparent; border-radius: 999px; background: transparent;
     transition: background 400ms var(--ease), border-color 400ms var(--ease), max-width var(--t), padding var(--t), color 300ms var(--ease); }
-  .solid .bar { max-width: 1120px; padding: 0 8px 0 clamp(12px, 1.4vw, 20px); background: #FFFFFF; border-color: var(--hair); }
+  /* Once the page scrolls, the header becomes one full-width band, so nothing on the page shows beside or above it. */
+  .site-header.solid { background: #fff; padding-bottom: 8px; padding-top: 8px; }
+  .site-header.solid.over { background: #000; }
+  .site-header.open { background: transparent; }
+  .solid .bar { padding: 0; background: transparent; border-color: transparent; }
   .over .bar { --fg: #FFFFFF; --fg-2: #FFFFFF; --fg-3: #FFFFFF; --bg: #000000; --hair: transparent; --hair-2: #FFFFFF; --tint: transparent; --tint-2: transparent; color: #fff; }
-  .over.solid .bar { background: #000000; }
+  .over.solid .bar { background: transparent; }
   .over .lang-m { --fg: #000000; --surface: #FFFFFF; --edge: transparent; --tint: transparent; }
   .open .bar { background: transparent; border-color: transparent; box-shadow: none; color: #fff; max-width: calc(var(--wide) - 2 * var(--gutter)); padding: 0; }
   .brand { display: block; width: 66px; flex: none; transition: transform 400ms var(--ease); }
