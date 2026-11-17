@@ -40,6 +40,7 @@ const p = c(lang).plans;
   /* Four panels in one row, same height; the buttons line up along the bottom. */
   .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); align-items: stretch; }
   @media (max-width: 1100px) { .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .fine { margin: clamp(24px, 2.6vw, 40px) auto 0; text-align: center; font-size: 15px; font-weight: 500; max-width: 60rem; text-wrap: balance; }
   /* Phones: the "in every plan" list as one left-aligned column, so the dots line up. */
   @media (max-width: 640px) {
     .row { grid-template-columns: 1fr; }
