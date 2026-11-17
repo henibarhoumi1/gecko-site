@@ -124,11 +124,12 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
   .every-p ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 30px; max-width: 64rem; font-weight: 600; font-size: clamp(16px, 1.2vw, 19px); }
   .every-p li { position: relative; padding-left: 18px; }
   .every-p li::before { content: ''; position: absolute; left: 0; top: .45em; width: 8px; height: 8px; border-radius: 50%; background: #000; }
-  .panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: clamp(16px, 1.6vw, 24px); align-items: stretch; }
-  .panels :global(.pp.k-test) { height: 100%; }
-  .m { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 1.6vw, 24px); }
-  .m :global(.k-partner) { grid-column: 1 / -1; }
-  @media (max-width: 1000px) { .panels, .m, .bwo { grid-template-columns: 1fr; } }
+  /* The same four compact panels as home, in one row: the Test, then the three monthly plans. */
+  .panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 3fr); gap: clamp(12px, 1.2vw, 18px); align-items: stretch; }
+  .m { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  @media (max-width: 1100px) { .panels { grid-template-columns: 1fr; } .m { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1000px) { .bwo { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) { .m { grid-template-columns: 1fr; } }
   @media (max-width: 640px) { .every-p ul { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; text-align: left; gap: 10px; } }
 
   /* What the fee covers: three filled blocks. */
