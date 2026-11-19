@@ -1,0 +1,76 @@
+---
+// Home pricing (Heni, 19 Nov, canvas "Pick your plan."): four cards in one row, the Test in yellow, the others white
+// with a black edge. Each: name, who it's for, the big number, what you get, then the price, the launch note and
+// "Choose →". The whole card is the link. Prices come from data/offers.ts only. All text is black.
+import { type Locale } from '../i18n/strings';
+import { c } from '../i18n/copy';
+import { launch } from '../i18n/launch';
+import { href } from '../i18n/paths';
+import { test, monthly, fmt, type Offer } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const p = c(lang).plans;
+const L = launch(lang).plans;
+const apply = href(lang, 'apply');
+const cards = [test, ...monthly];
+const openings = (m: Offer) => (m.key === 'regular' || m.key === 'pro' ? (m.reels ?? 0) * 2 : 0);
+// What you get, short: nothing every plan already has, statics and carousels on one line.
+const gives = (m: Offer): string[] => {
+  if (m.custom) return L.partnerShortList.slice(1);
+  const it = m.items[lang];
+  if (m.once) return [it[0], m.shoot?.[lang] ?? '', it[1], it[2]].filter(Boolean);
+  return [L.openings(openings(m)), it.slice(0, 2).join(' · '), ...it.slice(2), m.shoot?.[lang] ?? '', m.review?.[lang] ?? ''].filter(Boolean);
+};
+---
+<ul class="pc">
+  {cards.map((m, i) => (
+    <li class="rv" style={`--d:${i * 70}ms`}>
+      <a class:list={['card', { yellow: m.key === 'test' }]} href={`${apply}?plan=${m.key}`}>
+        <span class="name">{m.name}</span>
+        <span class="for">{m.for?.[lang]}</span>
+        <span class="big">
+          {m.custom ? <><b class="word">{L.partnerBig}</b><span>{L.partnerUnit}</span></> : <><b>{m.reels}</b><span>{m.once ? L.unitOnce : L.unitMonth}</span></>}
+        </span>
+        <span class="gives" role="list" aria-label={L.included}>
+          {gives(m).map((x) => <span role="listitem">{x}</span>)}
+        </span>
+        <span class="price">
+          {m.custom ? <b class="quote">{L.custom}</b> : <><b>{fmt(m.launch, lang)}</b> <span>{m.once ? L.once : L.month}</span></>}
+        </span>
+        <span class="note">{m.once ? L.testNote : m.custom ? L.partnerNote : L.launchNote}</span>
+        <span class="go">{m.custom ? L.talk : L.choose}<span class="arr" aria-hidden="true">→</span></span>
+      </a>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .pc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
+  .pc li { display: flex; min-width: 0; }
+  .card { flex: 1; min-width: 0; display: flex; flex-direction: column; padding: 28px; border: 1.5px solid #000; border-radius: 18px; background: #fff; color: #000; text-decoration: none;
+    transition: transform 280ms var(--ease), box-shadow 280ms var(--ease); }
+  .card.yellow { background: var(--yellow); }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 6px 0 #000; }
+  .card:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; }
+  .name { font-weight: 700; font-size: 30px; line-height: 1; letter-spacing: -0.04em; }
+  .for { margin-top: 12px; font-weight: 500; font-size: 15px; line-height: 1.45; min-height: 4.35em; text-wrap: pretty; }
+  .big { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .big b { font-weight: 800; font-size: 64px; line-height: .9; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .big b.word { font-size: clamp(40px, 3.6vw, 56px); letter-spacing: -0.05em; }
+  .big span { font-weight: 600; font-size: 15px; }
+  /* What you get: short lines, each with a small black tick. */
+  .gives { margin-top: 22px; margin-bottom: 26px; display: grid; gap: 9px; font-weight: 500; font-size: 15px; line-height: 1.35; }
+  .gives > span { position: relative; padding-left: 24px; }
+  .gives > span::before { content: ''; position: absolute; left: 1px; top: .2em; width: 11px; height: 6px; border-left: 2px solid #000; border-bottom: 2px solid #000; transform: rotate(-45deg); }
+  .price { margin-top: auto; padding-top: 16px; border-top: 1.5px solid #000; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+  .price b { font-weight: 700; font-size: 26px; letter-spacing: -0.035em; font-variant-numeric: tabular-nums; }
+  .price span { font-weight: 600; font-size: 15px; }
+  .note { margin-top: 10px; font-weight: 600; font-size: 13px; }
+  .go { margin-top: 14px; display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 20px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 16px; }
+  .yellow .go { background: #000; }
+  .go .arr { transition: transform 240ms var(--ease); }
+  .card:hover .go .arr { transform: translateX(4px); }
+  @media (max-width: 1180px) { .pc { grid-template-columns: repeat(2, minmax(0, 1fr)); } .for { min-height: 0; } }
+  @media (max-width: 640px) { .pc { grid-template-columns: 1fr; } .card { padding: 24px; } }
+  @media (prefers-reduced-motion: reduce) { .card, .go .arr { transition: none; } .card:hover { transform: none; } }
+</style>

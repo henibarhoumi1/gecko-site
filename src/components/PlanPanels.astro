@@ -1,6 +1,7 @@
 ---
-// The plans as panels in black and white (Heni, 11 Nov): white with a black edge, Pro in black. Creative Partner as
-// one wide blue panel under them. Prices come from data/offers.ts only. Used on the home page and on Offers.
+// The plans, compact (Heni, 17 Nov: the old cards were too long and not premium). Each panel: name and flag on one
+// line, the price, one line under it, the key deliverables only, the button. White with a black edge, Pro in black.
+// Prices come from data/offers.ts only. Used on the home page and on Offers.
 import { t, type Locale } from '../i18n/strings';
 import { c } from '../i18n/copy';
 import { launch } from '../i18n/launch';
@@ -17,61 +18,50 @@ const hooks = (m: Offer) => (m.key === 'regular' || m.key === 'pro' ? (m.reels ?
 const [regular, pro, partner] = monthly;
 const tone: Record<string, string> = { test: 'yellow', regular: 'pink', pro: 'black', partner: 'blue' };
 const cards = part === 'test' ? [test] : part === 'monthly' ? [regular, pro, partner] : [test, regular, pro, partner];
+// The deliverables, short: statics and carousels on one line, nothing every plan already has ("in every plan").
+const list = (m: Offer): string[] => {
+  if (m.custom) return L.partnerShortList;
+  const it = m.items[lang];
+  if (m.once) return [`${m.reels} ${p.reelsOnce} · ${it[0]}`, m.shoot?.[lang] ?? '', it[1]].filter(Boolean);
+  return [`${m.reels} ${p.reels}`, L.openings(hooks(m)), it.slice(0, 2).join(' · '), ...it.slice(2), m.review?.[lang] ?? ''].filter(Boolean);
+};
 const flag = (m: Offer) => (m.key === 'test' ? L.start : m.key === 'pro' ? L.lowest : '');
 ---
 {cards.map((m) => (
-  <article class={`pp ${tone[m.key]} k-${m.key}`}>
-    <header>
-      {flag(m) && <p class="flag">{flag(m)}</p>}
+  <article class={`pp ${m.key === 'pro' ? 'black' : 'white'} k-${m.key}`}>
+    <header class="top">
       <h3 class="name">{m.name}</h3>
-      {m.for && <p class="for">{m.for[lang]}</p>}
+      {flag(m) && <p class="flag">{flag(m)}</p>}
     </header>
     <p class="price">
-      {m.custom ? <b>{L.custom}</b> : <><b>{fmt(m.launch, lang)}</b>{' '}<span>{o.currency}{' '}{m.once ? p.once : p.month}</span></>}
+      {m.custom ? <b class="quote">{L.custom}</b> : <><b>{fmt(m.launch, lang)}</b><span>{o.currency}{' '}{m.once ? p.once : p.month}</span></>}
     </p>
-    <p class="works">
-      {m.key === 'test' ? L.testWorks : m.custom ? p.customNote : L.perReel(perReel(m))}
-    </p>
-    <div class="gives">
-      <p class="label">{L.gives}</p>
-      <ul>
-        {m.custom ? L.partnerGives.map((x) => <li>{x}</li>) : (
-          <>
-            {m.campaigns && <li><b>{m.campaigns[lang]}</b></li>}
-            <li>{m.reels}{' '}{m.once ? p.reelsOnce : p.reels}</li>
-            {m.shoot && m.once && <li>{m.shoot[lang]}</li>}
-            {hooks(m) > 0 && <li>{L.openings(hooks(m))}</li>}
-            {m.items[lang].map((x) => <li>{x}</li>)}
-            {m.review && <li>{m.review[lang]}</li>}
-          </>
-        )}
-      </ul>
-    </div>
-    <a class={`btn go ${m.key === 'pro' ? 'pink' : ''}`} href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : `${L.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
+    <p class="works">{m.key === 'test' ? L.testWorks : m.custom ? L.partnerWorks : L.perReel(perReel(m))}</p>
+    <ul class="gives">{list(m).map((x) => <li>{x}</li>)}</ul>
+    <a class="go" href={`${apply}?plan=${m.key}`} aria-label={`${m.custom ? L.talk : L.choose}: ${m.name}`}>{m.custom ? L.talk : `${L.choose} ${m.name}`} <span class="arr" aria-hidden="true">→</span></a>
   </article>
 ))}
 
 <style>
-  .pp { display: grid; align-content: start; gap: clamp(16px, 1.6vw, 24px); padding: clamp(24px, 2.4vw, 36px); border-radius: var(--r-lg); color: var(--ink); min-width: 0; --fg: #000; --bg: #fff; --hair-2: #000; }
-  /* Black and white only: white panels with a black edge, and one black panel for the plan with the lowest price per reel. */
-  .pp.yellow, .pp.pink, .pp.blue { background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
-  .pp.black { background: #000; color: #fff; --fg: #fff; --bg: #000; --hair-2: #fff; }
-  .flag { display: inline-block; margin: 0 0 12px; padding: 6px 12px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 13px; }
-  .black .flag { background: #fff; color: #000; }
-  .name { margin: 0; font-weight: 800; font-size: clamp(34px, 3.4vw, 54px); line-height: .95; letter-spacing: -0.03em; }
-  .for { margin: 10px 0 0; font-size: 17px; line-height: 1.4; font-weight: 500; }
-  .price { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
-  .price b { font-weight: 800; font-size: clamp(40px, 4.2vw, 68px); line-height: .9; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-  .price span { font-weight: 700; font-size: 16px; }
-  .works { margin: -6px 0 0; font-weight: 700; font-size: 17px; }
-  .gives ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 8px; font-weight: 500; font-size: 17px; line-height: 1.35; }
-  .gives li { padding-left: 22px; position: relative; }
-  .gives li::before { content: ''; position: absolute; left: 0; top: .72em; width: 10px; height: 2px; background: currentColor; }
-  .go { justify-self: start; align-self: end; margin-top: 8px; }
-  .black .go { background: #fff; border-color: #fff; color: #000; }
-  .black .go:hover { background: #000; border-color: #fff; color: #fff; }
-  .pp.blue { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(24px, 4vw, 64px); }
-  .pp.blue > header, .pp.blue > .go { grid-column: 1; }
-  .pp.blue > .gives { grid-column: 2; grid-row: 1 / span 4; }
-  @media (max-width: 900px) { .pp.blue { grid-template-columns: 1fr; } .pp.blue > .gives { grid-column: 1; grid-row: auto; } }
+  /* Compact and quiet: generous padding, one strong number, a short list, the button at the bottom of every panel. */
+  .pp { display: flex; flex-direction: column; gap: 0; padding: clamp(24px, 2.2vw, 34px); border-radius: var(--r-lg); color: #000; min-width: 0; background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
+  .pp.black { background: #000; color: #fff; box-shadow: none; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; }
+  .name { margin: 0; font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); line-height: 1; letter-spacing: -0.03em; }
+  .flag { margin: 0; padding: 6px 11px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 12.5px; white-space: nowrap; }
+  .black .flag { background: var(--pink); color: #000; }
+  .price { margin: clamp(26px, 2.6vw, 40px) 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+  .price b { font-weight: 800; font-size: clamp(48px, 4.6vw, 72px); line-height: .9; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+  .price b.quote { font-size: clamp(30px, 2.7vw, 42px); line-height: 1; }
+  .price span { font-weight: 700; font-size: 15px; }
+  .works { margin: 12px 0 0; font-weight: 600; font-size: 15px; }
+  .gives { list-style: none; margin: clamp(22px, 2.2vw, 30px) 0 0; padding: clamp(18px, 1.8vw, 24px) 0 0; display: grid; gap: 10px; font-weight: 500; font-size: 16px; line-height: 1.35; box-shadow: inset 0 1.5px 0 currentColor; }
+  .gives li { position: relative; padding-left: 20px; }
+  .gives li::before { content: ''; position: absolute; left: 0; top: .5em; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+  .go { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px 20px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; transition: transform 240ms var(--ease), background 240ms var(--ease); }
+  .pp > .gives { margin-bottom: 28px; }
+  .go:hover { transform: translateY(-2px); }
+  .black .go { background: #fff; color: #000; }
+  .go .arr { transition: transform 240ms var(--ease); }
+  .go:hover .arr { transform: translateX(4px); }
 </style>

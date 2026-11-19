@@ -3,6 +3,7 @@
 import type { Locale } from './strings';
 
 const en = {
+  soundOn: 'Sound on',
   hero: { line: 'A creative studio in Tunis. Ads that get better every month, and the brands around them.', caption: (t: string, f: string) => (f ? `${t} · ${f}` : t) },
   what: {
     title: 'One studio. Three ways to work with us.',
@@ -52,8 +53,15 @@ const en = {
     testWorks: 'One payment, once', openings: (n: number) => `${n} openings to test`,
     custom: 'Custom price', talk: 'Talk to us', choose: 'Choose', quoteBW: 'Ask for a quote',
     bwText: 'Strategy, brand, 15 reels, product photos and a website with its own back office. One team.',
+    partnerShortList: ['Volume set with you', 'Planning across the months', 'Weekly review', 'Market analysis for your category', 'Priority shoot dates'],
+    partnerWorks: 'Quoted on your volume and rhythm',
     partnerGives: ['Volume set with you: campaigns, rhythm and production capacity', 'Creative planning across the months', 'Weekly review of production and results', 'Market analysis for your category', 'Priority shoot dates'],
     openingsNote: 'Openings are alternate first seconds of the same reel, to test which hook holds attention. They are not extra finished videos.',
+    // Home pricing as the canvas "Pick your plan." (Heni, 19 Nov).
+    label: 'Plans', pick: 'Pick your plan.', unitOnce: 'reels, one shoot', unitMonth: 'reels a month', partnerBig: 'Volume', partnerUnit: 'set with you',
+    testNote: 'First 5 brands only · until 31 December', launchNote: 'Launch price · first 5 clients', partnerNote: 'Priced to your volume',
+    once: 'TND one time', month: 'TND / month', all: 'All offers and bespoke projects', included: 'What you get',
+    fine: 'Not included: ad spend, and the studio, talent or props an idea may need. Openings are alternate first seconds of the same reel, not extra videos. Prices exclude VAT.',
   },
   ws: {
     label: 'One link. The whole project.',
@@ -86,6 +94,7 @@ const en = {
 };
 
 const fr: typeof en = {
+  soundOn: 'Son activé',
   hero: { line: 'Un studio créatif à Tunis. Des pubs qui s’améliorent chaque mois, et les marques autour.', caption: en.hero.caption },
   what: {
     title: 'Un studio. Trois façons de travailler avec nous.',
@@ -133,8 +142,14 @@ const fr: typeof en = {
     testWorks: 'Un seul paiement', openings: (n: number) => `${n} ouvertures à tester`,
     custom: 'Prix sur mesure', talk: 'Parlons-en', choose: 'Choisir', quoteBW: 'Demander un devis',
     bwText: 'Stratégie, marque, 15 reels, photos produit et un site avec son propre back-office. Une seule équipe.',
+    partnerShortList: ['Volume fixé avec vous', 'Planification sur plusieurs mois', 'Revue hebdomadaire', 'Analyse de marché de votre secteur', 'Dates de tournage prioritaires'],
+    partnerWorks: 'Chiffré selon votre volume et votre rythme',
     partnerGives: ['Volume fixé avec vous : campagnes, rythme et capacité de production', 'Planification créative sur plusieurs mois', 'Revue hebdomadaire de la production et des résultats', 'Analyse de marché de votre secteur', 'Dates de tournage prioritaires'],
     openingsNote: 'Les ouvertures sont des débuts alternatifs d’un même reel, pour tester quelle accroche retient l’attention. Ce ne sont pas des vidéos finies en plus.',
+    label: 'Plans', pick: 'Choisissez votre plan.', unitOnce: 'reels, un tournage', unitMonth: 'reels par mois', partnerBig: 'Volume', partnerUnit: 'fixé avec vous',
+    testNote: 'Réservé aux 5 premières marques · jusqu’au 31 décembre', launchNote: 'Prix de lancement · 5 premiers clients', partnerNote: 'Selon votre volume',
+    once: 'TND une fois', month: 'TND / mois', all: 'Toutes les offres et les projets sur mesure', included: 'Ce que vous recevez',
+    fine: 'Non inclus\u00a0: le budget pub, et le studio, les talents ou les accessoires qu’une idée peut demander. Les ouvertures sont des débuts alternatifs d’un même reel, pas des vidéos en plus. Prix hors TVA.',
   },
   ws: {
     label: 'Un lien. Tout le projet.',

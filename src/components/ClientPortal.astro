@@ -1,0 +1,306 @@
+---
+// Home: the client workspace (Heni, 19 Nov, canvas "One link. The whole project."). Pink section. On the left the
+// label, the title, one line, the five steps of a project and a way to the process page. On the right, big, an example
+// of the workspace a client gets: Overview, Approvals, Files and Payments, each a real screen you can click. It moves
+// from screen to screen by itself while in view until someone clicks; with reduced motion it stays on Overview.
+// All text black, lines black: no grey.
+import Logo from './Logo.astro';
+import { href } from '../i18n/paths';
+import { c } from '../i18n/copy';
+import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const why = c(lang).home.why;
+const T = {
+  en: {
+    label: 'Client workspace', title: ['One link.', 'The whole project.'], line: 'Approve scripts, watch previews, download your files. No chat threads.',
+    steps: [['Brief and quote', 'Price and dates, agreed in writing.'], ['Scripts', 'Read each one. Approve it in one click.'], ['Shoot', 'Planned with you, shot by one team.'], ['First draft', 'Seven days after the shoot, with your notes under it.'], ['Final files', 'Every format, ready to post or run.']],
+    cta: 'See how a project runs', ex: 'Example workspace', project: 'Spring launch', plan: '10 reels · Regular plan', status: 'In edit',
+    nav: ['Overview', 'Approvals', 'Files', 'Payments'], timeline: ['Brief', 'Scripts', 'Shoot', 'Edit', 'Delivery'],
+    tiles: [['Next', 'First draft on Thursday'], ['From you', 'Approve 2 scripts'], ['Reels in edit', '7 / 10']],
+    previews: 'Latest previews', latest: 'Latest', feed: [['Script 06 approved', '2 h ago'], ['Shoot photos added', 'Yesterday'], ['Studio cost added', 'Mon']],
+    wait: 'Waiting for you', ok: 'Approved', script: 'Script 06 · Reel 04', cut: 'Cut 2 · Reel 02', see: 'We see', hear: 'We hear',
+    seeV: 'Close-up: a shelf of half-used serums.', hearV: '“I tried six. None of them lasted.”',
+    rowsV: ['Dry patches back by noon.', 'One drop, worked in. The skin stays calm.', 'Same face, morning and evening.'],
+    notes: 'Your notes', n1: 'Logo one second earlier.', done: 'Done in cut 2', approveScript: 'Approve script', approveCut: 'Approve cut',
+    files: 'Final files', fmt: '9:16 · 4:5 · with and without subtitles', dl: 'Download', all: 'Download all',
+    pay: [['Deposit · 50%', 'Paid', 'k'], ['Studio rental · advanced', 'Added to balance', 'y'], ['Balance · 50%', 'Due on approval', 'p']], payT: 'Payments', inv: 'Invoice',
+  },
+  fr: {
+    label: 'Espace client', title: ['Un lien.', 'Tout le projet.'], line: 'Validez les scripts, regardez les montages, téléchargez vos fichiers. Sans fil de discussion.',
+    steps: [['Brief et devis', 'Prix et dates, validés par écrit.'], ['Scripts', 'Lisez-les. Validez en un clic.'], ['Tournage', 'Planifié avec vous, tourné par une seule équipe.'], ['Premier montage', 'Sept jours après le tournage, avec vos notes dessous.'], ['Fichiers finaux', 'Tous les formats, prêts à publier ou à lancer.']],
+    cta: 'Voir comment un projet avance', ex: 'Exemple d’espace client', project: 'Lancement de printemps', plan: '10 reels · Plan Regular', status: 'En montage',
+    nav: ['Vue d’ensemble', 'Validations', 'Fichiers', 'Paiements'], timeline: ['Brief', 'Scripts', 'Tournage', 'Montage', 'Livraison'],
+    tiles: [['Ensuite', 'Premier montage jeudi'], ['De votre côté', 'Valider 2 scripts'], ['Reels en montage', '7 / 10']],
+    previews: 'Derniers montages', latest: 'Récent', feed: [['Script 06 validé', 'Il y a 2 h'], ['Photos du tournage ajoutées', 'Hier'], ['Coût du studio ajouté', 'Lun.']],
+    wait: 'En attente de vous', ok: 'Validé', script: 'Script 06 · Reel 04', cut: 'Montage 2 · Reel 02', see: 'On voit', hear: 'On entend',
+    seeV: 'Gros plan : une étagère de sérums à moitié vides.', hearV: '« J’en ai essayé six. Aucun n’a tenu. »',
+    rowsV: ['Les plaques sèches reviennent avant midi.', 'Une goutte, bien appliquée. La peau reste calme.', 'Même visage, le matin et le soir.'],
+    notes: 'Vos notes', n1: 'Le logo une seconde plus tôt.', done: 'Fait dans le montage 2', approveScript: 'Valider le script', approveCut: 'Valider le montage',
+    files: 'Fichiers finaux', fmt: '9:16 · 4:5 · avec et sans sous-titres', dl: 'Télécharger', all: 'Tout télécharger',
+    pay: [['Acompte · 50 %', 'Payé', 'k'], ['Location studio · avancée', 'Ajoutée au solde', 'y'], ['Solde · 50 %', 'À la validation', 'p']], payT: 'Paiements', inv: 'Facture',
+  },
+}[lang];
+const reels = ads.slice(0, 4);
+const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
+const down = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v9M6 9.5l4 4 4-4M5 16h10" /></svg>';
+const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z" /></svg>';
+---
+<section class="cp" id="workspace" aria-labelledby="cp-t">
+  <div class="wrap wide cp-in">
+    <div class="copy">
+      <p class="lab rv">{T.label} <span aria-hidden="true">]</span></p>
+      <h2 class="ttl rv" id="cp-t">{T.title[0]}<br />{T.title[1]}</h2>
+      <p class="line rv">{T.line}</p>
+      <ol class="steps rv">
+        {T.steps.map(([s, d], i) => (
+          <li class:list={[{ on: i === 0 }]} data-step={i}>
+            <span class="n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="st"><b>{s}</b><span class="sd">{d}</span></span>
+          </li>
+        ))}
+      </ol>
+      <a class="btn rv" href={href(lang, 'process')}>{T.cta} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="app rv" style="--d:120ms" data-cp>
+      <span class="cp-tag">{T.ex}</span>
+      <div class="win">
+        <div class="bar"><i></i><i></i><i></i><span>gecko / {T.project}</span></div>
+        <div class="body">
+          <nav class="side" aria-label={T.ex}>
+            <span class="cp-logo"><Logo /></span>
+            {T.nav.map((x, i) => (
+              <button type="button" class:list={['it', { on: i === 0 }]} data-go={i} aria-pressed={String(i === 0)}>
+                {x}{i === 1 && <span class="badge" data-badge>2</span>}
+              </button>
+            ))}
+          </nav>
+          <div class="screens">
+            <!-- Overview -->
+            <div class="sc on" data-sc="0">
+              <header class="hd">
+                <div><h3>{T.project}</h3><p>{T.plan}</p></div>
+                <span class="pill y"><i></i>{T.status}</span>
+              </header>
+              <ol class="tl">{T.timeline.map((x, i) => <li class:list={[{ done: i < 3, now: i === 3 }]}>{x}</li>)}</ol>
+              <div class="tiles">{T.tiles.map(([k, v]) => <div class="tile"><span class="k">{k}</span><b>{v}</b></div>)}</div>
+              <div class="two">
+                <div>
+                  <p class="k">{T.previews}</p>
+                  <ul class="prev">
+                    {reels.slice(0, 3).map((r, i) => (
+                      <li><img src={r.poster} alt="" width="120" height="213" loading="lazy" decoding="async" /><span class="pl" set:html={play} /><span class="cap">Reel 0{i + 1}</span></li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p class="k">{T.latest}</p>
+                  <ul class="feed">{T.feed.map(([a, b]) => <li><b>{a}</b><span>{b}</span></li>)}</ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approvals -->
+            <div class="sc" data-sc="1">
+              <div class="appr">
+                <article class="card" data-card>
+                  <header><h4>{T.script}</h4><span class="pill p state"><span class="a">{T.wait}</span><span class="b">{T.ok}</span></span></header>
+                  <div class="page">
+                    <p><b>{why.script.scenes[0]}</b>{why.hooks.lines[0]}</p>
+                    <p class="cols"><span><b>{T.see}</b>{T.seeV}</span><span><b>{T.hear}</b>{T.hearV}</span></p>
+                    {why.script.scenes.slice(1, 4).map((x, i) => <p><b>{x}</b>{T.rowsV[i]}</p>)}
+                  </div>
+                  <button type="button" class="go" data-ok><span class="a">{T.approveScript}</span><span class="b"><Fragment set:html={tick} />{T.ok}</span></button>
+                </article>
+                <article class="card cut" data-card>
+                  <header><h4>{T.cut}</h4><span class="pill p state"><span class="a">{T.wait}</span><span class="b">{T.ok}</span></span></header>
+                  <div class="cutbody">
+                    <span class="vid"><img src={reels[1]?.poster} alt="" width="160" height="284" loading="lazy" decoding="async" /><span class="pl" set:html={play} /></span>
+                    <div class="nt">
+                      <p class="k">{T.notes}</p>
+                      <p class="note"><b>0:02</b>{T.n1}</p>
+                      <p class="fixed"><Fragment set:html={tick} />{T.done}</p>
+                    </div>
+                  </div>
+                  <button type="button" class="go" data-ok><span class="a">{T.approveCut}</span><span class="b"><Fragment set:html={tick} />{T.ok}</span></button>
+                </article>
+              </div>
+            </div>
+
+            <!-- Files -->
+            <div class="sc" data-sc="2">
+              <header class="hd"><div><h3>{T.files}</h3><p>{T.fmt}</p></div><span class="btnx"><Fragment set:html={down} />{T.all}</span></header>
+              <ul class="files">
+                {reels.map((r, i) => (
+                  <li><img src={r.poster} alt="" width="160" height="284" loading="lazy" decoding="async" /><span class="fn"><b>Reel 0{i + 1}</b><span class="dl" set:html={down} /></span></li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Payments -->
+            <div class="sc" data-sc="3">
+              <header class="hd"><div><h3>{T.payT}</h3><p>{T.project}</p></div></header>
+              <ul class="pay">
+                {T.pay.map(([a, b, t]) => <li><b>{a}</b><span class={`pill ${t}`}>{b}</span><span class="inv"><Fragment set:html={down} />{T.inv}</span></li>)}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cp]').forEach((app) => {
+    const its = [...app.querySelectorAll<HTMLButtonElement>('[data-go]')];
+    const scs = [...app.querySelectorAll<HTMLElement>('[data-sc]')];
+    let at = 0, held = false, timer = 0, seen = false;
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const show = (j: number) => {
+      at = j;
+      its.forEach((b, i) => { b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', String(i === j)); });
+      scs.forEach((s, i) => s.classList.toggle('on', i === j));
+    };
+    const tick = () => { clearTimeout(timer); if (held || still || !seen) return; timer = window.setTimeout(() => { show((at + 1) % scs.length); tick(); }, 4200); };
+    its.forEach((b, i) => b.addEventListener('click', () => { held = true; clearTimeout(timer); show(i); }));
+    app.querySelectorAll<HTMLButtonElement>('[data-ok]').forEach((b) => b.addEventListener('click', () => {
+      held = true; clearTimeout(timer);
+      const card = b.closest('[data-card]')!;
+      card.classList.toggle('ok');
+      const left = app.querySelectorAll('[data-card]:not(.ok)').length;
+      const badge = app.querySelector<HTMLElement>('[data-badge]')!;
+      badge.textContent = String(left); badge.hidden = left === 0;
+    }));
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; if (seen) tick(); else clearTimeout(timer); }, { threshold: 0.4 }).observe(app);
+  });
+</script>
+
+<style>
+  .cp { background: var(--pink); color: #000; border-block: 1.5px solid #000; padding-block: clamp(80px, 8vw, 120px); }
+  .cp-in { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 56px clamp(48px, 5vw, 80px); align-items: center; }
+  .copy { display: grid; justify-items: start; gap: 26px; min-width: 0; }
+  .lab { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+  .ttl { margin: 0; font-weight: 800; font-size: clamp(40px, 3.9vw, 56px); line-height: 1; letter-spacing: -0.05em; }
+  .line { margin: 0; font-weight: 500; font-size: 19px; line-height: 1.45; }
+  .steps { list-style: none; margin: 0; padding: 0; justify-self: stretch; border-bottom: 1.5px solid #000; }
+  .steps li { display: flex; gap: 18px; padding: 15px 0; border-top: 1.5px solid #000; }
+  .steps li.on { border-top-width: 3px; }
+  .steps .n { flex: none; width: 26px; padding-top: 5px; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .steps .st { display: grid; gap: 4px; }
+  .steps b { font-weight: 700; font-size: 21px; letter-spacing: -0.03em; }
+  .steps .sd { font-weight: 500; font-size: 15px; line-height: 1.4; }
+  .btn { background: transparent; }
+
+  /* The app window. */
+  .app { position: relative; min-width: 0; }
+  .cp-tag { position: absolute; z-index: 2; top: -15px; left: 22px; padding: 6px 12px; background: var(--yellow); border: 1.5px solid #000; font-weight: 700; font-size: 13px; transform: rotate(-2deg); }
+  .win { background: #fff; border: 1.5px solid #000; border-radius: 16px; overflow: hidden; box-shadow: 10px 10px 0 #000; }
+  .bar { display: flex; align-items: center; gap: 7px; height: 46px; padding: 0 16px; border-bottom: 1.5px solid #000; }
+  .bar i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid #000; }
+  .bar i:nth-child(1) { background: var(--pink); } .bar i:nth-child(2) { background: var(--yellow); } .bar i:nth-child(3) { background: var(--blue); }
+  .bar span { margin-left: 10px; padding: 4px 12px; border: 1.5px solid #000; border-radius: 999px; font-weight: 600; font-size: 13px; }
+  .body { display: grid; grid-template-columns: 196px minmax(0, 1fr); min-height: clamp(540px, 42vw, 600px); }
+  .side { display: flex; flex-direction: column; gap: 6px; padding: 20px 14px; border-right: 1.5px solid #000; }
+  .cp-logo { display: block; width: 84px; margin: 2px 0 18px 12px; }
+  .cp-logo :global(.logo) { display: block; width: 100%; }
+  .cp-logo :global(svg) { display: block; width: 100%; height: auto; }
+  .it { display: flex; align-items: center; justify-content: space-between; height: 42px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #000; font: 500 14px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease); }
+  .it:hover { background: var(--yellow); }
+  .it.on { background: var(--pink); font-weight: 700; }
+  .badge { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #000; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
+  .badge[hidden] { display: none; }
+  .screens { position: relative; min-width: 0; }
+  .sc { position: absolute; inset: 0; padding: 28px 30px; display: flex; flex-direction: column; gap: 22px; overflow: hidden;
+    opacity: 0; visibility: hidden; transform: translateY(10px); transition: opacity 360ms var(--ease), transform 360ms var(--ease), visibility 0s 360ms; }
+  .sc.on { opacity: 1; visibility: visible; transform: none; transition: opacity 360ms var(--ease), transform 360ms var(--ease); }
+  .hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .hd h3 { margin: 0; font-weight: 700; font-size: 28px; letter-spacing: -0.035em; line-height: 1.1; }
+  .hd p { margin: 4px 0 0; font-weight: 500; font-size: 14px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; font-weight: 700; font-size: 12.5px; white-space: nowrap; border: 1.5px solid #000; }
+  .pill i { width: 7px; height: 7px; border-radius: 50%; background: #000; }
+  .pill.y { background: var(--yellow); } .pill.p { background: var(--pink); } .pill.k { background: #000; color: #fff; }
+  .k { margin: 0 0 10px; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .tl { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .tl li { padding-top: 10px; border-top: 1.5px solid #000; font-weight: 500; font-size: 13px; }
+  .tl li.done { border-top-width: 3px; font-weight: 600; }
+  .tl li.now { border-top: 5px solid var(--pink); font-weight: 800; padding-top: 8px; position: relative; }
+  .tl li.now::before { content: ''; position: absolute; top: -5px; left: 0; height: 5px; width: 70%; background: #000; animation: fill 3.2s var(--ease) infinite alternate; }
+  @keyframes fill { from { width: 20%; } }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .tile { display: grid; gap: 6px; padding: 14px 16px; border: 1.5px solid #000; border-radius: 12px; }
+  .tile .k { margin: 0; }
+  .tile b { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; line-height: 1.2; }
+  .tile:nth-child(2) { background: var(--pink); }
+  .two { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 22px; }
+  .prev { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .prev li { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 9 / 16; background: #000; }
+  .prev img, .vid img, .files img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pl { position: absolute; left: 50%; top: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .pl :global(svg) { width: 14px; height: 14px; fill: #000; }
+  .prev .cap { position: absolute; left: 6px; bottom: 6px; padding: 3px 7px; border-radius: 6px; background: #fff; font-weight: 700; font-size: 11px; }
+  .feed { list-style: none; margin: 0; padding: 0; }
+  .feed li { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-top: 1px solid #000; font-size: 14px; }
+  .feed b { font-weight: 600; }
+  .feed span { font-weight: 500; white-space: nowrap; }
+  /* Approvals: the script and the cut, each with its button. */
+  .appr { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 14px; height: 100%; }
+  .card { display: flex; flex-direction: column; gap: 14px; padding: 18px; border: 1.5px solid #000; border-radius: 14px; min-width: 0; }
+  .card header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .card h4 { margin: 0; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; }
+  .state .b, .go .b { display: none; }
+  .ok .state .a, .ok .go .a { display: none; }
+  .ok .state .b, .ok .go .b { display: inline-flex; align-items: center; gap: 6px; }
+  .ok .state { background: #000; color: #fff; }
+  .page { display: grid; gap: 10px; font-size: 13.5px; line-height: 1.4; }
+  .page p { margin: 0; display: grid; gap: 2px; }
+  .page b { font-weight: 700; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+  .page .cols { grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; border-radius: 10px; background: var(--yellow); }
+  .page .cols span { display: grid; gap: 2px; }
+  .go { margin-top: auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: #000; color: #fff; font: 700 14px/1 var(--font); cursor: pointer; transition: transform 200ms var(--ease); }
+  .go:hover { transform: translateY(-2px); }
+  .ok .go { background: var(--pink); color: #000; }
+  .go :global(svg), .fixed :global(svg) { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .cutbody { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; }
+  .vid { position: relative; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; background: #000; }
+  .nt { display: grid; align-content: start; gap: 10px; font-size: 13.5px; }
+  .nt .k { margin: 0; }
+  .note { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--pink); font-weight: 500; line-height: 1.35; }
+  .note b { margin-right: 6px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .fixed { margin: 0; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; }
+  /* Files: the four reels with a download on each. */
+  .btnx { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 13.5px; white-space: nowrap; }
+  .btnx :global(svg), .dl :global(svg), .inv :global(svg) { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .files { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .files li { display: grid; gap: 8px; }
+  .files li > img { position: static; aspect-ratio: 9 / 16; border-radius: 10px; }
+  .fn { display: flex; align-items: center; justify-content: space-between; font-size: 14px; }
+  .dl { width: 32px; height: 32px; border: 1.5px solid #000; border-radius: 50%; display: grid; place-items: center; }
+  /* Payments. */
+  .pay { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid #000; }
+  .pay li { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px; padding: 18px 0; border-top: 1px solid #000; font-size: 15px; }
+  .pay b { font-weight: 600; }
+  .inv { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13.5px; }
+
+  @media (max-width: 1180px) {
+    .cp-in { grid-template-columns: minmax(0, 1fr); }
+    .copy { max-width: 560px; }
+  }
+  @media (max-width: 760px) {
+    .body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .side { flex-direction: row; overflow-x: auto; padding: 10px; border-right: 0; border-bottom: 1.5px solid #000; gap: 4px; }
+    .cp-logo { display: none; }
+    .it { flex: none; height: 36px; font-size: 13px; }
+    .screens { display: grid; }
+    .sc { position: relative; inset: auto; grid-area: 1 / 1; padding: 20px 16px; }
+    .tiles, .two, .appr { grid-template-columns: minmax(0, 1fr); }
+    .tl li { font-size: 11px; }
+    .files { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pay li { grid-template-columns: minmax(0, 1fr) auto; }
+    .pay .inv { display: none; }
+    .win { box-shadow: 6px 6px 0 #000; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sc, .sc.on { transition: none; } .tl li.now::before { animation: none; } }
+</style>
