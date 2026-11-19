@@ -1,49 +1,32 @@
 ---
-// Home: "Choose how we work together." What every plan has, then the four plans as equal filled panels in one row
-// (their rows line up: name, price, what it works out to, what you get, button), in black and white.
-import PlanPanels from './PlanPanels.astro';
-import { t, type Locale } from '../i18n/strings';
-import { c } from '../i18n/copy';
+// Home: "Pick your plan." (Heni, 19 Nov, canvas Landing v2). The label and title on the left, the four plan cards,
+// then the fine print with a way to every offer. The full detail of each plan stays on Offers.
+import PlanCards from './PlanCards.astro';
+import { type Locale } from '../i18n/strings';
 import { launch } from '../i18n/launch';
 import { href } from '../i18n/paths';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
-const L = launch(lang);
-const o = t(lang).offers;
-const p = c(lang).plans;
+const L = launch(lang).plans;
 ---
 <section class="section plans-sec" id="plans">
   <div class="wrap wide">
-    <div class="top">
-      <h2 class="h2 rv">{L.plans.title}</h2>
-      <div class="every rv" style="--d:80ms">
-        <h3 class="every-t">{L.plans.everyTitle}</h3>
-        <ul>{L.plans.every.map((x) => <li>{x}</li>)}</ul>
-      </div>
+    <div class="top rv">
+      <p class="lab">{L.label} <span aria-hidden="true">]</span></p>
+      <h2 class="ttl">{L.pick}</h2>
     </div>
-
-    <div class="row rv"><PlanPanels lang={lang} part="all" /></div>
-
-    <p class="fine rv">{L.plans.openingsNote} {p.spec.out} {o.launchNote}</p>
+    <PlanCards lang={lang} />
+    <div class="foot rv">
+      <p class="fine">{L.fine}</p>
+      <a class="btn" href={href(lang, 'offers')}>{L.all} <span class="arr" aria-hidden="true">→</span></a>
+    </div>
   </div>
 </section>
 
 <style>
-  /* The title centred, and what every plan has as one centred row under it. */
-  .top { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: clamp(22px, 2.6vw, 34px); margin-bottom: clamp(40px, 4.6vw, 68px); text-align: center; }
-  .top .h2 { margin: 0; }
-  .every { display: grid; justify-items: center; gap: 14px; }
-  .every-t { margin: 0; font-weight: 800; font-size: 15px; letter-spacing: .02em; text-transform: uppercase; }
-  .every ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 30px; max-width: 64rem; font-weight: 600; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.3; }
-  .every li { padding-left: 18px; position: relative; }
-  .every li::before { content: ''; position: absolute; left: 0; top: .45em; width: 8px; height: 8px; border-radius: 50%; background: #000; }
-  /* Four panels in one row, same height; the buttons line up along the bottom. */
-  .row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); align-items: stretch; }
-  @media (max-width: 1100px) { .row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .fine { margin: clamp(24px, 2.6vw, 40px) auto 0; text-align: center; font-size: 15px; font-weight: 500; max-width: 60rem; text-wrap: balance; }
-  /* Phones: the "in every plan" list as one left-aligned column, so the dots line up. */
-  @media (max-width: 640px) {
-    .row { grid-template-columns: 1fr; }
-    .every ul { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; text-align: left; gap: 10px; }
-  }
+  .top { display: grid; gap: 22px; margin-bottom: clamp(36px, 4vw, 56px); }
+  .lab { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
+  .ttl { margin: 0; font-weight: 800; font-size: clamp(40px, 4.8vw, 68px); line-height: 1; letter-spacing: -0.05em; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; margin-top: clamp(28px, 3vw, 40px); }
+  .fine { margin: 0; max-width: 52rem; font-weight: 500; font-size: 15px; line-height: 1.5; }
 </style>

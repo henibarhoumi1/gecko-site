@@ -1,0 +1,148 @@
+---
+// The landing's reel player (Heni, 19 Nov, "Landing v2" on the design canvas): the reel playing silently on the right of
+// the headline, the other reels as thumbnails beside it, a black bracket, then a progress bar, what's playing, what's
+// next and two arrows. The sound button switches to the full reel with sound. With reduced motion or data saver
+// nothing plays by itself; a click plays it.
+import { ads } from '../data/work';
+import type { Locale } from '../i18n/strings';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const T = {
+  en: { now: 'Now playing', next: 'Next', on: 'Sound on', sound: 'Watch with sound', mute: 'Mute', prev: 'Previous reel', nxt: 'Next reel', play: 'Play reel' },
+  fr: { now: 'En lecture', next: 'Ensuite', on: 'Son activé', sound: 'Regarder avec le son', mute: 'Couper le son', prev: 'Reel précédent', nxt: 'Reel suivant', play: 'Lire le reel' },
+}[lang];
+const reels = ads.slice(0, 4).map((a, i) => ({ i, clip: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, title: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
+const pad = (n: number) => String(n).padStart(2, '0');
+const first = reels[0];
+const icon = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
+---
+<div class="hr" data-hr data-reels={JSON.stringify(reels)} data-t={JSON.stringify(T)}>
+  <div class="row">
+    <ul class="thumbs">
+      {reels.map((r) => (
+        <li class:list={[{ cur: r.i === 0 }]} data-thumb={r.i}>
+          <button type="button" aria-label={`${T.play} ${pad(r.i + 1)}: ${r.title}`}>
+            <img src={r.poster} alt="" width="104" height="184" loading="lazy" decoding="async" />
+            <span>{pad(r.i + 1)}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+    <div class="frame">
+      <div class="scr">
+        <img class="poster" src={first.poster} alt="" width="540" height="960" fetchpriority="high" decoding="async" data-poster />
+        <video muted playsinline preload="none" aria-hidden="true" tabindex="-1" data-video></video>
+        <span class="np"><i aria-hidden="true"></i><span data-np>{T.now}</span></span>
+        <button type="button" class="snd" aria-pressed="false" aria-label={`${T.sound}: ${first.title}`} data-sound>
+          <svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon} />
+        </button>
+      </div>
+      <span class="bracket" aria-hidden="true"></span>
+    </div>
+  </div>
+  <div class="meta">
+    <div class="bar" aria-hidden="true"><i data-bar></i></div>
+    <p class="now"><b data-count>01 / {pad(reels.length)}</b><span data-title>{first.title}</span><span class="fmt" data-fmt>{first.fmt}</span></p>
+    <div class="ctl">
+      <p class="next"><b>{T.next}:</b> <span data-next>{reels[1]?.title}</span></p>
+      <div class="arrows">
+        <button type="button" aria-label={T.prev} data-prev><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+        <button type="button" aria-label={T.nxt} data-nxt><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  type Reel = { i: number; clip: string; full: string; poster: string; title: string; fmt: string };
+  document.querySelectorAll<HTMLElement>('[data-hr]').forEach((root) => {
+    const reels: Reel[] = JSON.parse(root.dataset.reels!);
+    const T = JSON.parse(root.dataset.t!);
+    const video = root.querySelector<HTMLVideoElement>('[data-video]')!;
+    const poster = root.querySelector<HTMLImageElement>('[data-poster]')!;
+    const snd = root.querySelector<HTMLButtonElement>('[data-sound]')!;
+    const bar = root.querySelector<HTMLElement>('[data-bar]')!;
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator as any).connection?.saveData;
+    let at = 0, loud = false, seen = false, asked = false;
+
+    const show = (j: number) => {
+      at = (j + reels.length) % reels.length;
+      const r = reels[at];
+      poster.src = r.poster;
+      root.querySelectorAll<HTMLElement>('[data-thumb]').forEach((t) => t.classList.toggle('cur', Number(t.dataset.thumb) === at));
+      root.querySelector('[data-count]')!.textContent = `${pad(at + 1)} / ${pad(reels.length)}`;
+      root.querySelector('[data-title]')!.textContent = r.title;
+      root.querySelector('[data-fmt]')!.textContent = r.fmt;
+      root.querySelector('[data-next]')!.textContent = reels[(at + 1) % reels.length].title;
+      snd.setAttribute('aria-label', `${loud ? T.mute : T.sound}: ${r.title}`);
+      bar.style.transform = 'scaleX(0)';
+      video.src = loud ? r.full : r.clip;
+      video.muted = !loud;
+      root.classList.remove('live');
+      if ((seen && !still) || asked) video.play().catch(() => {});
+    };
+    video.addEventListener('playing', () => root.classList.add('live'));
+    video.addEventListener('timeupdate', () => { if (video.duration) bar.style.transform = `scaleX(${video.currentTime / video.duration})`; });
+    video.addEventListener('ended', () => show(at + 1));
+
+    snd.addEventListener('click', () => {
+      loud = !loud; asked = true;
+      root.classList.toggle('loud', loud);
+      snd.setAttribute('aria-pressed', String(loud));
+      root.querySelector('[data-np]')!.textContent = loud ? T.on : T.now;
+      show(at);
+    });
+    root.querySelector('[data-prev]')!.addEventListener('click', () => { asked = true; show(at - 1); });
+    root.querySelector('[data-nxt]')!.addEventListener('click', () => { asked = true; show(at + 1); });
+    root.querySelectorAll<HTMLElement>('[data-thumb]').forEach((t) => t.querySelector('button')!.addEventListener('click', () => { asked = true; show(Number(t.dataset.thumb)); }));
+
+    // Plays only while on screen; the first reel starts once the page has settled.
+    new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting;
+      if (!seen) video.pause();
+      else if (!video.src) show(at);
+      else if ((!still || asked) && video.paused) video.play().catch(() => {});
+    }, { threshold: 0.35 }).observe(root);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
+  });
+</script>
+
+<style>
+  .hr { display: grid; gap: 18px; width: 100%; }
+  .row { display: flex; align-items: flex-end; gap: 16px; }
+  .thumbs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; flex: none; }
+  .thumbs li.cur { display: none; }
+  .thumbs button { display: grid; gap: 6px; padding: 0; border: 0; background: none; color: #000; font: 700 12px/1 var(--font); letter-spacing: .06em; cursor: pointer; }
+  .thumbs img { display: block; width: 52px; height: 92px; object-fit: cover; border-radius: 8px; transition: transform 240ms var(--ease); }
+  .thumbs button:hover img { transform: translateY(-3px); }
+  .frame { display: flex; align-items: stretch; flex: 1; min-width: 0; max-width: calc(min(364px, (100svh - 250px) * .5625) + 34px); }
+  .scr { position: relative; flex: 1; min-width: 0; aspect-ratio: 9 / 16; border-radius: 18px; overflow: hidden; background: #000; }
+  .scr img, .scr video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .scr video { opacity: 0; transition: opacity 500ms var(--ease); }
+  .live .scr video { opacity: 1; }
+  .np { position: absolute; z-index: 1; top: 14px; left: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: var(--yellow); color: #000; font-weight: 700; font-size: 13px; }
+  .np i { width: 7px; height: 7px; border-radius: 50%; background: #000; }
+  .loud .np { background: var(--pink); }
+  .snd { position: absolute; z-index: 1; right: 14px; bottom: 14px; width: 48px; height: 48px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: #fff; color: #000; cursor: pointer; transition: transform 240ms var(--ease), background 240ms var(--ease); }
+  .snd:hover { transform: scale(1.06); }
+  .loud .snd { background: var(--pink); }
+  .snd svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .snd :global(.on) { display: none; }
+  .loud .snd :global(.on) { display: inline; }
+  .loud .snd :global(.off) { display: none; }
+  .bracket { flex: none; width: 22px; margin: -16px 0 -16px 12px; border: 3px solid #000; border-left: 0; }
+  .meta { display: grid; gap: 10px; margin: 0 34px 0 68px; }
+  .bar { height: 3px; background: linear-gradient(#000, #000) 0 50% / 100% 1px no-repeat; overflow: hidden; }
+  .bar i { display: block; height: 3px; background: #000; transform-origin: 0 50%; transform: scaleX(0); transition: transform 250ms linear; }
+  .now { margin: 0; display: flex; align-items: baseline; gap: 10px; font-weight: 700; font-size: 16px; letter-spacing: -0.015em; }
+  .now b { font-size: 12px; letter-spacing: .06em; }
+  .now .fmt { margin-left: auto; font-weight: 500; font-size: 14px; }
+  .ctl { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .next { margin: 0; font-size: 14px; font-weight: 500; }
+  .arrows { display: flex; gap: 6px; }
+  .arrows button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1.5px solid #000; border-radius: 50%; background: #fff; color: #000; cursor: pointer; transition: background 200ms var(--ease), color 200ms var(--ease); }
+  .arrows button:hover { background: #000; color: #fff; }
+  .arrows svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  @media (max-width: 760px) { .thumbs { display: none; } .meta { margin: 0 34px 0 0; } }
+</style>

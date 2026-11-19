@@ -2,7 +2,8 @@
 // One straight running strip, full width: blue (formats) or pink ("Let's make your next ad" before the footer). Same
 // motion as the crossed pair in Bands.astro: it drifts sideways at a steady speed and never reacts to scrolling.
 // With `href` the whole strip is a link.
-interface Props { tone: 'blue' | 'pink'; items: readonly string[]; href?: string; label?: string; speed?: number; rev?: boolean }
+// tone 'black' is the thin formats bar under Selected work: white words, pink stars.
+interface Props { tone: 'blue' | 'pink' | 'black'; items: readonly string[]; href?: string; label?: string; speed?: number; rev?: boolean }
 const { tone, items, href, label, speed = 55, rev = false } = Astro.props;
 const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
 const Tag = href ? 'a' : 'div';
@@ -21,6 +22,9 @@ const Tag = href ? 'a' : 'div';
   .strip { display: block; overflow: hidden; color: var(--ink); text-decoration: none; font-weight: 800; font-size: clamp(30px, 4.6vw, 72px); line-height: 1; letter-spacing: -0.035em; }
   .blue { background: var(--blue); }
   .pink { background: var(--pink); }
+  .black { background: #000; color: #fff; font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+  .black .run li { gap: 28px; padding: 20px 28px 20px 0; }
+  .black .run svg { stroke: var(--pink); width: 14px; height: 14px; }
   .run { display: flex; width: max-content; will-change: transform; }
   .run ul { display: flex; list-style: none; margin: 0; padding: 0; }
   .run li { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 36px); padding: clamp(18px, 2vw, 28px) clamp(20px, 2.4vw, 36px) clamp(18px, 2vw, 28px) 0; white-space: nowrap; }

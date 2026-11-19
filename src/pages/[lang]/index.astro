@@ -6,8 +6,9 @@ import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
 import WhatWeDo from '../../components/WhatWeDo.astro';
 import PlansHome from '../../components/PlansHome.astro';
-import WorkspaceHome from '../../components/WorkspaceHome.astro';
+import ClientPortal from '../../components/ClientPortal.astro';
 import ReelViewer from '../../components/ReelViewer.astro';
+import HeroReel from '../../components/HeroReel.astro';
 import { launch } from '../../i18n/launch';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
@@ -26,6 +27,8 @@ const L = launch(lang);
 const lines = h.scenes[0].d;
 const last = lines[lines.length - 1].replace(/\.$/, '');
 const said = lines.join(' ');
+// The line under it: its first sentence in bold, the rest in regular weight (still black).
+const [subA, ...subB] = L.hero.line.split(/(?<=\.)\s+/);
 // Measured with Archivo Extrabold at 92% width (11 Nov 2026): 5.86 em for the widest English line, set a little wide
 // so no line is ever cut.
 const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
@@ -49,13 +52,14 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
           ))}
         </h1>
         <div class="h-foot">
-          <p class="h-sub up" style="--d:420ms">{L.hero.line}</p>
+          <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
           <div class="h-act up" style="--d:520ms">
             <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
             <a class="btn lg" href="#work">{s.hero.work}</a>
           </div>
         </div>
       </div>
+      <div class="h-reel up" style="--d:300ms"><HeroReel lang={lang} /></div>
     </div>
   </section>
 
@@ -73,21 +77,23 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
             <button type="button" class="c-media" data-cut={cl.i} data-full={cl.full} aria-pressed="false" aria-label={`${k.work.sound}: ${cl.cap}`} data-on={`${k.work.sound}: ${cl.cap}`} data-off={`${k.work.mute}: ${cl.cap}`}>
               <img src={cl.poster} alt="" width="540" height="960" loading="lazy" decoding="async" />
               <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={cl.src}></video>
+              <span class="c-on" aria-hidden="true">{L.soundOn}</span>
               <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
             </button>
             <p class="c-cap" aria-hidden="true"><b>{pad(cl.i + 1)}</b><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
           </li>
         ))}
       </ol>
-      <p class="w-credit rv">{k.work.credit}</p>
     </div>
   </section>
+
+  <Strip tone="black" items={s.home.formats} speed={40} />
 
   <WhatWeDo lang={lang} />
 
   <PlansHome lang={lang} />
 
-  <WorkspaceHome lang={lang} />
+  <ClientPortal lang={lang} />
 
   <section class="section apply-sec" id="apply">
     <div class="wrap"><ApplyFlow lang={lang} /></div>
@@ -167,13 +173,16 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   /* The first screen: the headline across the full width, then the line and the two ways in. Text only.
      The reels live in Selected work, just below. */
   .hero { display: flex; flex-direction: column; min-height: min(100svh, 1040px); background: var(--bg); }
-  .h-in { flex: 1; display: grid; align-items: center;
+  /* Headline, line and buttons on the left; the reel player on the right (canvas "Landing v2", 19 Nov). */
+  .h-in { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px clamp(40px, 4.4vw, 64px); align-items: center;
     padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
   .h-copy { container-type: inline-size; display: grid; gap: clamp(28px, 4.4vh, 56px); align-content: center; min-width: 0; }
-  .h-foot { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px 48px; }
+  .h-foot { display: grid; justify-items: start; gap: 34px; }
+  .h-sub strong { font-weight: 700; }
+  .h-reel { width: clamp(340px, 30vw, 432px); min-width: 0; }
   .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
   .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
-    font-size: min(calc(100cqw / var(--kw) * .97), 210px, 21svh); }
+    font-size: min(calc(100cqw / var(--kw) * .97), 140px, 17svh); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
   @keyframes rise { from { transform: translateY(110%); } }
@@ -193,6 +202,8 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
     .hero { min-height: 0; }
     .h-in { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: calc(var(--header) + 20px); padding-bottom: 40px; }
     .h-act .btn { flex: 1 1 auto; }
+    .h-act { align-self: stretch; }
+    .h-reel { width: min(100%, 420px); }
   }
 
   /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
@@ -213,7 +224,10 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .loud .c-mute :global(.off) { display: none; }
   .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-  .w-credit { margin: clamp(24px, 2.6vw, 36px) 0 0; font-size: 15px; font-weight: 600; color: #fff; }
+  /* Each reel sits in a thin pink outline; the one playing with sound gets a pink pill and a pink button. */
+  .c-media { outline: 2px solid var(--pink); outline-offset: 4px; }
+  .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
+  .loud .c-on { opacity: 1; transform: none; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
   .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
