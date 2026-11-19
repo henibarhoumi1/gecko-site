@@ -224,8 +224,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .loud .c-mute :global(.off) { display: none; }
   .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
   .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-  /* Each reel sits in a thin pink outline; the one playing with sound gets a pink pill and a pink button. */
-  .c-media { outline: 2px solid var(--pink); outline-offset: 4px; }
+  /* The reel playing with sound gets a pink pill and a pink button. */
   .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
   .loud .c-on { opacity: 1; transform: none; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
