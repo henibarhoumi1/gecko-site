@@ -16,7 +16,7 @@ const cards = [test, ...monthly];
 const openings = (m: Offer) => (m.key === 'regular' || m.key === 'pro' ? (m.reels ?? 0) * 2 : 0);
 // What you get, short: nothing every plan already has, statics and carousels on one line.
 const gives = (m: Offer): string[] => {
-  if (m.custom) return L.partnerShortList;
+  if (m.custom) return L.partnerShortList.slice(1);
   const it = m.items[lang];
   if (m.once) return [it[0], m.shoot?.[lang] ?? '', it[1], it[2]].filter(Boolean);
   return [L.openings(openings(m)), it.slice(0, 2).join(' · '), ...it.slice(2), m.shoot?.[lang] ?? '', m.review?.[lang] ?? ''].filter(Boolean);

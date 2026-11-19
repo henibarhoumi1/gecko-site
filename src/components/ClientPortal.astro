@@ -70,7 +70,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
         <div class="bar"><i></i><i></i><i></i><span>gecko / {T.project}</span></div>
         <div class="body">
           <nav class="side" aria-label={T.ex}>
-            <span class="logo"><Logo /></span>
+            <span class="cp-logo"><Logo /></span>
             {T.nav.map((x, i) => (
               <button type="button" class:list={['it', { on: i === 0 }]} data-go={i} aria-pressed={String(i === 0)}>
                 {x}{i === 1 && <span class="badge" data-badge>2</span>}
@@ -204,8 +204,9 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
   .bar span { margin-left: 10px; padding: 4px 12px; border: 1.5px solid #000; border-radius: 999px; font-weight: 600; font-size: 13px; }
   .body { display: grid; grid-template-columns: 196px minmax(0, 1fr); min-height: clamp(560px, 46vw, 660px); }
   .side { display: flex; flex-direction: column; gap: 6px; padding: 20px 14px; border-right: 1.5px solid #000; }
-  .logo { display: block; height: 30px; margin: 0 0 16px 10px; }
-  .logo :global(svg), .logo :global(img) { height: 100%; width: auto; display: block; }
+  .cp-logo { display: block; width: 84px; margin: 2px 0 18px 12px; }
+  .cp-logo :global(.logo) { display: block; width: 100%; }
+  .cp-logo :global(svg) { display: block; width: 100%; height: auto; }
   .it { display: flex; align-items: center; justify-content: space-between; height: 42px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #000; font: 500 14px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease); }
   .it:hover { background: var(--yellow); }
   .it.on { background: var(--pink); font-weight: 700; }
@@ -290,7 +291,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
   @media (max-width: 760px) {
     .body { grid-template-columns: minmax(0, 1fr); min-height: 0; }
     .side { flex-direction: row; overflow-x: auto; padding: 10px; border-right: 0; border-bottom: 1.5px solid #000; gap: 4px; }
-    .logo { display: none; }
+    .cp-logo { display: none; }
     .it { flex: none; height: 36px; font-size: 13px; }
     .screens { display: grid; }
     .sc { position: relative; inset: auto; grid-area: 1 / 1; padding: 20px 16px; }
