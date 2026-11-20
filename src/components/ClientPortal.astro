@@ -227,8 +227,8 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
   .tl li { padding-top: 10px; border-top: 1.5px solid #000; font-weight: 500; font-size: 13px; }
   .tl li.done { border-top-width: 3px; font-weight: 600; }
   .tl li.now { border-top: 5px solid var(--pink); font-weight: 800; padding-top: 8px; position: relative; }
-  .tl li.now::before { content: ''; position: absolute; top: -5px; left: 0; height: 5px; width: 70%; background: #000; animation: fill 3.2s var(--ease) infinite alternate; }
-  @keyframes fill { from { width: 20%; } }
+  .tl li.now::before { content: ''; position: absolute; top: -5px; left: 0; height: 5px; width: 70%; background: #000; transform-origin: 0 50%; animation: fill 3.2s var(--ease) infinite alternate; }
+  @keyframes fill { from { transform: scaleX(.3); } }
   .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .tile { display: grid; gap: 6px; padding: 14px 16px; border: 1.5px solid #000; border-radius: 12px; }
   .tile .k { margin: 0; }
