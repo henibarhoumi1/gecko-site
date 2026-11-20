@@ -240,7 +240,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   /* 3 Brand World: the brand's website in a window, the brand deck laid over its corner, an order notification.
      Everything is sized in container units, so the scene keeps its proportions at any stage size. */
   .bw { position: relative; width: 100%; aspect-ratio: 1 / .92; container-type: inline-size; }
-  .site { position: absolute; top: 4cqw; right: 0; width: 82cqw; display: grid; gap: 3cqw; padding: 0 0 4cqw; border: 1.5px solid #000; border-radius: 4cqw; background: #fff; box-shadow: 1.6cqw 1.6cqw 0 #000; overflow: hidden; }
+  .site { position: absolute; top: 5cqw; right: 0; width: 82cqw; display: grid; gap: 3cqw; padding: 0 0 4cqw; border: 1.5px solid #000; border-radius: 4cqw; background: #fff; box-shadow: 1.6cqw 1.6cqw 0 #000; overflow: hidden; }
   .s-bar { display: flex; align-items: center; gap: 1.2cqw; height: 8cqw; padding: 0 3.4cqw; border-bottom: 1.5px solid #000; }
   .s-bar i { width: 2cqw; height: 2cqw; border-radius: 50%; border: 1.5px solid #000; }
   .s-bar i:nth-child(1) { background: var(--pink); } .s-bar i:nth-child(2) { background: var(--yellow); } .s-bar i:nth-child(3) { background: var(--blue); }
@@ -259,13 +259,13 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .bottle::before { content: ''; position: absolute; left: 30%; right: 30%; top: -14%; height: 16%; border-radius: 3px 3px 0 0; background: #000; }
   .s-pic .bottle { width: 22%; }
   .s-grid .bottle { width: 18%; }
-  .deck { position: absolute; left: 0; bottom: 0; width: 38cqw; display: grid; gap: 2.4cqw; padding: 4cqw; border-radius: 4cqw; background: #000; color: #fff; transform: rotate(-6deg); box-shadow: 0 0 0 1.5px #000; }
+  .deck { position: absolute; z-index: 1; left: 0; bottom: 2cqw; width: 36cqw; display: grid; gap: 2.4cqw; padding: 4cqw; border-radius: 4cqw; background: #000; color: #fff; transform: rotate(-6deg); box-shadow: 0 0 0 1.5px #000; }
   .deck .k { font-size: 2.8cqw; }
   .aa { margin: 0; font-weight: 800; font-size: 15cqw; line-height: .85; letter-spacing: -0.05em; }
   .sw { display: flex; gap: 1.4cqw; }
   .sw i { width: 5cqw; height: 5cqw; border-radius: 50%; background: var(--pink); }
   .sw i:nth-child(2) { background: var(--blue); } .sw i:nth-child(3) { background: var(--yellow); } .sw i:nth-child(4) { background: #fff; }
-  .toast { position: absolute; right: 4cqw; bottom: 9cqw; margin: 0; display: inline-flex; align-items: center; gap: 1.6cqw; padding: 1.4cqw 1.4cqw 1.4cqw 3cqw; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 3cqw; white-space: nowrap; }
+  .toast { position: absolute; z-index: 2; right: -1cqw; top: 0; box-shadow: 0 0 0 1.5px #000; margin: 0; display: inline-flex; align-items: center; gap: 1.6cqw; padding: 1.4cqw 1.4cqw 1.4cqw 3cqw; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 3cqw; white-space: nowrap; }
   .toast i { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; background: var(--pink); }
   .toast span { padding: 1cqw 2.2cqw; border-radius: 999px; background: var(--pink); color: #000; }
   .scene.on .bw { animation: cut-in 520ms cubic-bezier(.2, .8, .2, 1) both; }
