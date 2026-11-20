@@ -2,7 +2,7 @@
 // "One studio": the three Gecko divisions (Ads, Campaigns, Brand World), as a small show. The words stand on the left, drawn in outline; the one
 // that is on fills with ink and sits on the pink marker, with its line under it. On the right a stage plays a short
 // scene for it, built in code: a market study ticking itself off, a script being written and approved, a real reel on
-// an edit timeline, a brand deck beside a back office taking orders. The show moves on by itself every few seconds;
+// an edit timeline, the brand’s website with its deck laid over it and an order coming in. The show moves on by itself every few seconds;
 // hovering or clicking a word holds it there. With reduced motion nothing moves and the first scene stays.
 import { launch } from '../i18n/launch';
 import { c } from '../i18n/copy';
@@ -14,8 +14,8 @@ const L = launch(lang).what;
 const why = c(lang).home.why;
 const reel = ads[1] ?? ads[0];
 const T = {
-  en: { study: 'Market study', rows: ['Your business', 'Your market', 'Your strongest competitors'], angle: 'One written angle', rec: 'Shooting', edit: 'Edit', deck: 'Brand deck', bo: 'Back office', ex: 'Example', tabs: ['Orders', 'Products', 'Stock', 'Payments'], order: 'New order', st: ['Paid', 'Packed', 'Sent'] },
-  fr: { study: 'Étude de marché', rows: ['Votre activité', 'Votre marché', 'Vos concurrents les plus forts'], angle: 'Un angle écrit', rec: 'Tournage', edit: 'Montage', deck: 'Brand deck', bo: 'Back-office', ex: 'Exemple', tabs: ['Commandes', 'Produits', 'Stock', 'Paiements'], order: 'Nouvelle commande', st: ['Payé', 'Emballé', 'Envoyé'] },
+  en: { study: 'Market study', rows: ['Your business', 'Your market', 'Your strongest competitors'], angle: 'One written angle', rec: 'Shooting', edit: 'Edit', deck: 'Brand deck', url: 'yourbrand.tn', brand: 'Your brand', drop: 'New collection', shop: 'Shop now', order: 'New order', paid: 'Paid' },
+  fr: { study: 'Étude de marché', rows: ['Votre activité', 'Votre marché', 'Vos concurrents les plus forts'], angle: 'Un angle écrit', rec: 'Tournage', edit: 'Montage', deck: 'Brand deck', url: 'votremarque.tn', brand: 'Votre marque', drop: 'Nouvelle collection', shop: 'Acheter', order: 'Nouvelle commande', paid: 'Payée' },
 }[lang];
 const tones = ['pink', 'black', 'blue'];
 const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg>';
@@ -65,22 +65,23 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
         </div>
       </div>
 
-      <!-- 3 Gecko Brand World: the brand deck, and a back office taking an order. -->
+      <!-- 3 Gecko Brand World: the brand's own website, its brand deck on top, and an order coming in. -->
       <div class="scene" id="what-s2" role="tabpanel" aria-labelledby="what-w2" data-scene="2" hidden>
-        <div class="brand">
+        <div class="bw" aria-hidden="true">
+          <div class="site">
+            <div class="s-bar"><i></i><i></i><i></i><span>{T.url}</span></div>
+            <div class="s-hero">
+              <div class="s-copy"><b>{T.brand}</b><span>{T.drop}</span><em>{T.shop} →</em></div>
+              <div class="s-pic"><span class="bottle"></span></div>
+            </div>
+            <ul class="s-grid"><li><span class="bottle"></span></li><li><span class="bottle"></span></li><li><span class="bottle"></span></li></ul>
+          </div>
           <div class="deck">
             <p class="k">{T.deck}</p>
-            <p class="aa" aria-hidden="true">Aa</p>
-            <div class="sw" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            <p class="aa">Aa</p>
+            <div class="sw"><i></i><i></i><i></i><i></i></div>
           </div>
-          <div class="office">
-            <p class="k">{T.bo} <span>· {T.ex}</span></p>
-            <ul class="tabs">{T.tabs.map((x, i) => <li class:list={[{ cur: i === 0 }]}>{x}</li>)}</ul>
-            <ul class="orders" aria-hidden="true">
-              {T.st.map((x, i) => <li style={`--i:${i}`}><span class="bar"></span><span class="chip">{x}</span></li>)}
-            </ul>
-            <p class="toast"><i aria-hidden="true"></i>{T.order}</p>
-          </div>
+          <p class="toast"><i></i>{T.order}<span>{T.paid}</span></p>
         </div>
       </div>
     </div>
@@ -182,7 +183,7 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: clamp(20px, 3vw, 48px); }
   .k { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
   .sheet { width: min(100%, 440px); display: grid; gap: 18px; padding: clamp(22px, 2.4vw, 34px); border-radius: 24px; background: #fff; color: #000; }
-  .scene.on .sheet, .scene.on .shoot, .scene.on .brand { animation: cut-in 520ms cubic-bezier(.2, .8, .2, 1) both; }
+  .scene.on .sheet, .scene.on .shoot { animation: cut-in 520ms cubic-bezier(.2, .8, .2, 1) both; }
   @keyframes cut-in { from { opacity: 0; transform: translateY(18px) scale(.97); } }
 
   /* 1 Strategy */
@@ -236,31 +237,45 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   @keyframes play { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
   /* 4 Brand and web */
-  .brand { width: 100%; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(10px, 1.2vw, 18px); align-items: center; }
-  .deck, .office { display: grid; gap: 14px; padding: clamp(18px, 2vw, 28px); border-radius: 22px; background: #fff; }
-  .deck { background: #000; color: #fff; transform: rotate(-4deg); }
-  .aa { margin: 0; font-weight: 800; font-size: clamp(64px, 7vw, 120px); line-height: .9; letter-spacing: -0.05em; }
-  .sw { display: flex; gap: 8px; }
-  .sw i { width: 26px; height: 26px; border-radius: 50%; background: var(--pink); }
-  .sw i:nth-child(2) { background: var(--blue); } .sw i:nth-child(3) { background: #fff; } .sw i:nth-child(4) { background: none; box-shadow: inset 0 0 0 2px #fff; }
-  .scene.on .sw i { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(500ms + var(--n, 0) * 100ms); }
+  /* 3 Brand World: the brand's website in a window, the brand deck laid over its corner, an order notification.
+     Everything is sized in container units, so the scene keeps its proportions at any stage size. */
+  .bw { position: relative; width: 100%; aspect-ratio: 1 / .92; container-type: inline-size; }
+  .site { position: absolute; top: 5cqw; right: 0; width: 82cqw; display: grid; gap: 3cqw; padding: 0 0 4cqw; border: 1.5px solid #000; border-radius: 4cqw; background: #fff; box-shadow: 1.6cqw 1.6cqw 0 #000; overflow: hidden; }
+  .s-bar { display: flex; align-items: center; gap: 1.2cqw; height: 8cqw; padding: 0 3.4cqw; border-bottom: 1.5px solid #000; }
+  .s-bar i { width: 2cqw; height: 2cqw; border-radius: 50%; border: 1.5px solid #000; }
+  .s-bar i:nth-child(1) { background: var(--pink); } .s-bar i:nth-child(2) { background: var(--yellow); } .s-bar i:nth-child(3) { background: var(--blue); }
+  .s-bar span { margin-left: 1.6cqw; padding: .6cqw 2.4cqw; border: 1.5px solid #000; border-radius: 999px; font-weight: 600; font-size: 2.6cqw; }
+  .s-hero { display: grid; grid-template-columns: 1fr .9fr; gap: 3cqw; align-items: center; padding: 0 4cqw; }
+  .s-copy { display: grid; justify-items: start; gap: 1.6cqw; }
+  .s-copy b { font-weight: 800; font-size: 7.4cqw; line-height: .95; letter-spacing: -0.05em; }
+  .s-copy span { font-weight: 600; font-size: 3cqw; }
+  .s-copy em { margin-top: 1cqw; padding: 1.6cqw 3cqw; border-radius: 999px; background: #000; color: #fff; font-style: normal; font-weight: 700; font-size: 2.8cqw; }
+  .s-pic { display: grid; place-items: center; aspect-ratio: 1 / .95; border-radius: 3cqw; background: var(--yellow); }
+  .s-grid { list-style: none; margin: 0; padding: 0 4cqw; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2cqw; }
+  .s-grid li { display: grid; place-items: center; aspect-ratio: 1 / .8; border-radius: 2.4cqw; background: var(--pink); }
+  .s-grid li:nth-child(2) { background: var(--blue); } .s-grid li:nth-child(3) { background: var(--yellow); }
+  /* The product: a plain black bottle. */
+  .bottle { position: relative; width: 28%; aspect-ratio: .46; border-radius: 30% 30% 14% 14% / 18% 18% 8% 8%; background: #000; }
+  .bottle::before { content: ''; position: absolute; left: 30%; right: 30%; top: -14%; height: 16%; border-radius: 3px 3px 0 0; background: #000; }
+  .s-pic .bottle { width: 22%; }
+  .s-grid .bottle { width: 18%; }
+  .deck { position: absolute; z-index: 1; left: 0; bottom: 2cqw; width: 36cqw; display: grid; gap: 2.4cqw; padding: 4cqw; border-radius: 4cqw; background: #000; color: #fff; transform: rotate(-6deg); box-shadow: 0 0 0 1.5px #000; }
+  .deck .k { font-size: 2.8cqw; }
+  .aa { margin: 0; font-weight: 800; font-size: 15cqw; line-height: .85; letter-spacing: -0.05em; }
+  .sw { display: flex; gap: 1.4cqw; }
+  .sw i { width: 5cqw; height: 5cqw; border-radius: 50%; background: var(--pink); }
+  .sw i:nth-child(2) { background: var(--blue); } .sw i:nth-child(3) { background: var(--yellow); } .sw i:nth-child(4) { background: #fff; }
+  .toast { position: absolute; z-index: 2; right: -1cqw; top: 0; box-shadow: 0 0 0 1.5px #000; margin: 0; display: inline-flex; align-items: center; gap: 1.6cqw; padding: 1.4cqw 1.4cqw 1.4cqw 3cqw; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 3cqw; white-space: nowrap; }
+  .toast i { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; background: var(--pink); }
+  .toast span { padding: 1cqw 2.2cqw; border-radius: 999px; background: var(--pink); color: #000; }
+  .scene.on .bw { animation: cut-in 520ms cubic-bezier(.2, .8, .2, 1) both; }
+  .scene.on .deck { animation: deck-in 640ms cubic-bezier(.2, .9, .3, 1.1) both 260ms; }
+  .scene.on .s-grid li { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(560ms + var(--n, 0) * 110ms); }
+  .s-grid li:nth-child(2) { --n: 1; } .s-grid li:nth-child(3) { --n: 2; }
+  .scene.on .sw i { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(780ms + var(--n, 0) * 90ms); }
   .sw i:nth-child(2) { --n: 1; } .sw i:nth-child(3) { --n: 2; } .sw i:nth-child(4) { --n: 3; }
-  .office { position: relative; }
-  .office .k span { font-weight: 500; }
-  .tabs { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; font-weight: 700; font-size: 13px; }
-  .tabs li { padding: 7px 12px; border-radius: 999px; }
-  .tabs .cur { background: #000; color: #fff; }
-  .orders { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .orders li { display: flex; align-items: center; gap: 12px; }
-  .orders .bar { flex: 1; height: 12px; border-radius: 12px; background: #000; transform-origin: 0 50%; }
-  .orders li:nth-child(2) .bar { flex: .7; } .orders li:nth-child(3) .bar { flex: .85; }
-  .orders .chip { flex: none; padding: 6px 12px; border-radius: 999px; background: var(--blue); font-weight: 700; font-size: 13px; }
-  .orders li:nth-child(2) .chip { background: #000; color: #fff; } .orders li:nth-child(3) .chip { background: var(--pink); }
-  .scene.on .orders .bar { animation: grow 600ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(500ms + var(--i) * 260ms); }
-  .scene.on .orders .chip { animation: pop 380ms cubic-bezier(.34, 1.56, .64, 1) both; animation-delay: calc(900ms + var(--i) * 260ms); }
-  .toast { position: absolute; right: -8px; top: -18px; margin: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 14px; }
-  .toast i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); }
-  .scene.on .toast { animation: toast 520ms cubic-bezier(.2, 1.4, .4, 1) both 1900ms; }
+  .scene.on .toast { animation: toast 520ms cubic-bezier(.2, 1.4, .4, 1) both 1500ms; }
+  @keyframes deck-in { from { opacity: 0; transform: translate(-8cqw, 6cqw) rotate(-14deg); } }
   @keyframes toast { from { opacity: 0; transform: translateY(-16px) scale(.9); } }
 
   @media (max-width: 980px) {
