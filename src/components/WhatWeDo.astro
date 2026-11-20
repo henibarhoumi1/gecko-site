@@ -113,22 +113,29 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
       else video.pause();
     };
     // Wide screens: the section pins and the scroll turns the page. Each word owns an equal share of the scroll.
-    const span = () => wrap.offsetHeight - innerHeight;
+    // Per scroll frame it reads one number and sets the transform of the three progress segments, nothing else: no
+    // custom properties on the section (those made the browser restyle the whole pinned block on every frame).
+    const segs = [...root.querySelectorAll<HTMLElement>('.steps i')];
+    let top = 0, span = 1;
+    const size = () => { top = wrap.getBoundingClientRect().top + scrollY; span = Math.max(1, wrap.offsetHeight - innerHeight); };
     const onScroll = () => {
       if (!wide.matches) return;
-      const p = Math.max(0, Math.min(0.999, -wrap.getBoundingClientRect().top / Math.max(1, span())));
-      wrap.style.setProperty('--p', p.toFixed(4));
-      wrap.style.setProperty('--q', ((p * words.length) % 1).toFixed(4));
+      const p = Math.max(0, Math.min(0.999, (scrollY - top) / span));
+      segs.forEach((g, j) => { g.style.transform = `scaleX(${Math.max(0, Math.min(1, p * words.length - j)).toFixed(3)})`; });
       const i = Math.floor(p * words.length);
       if (i !== at) show(i);
     };
     let queued = false;
     addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(() => { queued = false; onScroll(); }); } }, { passive: true });
-    addEventListener('resize', onScroll);
+    addEventListener('resize', () => { size(); onScroll(); });
+    addEventListener('load', () => { size(); onScroll(); }, { once: true });
+    size();
+    // Anything above that changes height (images, the font) moves the section: measure again when it does.
+    new ResizeObserver(() => { size(); onScroll(); }).observe(document.body);
     // Narrow screens: no pin; it moves on by itself and a tap picks a word.
     const tick = (wait = 4200) => { clearTimeout(timer); if (!wide.matches && !still && seen && !document.hidden) timer = window.setTimeout(() => { show((at + 1) % words.length); tick(); }, wait); };
     words.forEach((w, j) => w.querySelector('button')!.addEventListener('click', () => {
-      if (wide.matches) scrollTo({ top: wrap.getBoundingClientRect().top + scrollY + ((j + 0.5) / words.length) * span(), behavior: still ? 'auto' : 'smooth' });
+      if (wide.matches) { size(); scrollTo({ top: top + ((j + 0.5) / words.length) * span, behavior: still ? 'auto' : 'smooth' }); }
       else { show(j); tick(9000); }
     }));
     document.addEventListener('visibilitychange', () => tick());
@@ -162,11 +169,9 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   /* Under the stage: where you are in the scroll, as four segments that fill. */
   .steps { position: absolute; z-index: 2; left: 22px; right: 22px; bottom: 20px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; margin: 0; padding: 0; list-style: none; }
   .steps li { height: 6px; border-radius: 6px; box-shadow: inset 0 0 0 1.5px #000; overflow: hidden; }
-  .steps li i { display: block; height: 100%; background: #000; transform-origin: 0 50%; transform: scaleX(clamp(0, calc(var(--p, 0) * 4 - var(--n)), 1)); }
+  .steps li i { display: block; height: 100%; background: #000; transform-origin: 0 50%; transform: scaleX(0); }
   .stage[data-tone='black'] .steps li i { background: #fff; }
   .stage[data-tone='black'] .steps li { box-shadow: inset 0 0 0 1.5px #fff; }
-  /* The scene drifts a little as you scroll through it. */
-  .scene > * { transform: translateY(calc((var(--q, .5) - .5) * -28px)); transition: transform 120ms linear; }
 
   /* The stage: one filled block that changes colour with the scene. */
   .stage { position: relative; aspect-ratio: 1 / 1.02; width: min(100%, calc(min(700px, 100svh - var(--header, 84px) - 64px) / 1.02)); height: auto; justify-self: end; border-radius: 32px; overflow: hidden; background: var(--blue); color: #000; transition: background 520ms var(--ease); }
@@ -226,8 +231,9 @@ const check = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 
   .track.two { height: 12px; }
   .scene.on .track i { animation: grow 520ms cubic-bezier(.65, 0, .35, 1) both; animation-delay: calc(200ms + var(--n, 0) * 90ms); }
   .track i:nth-child(2) { --n: 1; } .track i:nth-child(3) { --n: 2; } .track i:nth-child(4) { --n: 3; } .track i:nth-child(5) { --n: 4; }
-  .head { position: absolute; top: -5px; bottom: -22px; left: 0; width: 3px; border-radius: 3px; background: #fff; animation: play 4s linear infinite; }
-  @keyframes play { to { left: 100%; } }
+  /* The playhead: a full-width layer with a 3px line at its left edge, moved by transform (no layout per frame). */
+  .head { position: absolute; top: -5px; bottom: -22px; left: 0; width: 100%; margin: 0; background: linear-gradient(#fff, #fff) 0 0 / 3px 100% no-repeat; pointer-events: none; animation: play 4s linear infinite; }
+  @keyframes play { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
   /* 4 Brand and web */
   .brand { width: 100%; display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(10px, 1.2vw, 18px); align-items: center; }

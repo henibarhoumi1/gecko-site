@@ -53,6 +53,13 @@ main:focus { outline: none; }
 .head .h2 { max-width: 15ch; }
 .head .sub { max-width: 28rem; }
 
+/* Running strips (scripts/marquee.ts sets --mq-w, one copy's width, and --mq-t, its duration). A CSS animation runs
+   on the compositor, so the strips never hold up scrolling. */
+.mq { animation: mq var(--mq-t, 40s) linear infinite; }
+.mq-rev { animation-direction: reverse; }
+.mq-off { animation-play-state: paused; }
+@keyframes mq { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(var(--mq-w, -50%), 0, 0); } }
+
 /* Reveal on scroll */
 html.js .rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); transition-delay: min(var(--d, 0ms), 240ms); }
 html.js .rv.in { opacity: 1; transform: none; }

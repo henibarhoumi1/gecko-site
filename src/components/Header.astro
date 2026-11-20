@@ -83,12 +83,20 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
   const menu = header.querySelector<HTMLElement>('[data-menu]')!;
   // Solid once you leave the top; hidden while reading down, back on the way up. A few pixels of slack stop flicker.
   // Over a black band (marked data-dark) the bar turns light on dark. A band can switch itself off with data-dark="0".
+  // Which dark band sits under the bar is tracked by an IntersectionObserver watching a 1px line 40px from the top, so
+  // the scroll handler never measures the page (measuring there forced a layout in the middle of every frame).
   const darks = [...document.querySelectorAll<HTMLElement>('[data-dark]')];
-  const under = (el: HTMLElement) => { if (el.dataset.dark === '0') return false; const r = el.getBoundingClientRect(); return r.top < 40 && r.bottom > 40; };
+  const lit = new Set<HTMLElement>();
+  let line: IntersectionObserver | undefined;
+  const watch = () => {
+    line?.disconnect(); lit.clear();
+    line = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? lit.add(e.target as HTMLElement) : lit.delete(e.target as HTMLElement))); update(); },
+      { rootMargin: `-40px 0px ${-(innerHeight - 41)}px 0px` });
+    darks.forEach((el) => line!.observe(el));
+  };
   let last = scrollY, ticking = false;
   const update = () => {
-    // Read everything first, then write, so the browser never has to lay the page out twice in one frame.
-    const y = scrollY, d = y - last, over = darks.length > 0 && darks.some(under);
+    const y = scrollY, d = y - last, over = [...lit].some((el) => el.dataset.dark !== '0');
     header.classList.toggle('solid', y > 24);
     header.classList.toggle('over', over);
     if (y < 160 || header.classList.contains('open')) header.classList.remove('away');
@@ -98,6 +106,7 @@ const globe = '<circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.6 3.
     ticking = false;
   };
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  if (darks.length) { watch(); let rt = 0; addEventListener('resize', () => { clearTimeout(rt); rt = window.setTimeout(watch, 200); }); }
   update();
   // The bar takes its first state without animating; transitions switch on two frames later.
   requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.remove('pre')));
