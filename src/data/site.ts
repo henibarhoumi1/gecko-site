@@ -1,5 +1,5 @@
-// Contact details. Email: contact@gecko-creative.com (Heni, 16 Nov 2026). The domain must be registered with mail
-// forwarding before launch, or mail to it bounces. The client login stays on the app's workers.dev address until
+// Contact details. Email: contact@gecko-creative.com (Heni, 16 Nov 2026), forwarded to Heni's Gmail by Cloudflare
+// Email Routing (set up 20 Nov 2026). The client login stays on the app's workers.dev address until
 // client.gecko-creative.com exists.
 export const site = {
   phone: '+216 26 191 555',

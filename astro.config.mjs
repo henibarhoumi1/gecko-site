@@ -1,11 +1,9 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  // The live address, used for canonical links, the sitemap, share previews and Google. gecko-creative.com isn't
-  // registered yet, so until it is the site names the address it actually lives on; otherwise Google and link
-  // previews (WhatsApp, Instagram) look for pages and pictures on a domain that doesn't exist. Once the domain is
-  // live, set the build variable SITE_URL=https://gecko-creative.com in Cloudflare (or change the default here).
-  site: process.env.SITE_URL || 'https://gecko-site.henibarhoumi1.workers.dev',
+  // The live address, used for canonical links, the sitemap, share previews and Google. gecko-creative.com went live
+  // on 20 Nov 2026 (Cloudflare custom domain on the gecko-site Worker, plus www). SITE_URL can override it.
+  site: process.env.SITE_URL || 'https://gecko-creative.com',
   trailingSlash: 'always',
   // Styles go inside each page, so a page never shows up unstyled if a separate stylesheet fails to load.
   build: { inlineStylesheets: 'always' },
