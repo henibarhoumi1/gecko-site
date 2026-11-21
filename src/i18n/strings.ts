@@ -130,7 +130,7 @@ export const strings = {
       empty: 'Our first case studies go up as their results come in.',
     },
     offers: {
-      title: 'Offers and prices',
+      title: 'Pricing',
       intro: 'Start with the Test if you want to see how we work. Then pick the month that matches how much you want to post.',
       launch: 'Launch price', standard: 'Standard', month: '/ month', currency: 'TND',
       reels: 'reels a month',
@@ -306,7 +306,7 @@ export const strings = {
       empty: 'Nos premières études de cas arrivent avec leurs résultats.',
     },
     offers: {
-      title: 'Offres et prix',
+      title: 'Tarifs',
       intro: 'Commencez par le Test pour voir comment on travaille. Ensuite, choisissez le mois qui correspond à ce que vous voulez publier.',
       launch: 'Prix de lancement', standard: 'Standard', month: '/ mois', currency: 'TND',
       reels: 'reels par mois',

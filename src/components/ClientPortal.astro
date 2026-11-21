@@ -1,7 +1,7 @@
 ---
-// Home: the client workspace (Heni, 19 Nov, canvas "One link. The whole project."). Pink section. On the left the
-// label, the title, one line, the five steps of a project and a way to the process page. On the right, big, an example
-// of the workspace a client gets: Overview, Approvals, Files and Payments, each a real screen you can click. It moves
+// Home: the client workspace (Heni, 21 Nov: on black, "more advanced, detailed, selling the idea"). The pitch on top,
+// then, full width, an example of the workspace a client gets: Overview, Approvals, Shoot day, Results, Files and
+// Payments, each a real screen you can click. Under it, six reasons it changes the work, without boxes. It moves
 // from screen to screen by itself while in view until someone clicks; with reduced motion it stays on Overview.
 // All text black, lines black: no grey.
 import Logo from './Logo.astro';
@@ -26,6 +26,19 @@ const T = {
     notes: 'Your notes', n1: 'Logo one second earlier.', done: 'Done in cut 2', approveScript: 'Approve script', approveCut: 'Approve cut',
     files: 'Final files', fmt: '9:16 · 4:5 · with and without subtitles', dl: 'Download', all: 'Download all',
     pay: [['Deposit · 50%', 'Paid', 'k'], ['Studio rental · advanced', 'Added to balance', 'y'], ['Balance · 50%', 'Due on approval', 'p']], payT: 'Payments', inv: 'Invoice',
+    big: 'Watch your ads get made.', sub: 'Every idea, script, shoot day, cut, file and invoice lives in one private workspace. You see what we see, the moment we see it. Included in every plan, the Test too.',
+    start: 'Start a project', nav2: ['Shoot day', 'Results'],
+    day: 'Shoot day', dayWhen: 'Thursday · call 8:30 · Studio, La Marsa', dayReels: [['Reel 01 · Morning routine', 1], ['Reel 02 · Before and after', 1], ['Reel 03 · Six serums', 0], ['Reel 04 · The founder', 0]],
+    picks: [['Talent', 'Yasmine · main role', 'Approved'], ['Location', 'Bright kitchen, La Marsa', 'Approved'], ['Props', 'Six serum bottles', 'Gecko brings']],
+    res: 'Results', resLead: 'Imported from your ad and store exports. Each number goes back to the hook that earned it.', hooks: [['Hook A · “Your serum isn’t the problem.”', 0.86, 'Keep'], ['Hook B · “I tried six serums.”', 0.58, 'Test again'], ['Hook C · The shelf, no words', 0.31, 'Drop']], nextT: 'Next month starts from Hook A.',
+    feats: [
+      ['Nothing is filmed without your yes.', 'Every script, hook and call to action is written where you can read it. Approve in one click, or comment on the exact line.'],
+      ['Notes on the exact second.', 'Pause any cut and leave a note at 0:02. The next version shows what changed.'],
+      ['The shoot, planned together.', 'Date, call time, place, talent and locations, each one with its cost against your budget before you say yes.'],
+      ['Results go back to each hook.', 'Your ad and store numbers sit next to the ads that earned them. The next scripts start from what sold.'],
+      ['Files and invoices in one place.', 'Every format, with and without subtitles. Every payment, with its invoice. No more “which version?”'],
+      ['Your team, invited.', 'Add your partner, your marketer or your accountant, each one seeing only what they need.'],
+    ],
   },
   fr: {
     label: 'Espace client', title: ['Un lien.', 'Tout le projet.'], line: 'Validez les scripts, regardez les montages, téléchargez vos fichiers. Sans fil de discussion.',
@@ -40,6 +53,19 @@ const T = {
     notes: 'Vos notes', n1: 'Le logo une seconde plus tôt.', done: 'Fait dans le montage 2', approveScript: 'Valider le script', approveCut: 'Valider le montage',
     files: 'Fichiers finaux', fmt: '9:16 · 4:5 · avec et sans sous-titres', dl: 'Télécharger', all: 'Tout télécharger',
     pay: [['Acompte · 50 %', 'Payé', 'k'], ['Location studio · avancée', 'Ajoutée au solde', 'y'], ['Solde · 50 %', 'À la validation', 'p']], payT: 'Paiements', inv: 'Facture',
+    big: 'Regardez vos pubs se faire.', sub: 'Chaque idée, script, journée de tournage, montage, fichier et facture vit dans un seul espace privé. Vous voyez ce qu’on voit, au moment où on le voit. Inclus dans chaque plan, le Test aussi.',
+    start: 'Lancer un projet', nav2: ['Tournage', 'Résultats'],
+    day: 'Journée de tournage', dayWhen: 'Jeudi · rendez-vous 8 h 30 · Studio, La Marsa', dayReels: [['Reel 01 · Routine du matin', 1], ['Reel 02 · Avant/après', 1], ['Reel 03 · Six sérums', 0], ['Reel 04 · La fondatrice', 0]],
+    picks: [['Talent', 'Yasmine · rôle principal', 'Validé'], ['Lieu', 'Cuisine lumineuse, La Marsa', 'Validé'], ['Accessoires', 'Six flacons de sérum', 'Apportés par Gecko']],
+    res: 'Résultats', resLead: 'Importés de vos exports pub et boutique. Chaque chiffre remonte à l’accroche qui l’a obtenu.', hooks: [['Accroche A · « Votre sérum n’est pas le problème. »', 0.86, 'On garde'], ['Accroche B · « J’ai testé six sérums. »', 0.58, 'À retester'], ['Accroche C · L’étagère, sans un mot', 0.31, 'On arrête']], nextT: 'Le mois prochain part de l’accroche A.',
+    feats: [
+      ['Rien n’est tourné sans votre feu vert.', 'Chaque script, accroche et appel à l’action est écrit là où vous pouvez le lire. Validez en un clic, ou commentez la ligne exacte.'],
+      ['Des notes à la seconde près.', 'Mettez un montage en pause et laissez une note à 0:02. La version suivante montre ce qui a changé.'],
+      ['Le tournage, planifié ensemble.', 'Date, horaire, lieu, talents et décors, chacun avec son coût face à votre budget avant votre accord.'],
+      ['Les résultats remontent à chaque accroche.', 'Vos chiffres pub et boutique à côté des pubs qui les ont obtenus. Les scripts suivants partent de ce qui a vendu.'],
+      ['Fichiers et factures au même endroit.', 'Tous les formats, avec et sans sous-titres. Chaque paiement, avec sa facture. Fini le « quelle version ? »'],
+      ['Votre équipe, invitée.', 'Ajoutez votre associé, votre marketeur ou votre comptable, chacun ne voyant que ce dont il a besoin.'],
+    ],
   },
 }[lang];
 const reels = ads.slice(0, 4);
@@ -47,21 +73,20 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
 const down = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v9M6 9.5l4 4 4-4M5 16h10" /></svg>';
 const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z" /></svg>';
 ---
-<section class="cp" id="workspace" aria-labelledby="cp-t">
+<section class="cp on-black" id="workspace" data-dark="1" aria-labelledby="cp-t">
   <div class="wrap wide cp-in">
-    <div class="copy">
-      <p class="lab rv">{T.label} <span aria-hidden="true">]</span></p>
-      <h2 class="ttl rv" id="cp-t">{T.title[0]}<br />{T.title[1]}</h2>
-      <p class="line rv">{T.line}</p>
-      <ol class="steps rv">
-        {T.steps.map(([s, d], i) => (
-          <li class:list={[{ on: i === 0 }]} data-step={i}>
-            <span class="n">{String(i + 1).padStart(2, '0')}</span>
-            <span class="st"><b>{s}</b><span class="sd">{d}</span></span>
-          </li>
-        ))}
-      </ol>
-      <a class="btn rv" href={href(lang, 'process')}>{T.cta} <span class="arr" aria-hidden="true">→</span></a>
+    <div class="cp-head">
+      <div class="copy">
+        <p class="lab rv">{T.label} · {T.title.join(' ')}</p>
+        <h2 class="ttl rv" id="cp-t">{T.big}</h2>
+      </div>
+      <div class="cp-side rv" style="--d:80ms">
+        <p class="line">{T.sub}</p>
+        <div class="cp-act">
+          <a class="btn pink lg" href={href(lang, 'apply')}>{T.start} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn lg" href={href(lang, 'process')}>{T.cta}</a>
+        </div>
+      </div>
     </div>
 
     <div class="app rv" style="--d:120ms" data-cp>
@@ -71,7 +96,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
         <div class="body">
           <nav class="side" aria-label={T.ex}>
             <span class="cp-logo"><Logo /></span>
-            {T.nav.map((x, i) => (
+            {[...T.nav.slice(0, 2), ...T.nav2, ...T.nav.slice(2)].map((x, i) => (
               <button type="button" class:list={['it', { on: i === 0 }]} data-go={i} aria-pressed={String(i === 0)}>
                 {x}{i === 1 && <span class="badge" data-badge>2</span>}
               </button>
@@ -129,8 +154,30 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
               </div>
             </div>
 
-            <!-- Files -->
+            <!-- Shoot day -->
             <div class="sc" data-sc="2">
+              <header class="hd"><div><h3>{T.day}</h3><p>{T.dayWhen}</p></div><span class="pill y"><i></i>{T.status === 'In edit' ? 'Booked' : 'Réservé'}</span></header>
+              <div class="sd">
+                <ul class="sd-reels">
+                  {T.dayReels.map(([r, done]) => <li class:list={[{ done: !!done }]}><span class="sd-tick" set:html={tick} />{r}</li>)}
+                </ul>
+                <ul class="sd-picks">
+                  {T.picks.map(([k, v, st]) => <li><span class="k">{k}</span><b>{v}</b><span class="pill k">{st}</span></li>)}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div class="sc" data-sc="3">
+              <header class="hd"><div><h3>{T.res}</h3><p>{T.resLead}</p></div></header>
+              <ul class="rs">
+                {T.hooks.map(([h, v, verdict]) => <li><b>{h}</b><span class="rs-bar"><i style={`--v:${v}`}></i></span><span class="pill">{verdict}</span></li>)}
+              </ul>
+              <p class="rs-next">{T.nextT}</p>
+            </div>
+
+            <!-- Files -->
+            <div class="sc" data-sc="4">
               <header class="hd"><div><h3>{T.files}</h3><p>{T.fmt}</p></div><span class="btnx"><Fragment set:html={down} />{T.all}</span></header>
               <ul class="files">
                 {reels.map((r, i) => (
@@ -140,7 +187,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
             </div>
 
             <!-- Payments -->
-            <div class="sc" data-sc="3">
+            <div class="sc" data-sc="5">
               <header class="hd"><div><h3>{T.payT}</h3><p>{T.project}</p></div></header>
               <ul class="pay">
                 {T.pay.map(([a, b, t]) => <li><b>{a}</b><span class={`pill ${t}`}>{b}</span><span class="inv"><Fragment set:html={down} />{T.inv}</span></li>)}
@@ -150,6 +197,12 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
         </div>
       </div>
     </div>
+
+    <ol class="feats">
+      {T.feats.map(([t, d], i) => (
+        <li class="rv" style={`--d:${(i % 3) * 60}ms`}><span class="fn">{String(i + 1).padStart(2, '0')}</span><b>{t}</b><p>{d}</p></li>
+      ))}
+    </ol>
   </div>
 </section>
 
@@ -179,37 +232,75 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
 </script>
 
 <style>
-  .cp { background: var(--pink); color: #000; border-block: 1.5px solid #000; padding-block: clamp(80px, 8vw, 120px); }
-  .cp-in { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 56px clamp(48px, 5vw, 80px); align-items: center; }
+  /* On black since 21 Nov 2026 (Heni: no more pink section). The copy in white, the app window white with no shadow. */
+  .cp { background: #000; color: #fff; padding-block: clamp(96px, 9vw, 144px); }
+  .cp-in { display: grid; gap: clamp(48px, 5vw, 80px); }
+  .cp-head { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 28px clamp(40px, 6vw, 120px); align-items: end; }
+  .cp-side { display: grid; justify-items: start; gap: 28px; }
+  .cp-act { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cp-act .btn:not(.pink) { color: #fff; border-color: #fff; }
+  .cp-act .btn:not(.pink):hover { background: #fff; color: #000; }
   .copy { display: grid; justify-items: start; gap: 26px; min-width: 0; }
-  .lab { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
-  .ttl { margin: 0; font-weight: 800; font-size: clamp(40px, 3.9vw, 56px); line-height: 1; letter-spacing: -0.05em; }
-  .line { margin: 0; font-weight: 500; font-size: 19px; line-height: 1.45; }
-  .steps { list-style: none; margin: 0; padding: 0; justify-self: stretch; border-bottom: 1.5px solid #000; }
-  .steps li { display: flex; gap: 18px; padding: 15px 0; border-top: 1.5px solid #000; }
-  .steps li.on { border-top-width: 3px; }
+  .lab { margin: 0; font-weight: 700; font-size: 13px; }
+  .ttl { margin: 0; max-width: 11ch; font-weight: 800; font-size: clamp(56px, 7.2vw, 132px); line-height: .9; letter-spacing: -0.055em; font-stretch: 92%; }
+  .line { margin: 0; font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; }
+  .steps { list-style: none; margin: 0; padding: 0; justify-self: stretch; display: grid; gap: 6px; }
+  .steps li { display: flex; gap: 18px; padding: 12px 16px; border-radius: 16px; transition: background 300ms var(--ease), color 300ms var(--ease); }
+  .steps li:hover { background: #fff; color: #000; }
   .steps .n { flex: none; width: 26px; padding-top: 5px; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
   .steps .st { display: grid; gap: 4px; }
-  .steps b { font-weight: 700; font-size: 21px; letter-spacing: -0.03em; }
+  .steps b { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; }
   .steps .sd { font-weight: 500; font-size: 15px; line-height: 1.4; }
-  .btn { background: transparent; }
+  .copy .btn { background: transparent; color: #fff; border-color: #fff; }
+  .copy .btn:hover { background: #fff; color: #000; }
+  .app { color: #000; }
+  .copy { gap: 20px; }
+
+  /* Six reasons it sells: white on black, numbered, no boxes. */
+  .feats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(36px, 4vw, 64px) clamp(28px, 4vw, 72px); }
+  .feats li { display: grid; gap: 12px; align-content: start; }
+  .feats .fn { font-weight: 700; font-size: 13px; color: var(--pink); font-variant-numeric: tabular-nums; }
+  .feats b { font-weight: 800; font-size: clamp(24px, 2.1vw, 34px); line-height: 1.04; letter-spacing: -0.035em; font-stretch: 94%; text-wrap: balance; }
+  .feats p { margin: 0; font-weight: 500; font-size: 17px; line-height: 1.5; text-wrap: pretty; }
+
+  /* Shoot day screen. */
+  .sd { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  .sd-reels, .sd-picks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-content: start; }
+  .sd-reels li { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; background: var(--yellow); font-weight: 600; font-size: 14px; }
+  .sd-reels li.done { background: #000; color: #fff; }
+  .sd-tick { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid currentColor; }
+  .sd-tick :global(svg) { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; opacity: 0; }
+  .done .sd-tick :global(svg) { opacity: 1; }
+  .sd-picks li { display: grid; gap: 4px; justify-items: start; padding: 12px 14px; border-radius: 12px; background: var(--blue); }
+  .sd-picks .k { margin: 0; }
+  .sd-picks b { font-weight: 700; font-size: 15px; }
+  /* Results screen: each hook with a bar for how well it held, and the verdict. */
+  .rs { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .rs li { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) auto; align-items: center; gap: 16px; font-size: 14px; }
+  .rs b { font-weight: 600; }
+  .rs-bar { height: 12px; border-radius: 999px; background: var(--yellow); overflow: hidden; }
+  .rs-bar i { display: block; height: 100%; width: 100%; border-radius: 999px; background: #000; transform-origin: 0 50%; transform: scaleX(var(--v)); }
+  .sc.on .rs-bar i { animation: rs-grow 900ms cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes rs-grow { from { transform: scaleX(0); } }
+  .rs-next { margin: auto 0 0; padding: 12px 14px; border-radius: 12px; background: var(--pink); font-weight: 700; font-size: 15px; }
+  @media (max-width: 1000px) { .cp-head, .feats { grid-template-columns: 1fr; } .sd, .rs li { grid-template-columns: 1fr; } }
 
   /* The app window. */
   .app { position: relative; min-width: 0; }
   .cp-tag { position: absolute; z-index: 2; top: -15px; left: 22px; padding: 6px 12px; background: var(--yellow); border: 1.5px solid #000; font-weight: 700; font-size: 13px; transform: rotate(-2deg); }
-  .win { background: #fff; border: 1.5px solid #000; border-radius: 16px; overflow: hidden; box-shadow: 10px 10px 0 #000; }
+  .win { background: #fff; border-radius: 20px; overflow: hidden; }
   .bar { display: flex; align-items: center; gap: 7px; height: 46px; padding: 0 16px; border-bottom: 1.5px solid #000; }
   .bar i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid #000; }
   .bar i:nth-child(1) { background: var(--pink); } .bar i:nth-child(2) { background: var(--yellow); } .bar i:nth-child(3) { background: var(--blue); }
   .bar span { margin-left: 10px; padding: 4px 12px; border: 1.5px solid #000; border-radius: 999px; font-weight: 600; font-size: 13px; }
-  .body { display: grid; grid-template-columns: 196px minmax(0, 1fr); min-height: clamp(540px, 42vw, 600px); }
+  .body { display: grid; grid-template-columns: 210px minmax(0, 1fr); min-height: clamp(560px, 40vw, 640px); }
   .side { display: flex; flex-direction: column; gap: 6px; padding: 20px 14px; border-right: 1.5px solid #000; }
   .cp-logo { display: block; width: 84px; margin: 2px 0 18px 12px; }
   .cp-logo :global(.logo) { display: block; width: 100%; }
   .cp-logo :global(svg) { display: block; width: 100%; height: auto; }
   .it { display: flex; align-items: center; justify-content: space-between; height: 42px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #000; font: 500 14px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease); }
   .it:hover { background: var(--yellow); }
-  .it.on { background: var(--pink); font-weight: 700; }
+  .it.on { background: #000; color: #fff; font-weight: 700; }
   .badge { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #000; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
   .badge[hidden] { display: none; }
   .screens { position: relative; min-width: 0; }
@@ -233,7 +324,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
   .tile { display: grid; gap: 6px; padding: 14px 16px; border: 1.5px solid #000; border-radius: 12px; }
   .tile .k { margin: 0; }
   .tile b { font-weight: 700; font-size: 17px; letter-spacing: -0.02em; line-height: 1.2; }
-  .tile:nth-child(2) { background: var(--pink); }
+  .tile:nth-child(2) { background: var(--yellow); }
   .two { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 22px; }
   .prev { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .prev li { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 9 / 16; background: #000; }

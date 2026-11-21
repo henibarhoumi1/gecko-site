@@ -1,0 +1,83 @@
+---
+// Home: what Gecko makes (Heni, 21 Nov 2026: "remove the box look"). No boxes: one big typographic index. Each
+// direction is a row with its name set large; on hover the name draws its own colour marker and the arrow turns.
+// Video ads lead, biggest, with the real prices. A line under the list sends anyone unsure to the brief.
+import { type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+import { solutions, sc } from '../data/solutions';
+import { test, monthly, fmt } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const S = sc(lang);
+const pad = (n: number) => String(n).padStart(2, '0');
+const from = lang === 'fr' ? `Test ${fmt(test.launch!, lang)} TND · plans dès ${fmt(monthly[0].launch!, lang)} TND / mois` : `Test ${fmt(test.launch!, lang)} TND · plans from ${fmt(monthly[0].launch!, lang)} TND / month`;
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
+---
+<section class="section sol" id="solutions" aria-labelledby="sol-t">
+  <div class="wrap wide">
+    <div class="sol-head">
+      <h2 class="sol-t rv" id="sol-t">{S.homeTitle}</h2>
+      <div class="sol-side rv" style="--d:80ms">
+        <p>{S.homeLead}</p>
+        <a class="btn" href={href(lang, 'solutions')}>{S.all} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <ol class="ix">
+      {solutions.map((s, i) => (
+        <li class="rv" style={`--d:${Math.min(i, 4) * 40}ms`}>
+          <a href={href(lang, s.page)} data-tone={s.tone} class:list={['ix-row', { flag: s.flagship }]}>
+            <span class="ix-n">{pad(i + 1)}</span>
+            <span class="ix-name"><span class="ix-mk">{s.name[lang]}</span></span>
+            <span class="ix-line">
+              {s.flagship && <b class="ix-flag">{S.flag}</b>}
+              {s.line[lang]}
+              <span class="ix-chips">{s.flagship ? from : s.chips[lang].join(' · ')}</span>
+            </span>
+            <span class="ix-go" set:html={arrow} />
+          </a>
+        </li>
+      ))}
+    </ol>
+
+    <p class="ix-unsure rv">{S.notSure} <a href={href(lang, 'apply')}>{S.brief} →</a></p>
+  </div>
+</section>
+
+<style>
+  .sol { padding-top: clamp(64px, 7vw, 120px); }
+  .sol-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 28px clamp(40px, 6vw, 120px); align-items: end; margin-bottom: clamp(40px, 5vw, 80px); }
+  .sol-t { margin: 0; max-width: 15ch; font-weight: 800; font-size: clamp(44px, 5.6vw, 96px); line-height: .94; letter-spacing: -0.05em; font-stretch: 92%; text-wrap: balance; }
+  .sol-side { display: grid; justify-items: start; gap: 22px; }
+  .sol-side p { margin: 0; font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; text-wrap: pretty; }
+
+  /* The index: no boxes, no lines. Space between rows; the names carry it. */
+  .ix { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 1.8vw, 28px); }
+  .ix-row { display: grid; grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1fr) 56px; gap: 12px clamp(20px, 3vw, 56px); align-items: center; color: #000; text-decoration: none; }
+  .ix-n { align-self: start; padding-top: .9em; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ix-name { font-weight: 800; font-size: clamp(40px, 5vw, 88px); line-height: .98; letter-spacing: -0.05em; font-stretch: 92%; }
+  .flag .ix-name { font-size: clamp(56px, 7.4vw, 136px); }
+  /* The marker in the direction's own colour, drawn on hover; the flagship keeps it. */
+  .ix-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
+  .ix-row[data-tone='pink'] { --tone: var(--pink); } .ix-row[data-tone='yellow'] { --tone: var(--yellow); } .ix-row[data-tone='blue'] { --tone: var(--blue); } .ix-row[data-tone='black'] { --tone: var(--pink); }
+  .flag .ix-mk, .ix-row:hover .ix-mk, .ix-row:focus-visible .ix-mk { background-size: 100% 34%; }
+  .ix-line { display: grid; gap: 8px; font-weight: 500; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; text-wrap: pretty; }
+  .ix-flag { font-weight: 700; font-size: 13px; }
+  .ix-chips { font-weight: 700; font-size: 14px; }
+  .ix-go { justify-self: end; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
+  .ix-go :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
+  .ix-row:hover .ix-go { transform: scale(1.08); }
+  .ix-row:hover .ix-go :global(svg) { transform: none; }
+  .ix-row:focus-visible { outline: none; }
+  .ix-unsure { margin: clamp(40px, 5vw, 72px) 0 0; font-weight: 800; font-size: clamp(22px, 2vw, 32px); letter-spacing: -0.03em; }
+  .ix-unsure a { margin-left: .3em; color: inherit; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; text-decoration-color: var(--pink); }
+  .ix-unsure a:hover { text-decoration-color: #000; }
+
+  @media (max-width: 1000px) {
+    .sol-head { grid-template-columns: 1fr; }
+    .ix-row { grid-template-columns: 40px minmax(0, 1fr) 44px; }
+    .ix-line { grid-column: 2 / 3; }
+    .ix-go { grid-row: 1; grid-column: 3; width: 44px; height: 44px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ix-mk { transition: none; } }
+</style>

@@ -8,6 +8,7 @@ import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
 import { mark } from '../../i18n/mark';
+import { solutions, sc } from '../../data/solutions';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -20,6 +21,9 @@ const L = launch(lang);
 // The three divisions, in the order home shows them: Gecko Ads (the plans), Gecko Campaigns, Gecko Brand World.
 const div = L.what.items;
 // Questions this page doesn't already answer above: timing, what you receive, revisions, ownership, media buying.
+// Every other direction (Solutions): quoted from the brief, one link each.
+const S = sc(lang);
+const quoted = solutions.filter((x) => x.price === 'quote' && !['campaigns', 'brand-world'].includes(x.slug));
 const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
 ---
 <Base lang={lang} title={o.title} page="offers">
@@ -86,6 +90,27 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
     </div>
   </section>
 
+  <section class="section other-sec">
+    <div class="wrap wide">
+      <div class="div-head rv">
+        <p class="tape flat">{S.label}</p>
+        <h2 class="h2">{lang === 'fr' ? 'Tout le reste, sur devis.' : 'Everything else, quoted.'}</h2>
+        <p class="text text-l">{S.quote}</p>
+      </div>
+      <ul class="other">
+        {quoted.map((x, i) => (
+          <li class="rv" style={`--d:${i * 60}ms`}>
+            <a href={href(lang, x.page)} data-tone={x.tone}>
+              <b>{x.name[lang]}</b>
+              <span>{x.line[lang]}</span>
+              <em>{S.open} →</em>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   <section class="section paying-sec">
     <div class="wrap wide paying">
       <h2 class="h2 rv">{k.pay.title}</h2>
@@ -114,7 +139,8 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
   .div-head .text { font-weight: 500; text-wrap: balance; }
   .note { margin: 24px auto 0; max-width: 56rem; text-align: center; font-size: 15px; font-weight: 500; line-height: 1.5; }
   .bw-block { padding-block: clamp(40px, 5vw, 72px); }
-  .bwo { padding: clamp(28px, 3.4vw, 56px); border-radius: 32px; background: var(--blue); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 96px); align-items: end; }
+  .bw-block { background: var(--blue); }
+  .bwo { padding-block: clamp(24px, 3vw, 48px); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 96px); align-items: end; }
   .bw-t { margin-top: 14px; }
   .bw-l { margin: 12px 0 0; max-width: 34rem; font-weight: 700; }
   .bw-r { display: grid; gap: 20px; }
@@ -138,10 +164,23 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
   .part { display: grid; gap: 12px; align-content: start; padding: clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); background: var(--blue); }
   .part .text { margin: 0; font-weight: 500; }
   .tag-l { margin: 0 0 4px; }
+  .other { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  .other li { display: grid; }
+  .other { gap: clamp(28px, 3vw, 56px); }
+  .other a { display: grid; grid-template-rows: auto 1fr auto; gap: 12px; color: #000; text-decoration: none; }
+  .other a[data-tone='pink'] { --tone: var(--pink); } .other a[data-tone='yellow'] { --tone: var(--yellow); } .other a[data-tone='blue'] { --tone: var(--blue); }
+  .other b { justify-self: start; padding-inline: .04em; background: linear-gradient(var(--tone, var(--pink)), var(--tone, var(--pink))) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
+  .other a:hover b { background-size: 100% 34%; }
+  .other b { font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); line-height: 1; letter-spacing: -0.035em; font-stretch: 92%; }
+  .other span { font-weight: 500; font-size: 15px; line-height: 1.45; }
+  .other em { font-style: normal; font-weight: 700; font-size: 14px; }
+  @media (max-width: 1180px) { .other { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .other { grid-template-columns: 1fr; } }
   .paying { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
   .paying .h2 { max-width: 10ch; }
   .rows { margin: 0; display: grid; gap: 12px; }
-  .rows > div { display: grid; grid-template-columns: minmax(140px, .5fr) minmax(0, 1fr); gap: 8px 32px; padding: clamp(16px, 1.6vw, 22px) clamp(18px, 2vw, 28px); border-radius: var(--r); background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
+  .rows { gap: clamp(18px, 2vw, 28px); }
+  .rows > div { display: grid; grid-template-columns: minmax(140px, .5fr) minmax(0, 1fr); gap: 8px 32px; font-size: 18px; }
   .rows dt { font-weight: 800; }
   .rows dd { margin: 0; font-weight: 500; }
   @media (max-width: 860px) { .paying, .rows > div { grid-template-columns: 1fr; } }
@@ -150,9 +189,10 @@ const asked = [4, 6, 12, 7, 8].map((i) => s.faq[i]).filter(Boolean);
   .beyond .h2 { max-width: 13ch; }
   .beyond .stack { justify-items: start; }
   .beyond .text { margin: 0; }
-  .quote { margin: 0; padding: 12px 18px; border-radius: var(--r); background: var(--pink); font-weight: 700; font-size: 18px; line-height: 1.4; max-width: 30rem; }
+  .quote { margin: 0; font-weight: 800; font-size: 20px; line-height: 1.4; max-width: 30rem; }
   .kinds { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-  .kinds li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: clamp(18px, 2vw, 26px); border-radius: var(--r); background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
+  .kinds { gap: clamp(20px, 2.2vw, 32px); }
+  .kinds li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; }
   .kinds .n { font-weight: 800; font-size: 18px; padding-top: 3px; font-variant-numeric: tabular-nums; }
   .kinds .h3 { margin-bottom: 6px; }
   .kinds .text { margin: 0; font-weight: 500; }

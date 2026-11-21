@@ -1,9 +1,11 @@
 import type { APIRoute } from 'astro';
 import { locales } from '../i18n/strings';
 import { cases } from '../data/work';
+import { pages as sol } from '../data/solutions';
+const solutionPages = sol.map((s) => s.page);
 
 // Every public page, each listed with its English and French versions so Google pairs them.
-const pages = ['', 'work', 'process', 'offers', 'about', 'brand-world', 'faq', 'contact', 'apply', 'join', 'privacy', ...cases.filter((c) => !c.sample).map((c) => `work/${c.slug}`)];
+const pages = ['', 'work', 'solutions', ...solutionPages, 'process', 'pricing', 'about', 'brand-world', 'faq', 'contact', 'apply', 'join', 'privacy', ...cases.filter((c) => !c.sample).map((c) => `work/${c.slug}`)];
 
 export const GET: APIRoute = ({ site }) => {
   const url = (lang: string, p: string) => new URL(`/${lang}/${p ? `${p}/` : ''}`, site).href;
