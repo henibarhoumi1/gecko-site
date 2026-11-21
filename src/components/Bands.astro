@@ -8,7 +8,7 @@ interface Props { lang: Locale }
 const { lang } = Astro.props;
 const b = c(lang).home.bands;
 const formats = t(lang).home.formats;
-const offers = href(lang, 'offers');
+const offers = href(lang, 'pricing');
 const star = '<path d="M8 1v14M1 8h14M3 3l10 10M13 3L3 13" />';
 ---
 <div class="bands" data-bands>

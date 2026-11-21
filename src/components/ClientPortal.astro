@@ -47,15 +47,15 @@ const tick = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3
 const down = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 4v9M6 9.5l4 4 4-4M5 16h10" /></svg>';
 const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z" /></svg>';
 ---
-<section class="cp" id="workspace" aria-labelledby="cp-t">
+<section class="cp on-black" id="workspace" data-dark="1" aria-labelledby="cp-t">
   <div class="wrap wide cp-in">
     <div class="copy">
-      <p class="lab rv">{T.label} <span aria-hidden="true">]</span></p>
+      <p class="lab rv">{T.label}</p>
       <h2 class="ttl rv" id="cp-t">{T.title[0]}<br />{T.title[1]}</h2>
       <p class="line rv">{T.line}</p>
       <ol class="steps rv">
         {T.steps.map(([s, d], i) => (
-          <li class:list={[{ on: i === 0 }]} data-step={i}>
+          <li data-step={i}>
             <span class="n">{String(i + 1).padStart(2, '0')}</span>
             <span class="st"><b>{s}</b><span class="sd">{d}</span></span>
           </li>
@@ -179,25 +179,28 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
 </script>
 
 <style>
-  .cp { background: var(--pink); color: #000; border-block: 1.5px solid #000; padding-block: clamp(80px, 8vw, 120px); }
-  .cp-in { display: grid; grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); gap: 56px clamp(48px, 5vw, 80px); align-items: center; }
+  /* On black since 21 Nov 2026 (Heni: no more pink section). The copy in white, the app window white with no shadow. */
+  .cp { background: #000; color: #fff; padding-block: clamp(96px, 9vw, 144px); }
+  .cp-in { display: grid; grid-template-columns: minmax(300px, 440px) minmax(0, 1fr); gap: 56px clamp(48px, 5vw, 96px); align-items: center; }
   .copy { display: grid; justify-items: start; gap: 26px; min-width: 0; }
-  .lab { margin: 0; font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; }
-  .ttl { margin: 0; font-weight: 800; font-size: clamp(40px, 3.9vw, 56px); line-height: 1; letter-spacing: -0.05em; }
-  .line { margin: 0; font-weight: 500; font-size: 19px; line-height: 1.45; }
-  .steps { list-style: none; margin: 0; padding: 0; justify-self: stretch; border-bottom: 1.5px solid #000; }
-  .steps li { display: flex; gap: 18px; padding: 15px 0; border-top: 1.5px solid #000; }
-  .steps li.on { border-top-width: 3px; }
+  .lab { margin: 0; font-weight: 700; font-size: 13px; }
+  .ttl { margin: 0; font-weight: 800; font-size: clamp(44px, 4.4vw, 72px); line-height: .96; letter-spacing: -0.05em; font-stretch: 92%; }
+  .line { margin: 0; font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; }
+  .steps { list-style: none; margin: 0; padding: 0; justify-self: stretch; display: grid; gap: 6px; }
+  .steps li { display: flex; gap: 18px; padding: 12px 16px; border-radius: 16px; transition: background 300ms var(--ease), color 300ms var(--ease); }
+  .steps li:hover { background: #fff; color: #000; }
   .steps .n { flex: none; width: 26px; padding-top: 5px; font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
   .steps .st { display: grid; gap: 4px; }
-  .steps b { font-weight: 700; font-size: 21px; letter-spacing: -0.03em; }
+  .steps b { font-weight: 700; font-size: 20px; letter-spacing: -0.03em; }
   .steps .sd { font-weight: 500; font-size: 15px; line-height: 1.4; }
-  .btn { background: transparent; }
+  .copy .btn { background: transparent; color: #fff; border-color: #fff; }
+  .copy .btn:hover { background: #fff; color: #000; }
+  .app { color: #000; }
 
   /* The app window. */
   .app { position: relative; min-width: 0; }
   .cp-tag { position: absolute; z-index: 2; top: -15px; left: 22px; padding: 6px 12px; background: var(--yellow); border: 1.5px solid #000; font-weight: 700; font-size: 13px; transform: rotate(-2deg); }
-  .win { background: #fff; border: 1.5px solid #000; border-radius: 16px; overflow: hidden; box-shadow: 10px 10px 0 #000; }
+  .win { background: #fff; border-radius: 20px; overflow: hidden; }
   .bar { display: flex; align-items: center; gap: 7px; height: 46px; padding: 0 16px; border-bottom: 1.5px solid #000; }
   .bar i { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid #000; }
   .bar i:nth-child(1) { background: var(--pink); } .bar i:nth-child(2) { background: var(--yellow); } .bar i:nth-child(3) { background: var(--blue); }
@@ -209,7 +212,7 @@ const play = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5l8 5-8 5z
   .cp-logo :global(svg) { display: block; width: 100%; height: auto; }
   .it { display: flex; align-items: center; justify-content: space-between; height: 42px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; color: #000; font: 500 14px/1 var(--font); text-align: left; cursor: pointer; transition: background 200ms var(--ease); }
   .it:hover { background: var(--yellow); }
-  .it.on { background: var(--pink); font-weight: 700; }
+  .it.on { background: #000; color: #fff; font-weight: 700; }
   .badge { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #000; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; }
   .badge[hidden] { display: none; }
   .screens { position: relative; min-width: 0; }

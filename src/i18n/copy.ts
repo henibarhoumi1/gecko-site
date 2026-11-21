@@ -2,7 +2,7 @@
 import type { Locale } from './strings';
 
 const en = {
-  nav: { work: 'Work', process: 'Process', offers: 'Offers', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'Reels and the thinking behind them', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
+  nav: { work: 'Work', process: 'Process', offers: 'Pricing', about: 'About', contact: 'Contact', faq: 'FAQ', apply: 'Start a project', menu: 'Menu', close: 'Close', lang: 'Language', desc: { work: 'Reels and the thinking behind them', process: 'How a project runs, step by step', offers: 'Monthly plans and bespoke projects', about: 'The studio and how we think', faq: 'Straight answers', contact: 'WhatsApp, email, Instagram' }, reach: 'Reach us' },
   home: {
     // The landing headline, three lines in turn: a blade cuts each one away to show the next. d is how a wide screen
     // breaks each line, m how a phone does. The last line of each carries the pink marker.
@@ -209,8 +209,8 @@ const en = {
     ],
   },
   offers: {
-    title: 'Plans and projects.',
-    sub: 'Fresh ads every month, or a bespoke project when you need more.',
+    title: 'Pricing, plain and simple.',
+    sub: 'Start with the Test, then pick a monthly plan for your ads. Everything else is quoted from your brief, every cost shown.',
     splitTitle: 'What you’re paying for.',
     make: { t: 'Creative production', tag: 'Every plan', d: 'Research, scripts, the shoot and the edit, all by one team.' },
     run: { t: 'Performance review', tag: 'Every monthly plan', d: 'You or your media buyer share your ad and store exports. We bring them into your workspace, read them with you and write the next round from them.' },
@@ -294,7 +294,7 @@ const en = {
 type Copy = typeof en;
 
 const fr: Copy = {
-  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Offres', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'Les reels et la réflexion derrière', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
+  nav: { work: 'Réalisations', process: 'Méthode', offers: 'Tarifs', about: 'À propos', contact: 'Contact', faq: 'FAQ', apply: 'Lancer un projet', menu: 'Menu', close: 'Fermer', lang: 'Langue', desc: { work: 'Les reels et la réflexion derrière', process: 'Le déroulé d’un projet, étape par étape', offers: 'Plans mensuels et projets sur mesure', about: 'Le studio et sa façon de penser', faq: 'Des réponses claires', contact: 'WhatsApp, e-mail, Instagram' }, reach: 'Nous joindre' },
   home: {
     scenes: [
       { d: ['Des pubs', 'à regarder', 'deux fois.'], m: ['Des', 'pubs', 'à regarder', 'deux fois.'] },
@@ -491,8 +491,8 @@ const fr: Copy = {
     ],
   },
   offers: {
-    title: 'Plans et projets.',
-    sub: 'De nouvelles pubs chaque mois, ou un projet sur mesure quand il en faut plus.',
+    title: 'Des tarifs simples et clairs.',
+    sub: 'Commencez par le Test, puis choisissez un plan mensuel pour vos pubs. Tout le reste est chiffré selon votre brief, chaque coût visible.',
     splitTitle: 'Ce que vous payez.',
     make: { t: 'Production créative', tag: 'Dans chaque plan', d: 'Recherche, scripts, tournage et montage, par une seule équipe.' },
     run: { t: 'Revue des performances', tag: 'Chaque plan mensuel', d: 'Vous ou votre media buyer partagez vos exports pub et boutique. On les importe dans votre espace, on les lit avec vous et on écrit la suite à partir d’eux.' },

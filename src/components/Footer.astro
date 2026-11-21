@@ -5,6 +5,7 @@ import { t, type Locale } from '../i18n/strings';
 import { href } from '../i18n/paths';
 import { site } from '../data/site';
 import { launch } from '../i18n/launch';
+import { sc } from '../data/solutions';
 interface Props { lang: Locale; cta?: boolean }
 const { lang, cta = true } = Astro.props;
 const s = t(lang);
@@ -20,9 +21,10 @@ const n = k.nav;
     <nav class="col" aria-label="Footer">
       <p class="h">{k.footer.pages}</p>
       <div class="pages">
+        <a href={href(lang, 'solutions')}>{sc(lang).nav}</a>
         <a href={href(lang, 'work')}>{n.work}</a>
         <a href={href(lang, 'brand-world')}>{launch(lang).bw.nav}</a>
-        <a href={href(lang, 'offers')}>{n.offers}</a>
+        <a href={href(lang, 'pricing')}>{n.offers}</a>
         <a href={href(lang, 'process')}>{n.process}</a>
         <a href={href(lang, 'about')}>{n.about}</a>
         <a href={href(lang, 'faq')}>{n.faq}</a>

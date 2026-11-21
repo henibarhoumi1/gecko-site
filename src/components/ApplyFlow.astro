@@ -74,7 +74,7 @@ const recs: Record<string, string> = {
     </div>
   </div>
 
-  <form class="flow rv" style="--d:120ms" data-bw={href(lang, 'brand-world')} data-offers={href(lang, 'offers')} data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
+  <form class="flow rv" style="--d:120ms" data-bw={href(lang, 'brand-world')} data-offers={href(lang, 'pricing')} data-flow data-key={site.formKey} data-wa={wa} data-intro={s.waIntro}
     data-meta={JSON.stringify(meta)} data-plans={JSON.stringify(plans)} data-recs={JSON.stringify(recs)} data-cheers={JSON.stringify(a.cheers)} data-contact-row={a.contactRow}
     action="https://api.web3forms.com/submit" method="POST" novalidate>
     <input type="hidden" name="access_key" value={site.formKey} />
@@ -136,7 +136,7 @@ const recs: Record<string, string> = {
       <div class="fit-done" data-fit-done hidden>
         <p class="label">{a.fitLead}</p>
         <p class="fit-name" data-fit-name></p>
-        <a class="btn primary" data-fit-go href={`${href(lang, 'offers')}`}>{a.fitSee} <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn primary" data-fit-go href={`${href(lang, 'pricing')}`}>{a.fitSee} <span class="arr" aria-hidden="true">→</span></a>
       </div>
       <p class="text fallback" data-fallback hidden>{a.waFallback} <a data-wa-link href="#" target="_blank" rel="noopener">{a.waLink}</a> · <a href={`mailto:${site.email}`}>{site.email}</a></p>
       <button type="button" class="again" data-again>{a.again}</button>

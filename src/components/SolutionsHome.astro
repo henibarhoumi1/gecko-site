@@ -1,0 +1,117 @@
+---
+// Home: what Gecko makes (Heni, 21 Nov 2026). The title and its line, then the flagship (video ads) as one wide black
+// block, then every other direction as a white card with a black edge that fills with its own colour on hover. The
+// last cell sends anyone unsure to the brief. Every card is one link to its page.
+import { type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+import { solutions, sc } from '../data/solutions';
+import { test, monthly, fmt } from '../data/offers';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const S = sc(lang);
+const flag = solutions.find((s) => s.flagship)!;
+const rest = solutions.filter((s) => !s.flagship);
+const pad = (n: number) => String(n).padStart(2, '0');
+const from = lang === 'fr' ? `${fmt(test.launch!, lang)} TND le Test · plans dès ${fmt(monthly[0].launch!, lang)} TND / mois` : `Test ${fmt(test.launch!, lang)} TND · plans from ${fmt(monthly[0].launch!, lang)} TND / month`;
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
+---
+<section class="section sol" id="solutions" aria-labelledby="sol-t">
+  <div class="wrap wide">
+    <div class="sol-head">
+      <h2 class="sol-t rv" id="sol-t">{S.homeTitle}</h2>
+      <div class="sol-side rv" style="--d:80ms">
+        <p>{S.homeLead}</p>
+        <a class="btn" href={href(lang, 'solutions')}>{S.all} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <a class="sol-flag rv" href={href(lang, flag.page)}>
+      <div class="sf-l">
+        <span class="sf-k">01 · {S.flag}</span>
+        <span class="sf-n">{flag.name[lang]}</span>
+        <span class="sf-line">{flag.line[lang]}</span>
+      </div>
+      <div class="sf-r">
+        <ul class="chips">{flag.chips[lang].map((x) => <li>{x}</li>)}</ul>
+        <span class="sf-from">{from}</span>
+        <span class="sf-go">{S.open}<span class="ic" set:html={arrow} /></span>
+      </div>
+    </a>
+
+    <ul class="sol-grid">
+      {rest.map((s, i) => (
+        <li class="rv" style={`--d:${(i % 4) * 60}ms`}>
+          <a class="sc-card" data-tone={s.tone} href={href(lang, s.page)}>
+            <span class="sc-n">{pad(i + 2)}</span>
+            <span class="sc-name">{s.name[lang]}</span>
+            <span class="sc-line">{s.line[lang]}</span>
+            <ul class="chips">{s.chips[lang].map((x) => <li>{x}</li>)}</ul>
+            <span class="sc-go" set:html={arrow} />
+          </a>
+        </li>
+      ))}
+      <li class="rv" style="--d:180ms">
+        <a class="sc-card unsure" href={href(lang, 'apply')}>
+          <span class="sc-n">?</span>
+          <span class="sc-name">{S.notSure}</span>
+          <span class="sc-line">{S.notSureLine}</span>
+          <span class="sc-btn">{S.brief} →</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .sol { padding-top: clamp(24px, 3vw, 48px); }
+  .sol-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 28px clamp(40px, 6vw, 120px); align-items: end; margin-bottom: clamp(36px, 4vw, 64px); }
+  .sol-t { margin: 0; max-width: 15ch; font-weight: 800; font-size: clamp(44px, 5.6vw, 96px); line-height: .94; letter-spacing: -0.05em; font-stretch: 92%; text-wrap: balance; }
+  .sol-side { display: grid; justify-items: start; gap: 22px; }
+  .sol-side p { margin: 0; font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; text-wrap: pretty; }
+
+  /* The flagship: one wide black block. */
+  .sol-flag { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(28px, 3.4vw, 56px);
+    margin-bottom: clamp(12px, 1.2vw, 18px); border-radius: 32px; background: #000; color: #fff; text-decoration: none; transition: transform 400ms var(--ease); }
+  .sol-flag:hover { transform: translateY(-3px); }
+  .sf-l { display: grid; gap: 16px; }
+  .sf-k { font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+  .sf-n { font-weight: 800; font-size: clamp(52px, 7vw, 120px); line-height: .9; letter-spacing: -0.05em; font-stretch: 92%; }
+  .sf-line { max-width: 32rem; font-weight: 500; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.4; }
+  .sf-r { display: grid; justify-items: start; gap: 20px; }
+  .sf-from { font-weight: 700; font-size: 16px; }
+  .sf-go { display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 10px 0 24px; border-radius: 999px; background: var(--pink); color: #000; font-weight: 700; font-size: 16px; }
+  .sf-go .ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #000; }
+  .sf-go :global(svg) { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 250ms var(--ease); }
+  .sol-flag:hover .sf-go :global(svg) { transform: translateX(3px); }
+  .sol-flag .chips li { background: #fff; color: #000; }
+
+  .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips li { padding: 8px 13px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 13px; line-height: 1.1; }
+
+  /* The other directions: white cards with a black edge, four to a row. Each fills with its colour on hover. */
+  .sol-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  .sol-grid > li { display: grid; min-width: 0; }
+  .sc-card { position: relative; display: grid; grid-template-rows: auto auto 1fr auto; gap: 14px; min-height: clamp(300px, 24vw, 380px); padding: clamp(22px, 2vw, 30px);
+    border-radius: 28px; background: #fff; color: #000; box-shadow: inset 0 0 0 1.5px #000; text-decoration: none; overflow: hidden;
+    transition: background 320ms var(--ease), transform 400ms var(--ease); }
+  .sc-card:hover { transform: translateY(-3px); }
+  .sc-card[data-tone='pink']:hover { background: var(--pink); }
+  .sc-card[data-tone='yellow']:hover { background: var(--yellow); }
+  .sc-card[data-tone='blue']:hover { background: var(--blue); }
+  .sc-card:focus-visible { outline: 3px solid #000; outline-offset: 3px; }
+  .sc-n { font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .sc-name { font-weight: 800; font-size: clamp(28px, 2.3vw, 40px); line-height: .98; letter-spacing: -0.04em; font-stretch: 92%; text-wrap: balance; }
+  .sc-line { font-weight: 500; font-size: 16px; line-height: 1.45; text-wrap: pretty; }
+  .sc-go { position: absolute; top: clamp(18px, 1.6vw, 24px); right: clamp(18px, 1.6vw, 24px); display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
+  .sc-go :global(svg) { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
+  .sc-card:hover .sc-go :global(svg) { transform: rotate(0deg); }
+  /* The last cell: anyone unsure goes to the brief. A whole yellow block. */
+  .unsure { background: var(--yellow); box-shadow: none; }
+  .unsure:hover { background: var(--yellow); }
+  .sc-btn { justify-self: start; display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 15px; }
+
+  @media (max-width: 1180px) { .sol-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 900px) { .sol-head, .sol-flag { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .sol-grid { grid-template-columns: 1fr; } .sc-card { min-height: 0; } }
+  @media (prefers-reduced-motion: reduce) { .sc-card:hover, .sol-flag:hover { transform: none; } }
+</style>

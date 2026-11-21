@@ -1,0 +1,176 @@
+---
+// One solution (data/solutions.ts): the title and lead beside a block in its colour, what you get, how it works, who
+// it's for, the price (the Ads plans, or a quote) and what pairs well with it. Same layout for every direction.
+import Base from '../../../layouts/Base.astro';
+import PlanCards from '../../../components/PlanCards.astro';
+import { locales, type Locale } from '../../../i18n/strings';
+import { href } from '../../../i18n/paths';
+import { launch } from '../../../i18n/launch';
+import { pages, bySlug, sc, solutions, type Solution } from '../../../data/solutions';
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) => pages.map((s) => ({ params: { lang, slug: s.slug } })));
+}
+const lang = Astro.params.lang as Locale;
+const sol = bySlug(Astro.params.slug!) as Solution;
+const S = sc(lang);
+const L = launch(lang).plans;
+const words = sol.title[lang].split(' ');
+const t0 = words.slice(0, -2).join(' ');
+const t1 = words.slice(-2).join(' ');
+const n = solutions.indexOf(sol) + 1;
+const pad = (x: number) => String(x).padStart(2, '0');
+const brief = `${href(lang, 'apply')}?plan=${sol.plan}`;
+const related = sol.related.map(bySlug).filter(Boolean) as Solution[];
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
+---
+<Base lang={lang} title={sol.name[lang]} page="solutions" description={sol.line[lang]}>
+  <section class="s-head">
+    <div class="wrap wide s-in">
+      <div class="s-copy">
+        <a class="back rv" href={href(lang, 'solutions')}>← {S.label} · {pad(n)}</a>
+        <h1 class="h1 rv" style="--d:60ms">{t0} <span class="hl">{t1}</span></h1>
+        <p class="text-l lead rv" style="--d:100ms">{sol.lead[lang]}</p>
+        <div class="actions rv" style="--d:140ms">
+          {sol.price === 'plans'
+            ? <><a class="btn primary lg" href={href(lang, 'pricing')}>{S.pricing} <span class="arr" aria-hidden="true">→</span></a><a class="btn lg" href={href(lang, 'work')}>{lang === 'fr' ? 'Voir les réalisations' : 'See the work'}</a></>
+            : <><a class="btn primary lg" href={brief}>{S.ask} <span class="arr" aria-hidden="true">→</span></a><a class="btn lg" href={href(lang, 'process')}>{lang === 'fr' ? 'Notre méthode' : 'How we work'}</a></>}
+        </div>
+      </div>
+      <div class="s-block rv" data-tone={sol.tone} style="--d:120ms" aria-hidden="true">
+        <span class="sb-n">{pad(n)}</span>
+        <ol>{sol.chips[lang].map((x, i) => <li style={`--i:${i}`}>{x}</li>)}</ol>
+        <span class="sb-name">{sol.name[lang]}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap wide split">
+      <h2 class="h2 sticky rv">{S.getsTitle}</h2>
+      <ol class="gets">
+        {sol.gets[lang].map((x, i) => <li class="rv" style={`--d:${(i % 3) * 50}ms`}><span class="n">{pad(i + 1)}</span><p>{x}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap wide">
+      <h2 class="h2 mid rv">{S.stepsTitle}</h2>
+      <ol class="steps" data-tone={sol.tone}>
+        {sol.steps[lang].map(([t, d], i) => (
+          <li class="rv" style={`--d:${i * 70}ms`}><span class="n">{i + 1}</span><b>{t}</b><p>{d}</p></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap wide">
+      <h2 class="h2 mid rv">{S.whoTitle}</h2>
+      <ul class="who">{sol.who[lang].map(([t, d], i) => <li class="rv" style={`--d:${i * 60}ms`}><b>{t}</b><p>{d}</p></li>)}</ul>
+    </div>
+  </section>
+
+  {sol.price === 'plans' ? (
+    <section class="section">
+      <div class="wrap wide">
+        <h2 class="h2 mid rv">{S.plansTitle}</h2>
+        <div class="plans"><PlanCards lang={lang} /></div>
+        <div class="fine rv"><p>{L.fine}</p><a class="btn" href={href(lang, 'pricing')}>{S.pricing} <span class="arr" aria-hidden="true">→</span></a></div>
+      </div>
+    </section>
+  ) : (
+    <section class="section">
+      <div class="wrap wide">
+        <div class="quote rv">
+          <div><h2 class="h2">{S.quoteTitle}</h2><p class="text-l">{S.quote}</p></div>
+          <a class="btn primary lg" href={brief}>{S.ask} <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="section rel-sec">
+    <div class="wrap wide">
+      <div class="rel-head rv"><h2 class="h2">{S.relatedTitle}</h2><a class="btn" href={href(lang, 'solutions')}>{S.all} <span class="arr" aria-hidden="true">→</span></a></div>
+      <ul class="rel">
+        {related.map((r, i) => (
+          <li class="rv" style={`--d:${i * 60}ms`}>
+            <a href={href(lang, r.page)} data-tone={r.tone}>
+              <b>{r.name[lang]}</b><span>{r.line[lang]}</span><i set:html={arrow} />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .s-head { padding-top: calc(var(--header) + clamp(40px, 6vw, 88px)); padding-bottom: clamp(40px, 5vw, 80px); }
+  .s-in { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 40px clamp(40px, 5vw, 96px); align-items: center; }
+  .s-copy { display: grid; justify-items: start; gap: 24px; }
+  .back { font-weight: 700; font-size: 14px; text-decoration: none; }
+  .back:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .s-copy .h1 { max-width: 13ch; text-wrap: balance; }
+  .lead { margin: 0; max-width: 38rem; font-weight: 500; }
+
+  /* The block in the solution's colour: what it includes, set big. */
+  .s-block { position: relative; display: grid; align-content: space-between; gap: 32px; aspect-ratio: 1 / 1.05; padding: clamp(24px, 2.6vw, 40px); border-radius: 32px; overflow: hidden; color: #000; }
+  .s-block[data-tone='pink'] { background: var(--pink); } .s-block[data-tone='yellow'] { background: var(--yellow); } .s-block[data-tone='blue'] { background: var(--blue); }
+  .s-block[data-tone='black'] { background: #000; color: #fff; }
+  .sb-n { font-weight: 800; font-size: 15px; }
+  .s-block ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .s-block li { justify-self: start; padding: .2em .45em .24em; border-radius: 18px; background: #fff; color: #000; font-weight: 800; font-size: clamp(28px, 3vw, 52px); line-height: 1; letter-spacing: -0.04em; font-stretch: 92%;
+    transform: rotate(calc((var(--i) - 1) * -2.2deg)); animation: chip-in 700ms cubic-bezier(.2, .9, .3, 1.15) both; animation-delay: calc(300ms + var(--i) * 140ms); }
+  .s-block[data-tone='black'] li:nth-child(2) { background: var(--pink); } .s-block[data-tone='black'] li:nth-child(3) { background: var(--yellow); }
+  @keyframes chip-in { from { opacity: 0; transform: translateY(24px) rotate(0deg) scale(.92); } }
+  .sb-name { font-weight: 700; font-size: 15px; }
+
+  .split { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 32px clamp(40px, 6vw, 120px); align-items: start; }
+  .sticky { position: sticky; top: calc(var(--header) + 32px); max-width: 9ch; }
+  .gets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 3vw, 48px) clamp(24px, 3vw, 56px); }
+  .gets li { display: grid; gap: 10px; align-content: start; }
+  .gets .n { font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .gets p { margin: 0; font-weight: 700; font-size: clamp(20px, 1.7vw, 27px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+
+  .mid { text-align: center; margin: 0 auto clamp(28px, 3.4vw, 48px); max-width: 16ch; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  .steps li { display: grid; align-content: start; gap: 12px; min-height: 220px; padding: clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); color: #000; }
+  .steps[data-tone='pink'] li { background: var(--pink); } .steps[data-tone='yellow'] li { background: var(--yellow); } .steps[data-tone='blue'] li { background: var(--blue); }
+  .steps[data-tone='black'] li { background: #000; color: #fff; }
+  .steps .n { font-weight: 800; font-size: 44px; line-height: 1; letter-spacing: -0.04em; }
+  .steps b { margin-top: auto; font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); letter-spacing: -0.03em; line-height: 1.05; }
+  .steps p { margin: 0; font-weight: 500; font-size: 16px; line-height: 1.45; }
+
+  .who { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); max-width: 1080px; }
+  .who li { padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
+  .who b { font-weight: 800; font-size: clamp(24px, 2vw, 32px); letter-spacing: -0.03em; }
+  .who p { margin: 8px 0 0; font-weight: 500; font-size: 18px; line-height: 1.45; }
+
+  .fine { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; margin-top: clamp(24px, 3vw, 40px); }
+  .fine p { margin: 0; max-width: 52rem; font-weight: 500; font-size: 15px; line-height: 1.5; }
+  .quote { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(32px, 4vw, 64px); border-radius: 32px; background: var(--yellow); color: #000; }
+  .quote .h2 { margin: 0; }
+  .quote .text-l { margin: 14px 0 0; max-width: 40rem; font-weight: 500; }
+
+  .rel-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 40px); }
+  .rel { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  .rel li { display: grid; }
+  .rel a { position: relative; display: grid; gap: 12px; align-content: start; min-height: 200px; padding: clamp(22px, 2.2vw, 32px) 80px clamp(22px, 2.2vw, 32px) clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); background: #fff; box-shadow: inset 0 0 0 1.5px #000; color: #000; text-decoration: none; transition: background 300ms var(--ease), transform 300ms var(--ease); }
+  .rel a:hover { transform: translateY(-3px); }
+  .rel a[data-tone='pink']:hover { background: var(--pink); } .rel a[data-tone='yellow']:hover { background: var(--yellow); } .rel a[data-tone='blue']:hover { background: var(--blue); }
+  .rel a[data-tone='black']:hover { background: #000; color: #fff; }
+  .rel b { font-weight: 800; font-size: clamp(26px, 2.2vw, 36px); line-height: 1; letter-spacing: -0.04em; font-stretch: 92%; }
+  .rel span { font-weight: 500; font-size: 16px; line-height: 1.45; }
+  .rel i { position: absolute; top: 22px; right: 22px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #000; }
+  .rel i :global(svg) { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
+  .rel a:hover i :global(svg) { transform: none; }
+  .rel a[data-tone='black']:hover i { background: #fff; } .rel a[data-tone='black']:hover i :global(svg) { stroke: #000; }
+
+  @media (max-width: 1100px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rel { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .s-in, .split, .quote { grid-template-columns: 1fr; } .sticky { position: static; max-width: none; } .s-block { aspect-ratio: auto; min-height: 360px; } }
+  @media (max-width: 640px) { .gets, .who, .steps { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .s-block li { animation: none; } }
+</style>

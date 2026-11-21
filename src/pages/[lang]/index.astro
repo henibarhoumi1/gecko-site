@@ -4,17 +4,14 @@ import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
-import WhatWeDo from '../../components/WhatWeDo.astro';
-import PlansHome from '../../components/PlansHome.astro';
+import SolutionsHome from '../../components/SolutionsHome.astro';
 import ClientPortal from '../../components/ClientPortal.astro';
-import ReelViewer from '../../components/ReelViewer.astro';
-import HeroReel from '../../components/HeroReel.astro';
 import { launch } from '../../i18n/launch';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { ads } from '../../data/work';
+import { test, monthly, fmt } from '../../data/offers';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -33,65 +30,52 @@ const [subA, ...subB] = L.hero.line.split(/(?<=\.)\s+/);
 // so no line is ever cut.
 const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
 const kw = widest[lang] ?? widest.en;
-// The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
-const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
-const pad = (n: number) => String(n).padStart(2, '0');
+// Pricing lives on its own page (Heni, 21 Nov): home keeps one yellow band with the way in and the monthly floor.
+const P = lang === 'fr'
+  ? { k: 'Tarifs', t: 'Essayez-nous d’abord.', d: `Le Test\u00a0: 3 reels et 1 visuel d’un seul tournage, ${fmt(test.launch!, lang)} TND. Ensuite, des plans mensuels dès ${fmt(monthly[0].launch!, lang)} TND. Tout le reste, sur devis.`, a: 'Voir les tarifs', b: 'Commencer par le Test' }
+  : { k: 'Pricing', t: 'Try us first.', d: `The Test: 3 reels and 1 static from one shoot, ${fmt(test.launch!, lang)} TND. Then monthly plans from ${fmt(monthly[0].launch!, lang)} TND. Everything else, quoted from your brief.`, a: 'See pricing', b: 'Start with the Test' };
 // Right under the prices, the questions a first-time client is really asking.
 const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
-const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 ---
 <Base lang={lang} page="home">
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
-      <div class="h-copy">
-        <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
-          {lines.map((line, i) => (
-            <span class="ln" style={`--l:${i}`} aria-hidden="true">
-              <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
-            </span>
-          ))}
-        </h1>
-        <div class="h-foot">
-          <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
-          <div class="h-act up" style="--d:520ms">
-            <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
-            <a class="btn lg" href="#work">{s.hero.work}</a>
-          </div>
+      <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
+        {lines.map((line, i) => (
+          <span class="ln" style={`--l:${i}`} aria-hidden="true">
+            <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
+          </span>
+        ))}
+      </h1>
+      <div class="h-foot">
+        <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
+        <div class="h-act up" style="--d:520ms">
+          <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn lg" href={href(lang, 'work')}>{s.hero.work}</a>
         </div>
       </div>
-      <div class="h-reel up" style="--d:300ms"><HeroReel lang={lang} /></div>
     </div>
   </section>
 
   <div class="cut"><Bands lang={lang} /></div>
 
-  <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
-    <div class="wrap wide w-in">
-      <div class="w-head rv">
-        <h2 class="w-title" id="w-title" tabindex="-1">{h.kicks.workTitle}</h2>
-        <a class="btn" href={href(lang, 'work')}>{hx.cta} <span class="arr" aria-hidden="true">→</span></a>
+  <SolutionsHome lang={lang} />
+
+  <section class="section price-sec" id="pricing" aria-labelledby="pr-t">
+    <div class="wrap wide">
+      <div class="pr rv">
+        <div class="pr-l">
+          <p class="pr-k">{P.k}</p>
+          <h2 class="pr-t" id="pr-t">{P.t}</h2>
+          <p class="pr-d">{P.d}</p>
+        </div>
+        <div class="pr-r">
+          <a class="btn primary lg" href={href(lang, 'pricing')}>{P.a} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn lg" href={`${href(lang, 'apply')}?plan=test`}>{P.b}</a>
+        </div>
       </div>
-      <ol class="deck" data-deck>
-        {clips.map((cl) => (
-          <li class="card rv" style={`--d:${cl.i * 80}ms`}>
-            <button type="button" class="c-media" data-cut={cl.i} data-full={cl.full} aria-pressed="false" aria-label={`${k.work.sound}: ${cl.cap}`} data-on={`${k.work.sound}: ${cl.cap}`} data-off={`${k.work.mute}: ${cl.cap}`}>
-              <img src={cl.poster} alt="" width="540" height="960" loading="lazy" decoding="async" />
-              <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={cl.src}></video>
-              <span class="c-on" aria-hidden="true">{L.soundOn}</span>
-              <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
-            </button>
-            <p class="c-cap" aria-hidden="true"><b>{pad(cl.i + 1)}</b><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
-          </li>
-        ))}
-      </ol>
     </div>
   </section>
-
-  <Strip tone="black" items={s.home.formats} speed={40} />
-
-  <WhatWeDo lang={lang} />
-
-  <PlansHome lang={lang} />
 
   <ClientPortal lang={lang} />
 
@@ -107,148 +91,57 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   </section>
 
   <Strip tone="pink" items={[L.strip.next]} href={href(lang, 'apply')} label={L.strip.next} speed={60} rev />
-
-  <ReelViewer lang={lang} />
 </Base>
 
 <script>
   import '../../scripts/marquee';
-  // Selected work: the four reels play, silent and looping, while they're in view. Nothing plays before the page has
-  // loaded, while a dialog or the menu is open, with reduced motion or with data saver on. A click on a reel turns its
-  // sound on, in place, with the full cut; another click turns it off. Only one reel plays with sound at a time.
-  const work = document.querySelector<HTMLElement>('[data-work]');
-  if (work) {
-    const deck = work.querySelector<HTMLElement>('[data-deck]')!;
-    const cards = [...deck.querySelectorAll<HTMLElement>('.card')];
-    const media = cards.map((el) => el.querySelector<HTMLButtonElement>('[data-cut]')!);
-    const vids = media.map((m) => m.querySelector('video')!);
-    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const save = !!(navigator as any).connection?.saveData;
-    const wanted = !still && !save;
-    let ready = false, seen = false, blocked = false, loud = -1;
-    const load = (v: HTMLVideoElement) => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
-    const go = () => {
-      const on = ready && seen && !blocked && !document.hidden && wanted;
-      vids.forEach((v, j) => { if (on || (j === loud && seen && !document.hidden && !blocked)) { load(v); v.play().catch(() => {}); } else v.pause(); });
-    };
-    vids.forEach((v, j) => v.addEventListener('playing', () => cards[j].classList.add('live')));
-    const fade = (v: HTMLVideoElement, to: number, ms: number, then?: () => void) => {
-      const from = v.volume, t0 = performance.now();
-      const step = (t: number) => { const q = Math.min(1, (t - t0) / ms); v.volume = Math.min(1, Math.max(0, from + (to - from) * q)); if (q < 1) requestAnimationFrame(step); else then?.(); };
-      requestAnimationFrame(step);
-    };
-    const quiet = (j: number) => {
-      const v = vids[j];
-      media[j].setAttribute('aria-pressed', 'false');
-      media[j].setAttribute('aria-label', media[j].dataset.on!);
-      cards[j].classList.remove('loud');
-      fade(v, 0, 250, () => { v.muted = true; });
-      if (loud === j) loud = -1;
-    };
-    const sound = (j: number) => {
-      if (loud > -1 && loud !== j) quiet(loud);
-      loud = j;
-      const v = vids[j], m = media[j];
-      m.setAttribute('aria-pressed', 'true');
-      m.setAttribute('aria-label', m.dataset.off!);
-      cards[j].classList.add('loud', 'live');
-      // Everything happens inside the click itself, so phones (iPhone above all) allow the sound.
-      if (v.getAttribute('src') !== m.dataset.full) { v.preload = 'auto'; v.src = m.dataset.full!; } else v.currentTime = 0;
-      v.muted = false;
-      v.volume = 0;
-      v.play().then(() => fade(v, 1, 600)).catch(() => { v.muted = true; quiet(j); });
-    };
-    media.forEach((m, j) => m.addEventListener('click', () => (loud === j ? quiet(j) : sound(j))));
-    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.15 }).observe(deck);
-    new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); if (blocked && loud > -1) quiet(loud); go(); })
-      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    document.addEventListener('visibilitychange', go);
-    const start = () => { ready = true; go(); };
-    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 600));
-    if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
-  }
 </script>
 
 <style>
-  /* The first screen: the headline across the full width, then the line and the two ways in. Text only.
-     The reels live in Selected work, just below. */
-  .hero { display: flex; flex-direction: column; min-height: min(100svh, 1040px); background: var(--bg); }
-  /* Headline, line and buttons on the left; the reel player on the right (canvas "Landing v2", 19 Nov). */
-  .h-in { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px clamp(40px, 4.4vw, 64px); align-items: center;
-    padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
-  .h-copy { container-type: inline-size; display: grid; gap: clamp(28px, 4.4vh, 56px); align-content: center; min-width: 0; }
-  .h-foot { display: grid; justify-items: start; gap: 34px; }
-  .h-sub strong { font-weight: 700; }
-  .h-reel { width: clamp(340px, 30vw, 432px); min-width: 0; }
-  .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
-  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
-    font-size: min(calc(100cqw / var(--kw) * .97), 140px, 17svh); }
+  /* The first screen: the headline across the whole width, then the line and the two ways in. Text only: the reels
+     live on the Work page (Heni, 21 Nov 2026). */
+  .hero { display: flex; flex-direction: column; min-height: min(100svh, 1080px); background: var(--bg); }
+  .h-in { flex: 1; display: grid; align-content: end; gap: clamp(36px, 6vh, 72px); container-type: inline-size;
+    padding-top: calc(var(--header) + clamp(32px, 6vh, 88px)); padding-bottom: clamp(40px, 7vh, 88px); }
+  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.055em; line-height: .86;
+    font-size: min(calc(100cqw / var(--kw) * 1.02), 232px, 24svh); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
   @keyframes rise { from { transform: translateY(110%); } }
   .mk { position: relative; z-index: 0; }
   .mk::after { content: ''; position: absolute; z-index: -1; left: -.06em; right: -.04em; top: .5em; bottom: .02em; background: var(--pink); transform-origin: 0 50%; animation: mark 800ms cubic-bezier(.65, 0, .35, 1) both 820ms; }
   @keyframes mark { from { transform: scaleX(0); } }
-  /* The crossed strips sit on the cut between the white first screen and the black work section. */
-  .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
-  .cut :global(.bands) { padding-block: clamp(72px, 8.5vw, 128px); }
-  .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
+  .h-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px 48px; flex-wrap: wrap; }
+  .h-sub { margin: 0; max-width: 36rem; font-weight: 500; font-size: clamp(19px, 1.6vw, 24px); line-height: 1.4; text-wrap: pretty; }
+  .h-sub strong { font-weight: 700; }
   .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
-
-  /* Phones and upright tablets: the line, the headline, the buttons, then the reel. */
+  .cut { position: relative; background: #fff; }
+  .cut :global(.bands) { padding-block: clamp(64px, 7.5vw, 112px); }
   @media (max-width: 860px) {
     .hero { min-height: 0; }
-    .h-in { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: calc(var(--header) + 20px); padding-bottom: 40px; }
-    .h-act .btn { flex: 1 1 auto; }
-    .h-act { align-self: stretch; }
-    .h-reel { width: min(100%, 420px); }
+    .h-in { padding-top: calc(var(--header) + 28px); padding-bottom: 40px; }
+    .h-title { font-size: min(calc(100cqw / var(--kw) * 1.02), 18vw); }
+    .h-act { align-self: stretch; } .h-act .btn { flex: 1 1 auto; }
   }
 
-  /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
-  .work { padding-block: var(--section); }
-  .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; margin-bottom: clamp(28px, 3.6vw, 52px); }
-  .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
-  .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
-  .card { position: relative; min-width: 0; }
-  .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: 24px; overflow: hidden; background: #000; color: #fff; cursor: pointer; transition: transform 500ms var(--ease); }
-  .c-media:hover { transform: translateY(-4px); }
-  .c-media img, .c-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .c-media video { opacity: 0; transition: opacity 600ms var(--ease); }
-  .live .c-media video { opacity: 1; }
-  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 44px; height: 44px; margin-left: -22px; padding: 11px; border-radius: 50%; background: #000; fill: none; stroke: #fff; stroke-width: 1.8;
-    stroke-linecap: round; stroke-linejoin: round; transition: background 200ms var(--ease), transform 200ms var(--ease); }
-  .c-mute :global(.on) { display: none; }
-  .loud .c-mute :global(.on) { display: inline; }
-  .loud .c-mute :global(.off) { display: none; }
-  .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
-  .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
-  /* The reel playing with sound gets a pink pill and a pink button. */
-  .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
-  .loud .c-on { opacity: 1; transform: none; }
-  .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
-  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
-  .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
-  @media (max-width: 960px) {
-    .deck { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
-    .c-cap { font-size: 15px; }
-    .c-cap i { display: none; }
-  }
-  /* Phones: reel captions wrap instead of being cut off. */
-  @media (max-width: 640px) { .c-cap { flex-wrap: wrap; white-space: normal; gap: 4px 8px; } .c-cap span { overflow: visible; } .c-cap i { margin-left: 0; flex-basis: 100%; } }
-  @media (prefers-reduced-motion: reduce) {
-    .ln-in, .up, .mk::after { animation: none; }
-    .c-media:hover { transform: none; }
-  }
+  /* Pricing, in one yellow block: the way in, the monthly floor, and the page with everything. */
+  .price-sec { padding-top: 0; }
+  .pr { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(28px, 3.6vw, 64px); border-radius: 32px; background: var(--yellow); color: #000; }
+  .pr-l { display: grid; gap: 14px; }
+  .pr-k { margin: 0; font-weight: 700; font-size: 13px; }
+  .pr-t { margin: 0; font-weight: 800; font-size: clamp(44px, 5.4vw, 92px); line-height: .92; letter-spacing: -0.05em; font-stretch: 92%; }
+  .pr-d { margin: 0; max-width: 40rem; font-weight: 500; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.45; }
+  .pr-r { display: flex; flex-wrap: wrap; gap: 12px; }
+  @media (max-width: 960px) { .pr { grid-template-columns: 1fr; } }
 
-  /* Questions: the title centred, the answers in one column under it. */
+  @media (prefers-reduced-motion: reduce) { .ln-in, .up, .mk::after { animation: none; } }
+
   /* Questions: the title on the left, held in place while the questions scroll past on the right. */
   .faq-col { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 120px); align-items: start; }
   .faq-h { position: sticky; top: calc(var(--header) + 32px); margin: 0; max-width: 7ch; font-size: clamp(48px, 6vw, 104px); }
   .faq-list { min-width: 0; }
   .faq-col :global(.faq-more) { display: inline-flex; width: fit-content; margin: 32px 0 0; }
   @media (max-width: 860px) { .faq-col { grid-template-columns: 1fr; } .faq-h { position: static; max-width: none; } }
-
 </style>
