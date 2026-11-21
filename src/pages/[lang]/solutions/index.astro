@@ -30,9 +30,9 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
           <li class="rv" style={`--d:${Math.min(i, 3) * 50}ms`}>
             <a href={href(lang, s.page)} data-tone={s.tone} class:list={[{ flag: s.flagship }]}>
               <span class="i-n">{pad(i + 1)}</span>
-              <span class="i-name">{s.name[lang]}{s.flagship && <em>{S.flag}</em>}</span>
+              <span class="i-name"><span class="i-mk">{s.name[lang]}</span>{s.flagship && <em>{S.flag}</em>}</span>
               <span class="i-line">{s.line[lang]}</span>
-              <ul class="i-chips">{s.chips[lang].map((x) => <li>{x}</li>)}</ul>
+              <span class="i-chips">{s.chips[lang].join(' · ')}</span>
               <span class="i-go" set:html={arrow} />
             </a>
           </li>
@@ -54,29 +54,26 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
 <style>
   .lede { max-width: 44rem; }
   .idx-sec { padding-top: 0; }
-  .idx { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .idx a { position: relative; display: grid; grid-template-columns: 64px minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, .9fr) 52px; gap: 16px clamp(20px, 3vw, 48px); align-items: center;
-    padding: clamp(22px, 2.4vw, 36px) clamp(22px, 2.6vw, 40px); border-radius: 28px; background: #fff; color: #000; box-shadow: inset 0 0 0 1.5px #000; text-decoration: none;
-    transition: background 320ms var(--ease), color 320ms var(--ease), transform 400ms var(--ease); }
-  .idx a:hover { transform: translateX(6px); }
-  .idx a[data-tone='pink']:hover { background: var(--pink); } .idx a[data-tone='yellow']:hover { background: var(--yellow); } .idx a[data-tone='blue']:hover { background: var(--blue); }
-  .idx a.flag { background: #000; color: #fff; box-shadow: none; }
-  .i-n { font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
-  .i-name { display: grid; gap: 8px; font-weight: 800; font-size: clamp(32px, 3.4vw, 60px); line-height: .95; letter-spacing: -0.045em; font-stretch: 92%; }
-  .i-name em { justify-self: start; padding: 6px 11px; border-radius: 999px; background: var(--pink); color: #000; font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: 0; font-stretch: 100%; }
+  /* An open index, no boxes: big names, space between rows, the colour marker drawn on hover. */
+  .idx { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 2.4vw, 40px); }
+  .idx a { display: grid; grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .6fr) 52px; gap: 12px clamp(20px, 3vw, 48px); align-items: center; color: #000; text-decoration: none; }
+  .idx a[data-tone='pink'] { --tone: var(--pink); } .idx a[data-tone='yellow'] { --tone: var(--yellow); } .idx a[data-tone='blue'] { --tone: var(--blue); } .idx a[data-tone='black'] { --tone: var(--pink); }
+  .i-n { align-self: start; padding-top: .9em; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .i-name { display: grid; justify-items: start; gap: 10px; font-weight: 800; font-size: clamp(40px, 4.8vw, 84px); line-height: .96; letter-spacing: -0.05em; font-stretch: 92%; }
+  .i-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
+  .flag .i-mk, .idx a:hover .i-mk, .idx a:focus-visible .i-mk { background-size: 100% 34%; }
+  .i-name em { font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: 0; font-stretch: 100%; }
   .i-line { font-weight: 500; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; }
-  .i-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-  .i-chips li { padding: 7px 12px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 13px; }
-  .flag .i-chips li { background: #fff; color: #000; }
-  .i-go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; }
-  .flag .i-go { background: var(--pink); }
+  .i-chips { font-weight: 700; font-size: 14px; line-height: 1.5; }
+  .i-go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
   .i-go :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
-  .flag .i-go :global(svg) { stroke: #000; }
+  .idx a:hover .i-go { transform: scale(1.08); }
   .idx a:hover .i-go :global(svg) { transform: none; }
-  .unsure { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 48px; align-items: end; padding: clamp(32px, 4vw, 64px); border-radius: 32px; background: var(--yellow); }
+  .idx a:focus-visible { outline: none; }
+  .unsure { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 48px; align-items: end; }
   .unsure .h2 { margin: 0; max-width: 16ch; }
   .unsure .text-l { margin: 14px 0 0; font-weight: 500; }
-  @media (max-width: 1100px) { .idx a { grid-template-columns: 48px minmax(0, 1fr) 52px; } .i-line, .i-chips { grid-column: 2 / 3; } .i-go { grid-row: 1; grid-column: 3; } }
+  @media (max-width: 1100px) { .idx a { grid-template-columns: 40px minmax(0, 1fr) 52px; } .i-line, .i-chips { grid-column: 2 / 3; } .i-go { grid-row: 1; grid-column: 3; } }
   @media (max-width: 760px) { .unsure { grid-template-columns: 1fr; } }
-  @media (prefers-reduced-motion: reduce) { .idx a:hover { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .i-mk { transition: none; } }
 </style>

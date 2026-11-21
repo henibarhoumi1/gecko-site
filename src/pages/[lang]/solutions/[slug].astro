@@ -39,7 +39,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
       </div>
       <div class="s-block rv" data-tone={sol.tone} style="--d:120ms" aria-hidden="true">
         <span class="sb-n">{pad(n)}</span>
-        <ol>{sol.chips[lang].map((x, i) => <li style={`--i:${i}`}>{x}</li>)}</ol>
+        <ol>{sol.chips[lang].map((x, i) => <li style={`--i:${i}`}><span>{x}</span></li>)}</ol>
         <span class="sb-name">{sol.name[lang]}</span>
       </div>
     </div>
@@ -98,7 +98,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
         {related.map((r, i) => (
           <li class="rv" style={`--d:${i * 60}ms`}>
             <a href={href(lang, r.page)} data-tone={r.tone}>
-              <b>{r.name[lang]}</b><span>{r.line[lang]}</span><i set:html={arrow} />
+              <b><span class="r-mk">{r.name[lang]}</span></b><span>{r.line[lang]}</span><i set:html={arrow} />
             </a>
           </li>
         ))}
@@ -116,17 +116,15 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .s-copy .h1 { max-width: 13ch; text-wrap: balance; }
   .lead { margin: 0; max-width: 38rem; font-weight: 500; }
 
-  /* The block in the solution's colour: what it includes, set big. */
-  .s-block { position: relative; display: grid; align-content: space-between; gap: 32px; aspect-ratio: 1 / 1.05; padding: clamp(24px, 2.6vw, 40px); border-radius: 32px; overflow: hidden; color: #000; }
-  .s-block[data-tone='pink'] { background: var(--pink); } .s-block[data-tone='yellow'] { background: var(--yellow); } .s-block[data-tone='blue'] { background: var(--blue); }
-  .s-block[data-tone='black'] { background: #000; color: #fff; }
-  .sb-n { font-weight: 800; font-size: 15px; }
-  .s-block ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  .s-block li { justify-self: start; padding: .2em .45em .24em; border-radius: 18px; background: #fff; color: #000; font-weight: 800; font-size: clamp(28px, 3vw, 52px); line-height: 1; letter-spacing: -0.04em; font-stretch: 92%;
-    transform: rotate(calc((var(--i) - 1) * -2.2deg)); animation: chip-in 700ms cubic-bezier(.2, .9, .3, 1.15) both; animation-delay: calc(300ms + var(--i) * 140ms); }
-  .s-block[data-tone='black'] li:nth-child(2) { background: var(--pink); } .s-block[data-tone='black'] li:nth-child(3) { background: var(--yellow); }
-  @keyframes chip-in { from { opacity: 0; transform: translateY(24px) rotate(0deg) scale(.92); } }
-  .sb-name { font-weight: 700; font-size: 15px; }
+  /* What it includes, set as a poster: huge words stacked, each on the solution's colour marker. No box. */
+  .s-block { display: grid; align-content: center; gap: 18px; color: #000; }
+  .s-block[data-tone='pink'] { --tone: var(--pink); } .s-block[data-tone='yellow'] { --tone: var(--yellow); } .s-block[data-tone='blue'] { --tone: var(--blue); } .s-block[data-tone='black'] { --tone: var(--pink); }
+  .sb-n { font-weight: 700; font-size: 14px; }
+  .s-block ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .s-block li { font-weight: 800; font-size: clamp(40px, 4.6vw, 84px); line-height: 1; letter-spacing: -0.05em; font-stretch: 92%; animation: chip-in 700ms cubic-bezier(.2, .9, .3, 1.1) both; animation-delay: calc(250ms + var(--i) * 140ms); }
+  .s-block li span { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 100% 34% no-repeat; }
+  @keyframes chip-in { from { opacity: 0; transform: translateY(24px); } }
+  .sb-name { font-weight: 700; font-size: 14px; }
 
   .split { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 32px clamp(40px, 6vw, 120px); align-items: start; }
   .sticky { position: sticky; top: calc(var(--header) + 32px); max-width: 9ch; }
@@ -137,40 +135,40 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
 
   .mid { text-align: center; margin: 0 auto clamp(28px, 3.4vw, 48px); max-width: 16ch; }
   .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
-  .steps li { display: grid; align-content: start; gap: 12px; min-height: 220px; padding: clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); color: #000; }
-  .steps[data-tone='pink'] li { background: var(--pink); } .steps[data-tone='yellow'] li { background: var(--yellow); } .steps[data-tone='blue'] li { background: var(--blue); }
-  .steps[data-tone='black'] li { background: #000; color: #fff; }
-  .steps .n { font-weight: 800; font-size: 44px; line-height: 1; letter-spacing: -0.04em; }
-  .steps b { margin-top: auto; font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); letter-spacing: -0.03em; line-height: 1.05; }
+  .steps { gap: clamp(28px, 3vw, 56px); }
+  .steps li { display: grid; align-content: start; gap: 12px; color: #000; }
+  .steps[data-tone='pink'] { --tone: var(--pink); } .steps[data-tone='yellow'] { --tone: var(--yellow); } .steps[data-tone='blue'] { --tone: var(--blue); } .steps[data-tone='black'] { --tone: var(--pink); }
+  .steps .n { justify-self: start; padding-inline: .06em; font-weight: 800; font-size: clamp(56px, 5vw, 88px); line-height: .9; letter-spacing: -0.05em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 100% 30% no-repeat; }
+  .steps b { margin-top: 8px; font-weight: 800; font-size: clamp(22px, 1.8vw, 28px); letter-spacing: -0.03em; line-height: 1.05; }
   .steps p { margin: 0; font-weight: 500; font-size: 16px; line-height: 1.45; }
 
   .who { list-style: none; margin: 0 auto; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); max-width: 1080px; }
-  .who li { padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: #fff; box-shadow: inset 0 0 0 1.5px #000; }
+  .who { gap: clamp(28px, 4vw, 80px); }
+  .who li { text-align: center; }
   .who b { font-weight: 800; font-size: clamp(24px, 2vw, 32px); letter-spacing: -0.03em; }
   .who p { margin: 8px 0 0; font-weight: 500; font-size: 18px; line-height: 1.45; }
 
   .fine { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; margin-top: clamp(24px, 3vw, 40px); }
   .fine p { margin: 0; max-width: 52rem; font-weight: 500; font-size: 15px; line-height: 1.5; }
-  .quote { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(32px, 4vw, 64px); border-radius: 32px; background: var(--yellow); color: #000; }
+  .quote { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; color: #000; }
   .quote .h2 { margin: 0; }
   .quote .text-l { margin: 14px 0 0; max-width: 40rem; font-weight: 500; }
 
   .rel-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: clamp(24px, 3vw, 40px); }
-  .rel { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.2vw, 18px); }
+  .rel { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(16px, 2vw, 28px); }
   .rel li { display: grid; }
-  .rel a { position: relative; display: grid; gap: 12px; align-content: start; min-height: 200px; padding: clamp(22px, 2.2vw, 32px) 80px clamp(22px, 2.2vw, 32px) clamp(22px, 2.2vw, 32px); border-radius: var(--r-lg); background: #fff; box-shadow: inset 0 0 0 1.5px #000; color: #000; text-decoration: none; transition: background 300ms var(--ease), transform 300ms var(--ease); }
-  .rel a:hover { transform: translateY(-3px); }
-  .rel a[data-tone='pink']:hover { background: var(--pink); } .rel a[data-tone='yellow']:hover { background: var(--yellow); } .rel a[data-tone='blue']:hover { background: var(--blue); }
-  .rel a[data-tone='black']:hover { background: #000; color: #fff; }
-  .rel b { font-weight: 800; font-size: clamp(26px, 2.2vw, 36px); line-height: 1; letter-spacing: -0.04em; font-stretch: 92%; }
-  .rel span { font-weight: 500; font-size: 16px; line-height: 1.45; }
-  .rel i { position: absolute; top: 22px; right: 22px; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #000; }
-  .rel i :global(svg) { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
+  .rel a { position: relative; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 52px; gap: 12px clamp(20px, 3vw, 48px); align-items: center; color: #000; text-decoration: none; }
+  .rel a[data-tone='pink'] { --tone: var(--pink); } .rel a[data-tone='yellow'] { --tone: var(--yellow); } .rel a[data-tone='blue'] { --tone: var(--blue); } .rel a[data-tone='black'] { --tone: var(--pink); }
+  .rel b { font-weight: 800; font-size: clamp(32px, 3.4vw, 60px); line-height: 1; letter-spacing: -0.045em; font-stretch: 92%; }
+  .r-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
+  .rel a:hover .r-mk { background-size: 100% 34%; }
+  .rel span { font-weight: 500; font-size: 17px; line-height: 1.45; }
+  .rel i { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; }
+  .rel i :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
   .rel a:hover i :global(svg) { transform: none; }
-  .rel a[data-tone='black']:hover i { background: #fff; } .rel a[data-tone='black']:hover i :global(svg) { stroke: #000; }
 
-  @media (max-width: 1100px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rel { grid-template-columns: 1fr; } }
-  @media (max-width: 900px) { .s-in, .split, .quote { grid-template-columns: 1fr; } .sticky { position: static; max-width: none; } .s-block { aspect-ratio: auto; min-height: 360px; } }
+  @media (max-width: 1100px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rel a { grid-template-columns: minmax(0, 1fr) 52px; } .rel a span { grid-column: 1; } .rel i { grid-row: 1; grid-column: 2; } }
+  @media (max-width: 900px) { .s-in, .split, .quote { grid-template-columns: 1fr; } .sticky { position: static; max-width: none; } }
   @media (max-width: 640px) { .gets, .who, .steps { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { .s-block li { animation: none; } }
 </style>

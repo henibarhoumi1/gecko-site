@@ -12,6 +12,8 @@ import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
 import { test, monthly, fmt } from '../../data/offers';
+import { ads } from '../../data/work';
+import ReelViewer from '../../components/ReelViewer.astro';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -34,6 +36,11 @@ const kw = widest[lang] ?? widest.en;
 const P = lang === 'fr'
   ? { k: 'Tarifs', t: 'Essayez-nous d’abord.', d: `Le Test\u00a0: 3 reels et 1 visuel d’un seul tournage, ${fmt(test.launch!, lang)} TND. Ensuite, des plans mensuels dès ${fmt(monthly[0].launch!, lang)} TND. Tout le reste, sur devis.`, a: 'Voir les tarifs', b: 'Commencer par le Test' }
   : { k: 'Pricing', t: 'Try us first.', d: `The Test: 3 reels and 1 static from one shoot, ${fmt(test.launch!, lang)} TND. Then monthly plans from ${fmt(monthly[0].launch!, lang)} TND. Everything else, quoted from your brief.`, a: 'See pricing', b: 'Start with the Test' };
+// Selected work (back on 21 Nov, Heni): a short silent loop of each reel plays on its card; a click plays the full reel
+// with sound, in place.
+const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
+const pad = (n: number) => String(n).padStart(2, '0');
+const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 // Right under the prices, the questions a first-time client is really asking.
 const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
 ---
@@ -51,13 +58,37 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
         <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
         <div class="h-act up" style="--d:520ms">
           <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn lg" href={href(lang, 'work')}>{s.hero.work}</a>
+          <a class="btn lg" href="#work">{s.hero.work}</a>
         </div>
       </div>
     </div>
   </section>
 
   <div class="cut"><Bands lang={lang} /></div>
+
+  <section class="work on-black" id="work" data-work data-dark="1" aria-labelledby="w-title">
+    <div class="wrap wide w-in">
+      <div class="w-head rv">
+        <h2 class="w-title" id="w-title" tabindex="-1">{h.kicks.workTitle}</h2>
+        <a class="btn" href={href(lang, 'work')}>{hx.cta} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+      <ol class="deck" data-deck>
+        {clips.map((cl) => (
+          <li class="card rv" style={`--d:${cl.i * 80}ms`}>
+            <button type="button" class="c-media" data-cut={cl.i} data-full={cl.full} aria-pressed="false" aria-label={`${k.work.sound}: ${cl.cap}`} data-on={`${k.work.sound}: ${cl.cap}`} data-off={`${k.work.mute}: ${cl.cap}`}>
+              <img src={cl.poster} alt="" width="540" height="960" loading="lazy" decoding="async" />
+              <video muted playsinline loop preload="none" tabindex="-1" aria-hidden="true" data-src={cl.src}></video>
+              <span class="c-on" aria-hidden="true">{L.soundOn}</span>
+              <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
+            </button>
+            <p class="c-cap" aria-hidden="true"><b>{pad(cl.i + 1)}</b><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <Strip tone="black" items={s.home.formats} speed={40} />
 
   <SolutionsHome lang={lang} />
 
@@ -91,10 +122,66 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   </section>
 
   <Strip tone="pink" items={[L.strip.next]} href={href(lang, 'apply')} label={L.strip.next} speed={60} rev />
+
+  <ReelViewer lang={lang} />
 </Base>
 
 <script>
   import '../../scripts/marquee';
+  // Selected work: the four reels play, silent and looping, while they're in view. Nothing plays before the page has
+  // loaded, while a dialog or the menu is open, with reduced motion or with data saver on. A click on a reel turns its
+  // sound on, in place, with the full cut; another click turns it off. Only one reel plays with sound at a time.
+  const work = document.querySelector<HTMLElement>('[data-work]');
+  if (work) {
+    const deck = work.querySelector<HTMLElement>('[data-deck]')!;
+    const cards = [...deck.querySelectorAll<HTMLElement>('.card')];
+    const media = cards.map((el) => el.querySelector<HTMLButtonElement>('[data-cut]')!);
+    const vids = media.map((m) => m.querySelector('video')!);
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const save = !!(navigator as any).connection?.saveData;
+    const wanted = !still && !save;
+    let ready = false, seen = false, blocked = false, loud = -1;
+    const load = (v: HTMLVideoElement) => { if (!v.getAttribute('src')) { v.preload = 'auto'; v.src = v.dataset.src!; } };
+    const go = () => {
+      const on = ready && seen && !blocked && !document.hidden && wanted;
+      vids.forEach((v, j) => { if (on || (j === loud && seen && !document.hidden && !blocked)) { load(v); v.play().catch(() => {}); } else v.pause(); });
+    };
+    vids.forEach((v, j) => v.addEventListener('playing', () => cards[j].classList.add('live')));
+    const fade = (v: HTMLVideoElement, to: number, ms: number, then?: () => void) => {
+      const from = v.volume, t0 = performance.now();
+      const step = (t: number) => { const q = Math.min(1, (t - t0) / ms); v.volume = Math.min(1, Math.max(0, from + (to - from) * q)); if (q < 1) requestAnimationFrame(step); else then?.(); };
+      requestAnimationFrame(step);
+    };
+    const quiet = (j: number) => {
+      const v = vids[j];
+      media[j].setAttribute('aria-pressed', 'false');
+      media[j].setAttribute('aria-label', media[j].dataset.on!);
+      cards[j].classList.remove('loud');
+      fade(v, 0, 250, () => { v.muted = true; });
+      if (loud === j) loud = -1;
+    };
+    const sound = (j: number) => {
+      if (loud > -1 && loud !== j) quiet(loud);
+      loud = j;
+      const v = vids[j], m = media[j];
+      m.setAttribute('aria-pressed', 'true');
+      m.setAttribute('aria-label', m.dataset.off!);
+      cards[j].classList.add('loud', 'live');
+      // Everything happens inside the click itself, so phones (iPhone above all) allow the sound.
+      if (v.getAttribute('src') !== m.dataset.full) { v.preload = 'auto'; v.src = m.dataset.full!; } else v.currentTime = 0;
+      v.muted = false;
+      v.volume = 0;
+      v.play().then(() => fade(v, 1, 600)).catch(() => { v.muted = true; quiet(j); });
+    };
+    media.forEach((m, j) => m.addEventListener('click', () => (loud === j ? quiet(j) : sound(j))));
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; go(); }, { threshold: 0.15 }).observe(deck);
+    new MutationObserver(() => { blocked = document.documentElement.classList.contains('locked'); if (blocked && loud > -1) quiet(loud); go(); })
+      .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('visibilitychange', go);
+    const start = () => { ready = true; go(); };
+    const idle = () => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(start, { timeout: 2000 }) : setTimeout(start, 600));
+    if (document.readyState === 'complete') idle(); else addEventListener('load', idle, { once: true });
+  }
 </script>
 
 <style>
@@ -117,8 +204,44 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
-  .cut { position: relative; background: #fff; }
+  /* The crossed strips sit on the cut between the white first screen and the black work section. */
+  .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
   .cut :global(.bands) { padding-block: clamp(64px, 7.5vw, 112px); }
+
+  /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
+  .work { padding-block: var(--section); }
+  .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
+  .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; margin-bottom: clamp(28px, 3.6vw, 52px); }
+  .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
+  .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
+  .card { position: relative; min-width: 0; }
+  .c-media { position: relative; display: block; width: 100%; aspect-ratio: 9 / 16; margin: 0; padding: 0; border: 0; border-radius: 24px; overflow: hidden; background: #000; color: #fff; cursor: pointer; transition: transform 500ms var(--ease); }
+  .c-media:hover { transform: translateY(-4px); }
+  .c-media img, .c-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .c-media video { opacity: 0; transition: opacity 600ms var(--ease); }
+  .live .c-media video { opacity: 1; }
+  .c-mute { position: absolute; z-index: 1; left: 50%; bottom: 12px; width: 44px; height: 44px; margin-left: -22px; padding: 11px; border-radius: 50%; background: #000; fill: none; stroke: #fff; stroke-width: 1.8;
+    stroke-linecap: round; stroke-linejoin: round; transition: background 200ms var(--ease), transform 200ms var(--ease); }
+  .c-mute :global(.on) { display: none; }
+  .loud .c-mute :global(.on) { display: inline; }
+  .loud .c-mute :global(.off) { display: none; }
+  .c-media:hover .c-mute, .loud .c-mute { background: var(--pink); stroke: var(--ink); transform: scale(1.06); }
+  .c-media:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
+  /* The reel playing with sound gets a pink pill and a pink button. */
+  .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
+  .loud .c-on { opacity: 1; transform: none; }
+  .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
+  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
+  .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
+  @media (max-width: 960px) {
+    .deck { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 12px; }
+    .c-cap { font-size: 15px; }
+    .c-cap i { display: none; }
+  }
+  /* Phones: reel captions wrap instead of being cut off. */
+  @media (max-width: 640px) { .c-cap { flex-wrap: wrap; white-space: normal; gap: 4px 8px; } .c-cap span { overflow: visible; } .c-cap i { margin-left: 0; flex-basis: 100%; } }
+
   @media (max-width: 860px) {
     .hero { min-height: 0; }
     .h-in { padding-top: calc(var(--header) + 28px); padding-bottom: 40px; }
@@ -127,11 +250,12 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   }
 
   /* Pricing, in one yellow block: the way in, the monthly floor, and the page with everything. */
-  .price-sec { padding-top: 0; }
-  .pr { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; padding: clamp(28px, 3.6vw, 64px); border-radius: 32px; background: var(--yellow); color: #000; }
+  /* Pricing as one full-width yellow band, edge to edge: no box. */
+  .price-sec { background: var(--yellow); color: #000; padding-block: clamp(72px, 8vw, 128px); }
+  .pr { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; }
   .pr-l { display: grid; gap: 14px; }
   .pr-k { margin: 0; font-weight: 700; font-size: 13px; }
-  .pr-t { margin: 0; font-weight: 800; font-size: clamp(44px, 5.4vw, 92px); line-height: .92; letter-spacing: -0.05em; font-stretch: 92%; }
+  .pr-t { margin: 0; font-weight: 800; font-size: clamp(56px, 7vw, 128px); line-height: .92; letter-spacing: -0.05em; font-stretch: 92%; }
   .pr-d { margin: 0; max-width: 40rem; font-weight: 500; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.45; }
   .pr-r { display: flex; flex-wrap: wrap; gap: 12px; }
   @media (max-width: 960px) { .pr { grid-template-columns: 1fr; } }
