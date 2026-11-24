@@ -1,0 +1,74 @@
+---
+// Solutions: every direction Gecko works in, as one index. Each row is a link to its page: the number, the name set big,
+// its line and what it includes. A row fills with its colour on hover. The brief closes the page for anyone unsure.
+import Base from '../../../layouts/Base.astro';
+import { type Locale } from '../../../i18n/strings';
+import { href } from '../../../i18n/paths';
+import { langPaths } from '../../../i18n/static';
+import { mark } from '../../../i18n/mark';
+import { solutions, sc } from '../../../data/solutions';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Locale;
+const S = sc(lang);
+const [t0, t1] = mark(S.pageTitle);
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
+---
+<Base lang={lang} title={S.nav} page="solutions">
+  <section class="page-head lit mid">
+    <div class="wrap wide stack" style="--gap:22px">
+      <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
+      <p class="text text-l lede rv" style="--d:80ms">{S.pageLead}</p>
+    </div>
+  </section>
+
+  <section class="section idx-sec">
+    <div class="wrap wide">
+      <ol class="idx">
+        {solutions.map((s) => (
+          <li class="rv">
+            <a href={href(lang, s.page)} data-tone={s.tone} class:list={[{ flag: s.flagship }]}>
+              <span class="i-name"><span class="i-mk">{s.name[lang]}</span></span>
+              <span class="i-line">{s.line[lang]}</span>
+              <span class="i-chips">{s.chips[lang].join(' · ')}</span>
+              <span class="i-go" set:html={arrow} />
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap wide">
+      <div class="unsure rv">
+        <div><h2 class="h2">{S.notSure}</h2><p class="text-l">{S.notSureLine}</p></div>
+        <a class="btn primary lg" href={href(lang, 'apply')}>{S.brief} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lede { max-width: 44rem; }
+  .idx-sec { padding-top: 0; }
+  /* An open index, no boxes: big names, space between rows, the colour marker drawn on hover. */
+  .idx { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 2.4vw, 40px); }
+  .idx a { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .6fr) 52px; gap: 12px clamp(20px, 3vw, 48px); align-items: center; color: #000; text-decoration: none; }
+  .idx a[data-tone='pink'] { --tone: var(--pink); } .idx a[data-tone='yellow'] { --tone: var(--yellow); } .idx a[data-tone='blue'] { --tone: var(--blue); } .idx a[data-tone='black'] { --tone: var(--pink); }
+  .i-name { display: grid; justify-items: start; gap: 10px; font-weight: 800; font-size: clamp(40px, 4.8vw, 84px); line-height: .96; letter-spacing: -0.05em; font-stretch: 92%; }
+  .i-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
+  .flag .i-mk, .idx a:hover .i-mk, .idx a:focus-visible .i-mk { background-size: 100% 34%; }
+  .i-line { font-weight: 500; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; }
+  .i-chips { font-weight: 700; font-size: 14px; line-height: 1.5; }
+  .i-go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
+  .i-go :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
+  .idx a:hover .i-go { transform: scale(1.08); }
+  .idx a:hover .i-go :global(svg) { transform: none; }
+  .idx a:focus-visible { outline: none; }
+  .unsure { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 48px; align-items: end; }
+  .unsure .h2 { margin: 0; max-width: 16ch; }
+  .unsure .text-l { margin: 14px 0 0; font-weight: 500; }
+  @media (max-width: 1100px) { .idx a { grid-template-columns: minmax(0, 1fr) 52px; } .i-line, .i-chips { grid-column: 1; } .i-go { grid-row: 1; grid-column: 2; } }
+  @media (max-width: 760px) { .unsure { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .i-mk { transition: none; } }
+</style>

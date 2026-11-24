@@ -1,3 +1,8 @@
 # The old "get filmed" page now lives inside the hiring page.
 /en/creators/ /en/join/ 301
 /fr/creators/ /fr/join/ 301
+# Offers became Pricing (21 Nov 2026).
+/en/offers/ /en/pricing/ 301
+/fr/offers/ /fr/pricing/ 301
+/en/offers /en/pricing/ 301
+/fr/offers /fr/pricing/ 301

@@ -1,0 +1,144 @@
+---
+// Home: what Gecko makes (Heni, 24 Nov 2026: the big list "is literally a document"). Now a switcher: the names on the
+// left, and on the right the thing itself, drawn on its colour (SolScene), with its line, what it includes and the
+// way in. Hover or tap a name to show it; while nobody touches it, it moves on by itself every few seconds. Video ads
+// lead, with the real prices on their picture. Each name is still a plain link to its page, so it works without JS.
+import SolScene from './SolScene.astro';
+import { type Locale } from '../i18n/strings';
+import { href } from '../i18n/paths';
+import { solutions, sc } from '../data/solutions';
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const S = sc(lang);
+const fr = lang === 'fr';
+const go = (slug: string) => (slug === 'ads' ? S.pricing : fr ? 'Voir la solution' : 'See how it works');
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
+---
+<section class="section sol" id="solutions" aria-labelledby="sol-t">
+  <div class="wrap wide">
+    <div class="sol-head">
+      <h2 class="sol-t rv" id="sol-t">{S.homeTitle}</h2>
+      <div class="sol-side rv" style="--d:80ms">
+        <p>{S.homeLead}</p>
+        <a class="btn" href={href(lang, 'solutions')}>{S.all} <span class="arr" aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="sw" data-sw>
+      <ol class="sw-list">
+        {solutions.map((s, i) => (
+          <li>
+            <a href={href(lang, s.page)} data-i={i} data-tone={s.tone} class:list={['sw-it', { on: i === 0 }]}>
+              <span class="sw-name"><span class="sw-mk">{s.name[lang]}</span></span>
+              <span class="sw-go" set:html={arrow} />
+            </a>
+          </li>
+        ))}
+      </ol>
+
+      <div class="sw-stage">
+        {solutions.map((s, i) => (
+          <article class:list={['sw-p', { on: i === 0 }]} data-p={i} aria-hidden={i === 0 ? undefined : 'true'}>
+            <div class="sw-vis"><SolScene slug={s.slug} lang={lang} tone={s.tone} /></div>
+            <div class="sw-foot">
+              <div>
+                <h3>{s.name[lang]}</h3>
+                <p class="sw-line">{s.line[lang]}</p>
+                <p class="sw-chips">{s.chips[lang].join(' · ')}</p>
+              </div>
+              <a class="btn primary" href={s.slug === 'ads' ? href(lang, 'pricing') : href(lang, s.page)} tabindex={i === 0 ? undefined : -1}>{go(s.slug)} <span class="arr" aria-hidden="true">→</span></a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <p class="ix-unsure rv">{S.notSure} <a href={href(lang, 'apply')}>{S.brief} →</a></p>
+  </div>
+</section>
+
+<script>
+  // The switcher: hover, focus or tap a name to show its picture. On touch screens the first tap shows it and the
+  // second opens the page. While in view and untouched, it moves on every 4.5 s. The Video ads reel plays only while
+  // its picture is showing. Reduced motion: no moving on, no video.
+  document.querySelectorAll<HTMLElement>('[data-sw]').forEach((sw) => {
+    const its = [...sw.querySelectorAll<HTMLAnchorElement>('.sw-it')];
+    const ps = [...sw.querySelectorAll<HTMLElement>('.sw-p')];
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let at = 0, held = false, seen = false, timer = 0;
+    const vid = (on: boolean) => ps.forEach((p, i) => p.querySelectorAll('video').forEach((v) => {
+      if (on && i === at && !still) { if (!v.src) v.src = v.dataset.src!; v.play().then(() => v.classList.add('on')).catch(() => {}); } else v.pause();
+    }));
+    const show = (j: number) => {
+      if (j === at) return;
+      at = j;
+      its.forEach((a, i) => a.classList.toggle('on', i === j));
+      ps.forEach((p, i) => {
+        p.classList.toggle('on', i === j);
+        if (i === j) p.removeAttribute('aria-hidden'); else p.setAttribute('aria-hidden', 'true');
+        p.querySelector('.btn')?.setAttribute('tabindex', i === j ? '0' : '-1');
+        // The Brand World scene plays once when shown.
+        if (i === j) p.querySelectorAll('.rv').forEach((r) => { r.classList.remove('in'); void (r as HTMLElement).offsetWidth; r.classList.add('in'); });
+      });
+      vid(seen);
+    };
+    const tick = () => { clearTimeout(timer); if (held || still || !seen) return; timer = window.setTimeout(() => { show((at + 1) % ps.length); tick(); }, 4500); };
+    its.forEach((a, i) => {
+      a.addEventListener('mouseenter', () => { if (fine) { held = true; clearTimeout(timer); show(i); } });
+      a.addEventListener('focus', () => { held = true; clearTimeout(timer); show(i); });
+      a.addEventListener('click', (e) => { if (!fine && at !== i && getComputedStyle(sw.querySelector('.sw-stage')!).display !== 'none') { e.preventDefault(); held = true; clearTimeout(timer); show(i); } });
+    });
+    sw.addEventListener('mouseleave', () => { held = false; tick(); });
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; vid(seen); if (seen) tick(); else clearTimeout(timer); }, { threshold: 0.35 }).observe(sw);
+  });
+</script>
+
+<style>
+  .sol { padding-top: clamp(64px, 7vw, 120px); }
+  .sol-head { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 28px clamp(40px, 6vw, 120px); align-items: end; margin-bottom: clamp(40px, 5vw, 72px); }
+  .sol-t { margin: 0; max-width: 15ch; font-weight: 800; font-size: clamp(44px, 5.6vw, 96px); line-height: .94; letter-spacing: -0.05em; font-stretch: 92%; text-wrap: balance; }
+  .sol-side { display: grid; justify-items: start; gap: 22px; }
+  .sol-side p { margin: 0; font-weight: 500; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.45; text-wrap: pretty; }
+
+  .sw { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(32px, 5vw, 96px); align-items: start; }
+  .sw-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .sw-it { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: clamp(6px, .7vw, 12px) 0; color: #000; text-decoration: none; }
+  .sw-it[data-tone='pink'] { --tone: var(--pink); } .sw-it[data-tone='yellow'] { --tone: var(--yellow); } .sw-it[data-tone='blue'] { --tone: var(--blue); } .sw-it[data-tone='black'] { --tone: var(--pink); }
+  .sw-name { font-weight: 800; font-size: clamp(30px, 3.4vw, 60px); line-height: 1; letter-spacing: -0.05em; font-stretch: 92%; }
+  .sw-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 36% no-repeat; transition: background-size 480ms cubic-bezier(.65, 0, .35, 1); }
+  .sw-it.on .sw-mk { background-size: 100% 36%; }
+  .sw-go { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #000; opacity: 0; transform: translateX(-8px); transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
+  .sw-go :global(svg) { width: 20px; height: 20px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .sw-it.on .sw-go { opacity: 1; transform: none; }
+  .sw-it:focus-visible { outline: 2px solid #000; outline-offset: 4px; border-radius: 8px; }
+
+  .sw-stage { position: sticky; top: calc(var(--header) + 24px); display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .sw-p { grid-area: 1 / 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; opacity: 0; visibility: hidden; transition: opacity 360ms var(--ease), visibility 0s 360ms; }
+  .sw-p.on { opacity: 1; visibility: visible; transition: opacity 360ms var(--ease); }
+  .sw-vis { aspect-ratio: 5 / 4; min-width: 0; }
+  .sw-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; }
+  .sw-foot h3 { margin: 0 0 6px; font-weight: 800; font-size: 22px; letter-spacing: -0.03em; }
+  .sw-line { margin: 0; max-width: 34rem; font-weight: 500; font-size: 18px; line-height: 1.45; }
+  .sw-chips { margin: 8px 0 0; font-weight: 700; font-size: 14px; }
+
+  .ix-unsure { margin: clamp(48px, 5vw, 80px) 0 0; font-weight: 800; font-size: clamp(22px, 2vw, 32px); letter-spacing: -0.03em; }
+  .ix-unsure a { margin-left: .3em; color: inherit; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; text-decoration-color: var(--pink); }
+  .ix-unsure a:hover { text-decoration-color: #000; }
+
+  /* Phones and small tablets: the picture on top, the names under it as a row of chips you can scroll. */
+  @media (max-width: 900px) {
+    .sol-head { grid-template-columns: 1fr; }
+    .sw { grid-template-columns: 1fr; gap: 20px; }
+    .sw-stage { position: static; order: -1; }
+    .sw-list { display: flex; gap: 8px; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding: 2px var(--gutter) 6px; scrollbar-width: none; }
+    .sw-list::-webkit-scrollbar { display: none; }
+    .sw-it { padding: 10px 16px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; white-space: nowrap; }
+    .sw-it.on { background: #000; color: #fff; }
+    .sw-name { font-size: 16px; letter-spacing: -0.01em; }
+    .sw-it .sw-mk { background: none; }
+    .sw-go { display: none; }
+    .sw-vis { aspect-ratio: 4 / 5; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sw-mk, .sw-p, .sw-go { transition: none; } }
+</style>

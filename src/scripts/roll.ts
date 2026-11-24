@@ -15,11 +15,14 @@ if (rolls.length && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     // Restart the animation on the word that lands.
     w.style.animation = 'none'; void w.offsetWidth; w.style.animation = '';
     w.classList.add('on');
+    fit(s.el, w);
   };
+  // The roll takes the width of the word on show, so a centred title stays centred (no gap kept for the longest word).
+  const fit = (el: HTMLElement, w: HTMLElement) => { el.style.width = `${w.getBoundingClientRect().width}px`; };
   const io = new IntersectionObserver((es) => es.forEach((e) => {
     const s = state.find((x) => x.el === e.target)!;
     clearInterval(s.timer);
-    if (e.isIntersecting && s.words.length > 1) { s.el.classList.add('live'); s.timer = window.setInterval(() => step(s), every); }
+    if (e.isIntersecting && s.words.length > 1) { fit(s.el, s.words[s.i]); s.el.classList.add('live'); s.timer = window.setInterval(() => step(s), every); }
   }));
   state.forEach((s) => io.observe(s.el));
 }

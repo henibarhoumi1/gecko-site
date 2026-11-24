@@ -22,7 +22,8 @@ jobs:
       - name: Every internal link and file exists
         run: node tools/check-links.mjs
       - name: Pages name the address the site lives on
+        # gecko-creative.com is live since 20 Nov 2026: pages must point there, never at the workers.dev address.
         run: |
-          if grep -rl 'https://gecko-creative.com' dist --include=*.html | head -1 | grep -q .; then
-            echo "::error::Pages point to gecko-creative.com, which isn't live yet. Set SITE_URL once it is."; exit 1
+          if grep -rl 'workers.dev' dist --include=*.html | head -1 | grep -q .; then
+            echo "::error::A page still points at the workers.dev address. The site lives on gecko-creative.com."; exit 1
           fi

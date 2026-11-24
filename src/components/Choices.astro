@@ -1,5 +1,5 @@
 ---
-// A numbered list of short ideas as four blue blocks: how an ad gets made, on the Work
+// Four short ideas in two open columns: how an ad gets made, on the Work
 // page under the reels. It can end on text links.
 interface Props { title: string; items: { t: string; d: string }[]; links?: { href: string; label: string }[] }
 const { title, items, links = [] } = Astro.props;
@@ -10,9 +10,8 @@ const tail = words.slice(-2).join(' ');
 ---
 <div class="head rv"><h2 class="h2 ch-h">{lead} <span class="hl">{tail}</span></h2></div>
 <ol class="choices">
-  {items.map((ch, i) => (
-    <li class="rv" style={`--d:${i * 70}ms`}>
-      <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+  {items.map((ch) => (
+    <li class="rv">
       <h3 class="t">{ch.t}</h3>
       <p class="text">{ch.d}</p>
     </li>
@@ -27,9 +26,8 @@ const tail = words.slice(-2).join(' ');
 <style>
   .head { justify-content: center; text-align: center; }
   .ch-h { max-width: 18ch; margin: 0 auto clamp(28px, 3.6vw, 56px); text-wrap: balance; }
-  .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
-  .choices li { display: grid; gap: 14px; align-content: start; min-height: 240px; padding: clamp(24px, 2.6vw, 40px); border-radius: var(--r-lg); background: #fff; box-shadow: inset 0 0 0 1.5px #000; color: #000; }
-  .n { font-weight: 800; font-size: 18px; font-variant-numeric: tabular-nums; }
+  .choices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 4vw, 64px) clamp(32px, 5vw, 96px); }
+  .choices li { display: grid; gap: 14px; align-content: start; color: #000; }
   .t { margin: 0; font-weight: 800; font-size: clamp(28px, 2.8vw, 44px); line-height: 1; letter-spacing: -0.03em; max-width: 16ch; }
   .text { margin: 0; max-width: 30rem; font-weight: 500; font-size: 18px; color: #000; }
   .more-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px clamp(28px, 4vw, 64px); margin: clamp(32px, 4vw, 56px) 0 0; }

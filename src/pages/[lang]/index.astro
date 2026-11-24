@@ -4,17 +4,15 @@ import Faq from '../../components/Faq.astro';
 import ApplyFlow from '../../components/ApplyFlow.astro';
 import Bands from '../../components/Bands.astro';
 import Strip from '../../components/Strip.astro';
-import WhatWeDo from '../../components/WhatWeDo.astro';
-import PlansHome from '../../components/PlansHome.astro';
+import SolutionsHome from '../../components/SolutionsHome.astro';
 import ClientPortal from '../../components/ClientPortal.astro';
-import ReelViewer from '../../components/ReelViewer.astro';
-import HeroReel from '../../components/HeroReel.astro';
 import { launch } from '../../i18n/launch';
 import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
 import { ads } from '../../data/work';
+import ReelViewer from '../../components/ReelViewer.astro';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const s = t(lang);
@@ -33,33 +31,30 @@ const [subA, ...subB] = L.hero.line.split(/(?<=\.)\s+/);
 // so no line is ever cut.
 const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
 const kw = widest[lang] ?? widest.en;
-// The work: a short silent loop of each reel plays on its card; a click plays the full reel with sound, in place.
+// Selected work (back on 21 Nov, Heni): a short silent loop of each reel plays on its card; a click plays the full reel
+// with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
-const pad = (n: number) => String(n).padStart(2, '0');
+const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 // Right under the prices, the questions a first-time client is really asking.
 const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
-const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 ---
 <Base lang={lang} page="home">
   <section class="hero" aria-labelledby="h-title">
     <div class="wrap wide h-in">
-      <div class="h-copy">
-        <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
-          {lines.map((line, i) => (
-            <span class="ln" style={`--l:${i}`} aria-hidden="true">
-              <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
-            </span>
-          ))}
-        </h1>
-        <div class="h-foot">
-          <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
-          <div class="h-act up" style="--d:520ms">
-            <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
-            <a class="btn lg" href="#work">{s.hero.work}</a>
-          </div>
+      <h1 class="h-title" id="h-title" aria-label={said} style={`--kw:${kw}`}>
+        {lines.map((line, i) => (
+          <span class="ln" style={`--l:${i}`} aria-hidden="true">
+            <span class="ln-in">{i === lines.length - 1 ? <><span class="mk">{last}</span>.</> : line}</span>
+          </span>
+        ))}
+      </h1>
+      <div class="h-foot">
+        <p class="h-sub up" style="--d:420ms"><strong>{subA}</strong> {subB.join(' ')}</p>
+        <div class="h-act up" style="--d:520ms">
+          <a class="btn primary lg" href={href(lang, 'apply')}>{k.nav.apply} <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn lg" href="#work">{s.hero.work}</a>
         </div>
       </div>
-      <div class="h-reel up" style="--d:300ms"><HeroReel lang={lang} /></div>
     </div>
   </section>
 
@@ -80,7 +75,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
               <span class="c-on" aria-hidden="true">{L.soundOn}</span>
               <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
             </button>
-            <p class="c-cap" aria-hidden="true"><b>{pad(cl.i + 1)}</b><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
+            <p class="c-cap" aria-hidden="true"><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
           </li>
         ))}
       </ol>
@@ -89,9 +84,7 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 
   <Strip tone="black" items={s.home.formats} speed={40} />
 
-  <WhatWeDo lang={lang} />
-
-  <PlansHome lang={lang} />
+  <SolutionsHome lang={lang} />
 
   <ClientPortal lang={lang} />
 
@@ -170,44 +163,32 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
 </script>
 
 <style>
-  /* The first screen: the headline across the full width, then the line and the two ways in. Text only.
-     The reels live in Selected work, just below. */
-  .hero { display: flex; flex-direction: column; min-height: min(100svh, 1040px); background: var(--bg); }
-  /* Headline, line and buttons on the left; the reel player on the right (canvas "Landing v2", 19 Nov). */
-  .h-in { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 48px clamp(40px, 4.4vw, 64px); align-items: center;
-    padding-top: calc(var(--header) + clamp(24px, 4vh, 56px)); padding-bottom: clamp(32px, 5vh, 64px); }
-  .h-copy { container-type: inline-size; display: grid; gap: clamp(28px, 4.4vh, 56px); align-content: center; min-width: 0; }
-  .h-foot { display: grid; justify-items: start; gap: 34px; }
-  .h-sub strong { font-weight: 700; }
-  .h-reel { width: clamp(340px, 30vw, 432px); min-width: 0; }
-  .h-sub { margin: 0; max-width: 34rem; font-weight: 500; font-size: clamp(18px, 1.45vw, 22px); line-height: 1.4; text-wrap: pretty; }
-  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.05em; line-height: .88;
-    font-size: min(calc(100cqw / var(--kw) * .97), 140px, 17svh); }
+  /* The first screen: the headline across the whole width, then the line and the two ways in. Text only: the reels
+     live on the Work page (Heni, 21 Nov 2026). */
+  .hero { display: flex; flex-direction: column; min-height: min(100svh, 1080px); background: var(--bg); }
+  .h-in { flex: 1; display: grid; align-content: end; gap: clamp(36px, 6vh, 72px); container-type: inline-size;
+    padding-top: calc(var(--header) + clamp(32px, 6vh, 88px)); padding-bottom: clamp(40px, 7vh, 88px); }
+  .h-title { display: grid; margin: 0; font-weight: 800; letter-spacing: -0.055em; line-height: .86;
+    font-size: min(calc(100cqw / var(--kw) * 1.02), 232px, 24svh); }
   .ln { display: block; overflow: hidden; padding: .06em .08em .1em .04em; margin: -.06em 0 -.1em -.04em; }
   .ln-in { display: inline-block; animation: rise 1100ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: calc(140ms + var(--l) * 110ms); }
   @keyframes rise { from { transform: translateY(110%); } }
   .mk { position: relative; z-index: 0; }
   .mk::after { content: ''; position: absolute; z-index: -1; left: -.06em; right: -.04em; top: .5em; bottom: .02em; background: var(--pink); transform-origin: 0 50%; animation: mark 800ms cubic-bezier(.65, 0, .35, 1) both 820ms; }
   @keyframes mark { from { transform: scaleX(0); } }
-  /* The crossed strips sit on the cut between the white first screen and the black work section. */
-  .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
-  .cut :global(.bands) { padding-block: clamp(72px, 8.5vw, 128px); }
-  .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
+  .h-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 28px 48px; flex-wrap: wrap; }
+  .h-sub { margin: 0; max-width: 36rem; font-weight: 500; font-size: clamp(19px, 1.6vw, 24px); line-height: 1.4; text-wrap: pretty; }
+  .h-sub strong { font-weight: 700; }
   .h-act { display: flex; flex-wrap: wrap; gap: 12px; }
   .up { animation: fade-up 1000ms cubic-bezier(.22, 1, .36, 1) both; animation-delay: var(--d); }
   @keyframes fade-up { from { opacity: 0; transform: translateY(16px); } }
-
-  /* Phones and upright tablets: the line, the headline, the buttons, then the reel. */
-  @media (max-width: 860px) {
-    .hero { min-height: 0; }
-    .h-in { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-top: calc(var(--header) + 20px); padding-bottom: 40px; }
-    .h-act .btn { flex: 1 1 auto; }
-    .h-act { align-self: stretch; }
-    .h-reel { width: min(100%, 420px); }
-  }
+  /* The crossed strips sit on the cut between the white first screen and the black work section. */
+  .cut { position: relative; background: linear-gradient(#fff 50%, #000 50%); }
+  .cut :global(.bands) { padding-block: clamp(64px, 7.5vw, 112px); }
 
   /* Selected work, on black: the title and a way to all the work, then the four reels side by side. */
   .work { padding-block: var(--section); }
+  .work { padding-top: clamp(8px, 1.5vw, 24px) !important; }
   .w-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; margin-bottom: clamp(28px, 3.6vw, 52px); }
   .w-title { margin: 0; font-weight: 800; font-size: clamp(48px, 7.4vw, 128px); line-height: .9; letter-spacing: -0.04em; outline: none; }
   .deck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); margin: 0; padding: 0; list-style: none; }
@@ -228,7 +209,6 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
   .loud .c-on { opacity: 1; transform: none; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
-  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
   @media (max-width: 960px) {
@@ -238,17 +218,20 @@ const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M1
   }
   /* Phones: reel captions wrap instead of being cut off. */
   @media (max-width: 640px) { .c-cap { flex-wrap: wrap; white-space: normal; gap: 4px 8px; } .c-cap span { overflow: visible; } .c-cap i { margin-left: 0; flex-basis: 100%; } }
-  @media (prefers-reduced-motion: reduce) {
-    .ln-in, .up, .mk::after { animation: none; }
-    .c-media:hover { transform: none; }
+
+  @media (max-width: 860px) {
+    .hero { min-height: 0; }
+    .h-in { padding-top: calc(var(--header) + 28px); padding-bottom: 40px; }
+    .h-title { font-size: min(calc(100cqw / var(--kw) * 1.02), 18vw); }
+    .h-act { align-self: stretch; } .h-act .btn { flex: 1 1 auto; }
   }
 
-  /* Questions: the title centred, the answers in one column under it. */
+  @media (prefers-reduced-motion: reduce) { .ln-in, .up, .mk::after { animation: none; } }
+
   /* Questions: the title on the left, held in place while the questions scroll past on the right. */
   .faq-col { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 120px); align-items: start; }
   .faq-h { position: sticky; top: calc(var(--header) + 32px); margin: 0; max-width: 7ch; font-size: clamp(48px, 6vw, 104px); }
   .faq-list { min-width: 0; }
   .faq-col :global(.faq-more) { display: inline-flex; width: fit-content; margin: 32px 0 0; }
   @media (max-width: 860px) { .faq-col { grid-template-columns: 1fr; } .faq-h { position: static; max-width: none; } }
-
 </style>

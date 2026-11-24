@@ -1,0 +1,226 @@
+---
+// One picture per solution, drawn in HTML and CSS on the solution's colour (home, the Solutions switcher). Not a
+// document: each shows the thing itself, made small. The brand in them, "nour.", is invented for the example.
+// Everything here is decoration: the words that matter sit beside it, in the switcher.
+import BrandScene from './BrandScene.astro';
+import type { Locale } from '../i18n/strings';
+import { ads } from '../data/work';
+import { test, monthly, fmt } from '../data/offers';
+interface Props { slug: string; lang: Locale; tone: string }
+const { slug, lang, tone } = Astro.props;
+const fr = lang === 'fr';
+const R = ads.slice(0, 4);
+const price = fr ? `Test ${fmt(test.launch!, lang)} TND · plans dès ${fmt(monthly[0].launch!, lang)} TND / mois` : `Test ${fmt(test.launch!, lang)} TND · plans from ${fmt(monthly[0].launch!, lang)} TND / month`;
+const W = fr
+  ? { order: 'Nouvelle commande', add: 'Ajouter', shop: 'Boutique', new: 'Nouveau', serum: 'Sérum', cream: 'Crème', oil: 'Huile', deck: 'Brand deck', type: 'Typo', colours: 'Couleurs', posts: 'publications', angles: 'Angles à tester', a: ['L’étagère de sérums à moitié vides', 'Le même visage, matin et soir', 'Le prix d’une goutte'], comp: 'Pubs des concurrents', test: 'On teste ça d’abord', one: 'Un tournage', every: 'Chaque format' }
+  : { order: 'New order', add: 'Add', shop: 'Shop', new: 'New', serum: 'Serum', cream: 'Cream', oil: 'Oil', deck: 'Brand deck', type: 'Type', colours: 'Colours', posts: 'posts', angles: 'Angles to test', a: ['The shelf of half-used serums', 'Same face, morning and evening', 'The price of one drop'], comp: 'Competitor ads', test: 'We test this first', one: 'One shoot', every: 'Every format' };
+---
+<div class={`sc sc-${slug}`} data-tone={tone} aria-hidden="true">
+  {slug === 'ads' && (
+    <div class="ads">
+      <span class="ph l"><img src={R[1].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></span>
+      <span class="ph m"><img src={R[0].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><video muted playsinline loop preload="none" data-src={R[0].clip}></video></span>
+      <span class="ph r"><img src={R[3].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></span>
+      <span class="pill y">{price}</span>
+    </div>
+  )}
+
+  {slug === 'campaigns' && (
+    <div class="camp">
+      <span class="wide"><img src={R[2].poster} alt="" width="540" height="960" loading="lazy" decoding="async" /><b>16:9</b></span>
+      <div class="cuts">
+        <span class="c916"><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><b>9:16</b></span>
+        <span class="c45"><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><b>4:5</b></span>
+        <span class="c11"><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><b>1:1</b></span>
+      </div>
+    </div>
+  )}
+  {slug === 'campaigns' && <span class="pill k">{W.one} · {W.every}</span>}
+
+  {slug === 'brand-identity' && (
+    <div class="id">
+      <div class="sheet">
+        <p class="wm">nour<i>.</i></p>
+        <p class="k">{W.deck}</p>
+      </div>
+      <div class="spec"><p class="aa">Aa</p><p class="k">{W.type}</p></div>
+      <div class="sws"><i></i><i></i><i></i><i></i><p class="k">{W.colours}</p></div>
+    </div>
+  )}
+
+  {slug === 'brand-world' && <div class="bw"><BrandScene lang={lang} /></div>}
+
+  {slug === 'web' && (
+    <div class="web">
+      <div class="win">
+        <div class="bar"><i></i><i></i><i></i><span>nour.tn</span></div>
+        <div class="store">
+          <div class="nav"><b>nour.</b><span>{W.shop}</span><span class="cart">1</span></div>
+          <div class="hero"><b>{W.new}</b><span class="btl"></span></div>
+          <ul class="grid">
+            {[W.serum, W.cream, W.oil].map((n, i) => <li><span class={`prod p${i}`}><span class="btl"></span></span><b>{n}</b><span class="add">{W.add}</span></li>)}
+          </ul>
+        </div>
+      </div>
+      <p class="toast"><i></i>{W.order}</p>
+    </div>
+  )}
+
+  {slug === 'product-photography' && (
+    <div class="ph-set">
+      <div class="vf">
+        <span class="btl big"><span class="lbl">nour.</span></span>
+        <span class="shadow"></span>
+        <i class="cn a"></i><i class="cn b"></i><i class="cn c"></i><i class="cn d"></i>
+        <span class="rec"><i></i>REC</span>
+      </div>
+      <ul class="strip">{[0, 1, 2].map((i) => <li class={`t${i}`}><span class="btl"></span></li>)}</ul>
+    </div>
+  )}
+
+  {slug === 'social' && (
+    <div class="soc">
+      <div class="phone">
+        <div class="prof"><span class="av">n.</span><b>nour.tn</b><span>24 {W.posts}</span></div>
+        <ul class="feed">
+          <li><img src={R[0].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>
+          <li class="t p">nour.</li>
+          <li><img src={R[3].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>
+          <li class="t k">Aa</li>
+          <li><img src={R[1].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>
+          <li class="t b"><span class="btl"></span></li>
+          <li><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>
+          <li class="t y">{W.new}</li>
+          <li class="t k"><span class="btl w"></span></li>
+        </ul>
+      </div>
+    </div>
+  )}
+
+  {slug === 'strategy' && (
+    <div class="str">
+      <div class="board">
+        <p class="k">{W.angles}</p>
+        <ul class="notes">{W.a.map((x, i) => <li class={`n${i}`}>{x}{i === 0 && <em>{W.test}</em>}</li>)}</ul>
+        <p class="k">{W.comp}</p>
+        <ul class="comp">{[1, 2, 3, 0].map((i) => <li><img src={R[i].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>)}</ul>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .sc { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 28px; display: grid; place-items: center; container-type: size; }
+  .sc[data-tone='black'] { background: #000; } .sc[data-tone='pink'] { background: var(--pink); }
+  .sc[data-tone='yellow'] { background: var(--yellow); } .sc[data-tone='blue'] { background: var(--blue); }
+  .k { margin: 0; font-weight: 700; font-size: 13px; }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .pill { position: absolute; left: 24px; bottom: 24px; z-index: 3; padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; white-space: nowrap; }
+  .pill.y { background: var(--yellow); color: #000; } .pill.k { background: #000; color: #fff; }
+  /* A bottle, drawn: cap, shoulder and body. Used by the store, the photos and the feed. */
+  .btl { position: relative; display: block; width: 34%; aspect-ratio: 1 / 2.3; margin: 0 auto; border-radius: 18% 18% 12% 12% / 10% 10% 6% 6%; background: #fff; box-shadow: inset 0 0 0 2px #000; }
+  .btl::before { content: ''; position: absolute; left: 30%; right: 30%; top: -16%; height: 17%; border-radius: 6px 6px 2px 2px; background: #000; }
+
+  /* Video ads: three reels fanned out, the middle one playing. */
+  .ads { position: relative; width: 100%; height: 100%; }
+  .ph { position: absolute; top: 50%; left: 50%; width: 30%; aspect-ratio: 9 / 16; overflow: hidden; border-radius: 22px; background: #111; box-shadow: 0 0 0 3px #000; }
+  .ph video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 500ms var(--ease); }
+  .ph video.on { opacity: 1; }
+  .ph.l { transform: translate(-128%, -46%) rotate(-7deg); }
+  .ph.m { z-index: 2; width: 34%; transform: translate(-50%, -54%); }
+  .ph.r { transform: translate(28%, -46%) rotate(7deg); }
+
+  /* Campaign films: the film, and its cut-downs. */
+  .camp { position: relative; width: 86%; }
+  .camp .wide, .cuts > span { position: relative; display: block; overflow: hidden; border-radius: 14px; background: #000; box-shadow: 0 0 0 3px #000; }
+  .camp b { position: absolute; left: 10px; top: 10px; padding: 4px 9px; border-radius: 999px; background: #fff; color: #000; font-size: 12px; }
+  .camp .wide { aspect-ratio: 16 / 9; }
+  .camp .wide img { object-position: 50% 30%; }
+  .cuts { position: absolute; right: -4%; bottom: -16%; display: flex; align-items: flex-end; gap: 10px; }
+  .cuts .c916 { width: 72px; aspect-ratio: 9 / 16; } .cuts .c45 { width: 96px; aspect-ratio: 4 / 5; } .cuts .c11 { width: 104px; aspect-ratio: 1; }
+  .sc-campaigns .pill { left: 24px; top: 24px; bottom: auto; }
+
+  /* Brand identity: the wordmark, the type and the colours. */
+  .id { width: 84%; display: grid; grid-template-columns: 1.4fr 1fr; grid-template-rows: auto auto; gap: 14px; }
+  .sheet, .spec, .sws { display: grid; align-content: space-between; gap: 14px; padding: 22px; border-radius: 20px; background: #fff; }
+  .sheet { grid-row: span 2; transform: rotate(-3deg); }
+  .wm { margin: 0; font-weight: 800; font-size: clamp(56px, 9cqw, 112px); line-height: .9; letter-spacing: -0.06em; }
+  .wm i { font-style: normal; color: var(--pink); }
+  .spec { background: #000; color: #fff; }
+  .aa { margin: 0; font-weight: 800; font-size: clamp(48px, 7cqw, 84px); line-height: .9; letter-spacing: -0.05em; }
+  .sws { grid-template-columns: repeat(4, 1fr); align-items: center; }
+  .sws i { aspect-ratio: 1; border-radius: 50%; background: #000; }
+  .sws i:nth-child(2) { background: var(--pink); } .sws i:nth-child(3) { background: var(--blue); } .sws i:nth-child(4) { background: #fff; box-shadow: inset 0 0 0 2px #000; }
+  .sws .k { grid-column: 1 / -1; }
+
+  /* The Brand World: the same scene as its page, on blue. */
+  .bw { width: 92%; }
+  .bw :global(.bscene) { padding: 0; background: none; max-width: none; }
+
+  /* Websites and stores: the shop, and an order coming in. */
+  .web { position: relative; width: 84%; }
+  .win { overflow: hidden; border-radius: 16px; background: #fff; box-shadow: 0 0 0 3px #000; }
+  .bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 2px solid #000; font-size: 12px; font-weight: 700; }
+  .bar i { width: 9px; height: 9px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px #000; }
+  .bar span { margin-left: 10px; padding: 3px 12px; border-radius: 999px; box-shadow: inset 0 0 0 1.5px #000; }
+  .store { display: grid; gap: 12px; padding: 14px; }
+  .nav { display: flex; align-items: center; gap: 14px; font-size: 13px; font-weight: 700; }
+  .nav b { font-size: 20px; letter-spacing: -0.05em; margin-right: auto; }
+  .cart { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--pink); }
+  .hero { display: flex; align-items: center; justify-content: space-between; height: 80px; padding: 0 22px; border-radius: 12px; background: var(--pink); overflow: hidden; }
+  .hero b { font-size: 28px; letter-spacing: -0.05em; }
+  .hero .btl { width: 34px; margin: 18px 10% 0 0; }
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .grid li { display: grid; gap: 6px; font-size: 13px; }
+  .prod { display: grid; place-items: center; aspect-ratio: 1; border-radius: 10px; background: var(--yellow); }
+  .prod.p1 { background: var(--blue); } .prod.p2 { background: var(--pink); }
+  .prod .btl { width: 22%; }
+  .add { justify-self: start; padding: 4px 10px; border-radius: 999px; background: #000; color: #fff; font-size: 11px; font-weight: 700; }
+  .toast { position: absolute; right: -14px; top: -18px; margin: 0; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 999px; background: #000; color: #fff; font-weight: 700; font-size: 14px; }
+  .toast i { width: 8px; height: 8px; border-radius: 50%; background: var(--pink); }
+
+  /* Product photography: a packshot in the viewfinder, and the picks. */
+  .ph-set { width: 84%; display: grid; grid-template-columns: 1fr 86px; gap: 14px; align-items: center; }
+  .vf { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; max-height: 78cqh; border-radius: 18px; background: #fff; }
+  .btl.big { width: 26%; z-index: 1; }
+  .lbl { position: absolute; left: 0; right: 0; top: 44%; text-align: center; font-weight: 800; font-size: 15px; letter-spacing: -0.04em; }
+  .shadow { position: absolute; bottom: 18%; width: 44%; height: 3px; border-radius: 3px; background: #000; }
+  .cn { position: absolute; width: 22px; height: 22px; border: 0 solid #000; }
+  .cn.a { left: 14px; top: 14px; border-width: 3px 0 0 3px; } .cn.b { right: 14px; top: 14px; border-width: 3px 3px 0 0; }
+  .cn.c { left: 14px; bottom: 14px; border-width: 0 0 3px 3px; } .cn.d { right: 14px; bottom: 14px; border-width: 0 3px 3px 0; }
+  .rec { position: absolute; left: 44px; top: 16px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; }
+  .rec i { width: 8px; height: 8px; border-radius: 50%; background: #e0362c; }
+  .strip { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .strip li { display: grid; place-items: center; aspect-ratio: 4 / 5; border-radius: 10px; background: var(--yellow); }
+  .strip .t1 { background: var(--blue); } .strip .t2 { background: #000; }
+  .strip .t2 .btl { box-shadow: inset 0 0 0 2px #fff; }
+  .strip .btl { width: 28%; }
+
+  /* Social content: the feed, planned. */
+  .soc { width: 100%; display: grid; place-items: center; }
+  .phone { width: min(46%, 300px); padding: 14px 12px; border-radius: 30px; background: #fff; box-shadow: 0 0 0 4px #000; }
+  .prof { display: flex; align-items: center; gap: 8px; padding: 2px 4px 12px; font-size: 12px; }
+  .prof b { margin-right: auto; font-size: 13px; }
+  .av { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--pink); font-weight: 800; }
+  .feed { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+  .feed li { aspect-ratio: 4 / 5; overflow: hidden; display: grid; place-items: center; font-weight: 800; font-size: 15px; letter-spacing: -0.04em; }
+  .feed .p { background: var(--pink); } .feed .k { background: #000; color: #fff; } .feed .b { background: var(--blue); } .feed .y { background: var(--yellow); }
+  .feed .btl { width: 22%; } .feed .btl.w { background: #000; box-shadow: inset 0 0 0 2px #fff; }
+
+  /* Creative strategy: the angles worth testing, beside the competition. */
+  .str { position: relative; width: 84%; }
+  .board { display: grid; gap: 14px; padding: 22px; border-radius: 20px; background: #fff; }
+  .notes { list-style: none; margin: 0 0 6px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .notes li { aspect-ratio: 1; padding: 12px; border-radius: 12px; background: var(--yellow); font-weight: 800; font-size: clamp(13px, 2.2cqw, 18px); line-height: 1.12; letter-spacing: -0.02em; }
+  .notes .n0 { transform: rotate(-3deg); } .notes .n1 { background: var(--pink); transform: rotate(2deg); } .notes .n2 { background: var(--blue); transform: rotate(-1deg); }
+  .comp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .comp li { aspect-ratio: 9 / 12; overflow: hidden; border-radius: 10px; }
+  .notes li { position: relative; }
+  .notes em { position: absolute; left: 10px; bottom: 10px; padding: 5px 9px; border-radius: 999px; background: #000; color: #fff; font-style: normal; font-weight: 700; font-size: 11px; letter-spacing: 0; }
+
+  @container (max-width: 520px) {
+    .pill { left: 14px; bottom: 14px; font-size: 12px; padding: 8px 12px; }
+    .cuts .c916 { width: 48px; } .cuts .c45 { width: 64px; } .cuts .c11 { width: 70px; }
+    .toast { right: 0; top: -14px; font-size: 12px; }
+  }
+</style>
