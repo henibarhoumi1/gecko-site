@@ -15,7 +15,6 @@ const lang = Astro.params.lang as Locale;
 const w = c(lang).work;
 const h = c(lang).home;
 const formats = t(lang).home.formats;
-const pad = (n: number) => String(n).padStart(2, '0');
 // A format with a reel on this page carries the pink marker and jumps to that reel.
 const low = (x: string) => x.toLowerCase();
 const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWith(low(a.format[lang])));
@@ -36,7 +35,7 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
           <li class="rv" id={`reel-${i + 1}`} style={`--d:${i * 80}ms`}>
             <span class="tp" aria-hidden="true"></span>
             <ReelCard ad={a} i={i} lang={lang} eager={i < 4} />
-            <p class="cap"><b>{pad(i + 1)}</b><span>{a.angle[lang]}</span>{a.format && <i>{a.format[lang]}</i>}</p>
+            <p class="cap"><span>{a.angle[lang]}</span>{a.format && <i>{a.format[lang]}</i>}</p>
           </li>
         ))}
       </ol>
@@ -57,7 +56,7 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
           const r = reelFor(f);
           return (
             <li class="rv" style={`--d:${Math.min(i, 8) * 40}ms`}>
-              {r >= 0 ? <a href={`#reel-${r + 1}`}><span class="hl">{f}</span> <sup>{pad(r + 1)}</sup></a> : <span>{f}</span>}
+              {r >= 0 ? <a href={`#reel-${r + 1}`}><span class="hl">{f}</span></a> : <span>{f}</span>}
             </li>
           );
         })}
@@ -80,7 +79,6 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   .wall li:nth-child(odd) { transform-origin: 50% 0; }
   .tp { display: none; }
   .cap { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 0; font-weight: 700; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: -0.015em; }
-  .cap b { flex: none; font-size: 13px; color: #000; font-variant-numeric: tabular-nums; }
   .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
 
@@ -92,7 +90,7 @@ const reelFor = (f: string) => ads.findIndex((a) => a.format && low(f).startsWit
   .formats a:hover sup { color: var(--fg); }
   .formats sup { font-size: 12px; letter-spacing: .06em; color: var(--fg-3); vertical-align: super; }
   .formats a:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; }
-  .credit { margin: clamp(40px, 5vw, 72px) auto 0; max-width: 46rem; text-align: center; font-size: 14px; line-height: 1.5; color: var(--fg-3); }
+  .credit { margin: clamp(40px, 5vw, 72px) auto 0; max-width: 46rem; text-align: center; font-size: 14px; line-height: 1.5; }
 
   @media (max-width: 960px) {
     .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }

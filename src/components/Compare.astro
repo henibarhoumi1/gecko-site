@@ -13,7 +13,7 @@ const k = c(lang).home.compare;
     <ol class="cmp">
       {k.rows.map(([topic, usual, gecko], i) => (
         <li class="row rv" style={`--d:${(i % 2) * 90}ms`}>
-          <p class="topic"><span class="i">{String(i + 1).padStart(2, '0')}</span>{topic}</p>
+          <p class="topic">{topic}</p>
           <p class="usual"><span class="sr">{k.usual}: </span><s>{usual}</s></p>
           <p class="gecko"><span class="sr">{k.gecko}: </span>{gecko}</p>
         </li>
@@ -28,7 +28,6 @@ const k = c(lang).home.compare;
   .cmp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(36px, 4vw, 64px) clamp(32px, 5vw, 96px); }
   .row { display: grid; gap: 14px; align-content: start; color: #000; }
   .topic { margin: 0; display: flex; gap: 12px; align-items: baseline; font-size: 15px; font-weight: 700; }
-  .topic .i { font-variant-numeric: tabular-nums; }
   .usual { margin: 0; max-width: 34rem; font-size: 17px; line-height: 1.5; font-weight: 500; }
   /* The usual way gets struck through in pink as the row comes into view. */
   .usual s { text-decoration: none; background: linear-gradient(#000, #000) 0 58% / 0 2px no-repeat; transition: background-size 900ms var(--ease) 300ms; }
