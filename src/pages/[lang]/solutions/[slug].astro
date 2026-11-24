@@ -6,7 +6,7 @@ import PlanCards from '../../../components/PlanCards.astro';
 import { locales, type Locale } from '../../../i18n/strings';
 import { href } from '../../../i18n/paths';
 import { launch } from '../../../i18n/launch';
-import { pages, bySlug, sc, solutions, type Solution } from '../../../data/solutions';
+import { pages, bySlug, sc, type Solution } from '../../../data/solutions';
 
 export function getStaticPaths() {
   return locales.flatMap((lang) => pages.map((s) => ({ params: { lang, slug: s.slug } })));
@@ -18,8 +18,6 @@ const L = launch(lang).plans;
 const words = sol.title[lang].split(' ');
 const t0 = words.slice(0, -2).join(' ');
 const t1 = words.slice(-2).join(' ');
-const n = solutions.indexOf(sol) + 1;
-const pad = (x: number) => String(x).padStart(2, '0');
 const brief = `${href(lang, 'apply')}?plan=${sol.plan}`;
 const related = sol.related.map(bySlug).filter(Boolean) as Solution[];
 const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
@@ -28,7 +26,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   <section class="s-head">
     <div class="wrap wide s-in">
       <div class="s-copy">
-        <a class="back rv" href={href(lang, 'solutions')}>← {S.label} · {pad(n)}</a>
+        <a class="back rv" href={href(lang, 'solutions')}>← {S.label}</a>
         <h1 class="h1 rv" style="--d:60ms">{t0} <span class="hl">{t1}</span></h1>
         <p class="text-l lead rv" style="--d:100ms">{sol.lead[lang]}</p>
         <div class="actions rv" style="--d:140ms">
@@ -38,9 +36,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
         </div>
       </div>
       <div class="s-block rv" data-tone={sol.tone} style="--d:120ms" aria-hidden="true">
-        <span class="sb-n">{pad(n)}</span>
         <ol>{sol.chips[lang].map((x, i) => <li style={`--i:${i}`}><span>{x}</span></li>)}</ol>
-        <span class="sb-name">{sol.name[lang]}</span>
       </div>
     </div>
   </section>
@@ -49,7 +45,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
     <div class="wrap wide split">
       <h2 class="h2 sticky rv">{S.getsTitle}</h2>
       <ol class="gets">
-        {sol.gets[lang].map((x, i) => <li class="rv" style={`--d:${(i % 3) * 50}ms`}><span class="n">{pad(i + 1)}</span><p>{x}</p></li>)}
+        {sol.gets[lang].map((x, i) => <li class="rv"><p>{x}</p></li>)}
       </ol>
     </div>
   </section>
@@ -59,7 +55,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
       <h2 class="h2 mid rv">{S.stepsTitle}</h2>
       <ol class="steps" data-tone={sol.tone}>
         {sol.steps[lang].map(([t, d], i) => (
-          <li class="rv" style={`--d:${i * 70}ms`}><span class="n">{i + 1}</span><b>{t}</b><p>{d}</p></li>
+          <li class="rv"><span class="n">{i + 1}</span><b>{t}</b><p>{d}</p></li>
         ))}
       </ol>
     </div>
@@ -68,7 +64,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   <section class="section">
     <div class="wrap wide">
       <h2 class="h2 mid rv">{S.whoTitle}</h2>
-      <ul class="who">{sol.who[lang].map(([t, d], i) => <li class="rv" style={`--d:${i * 60}ms`}><b>{t}</b><p>{d}</p></li>)}</ul>
+      <ul class="who">{sol.who[lang].map(([t, d], i) => <li class="rv"><b>{t}</b><p>{d}</p></li>)}</ul>
     </div>
   </section>
 
@@ -96,9 +92,9 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
       <div class="rel-head rv"><h2 class="h2">{S.relatedTitle}</h2><a class="btn" href={href(lang, 'solutions')}>{S.all} <span class="arr" aria-hidden="true">→</span></a></div>
       <ul class="rel">
         {related.map((r, i) => (
-          <li class="rv" style={`--d:${i * 60}ms`}>
+          <li class="rv">
             <a href={href(lang, r.page)} data-tone={r.tone}>
-              <b><span class="r-mk">{r.name[lang]}</span></b><span>{r.line[lang]}</span><i set:html={arrow} />
+              <b><span class="r-mk">{r.name[lang]}</span></b><span class="r-line">{r.line[lang]}</span><i set:html={arrow} />
             </a>
           </li>
         ))}
@@ -119,18 +115,15 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   /* What it includes, set as a poster: huge words stacked, each on the solution's colour marker. No box. */
   .s-block { display: grid; align-content: center; gap: 18px; color: #000; }
   .s-block[data-tone='pink'] { --tone: var(--pink); } .s-block[data-tone='yellow'] { --tone: var(--yellow); } .s-block[data-tone='blue'] { --tone: var(--blue); } .s-block[data-tone='black'] { --tone: var(--pink); }
-  .sb-n { font-weight: 700; font-size: 14px; }
   .s-block ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
   .s-block li { font-weight: 800; font-size: clamp(40px, 4.6vw, 84px); line-height: 1; letter-spacing: -0.05em; font-stretch: 92%; animation: chip-in 700ms cubic-bezier(.2, .9, .3, 1.1) both; animation-delay: calc(250ms + var(--i) * 140ms); }
-  .s-block li span { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 100% 34% no-repeat; }
   @keyframes chip-in { from { opacity: 0; transform: translateY(24px); } }
-  .sb-name { font-weight: 700; font-size: 14px; }
 
   .split { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 32px clamp(40px, 6vw, 120px); align-items: start; }
   .sticky { position: sticky; top: calc(var(--header) + 32px); max-width: 9ch; }
   .gets { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(28px, 3vw, 48px) clamp(24px, 3vw, 56px); }
-  .gets li { display: grid; gap: 10px; align-content: start; }
-  .gets .n { font-weight: 700; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .gets li { position: relative; padding-left: 28px; }
+  .gets li::before { content: ''; position: absolute; left: 0; top: .62em; width: 14px; height: 3px; background: #000; }
   .gets p { margin: 0; font-weight: 700; font-size: clamp(20px, 1.7vw, 27px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
 
   .mid { text-align: center; margin: 0 auto clamp(28px, 3.4vw, 48px); max-width: 16ch; }
@@ -162,12 +155,12 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .rel b { font-weight: 800; font-size: clamp(32px, 3.4vw, 60px); line-height: 1; letter-spacing: -0.045em; font-stretch: 92%; }
   .r-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
   .rel a:hover .r-mk { background-size: 100% 34%; }
-  .rel span { font-weight: 500; font-size: 17px; line-height: 1.45; }
+  .rel .r-line { font-weight: 500; font-size: 17px; line-height: 1.45; }
   .rel i { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; }
   .rel i :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
   .rel a:hover i :global(svg) { transform: none; }
 
-  @media (max-width: 1100px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rel a { grid-template-columns: minmax(0, 1fr) 52px; } .rel a span { grid-column: 1; } .rel i { grid-row: 1; grid-column: 2; } }
+  @media (max-width: 1100px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rel a { grid-template-columns: minmax(0, 1fr) 52px; } .rel .r-line { grid-column: 1; } .rel i { grid-row: 1; grid-column: 2; } }
   @media (max-width: 900px) { .s-in, .split, .quote { grid-template-columns: 1fr; } .sticky { position: static; max-width: none; } }
   @media (max-width: 640px) { .gets, .who, .steps { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { .s-block li { animation: none; } }

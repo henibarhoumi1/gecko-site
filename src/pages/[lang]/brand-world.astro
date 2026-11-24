@@ -15,7 +15,6 @@ import BrandScene from '../../components/BrandScene.astro';
 <Base lang={lang} title={L.metaTitle} page="brandworld">
   <section class="first">
     <div class="wrap wide">
-      <p class="tape flat rv">{L.label}</p>
       <h1 class="h1 rv" style="--d:60ms">{L.title.split(' ').slice(0, -3).join(' ')} <span class="hl">{L.title.split(' ').slice(-3).join(' ')}</span></h1>
       <p class="text-l lead rv" style="--d:100ms">{L.lead}</p>
       <div class="actions rv" style="--d:140ms">
@@ -29,7 +28,7 @@ import BrandScene from '../../components/BrandScene.astro';
     <div class="wrap wide">
       <h2 class="h2 mid-t rv">{L.insideTitle}</h2>
       <ul class="six">
-        {L.inside.map((x, i) => <li class={`rv c${i % 3}`} style={`--d:${i * 60}ms`}><span class="n">{String(i + 1).padStart(2, '0')}</span><p>{x}</p></li>)}
+        {L.inside.map((x) => <li class="rv"><p>{x}</p></li>)}
       </ul>
       <p class="value rv">{L.value}</p>
     </div>
@@ -39,7 +38,7 @@ import BrandScene from '../../components/BrandScene.astro';
     <div class="wrap wide">
       <h2 class="h2 mid-t rv">{L.startTitle}</h2>
       <ol class="four">
-        {L.start.map((x, i) => <li class="rv" style={`--d:${i * 60}ms`}><span class="n">{i + 1}</span><p>{x}</p></li>)}
+        {L.start.map((x, i) => <li class="rv"><span class="n">{i + 1}</span><p>{x}</p></li>)}
       </ol>
     </div>
   </section>
@@ -47,7 +46,7 @@ import BrandScene from '../../components/BrandScene.astro';
   <section class="section">
     <div class="wrap wide">
       <h2 class="h2 mid-t rv">{L.forTitle}</h2>
-      <ul class="who">{L.who.map(([t, d], i) => <li class="rv" style={`--d:${i * 60}ms`}><b>{t}</b><p>{d}</p></li>)}</ul>
+      <ul class="who">{L.who.map(([t, d]) => <li class="rv"><b>{t}</b><p>{d}</p></li>)}</ul>
     </div>
   </section>
 
@@ -65,15 +64,16 @@ import BrandScene from '../../components/BrandScene.astro';
 <style>
   /* The first screen and the section titles sit in the middle; the lists under them keep their own grids. */
   .first { padding-top: calc(var(--header) + clamp(48px, 7vw, 104px)); padding-bottom: clamp(56px, 7vw, 112px); text-align: center; }
-  .first .h1 { max-width: 14ch; margin: 18px auto 0; text-wrap: balance; }
+  .first .h1 { max-width: 14ch; margin: 0 auto; text-wrap: balance; }
   .lead { margin: 22px auto 28px; max-width: 40rem; font-weight: 500; text-wrap: balance; }
   .first .actions { justify-content: center; }
   .mid-t { text-align: center; margin-inline: auto; }
   .six { list-style: none; margin: clamp(28px, 3.4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }
   .six { gap: clamp(32px, 3.4vw, 56px) clamp(28px, 3vw, 56px); }
   .six li { display: grid; align-content: start; gap: 14px; color: #000; }
-  .six .n { justify-self: start; padding-inline: .06em; background: linear-gradient(var(--blue), var(--blue)) 0 86% / 100% 30% no-repeat; }
-  .six .n, .four .n { font-weight: 800; font-size: 44px; line-height: 1; }
+  .six li { position: relative; padding-left: 28px; }
+  .six li::before { content: ''; position: absolute; left: 0; top: .62em; width: 14px; height: 3px; background: #000; }
+  .four .n { font-weight: 800; font-size: 44px; line-height: 1; }
   .six p { margin: 0; font-weight: 700; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.3; }
   .value { margin: clamp(32px, 4vw, 56px) auto 0; max-width: 46rem; text-align: center; text-wrap: balance; font-weight: 800; font-size: clamp(24px, 2.4vw, 36px); line-height: 1.12; letter-spacing: -0.02em; }
   .four { list-style: none; margin: clamp(28px, 3.4vw, 48px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 20px); }

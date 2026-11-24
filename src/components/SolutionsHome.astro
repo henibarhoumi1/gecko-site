@@ -9,7 +9,6 @@ import { test, monthly, fmt } from '../data/offers';
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const S = sc(lang);
-const pad = (n: number) => String(n).padStart(2, '0');
 const from = lang === 'fr' ? `Test ${fmt(test.launch!, lang)} TND · plans dès ${fmt(monthly[0].launch!, lang)} TND / mois` : `Test ${fmt(test.launch!, lang)} TND · plans from ${fmt(monthly[0].launch!, lang)} TND / month`;
 const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
 ---
@@ -24,13 +23,11 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
     </div>
 
     <ol class="ix">
-      {solutions.map((s, i) => (
-        <li class="rv" style={`--d:${Math.min(i, 4) * 40}ms`}>
+      {solutions.map((s) => (
+        <li class="rv">
           <a href={href(lang, s.page)} data-tone={s.tone} class:list={['ix-row', { flag: s.flagship }]}>
-            <span class="ix-n">{pad(i + 1)}</span>
             <span class="ix-name"><span class="ix-mk">{s.name[lang]}</span></span>
             <span class="ix-line">
-              {s.flagship && <b class="ix-flag">{S.flag}</b>}
               {s.line[lang]}
               <span class="ix-chips">{s.flagship ? from : s.chips[lang].join(' · ')}</span>
             </span>
@@ -53,8 +50,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
 
   /* The index: no boxes, no lines. Space between rows; the names carry it. */
   .ix { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(14px, 1.8vw, 28px); }
-  .ix-row { display: grid; grid-template-columns: 56px minmax(0, 1.3fr) minmax(0, 1fr) 56px; gap: 12px clamp(20px, 3vw, 56px); align-items: center; color: #000; text-decoration: none; }
-  .ix-n { align-self: start; padding-top: .9em; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .ix-row { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 56px; gap: 12px clamp(20px, 3vw, 56px); align-items: center; color: #000; text-decoration: none; }
   .ix-name { font-weight: 800; font-size: clamp(40px, 5vw, 88px); line-height: .98; letter-spacing: -0.05em; font-stretch: 92%; }
   .flag .ix-name { font-size: clamp(56px, 7.4vw, 136px); }
   /* The marker in the direction's own colour, drawn on hover; the flagship keeps it. */
@@ -62,7 +58,6 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .ix-row[data-tone='pink'] { --tone: var(--pink); } .ix-row[data-tone='yellow'] { --tone: var(--yellow); } .ix-row[data-tone='blue'] { --tone: var(--blue); } .ix-row[data-tone='black'] { --tone: var(--pink); }
   .flag .ix-mk, .ix-row:hover .ix-mk, .ix-row:focus-visible .ix-mk { background-size: 100% 34%; }
   .ix-line { display: grid; gap: 8px; font-weight: 500; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; text-wrap: pretty; }
-  .ix-flag { font-weight: 700; font-size: 13px; }
   .ix-chips { font-weight: 700; font-size: 14px; }
   .ix-go { justify-self: end; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
   .ix-go :global(svg) { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transform: rotate(-45deg); transition: transform 300ms var(--ease); }
@@ -75,9 +70,9 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
 
   @media (max-width: 1000px) {
     .sol-head { grid-template-columns: 1fr; }
-    .ix-row { grid-template-columns: 40px minmax(0, 1fr) 44px; }
-    .ix-line { grid-column: 2 / 3; }
-    .ix-go { grid-row: 1; grid-column: 3; width: 44px; height: 44px; }
+    .ix-row { grid-template-columns: minmax(0, 1fr) 44px; }
+    .ix-line { grid-column: 1; }
+    .ix-go { grid-row: 1; grid-column: 2; width: 44px; height: 44px; }
   }
   @media (prefers-reduced-motion: reduce) { .ix-mk { transition: none; } }
 </style>

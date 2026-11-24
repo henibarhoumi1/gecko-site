@@ -11,13 +11,11 @@ export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Locale;
 const S = sc(lang);
 const [t0, t1] = mark(S.pageTitle);
-const pad = (n: number) => String(n).padStart(2, '0');
 const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>';
 ---
 <Base lang={lang} title={S.nav} page="solutions">
   <section class="page-head lit mid">
     <div class="wrap wide stack" style="--gap:22px">
-      <p class="tape flat rv">{S.label}</p>
       <h1 class="h1 rv">{t0}<span class="hl">{t1}</span></h1>
       <p class="text text-l lede rv" style="--d:80ms">{S.pageLead}</p>
     </div>
@@ -26,11 +24,10 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   <section class="section idx-sec">
     <div class="wrap wide">
       <ol class="idx">
-        {solutions.map((s, i) => (
-          <li class="rv" style={`--d:${Math.min(i, 3) * 50}ms`}>
+        {solutions.map((s) => (
+          <li class="rv">
             <a href={href(lang, s.page)} data-tone={s.tone} class:list={[{ flag: s.flagship }]}>
-              <span class="i-n">{pad(i + 1)}</span>
-              <span class="i-name"><span class="i-mk">{s.name[lang]}</span>{s.flagship && <em>{S.flag}</em>}</span>
+              <span class="i-name"><span class="i-mk">{s.name[lang]}</span></span>
               <span class="i-line">{s.line[lang]}</span>
               <span class="i-chips">{s.chips[lang].join(' · ')}</span>
               <span class="i-go" set:html={arrow} />
@@ -56,13 +53,11 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .idx-sec { padding-top: 0; }
   /* An open index, no boxes: big names, space between rows, the colour marker drawn on hover. */
   .idx { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(20px, 2.4vw, 40px); }
-  .idx a { display: grid; grid-template-columns: 56px minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .6fr) 52px; gap: 12px clamp(20px, 3vw, 48px); align-items: center; color: #000; text-decoration: none; }
+  .idx a { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .6fr) 52px; gap: 12px clamp(20px, 3vw, 48px); align-items: center; color: #000; text-decoration: none; }
   .idx a[data-tone='pink'] { --tone: var(--pink); } .idx a[data-tone='yellow'] { --tone: var(--yellow); } .idx a[data-tone='blue'] { --tone: var(--blue); } .idx a[data-tone='black'] { --tone: var(--pink); }
-  .i-n { align-self: start; padding-top: .9em; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
   .i-name { display: grid; justify-items: start; gap: 10px; font-weight: 800; font-size: clamp(40px, 4.8vw, 84px); line-height: .96; letter-spacing: -0.05em; font-stretch: 92%; }
   .i-mk { padding-inline: .04em; margin-inline: -.04em; background: linear-gradient(var(--tone), var(--tone)) 0 86% / 0 34% no-repeat; transition: background-size 520ms cubic-bezier(.65, 0, .35, 1); }
   .flag .i-mk, .idx a:hover .i-mk, .idx a:focus-visible .i-mk { background-size: 100% 34%; }
-  .i-name em { font-style: normal; font-weight: 700; font-size: 13px; letter-spacing: 0; font-stretch: 100%; }
   .i-line { font-weight: 500; font-size: clamp(16px, 1.2vw, 19px); line-height: 1.45; }
   .i-chips { font-weight: 700; font-size: 14px; line-height: 1.5; }
   .i-go { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #000; transition: transform 300ms var(--ease); }
@@ -73,7 +68,7 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .unsure { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 28px 48px; align-items: end; }
   .unsure .h2 { margin: 0; max-width: 16ch; }
   .unsure .text-l { margin: 14px 0 0; font-weight: 500; }
-  @media (max-width: 1100px) { .idx a { grid-template-columns: 40px minmax(0, 1fr) 52px; } .i-line, .i-chips { grid-column: 2 / 3; } .i-go { grid-row: 1; grid-column: 3; } }
+  @media (max-width: 1100px) { .idx a { grid-template-columns: minmax(0, 1fr) 52px; } .i-line, .i-chips { grid-column: 1; } .i-go { grid-row: 1; grid-column: 2; } }
   @media (max-width: 760px) { .unsure { grid-template-columns: 1fr; } }
   @media (prefers-reduced-motion: reduce) { .i-mk { transition: none; } }
 </style>

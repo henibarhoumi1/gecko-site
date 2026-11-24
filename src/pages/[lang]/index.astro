@@ -39,7 +39,6 @@ const P = lang === 'fr'
 // Selected work (back on 21 Nov, Heni): a short silent loop of each reel plays on its card; a click plays the full reel
 // with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
-const pad = (n: number) => String(n).padStart(2, '0');
 const mute = '<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" /><path class="off" d="M16 10l4 4M20 10l-4 4" /><path class="on" d="M15.5 9.5a3.5 3.5 0 0 1 0 5M17.8 7.2a7 7 0 0 1 0 9.6" />';
 // Right under the prices, the questions a first-time client is really asking.
 const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
@@ -81,7 +80,7 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
               <span class="c-on" aria-hidden="true">{L.soundOn}</span>
               <svg class="c-mute" viewBox="0 0 24 24" aria-hidden="true" set:html={mute} />
             </button>
-            <p class="c-cap" aria-hidden="true"><b>{pad(cl.i + 1)}</b><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
+            <p class="c-cap" aria-hidden="true"><span>{cl.cap}</span>{cl.fmt && <i>{cl.fmt}</i>}</p>
           </li>
         ))}
       </ol>
@@ -96,7 +95,6 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
     <div class="wrap wide">
       <div class="pr rv">
         <div class="pr-l">
-          <p class="pr-k">{P.k}</p>
           <h2 class="pr-t" id="pr-t">{P.t}</h2>
           <p class="pr-d">{P.d}</p>
         </div>
@@ -231,7 +229,6 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   .c-on { position: absolute; z-index: 1; top: 12px; left: 12px; padding: 7px 10px; border-radius: 8px; background: var(--pink); color: #000; font-size: 13px; font-weight: 700; opacity: 0; transform: translateY(-4px); transition: opacity 200ms var(--ease), transform 200ms var(--ease); }
   .loud .c-on { opacity: 1; transform: none; }
   .c-cap { display: flex; align-items: baseline; gap: 10px; margin: 0; padding-top: 14px; white-space: nowrap; font-size: 16px; font-weight: 700; letter-spacing: 0; color: #fff; }
-  .c-cap b { flex: none; font-size: 13px; letter-spacing: .06em; font-variant-numeric: tabular-nums; color: #fff; }
   .c-cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .c-cap i { flex: none; margin-left: auto; font-style: normal; font-size: 14px; font-weight: 500; }
   @media (max-width: 960px) {
@@ -254,7 +251,6 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   .price-sec { background: var(--yellow); color: #000; padding-block: clamp(72px, 8vw, 128px); }
   .pr { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; }
   .pr-l { display: grid; gap: 14px; }
-  .pr-k { margin: 0; font-weight: 700; font-size: 13px; }
   .pr-t { margin: 0; font-weight: 800; font-size: clamp(56px, 7vw, 128px); line-height: .92; letter-spacing: -0.05em; font-stretch: 92%; }
   .pr-d { margin: 0; max-width: 40rem; font-weight: 500; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.45; }
   .pr-r { display: flex; flex-wrap: wrap; gap: 12px; }

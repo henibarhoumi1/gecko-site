@@ -61,7 +61,7 @@ main:focus { outline: none; }
 @keyframes mq { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(var(--mq-w, -50%), 0, 0); } }
 
 /* Reveal on scroll */
-html.js .rv { opacity: 0; transform: translateY(14px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); transition-delay: min(var(--d, 0ms), 240ms); }
+html.js .rv { opacity: 0; transition: opacity 450ms var(--ease); transition-delay: min(var(--d, 0ms), 120ms); }
 html.js .rv.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { html.js .rv { opacity: 1; transform: none; transition: none; } }
 

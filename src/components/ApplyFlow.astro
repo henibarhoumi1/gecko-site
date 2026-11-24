@@ -51,9 +51,8 @@ const recs: Record<string, string> = {
 ---
 <div class="apply">
   <div class="a-head">
-    <p class="kicker rv"><span class="pulse" aria-hidden="true"></span>{a.kicker}</p>
     <H class={`${heading === 'h1' ? 'h1' : 'h2'} rv`} style="--d:60ms">{heading === 'h2' ? <>{LA.titleStart}<Roll words={LA.roll} end="." /></> : <>{t0}<span class="hl">{t1}</span></>}</H>
-    <p class="text text-l rv" style="--d:120ms">{a.sub}</p>
+    <p class="text text-l rv" style="--d:120ms">{a.sub} <b class="took">{a.kicker}.</b></p>
   </div>
 
   <div class="lead stack" style="--gap:22px">
@@ -380,8 +379,6 @@ const recs: Record<string, string> = {
   .a-head :global(.roll) { white-space: nowrap; }
   .a-head :global(.roll .w) { justify-self: center; }
   .lead { padding-top: 8px; }
-  .kicker { margin: 0; display: inline-flex; align-items: center; gap: 10px; width: fit-content; font-weight: 700; font-size: 14px; }
-  .pulse { width: 8px; height: 8px; border-radius: 50%; background: #000; animation: pulse 1.8s infinite; }
   @keyframes pulse { 50% { transform: scale(.55); } }
 
   .brief { display: grid; gap: 12px; padding: 18px 20px; max-width: 30rem; background: #fff; border: 1.5px solid #000; border-radius: var(--r-lg); }
