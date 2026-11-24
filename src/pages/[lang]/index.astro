@@ -11,7 +11,6 @@ import { t, type Locale } from '../../i18n/strings';
 import { c } from '../../i18n/copy';
 import { href } from '../../i18n/paths';
 import { langPaths } from '../../i18n/static';
-import { test, monthly, fmt } from '../../data/offers';
 import { ads } from '../../data/work';
 import ReelViewer from '../../components/ReelViewer.astro';
 export const getStaticPaths = langPaths;
@@ -32,10 +31,6 @@ const [subA, ...subB] = L.hero.line.split(/(?<=\.)\s+/);
 // so no line is ever cut.
 const widest: Record<string, number> = { en: 6.0, fr: 4.6 };
 const kw = widest[lang] ?? widest.en;
-// Pricing lives on its own page (Heni, 21 Nov): home keeps one yellow band with the way in and the monthly floor.
-const P = lang === 'fr'
-  ? { k: 'Tarifs', t: 'Essayez-nous d’abord.', d: `Le Test\u00a0: 3 reels et 1 visuel d’un seul tournage, ${fmt(test.launch!, lang)} TND. Ensuite, des plans mensuels dès ${fmt(monthly[0].launch!, lang)} TND. Tout le reste, sur devis.`, a: 'Voir les tarifs', b: 'Commencer par le Test' }
-  : { k: 'Pricing', t: 'Try us first.', d: `The Test: 3 reels and 1 static from one shoot, ${fmt(test.launch!, lang)} TND. Then monthly plans from ${fmt(monthly[0].launch!, lang)} TND. Everything else, quoted from your brief.`, a: 'See pricing', b: 'Start with the Test' };
 // Selected work (back on 21 Nov, Heni): a short silent loop of each reel plays on its card; a click plays the full reel
 // with sound, in place.
 const clips = ads.slice(0, 4).map((a, i) => ({ i, src: a.clip ?? a.src!, full: a.src ?? a.clip!, poster: a.poster!, cap: a.angle[lang], fmt: a.format?.[lang] ?? '' }));
@@ -90,21 +85,6 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
   <Strip tone="black" items={s.home.formats} speed={40} />
 
   <SolutionsHome lang={lang} />
-
-  <section class="section price-sec" id="pricing" aria-labelledby="pr-t">
-    <div class="wrap wide">
-      <div class="pr rv">
-        <div class="pr-l">
-          <h2 class="pr-t" id="pr-t">{P.t}</h2>
-          <p class="pr-d">{P.d}</p>
-        </div>
-        <div class="pr-r">
-          <a class="btn primary lg" href={href(lang, 'pricing')}>{P.a} <span class="arr" aria-hidden="true">→</span></a>
-          <a class="btn lg" href={`${href(lang, 'apply')}?plan=test`}>{P.b}</a>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <ClientPortal lang={lang} />
 
@@ -245,16 +225,6 @@ const faqs = [1, 10, 3, 5].map((i) => s.faq[i]);
     .h-title { font-size: min(calc(100cqw / var(--kw) * 1.02), 18vw); }
     .h-act { align-self: stretch; } .h-act .btn { flex: 1 1 auto; }
   }
-
-  /* Pricing, in one yellow block: the way in, the monthly floor, and the page with everything. */
-  /* Pricing as one full-width yellow band, edge to edge: no box. */
-  .price-sec { background: var(--yellow); color: #000; padding-block: clamp(72px, 8vw, 128px); }
-  .pr { display: grid; grid-template-columns: minmax(0, 1.4fr) auto; gap: 28px clamp(32px, 5vw, 96px); align-items: end; }
-  .pr-l { display: grid; gap: 14px; }
-  .pr-t { margin: 0; font-weight: 800; font-size: clamp(56px, 7vw, 128px); line-height: .92; letter-spacing: -0.05em; font-stretch: 92%; }
-  .pr-d { margin: 0; max-width: 40rem; font-weight: 500; font-size: clamp(18px, 1.4vw, 22px); line-height: 1.45; }
-  .pr-r { display: flex; flex-wrap: wrap; gap: 12px; }
-  @media (max-width: 960px) { .pr { grid-template-columns: 1fr; } }
 
   @media (prefers-reduced-motion: reduce) { .ln-in, .up, .mk::after { animation: none; } }
 
