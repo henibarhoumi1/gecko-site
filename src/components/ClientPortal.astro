@@ -161,7 +161,7 @@ const at = 1; // the stage the example project is in: Prep
                 {T.people.map(([n, r, f, st], i) => (
                   <li>
                     <span class={`face f${i}`}>{n.slice(0, 1)}</span>
-                    <div><p class="pn"><b>{n}</b><span class:list={['tg', i === 0 ? 'k' : 'y']}>{st}</span></p><p class="pr">{r} · <b>{f}</b> {T.day}</p></div>
+                    <div><p class="pn"><b>{n}</b><span class:list={['tg', i === 0 ? 'bk' : 'y']}>{st}</span></p><p class="pr">{r} · <b>{f}</b> {T.day}</p></div>
                   </li>
                 ))}
               </ul>
@@ -186,7 +186,7 @@ const at = 1; // the stage the example project is in: Prep
               <h3 class="pt">{T.resT}</h3>
               <p class="pl">{T.resL}</p>
               <ul class="rs">
-                {T.hooks.map(([h, v, verdict], i) => <li><b>{h}</b><span class="rs-bar"><i style={`--v:${v}`}></i></span><span class:list={['tg', i === 0 ? 'k' : i === 1 ? 'y' : 'p']}>{verdict}</span></li>)}
+                {T.hooks.map(([h, v, verdict], i) => <li><b>{h}</b><span class="rs-bar"><i style={`--v:${v}`}></i></span><span class:list={['tg', i === 0 ? 'bk' : i === 1 ? 'y' : 'p']}>{verdict}</span></li>)}
               </ul>
               <p class="rs-next">{T.next}</p>
             </div>
@@ -272,7 +272,7 @@ const at = 1; // the stage the example project is in: Prep
   .sc.on { opacity: 1; visibility: visible; transition: opacity 360ms var(--ease); }
   .k { font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
   .tg { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; white-space: nowrap; }
-  .tg.y { background: var(--yellow); } .tg.k { background: #000; color: #fff; } .tg.p { background: var(--pink); }
+  .tg.y { background: var(--yellow); } .tg.bk { background: #000; color: #fff; } .tg.p { background: var(--pink); }
 
   /* Home */
   .big { margin: 0; font-weight: 800; font-size: clamp(36px, 3.4vw, 52px); line-height: .95; letter-spacing: -0.05em; }
