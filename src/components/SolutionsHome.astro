@@ -113,10 +113,10 @@ const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 
   .sw-it.on .sw-go { opacity: 1; transform: none; }
   .sw-it:focus-visible { outline: 2px solid #000; outline-offset: 4px; border-radius: 8px; }
 
-  .sw-stage { position: sticky; top: calc(var(--header) + 24px); display: grid; }
-  .sw-p { grid-area: 1 / 1; display: grid; gap: 22px; opacity: 0; visibility: hidden; transition: opacity 360ms var(--ease), visibility 0s 360ms; }
+  .sw-stage { position: sticky; top: calc(var(--header) + 24px); display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+  .sw-p { grid-area: 1 / 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; opacity: 0; visibility: hidden; transition: opacity 360ms var(--ease), visibility 0s 360ms; }
   .sw-p.on { opacity: 1; visibility: visible; transition: opacity 360ms var(--ease); }
-  .sw-vis { aspect-ratio: 5 / 4; }
+  .sw-vis { aspect-ratio: 5 / 4; min-width: 0; }
   .sw-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; }
   .sw-foot h3 { margin: 0 0 6px; font-weight: 800; font-size: 22px; letter-spacing: -0.03em; }
   .sw-line { margin: 0; max-width: 34rem; font-weight: 500; font-size: 18px; line-height: 1.45; }

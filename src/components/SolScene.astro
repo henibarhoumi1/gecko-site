@@ -33,9 +33,9 @@ const W = fr
         <span class="c45"><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><b>4:5</b></span>
         <span class="c11"><img src={R[2].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /><b>1:1</b></span>
       </div>
-      <span class="pill k">{W.one} · {W.every}</span>
     </div>
   )}
+  {slug === 'campaigns' && <span class="pill k">{W.one} · {W.every}</span>}
 
   {slug === 'brand-identity' && (
     <div class="id">
@@ -101,11 +101,10 @@ const W = fr
     <div class="str">
       <div class="board">
         <p class="k">{W.angles}</p>
-        <ul class="notes">{W.a.map((x, i) => <li class={`n${i}`}>{x}</li>)}</ul>
+        <ul class="notes">{W.a.map((x, i) => <li class={`n${i}`}>{x}{i === 0 && <em>{W.test}</em>}</li>)}</ul>
         <p class="k">{W.comp}</p>
         <ul class="comp">{[1, 2, 3, 0].map((i) => <li><img src={R[i].poster} alt="" width="270" height="480" loading="lazy" decoding="async" /></li>)}</ul>
       </div>
-      <span class="pill k">{W.test} →</span>
     </div>
   )}
 </div>
@@ -133,7 +132,7 @@ const W = fr
 
   /* Campaign films: the film, and its cut-downs. */
   .camp { position: relative; width: 86%; }
-  .camp span { position: relative; display: block; overflow: hidden; border-radius: 14px; background: #000; box-shadow: 0 0 0 3px #000; }
+  .camp .wide, .cuts > span { position: relative; display: block; overflow: hidden; border-radius: 14px; background: #000; box-shadow: 0 0 0 3px #000; }
   .camp b { position: absolute; left: 10px; top: 10px; padding: 4px 9px; border-radius: 999px; background: #fff; color: #000; font-size: 12px; }
   .camp .wide { aspect-ratio: 16 / 9; }
   .camp .wide img { object-position: 50% 30%; }
@@ -185,7 +184,7 @@ const W = fr
   .vf { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 5; max-height: 78cqh; border-radius: 18px; background: #fff; }
   .btl.big { width: 26%; z-index: 1; }
   .lbl { position: absolute; left: 0; right: 0; top: 44%; text-align: center; font-weight: 800; font-size: 15px; letter-spacing: -0.04em; }
-  .shadow { position: absolute; bottom: 17%; width: 30%; height: 4%; border-radius: 50%; background: #000; opacity: .18; }
+  .shadow { position: absolute; bottom: 18%; width: 44%; height: 3px; border-radius: 3px; background: #000; }
   .cn { position: absolute; width: 22px; height: 22px; border: 0 solid #000; }
   .cn.a { left: 14px; top: 14px; border-width: 3px 0 0 3px; } .cn.b { right: 14px; top: 14px; border-width: 3px 3px 0 0; }
   .cn.c { left: 14px; bottom: 14px; border-width: 0 0 3px 3px; } .cn.d { right: 14px; bottom: 14px; border-width: 0 3px 3px 0; }
@@ -198,6 +197,7 @@ const W = fr
   .strip .btl { width: 28%; }
 
   /* Social content: the feed, planned. */
+  .soc { width: 100%; display: grid; place-items: center; }
   .phone { width: min(46%, 300px); padding: 14px 12px; border-radius: 30px; background: #fff; box-shadow: 0 0 0 4px #000; }
   .prof { display: flex; align-items: center; gap: 8px; padding: 2px 4px 12px; font-size: 12px; }
   .prof b { margin-right: auto; font-size: 13px; }
@@ -215,7 +215,8 @@ const W = fr
   .notes .n0 { transform: rotate(-3deg); } .notes .n1 { background: var(--pink); transform: rotate(2deg); } .notes .n2 { background: var(--blue); transform: rotate(-1deg); }
   .comp { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .comp li { aspect-ratio: 9 / 12; overflow: hidden; border-radius: 10px; }
-  .sc-strategy .pill { left: auto; right: 24px; bottom: 24px; }
+  .notes li { position: relative; }
+  .notes em { position: absolute; left: 10px; bottom: 10px; padding: 5px 9px; border-radius: 999px; background: #000; color: #fff; font-style: normal; font-weight: 700; font-size: 11px; letter-spacing: 0; }
 
   @container (max-width: 520px) {
     .pill { left: 14px; bottom: 14px; font-size: 12px; padding: 8px 12px; }
